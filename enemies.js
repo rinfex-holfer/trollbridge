@@ -1,4 +1,4 @@
-import {createResources} from "./resourses";
+import {createResources} from "./resourses.js";
 
 export const EnemyKey = {
     FARMER: 'FARMER',

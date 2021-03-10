@@ -88,7 +88,7 @@ const game = new Vue({
         },
 
         rob() {
-            const dangerCode = this.getDangerCode();
+            const dangerCode = this.dangerCode;
             let damage = 0;
             switch (dangerCode) {
                 case "NONE":
@@ -135,13 +135,13 @@ const game = new Vue({
     },
 
     computed: {
-        getDangerLevel: function() {
+        dangerLevel: function() {
             return this.troll.level - this.passingBy.level;
         },
-        getDangerCode: function () {
+        dangerCode: function () {
             if (this.passingBy.level === 0) return encounterDanger.NONE
 
-            const diff = this.getDangerLevel();
+            const diff = this.dangerLevel();
             if (diff > 1) return encounterDanger.LOW;
             else if (diff === 1) return encounterDanger.LOW;
             else if (diff === 0) return encounterDanger.MEDIUM;
