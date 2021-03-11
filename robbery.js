@@ -24,16 +24,23 @@ const messages = {
     DIE_MONSTER: 'DIE_MONSTER',
 }
 
-function createEncounter(dangerLevel) {
-    let state = states[stateKey.START]
+function createEncounter(dangerLevel, onPassed, onBattle) {
+    let currentStateKey = stateKey.START;
+    let state = states[currentStateKey]
 
     function goToState(key) {
-        state = states[key];
+        if (key === stateKey.BATTLE) return onBattle();
+
+        if (key === stateKey.END) return onPassed();
+
+        currentStateKey = key;
+        state = states[currentStateKey];
         state.start && state.start();
     }
 
     return {
         getMessages: () => Object.keys(state.messages),
+        getState: () => state,
         onMessage: message => {
             const roll = rnd();
 
@@ -280,40 +287,3 @@ const states = {
         }
     },
 }
-
-const createRobberyStates = (game) => ({
-    [stateKey.START]: {
-        on: (message, danger) => {
-            const roll = rnd();
-            switch (message) {
-                case stateKey.DEMAND_ALL:
-                    switch (danger) {
-                        case encounterDanger.IMPOSSIBLE:
-                        case encounterDanger.VERY_HIGH:
-                            goToState(stateKey.BATTLE);
-                            break;
-                        case encounterDanger.HIGH:
-                            if (roll <= chances.highGiveAllAttack)
-                                goToState(stateKey.BATTLE);
-                            else goToState(stateKey.ALL_REFUSED);
-                            break;
-                        case encounterDanger.MEDIUM:
-                            if (roll <= chances.mediumGiveAll) {
-                                goToState(stateKey.ALL_GIVEN);
-                            } else if (roll <= chances.mediumGiveAllAttack) goToState(stateKey.BATTLE);
-                            else goToState(stateKey.ALL_REFUSED);
-                            break;
-                        case encounterDanger.LOW:
-                            if (roll <= chances.mediumGiveAll) {
-                                goToState(stateKey.ALL_GIVEN);
-                            } else if (roll <= chances.mediumGiveAllAttack) goToState(stateKey.BATTLE);
-                            else goToState(stateKey.ALL_REFUSED);
-                            break;
-                        default:
-                            goToState(stateKey.ALL_GIVEN);
-                            break;
-                    }
-            }
-        }
-    }
-});
