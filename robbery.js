@@ -92,7 +92,7 @@ const states = {
                     100: {nextState: stateKey.BATTLE,       text: 'Ты слишком много на себя берешь, нечестивое создание!',},
                 },
                 [encounterDanger.MEDIUM]:       {
-                    66: {nextState: stateKey.PAYMENT_GIVEN, text: 'Справедливо. Держи оплату за проход.',},
+                    66: {nextState: stateKey.PAYMENT_GIVEN, text: 'Справедливое требование. Держи оплату.',},
                     90: {nextState: stateKey.PAY_REFUSED,   text: 'Нет, платы ты не дождешься. Дай пройти!',},
                     100: {nextState: stateKey.BATTLE,       text: 'Чем отдавать тебе плату - лучше намять тебе бока!',},
                 },
@@ -154,44 +154,20 @@ const states = {
                 },
             },
             [messages.TO_BATTLE]:   {
-                [encounterDanger.IMPOSSIBLE]:   {
-                    100: {nextState: stateKey.BATTLE, text: 'Сейчас поплатишься за дерзость!'},
-                },
-                [encounterDanger.VERY_HIGH]:    {
-                    100: {nextState: stateKey.BATTLE, text: 'Приготовься быть униженным!'},
-                },
-                [encounterDanger.HIGH]:         {
-                    100: {nextState: stateKey.BATTLE, text: 'Ты будешь повержен!'},
-                },
-                [encounterDanger.MEDIUM]:       {
-                    100: {nextState: stateKey.BATTLE, text: 'Тролль атакует!'},
-                },
-                [encounterDanger.LOW]:          {
-                    100: {nextState: stateKey.BATTLE, text: 'Ой-ей!'},
-                },
-                [encounterDanger.NONE]:         {
-                    100: {nextState: stateKey.BATTLE, text: 'Нет! Пожалуйста, не трогай!'},
-                },
+                [encounterDanger.IMPOSSIBLE]:   {100: {nextState: stateKey.BATTLE, text: 'Сейчас поплатишься за дерзость!'},},
+                [encounterDanger.VERY_HIGH]:    {100: {nextState: stateKey.BATTLE, text: 'Приготовься быть униженным!'},},
+                [encounterDanger.HIGH]:         {100: {nextState: stateKey.BATTLE, text: 'Ты будешь повержен!'},},
+                [encounterDanger.MEDIUM]:       {100: {nextState: stateKey.BATTLE, text: 'Тролль атакует!'},},
+                [encounterDanger.LOW]:          {100: {nextState: stateKey.BATTLE, text: 'Ой-ей!'},},
+                [encounterDanger.NONE]:         {100: {nextState: stateKey.BATTLE, text: 'Нет! Пожалуйста, не трогай!'},},
             },
             [messages.GO_IN_PEACE]: {
-                [encounterDanger.IMPOSSIBLE]:   {
-                    100: {nextState: stateKey.END, text: 'Прочь с дороги.'},
-                },
-                [encounterDanger.VERY_HIGH]:    {
-                    100: {nextState: stateKey.END, text: 'То-то же.'},
-                },
-                [encounterDanger.HIGH]:         {
-                    100: {nextState: stateKey.END, text: 'Освободи путь.'},
-                },
-                [encounterDanger.MEDIUM]:       {
-                    100: {nextState: stateKey.END, text: 'Сразу бы так.'},
-                },
-                [encounterDanger.LOW]:          {
-                    100: {nextState: stateKey.END, text: 'Ну, значит, можно идти...'},
-                },
-                [encounterDanger.NONE]:         {
-                    100: {nextState: stateKey.END, text: 'Спасибо, что не злишься.'},
-                },
+                [encounterDanger.IMPOSSIBLE]:   {100: {nextState: stateKey.END, text: 'Прочь с дороги.'},},
+                [encounterDanger.VERY_HIGH]:    {100: {nextState: stateKey.END, text: 'То-то же.'},},
+                [encounterDanger.HIGH]:         {100: {nextState: stateKey.END, text: 'Освободи путь.'},},
+                [encounterDanger.MEDIUM]:       {100: {nextState: stateKey.END, text: 'Сразу бы так.'},},
+                [encounterDanger.LOW]:          {100: {nextState: stateKey.END, text: 'Ну, значит, можно идти...'},},
+                [encounterDanger.NONE]:         {100: {nextState: stateKey.END, text: 'Спасибо, что не злишься.'},},
             },
         }
     },
@@ -199,44 +175,20 @@ const states = {
         start: () => {},
         messages: {
             [messages.TO_BATTLE]:   {
-                [encounterDanger.IMPOSSIBLE]:   {
-                    100: {nextState: stateKey.BATTLE, text: 'Тварь обезумела!'},
-                },
-                [encounterDanger.VERY_HIGH]:    {
-                    100: {nextState: stateKey.BATTLE, text: 'Тварь обезумела!'},
-                },
-                [encounterDanger.HIGH]:         {
-                    100: {nextState: stateKey.BATTLE, text: 'Тролль совсем обезумел!'},
-                },
-                [encounterDanger.MEDIUM]:       {
-                    100: {nextState: stateKey.BATTLE, text: 'Что за коварство?!'},
-                },
-                [encounterDanger.LOW]:          {
-                    100: {nextState: stateKey.BATTLE, text: 'Ты чего, тролль?!'},
-                },
-                [encounterDanger.NONE]:         {
-                    100: {nextState: stateKey.BATTLE, text: 'Но почему?! За что?!'},
-                },
+                [encounterDanger.IMPOSSIBLE]:   {100: {nextState: stateKey.BATTLE, text: 'Тварь обезумела!'},},
+                [encounterDanger.VERY_HIGH]:    {100: {nextState: stateKey.BATTLE, text: 'Тварь обезумела!'},},
+                [encounterDanger.HIGH]:         {100: {nextState: stateKey.BATTLE, text: 'Тролль совсем обезумел!'},},
+                [encounterDanger.MEDIUM]:       {100: {nextState: stateKey.BATTLE, text: 'Что за коварство?!'},},
+                [encounterDanger.LOW]:          {100: {nextState: stateKey.BATTLE, text: 'Ты чего, тролль?!'},},
+                [encounterDanger.NONE]:         {100: {nextState: stateKey.BATTLE, text: 'Но почему?! За что?!'},},
             },
             [messages.GO_IN_PEACE]: {
-                [encounterDanger.IMPOSSIBLE]:   {
-                    100: {nextState: stateKey.END, text: '...'},
-                },
-                [encounterDanger.VERY_HIGH]:    {
-                    100: {nextState: stateKey.END, text: 'Твой счастливый день.'},
-                },
-                [encounterDanger.HIGH]:         {
-                    100: {nextState: stateKey.END, text: 'Зеленый грабитель...'},
-                },
-                [encounterDanger.MEDIUM]:       {
-                    100: {nextState: stateKey.END, text: 'Тебе это аукнется...'},
-                },
-                [encounterDanger.LOW]:          {
-                    100: {nextState: stateKey.END, text: 'Убратья бы отсюда поскорей...'},
-                },
-                [encounterDanger.NONE]:         {
-                    100: {nextState: stateKey.END, text: 'Как бы теперь не умереть с голоду...'},
-                },
+                [encounterDanger.IMPOSSIBLE]:   {100: {nextState: stateKey.END, text: '...'},},
+                [encounterDanger.VERY_HIGH]:    {100: {nextState: stateKey.END, text: 'Твой счастливый день.'},},
+                [encounterDanger.HIGH]:         {100: {nextState: stateKey.END, text: 'Зеленый грабитель...'},},
+                [encounterDanger.MEDIUM]:       {100: {nextState: stateKey.END, text: 'Тебе это аукнется...'},},
+                [encounterDanger.LOW]:          {100: {nextState: stateKey.END, text: 'Убратья бы отсюда поскорей...'},},
+                [encounterDanger.NONE]:         {100: {nextState: stateKey.END, text: 'Как бы теперь не умереть с голоду...'},},
             },
         }
     },
@@ -244,29 +196,87 @@ const states = {
         start: () => {},
         messages: {
             [messages.DEMAND_ALL]: {
-                [encounterDanger.IMPOSSIBLE]:   {100: stateKey.BATTLE},
-                [encounterDanger.VERY_HIGH]:    {100: stateKey.BATTLE},
-                [encounterDanger.HIGH]:         {50: stateKey.ALL_AFTER_PAYMENT_REFUSED, 100: stateKey.BATTLE},
-                [encounterDanger.MEDIUM]:       {75: stateKey.ALL_AFTER_PAYMENT_REFUSED, 100: stateKey.BATTLE},
-                [encounterDanger.LOW]:          {33: stateKey.ALL_AFTER_PAYMENT_GIVEN, 90: stateKey.ALL_AFTER_PAYMENT_REFUSED, 100: stateKey.BATTLE},
-                [encounterDanger.NONE]:         {75: stateKey.ALL_AFTER_PAYMENT_GIVEN, 100: stateKey.ALL_AFTER_PAYMENT_REFUSED},
+                [encounterDanger.IMPOSSIBLE]:   {
+                    100: {nextState: stateKey.BATTLE, text: 'Какая невероятная наглость! Ну все, тролль, сейчас ты получишь урок вежливости!'},
+                },
+                [encounterDanger.VERY_HIGH]:    {
+                    100: {nextState: stateKey.BATTLE, text: 'Какая невероятная наглость! Ну все, тролль, сейчас ты получишь урок вежливости!'},
+                },
+                [encounterDanger.HIGH]:         {
+                    50: {nextState: stateKey.ALL_AFTER_PAYMENT_REFUSED, text: 'Что за глупость? Ты, тролль, совсем обнаглел.'},
+                    100: {nextState: stateKey.BATTLE, text: 'Какая невероятная наглость! Ну все, тролль, сейчас ты получишь урок вежливости!'},
+                },
+                [encounterDanger.MEDIUM]:       {
+                    75: {nextState: stateKey.ALL_AFTER_PAYMENT_REFUSED, text: 'Это нечестно. Нет.'},
+                    100: {nextState: stateKey.BATTLE, text: 'Сбрендил? За такие требования ты получишь только тумаков!'},
+                },
+                [encounterDanger.LOW]:          {
+                    33: {nextState: stateKey.ALL_AFTER_PAYMENT_GIVEN, text: 'Что? Но ты ведь уже получил свое! Эх, ладно.'},
+                    100: {nextState: stateKey.ALL_AFTER_PAYMENT_REFUSED, text: 'Ты что, издеваешься? Нет, это уже слишком.'},
+                },
+                [encounterDanger.NONE]:         {
+                    75: {nextState: stateKey.ALL_AFTER_PAYMENT_GIVEN, text: 'Бессердечное создание! Почему ты так издеваешься над людьми? Ладно... Забирай...'},
+                    100: {nextState: stateKey.ALL_AFTER_PAYMENT_REFUSED, text: 'За что ты так? Ты ведь уже получил плату! Не отбирай последнее, прошу!'},
+                },
             },
-            [messages.TO_BATTLE]:   stateKey.BATTLE,
-            [messages.GO_IN_PEACE]: stateKey.END,
+            [messages.TO_BATTLE]:   {
+                [encounterDanger.IMPOSSIBLE]:   {100: {nextState: stateKey.BATTLE, text: 'Тварь обезумела!'},},
+                [encounterDanger.VERY_HIGH]:    {100: {nextState: stateKey.BATTLE, text: 'Тварь обезумела!'},},
+                [encounterDanger.HIGH]:         {100: {nextState: stateKey.BATTLE, text: 'Тролль совсем обезумел!'},},
+                [encounterDanger.MEDIUM]:       {100: {nextState: stateKey.BATTLE, text: 'Что за коварство?!'},},
+                [encounterDanger.LOW]:          {100: {nextState: stateKey.BATTLE, text: 'Ты чего, тролль?!'},},
+                [encounterDanger.NONE]:         {100: {nextState: stateKey.BATTLE, text: 'Но почему?! За что?!'},},
+            },
+            [messages.GO_IN_PEACE]: {
+                [encounterDanger.IMPOSSIBLE]:   {100: {nextState: stateKey.END, text: '...'},},
+                [encounterDanger.VERY_HIGH]:    {100: {nextState: stateKey.END, text: 'В следующий раз не жди такой щедрости.'},},
+                [encounterDanger.HIGH]:         {100: {nextState: stateKey.END, text: 'Держи мост в порядке, тролль.'},},
+                [encounterDanger.MEDIUM]:       {100: {nextState: stateKey.END, text: 'Отличный мост, друг. Давай, не болей тут!'},},
+                [encounterDanger.LOW]:          {100: {nextState: stateKey.END, text: 'Честная плата за честную троллью работу, верно? Хорошего дня!'},},
+                [encounterDanger.NONE]:         {100: {nextState: stateKey.END, text: 'Хорошего дня, мистер тролль.'},},
+            },
         }
     },
     [stateKey.PAY_REFUSED]: {
         start: () => {},
         messages: {
-            [messages.TO_BATTLE]:   stateKey.BATTLE,
-            [messages.GO_IN_PEACE]: stateKey.END,
+            [messages.TO_BATTLE]:   {
+                [encounterDanger.IMPOSSIBLE]:   {100: {nextState: stateKey.BATTLE, text: 'Сейчас поплатишься за дерзость!'},},
+                [encounterDanger.VERY_HIGH]:    {100: {nextState: stateKey.BATTLE, text: 'Приготовься быть униженным!'},},
+                [encounterDanger.HIGH]:         {100: {nextState: stateKey.BATTLE, text: 'Ты будешь повержен!'},},
+                [encounterDanger.MEDIUM]:       {100: {nextState: stateKey.BATTLE, text: 'Тролль атакует!'},},
+                [encounterDanger.LOW]:          {100: {nextState: stateKey.BATTLE, text: 'Ой-ей!'},},
+                [encounterDanger.NONE]:         {100: {nextState: stateKey.BATTLE, text: 'Нет! Пожалуйста, не трогай!'},},
+            },
+            [messages.GO_IN_PEACE]: {
+                [encounterDanger.IMPOSSIBLE]:   {100: {nextState: stateKey.END, text: 'Прочь с дороги.'},},
+                [encounterDanger.VERY_HIGH]:    {100: {nextState: stateKey.END, text: 'То-то же.'},},
+                [encounterDanger.HIGH]:         {100: {nextState: stateKey.END, text: 'Освободи путь.'},},
+                [encounterDanger.MEDIUM]:       {100: {nextState: stateKey.END, text: 'Сразу бы так.'},},
+                [encounterDanger.LOW]:          {100: {nextState: stateKey.END, text: 'Ну, значит, можно идти... Фух.'},},
+                [encounterDanger.NONE]:         {100: {nextState: stateKey.END, text: 'Спасибо, что не злишься.'},},
+            },
         }
     },
     [stateKey.ALL_AFTER_PAYMENT_REFUSED]: {
         start: () => {},
         messages: {
-            [messages.TO_BATTLE]:   stateKey.BATTLE,
-            [messages.GO_IN_PEACE]: stateKey.END,
+            [messages.TO_BATTLE]:   {
+                [encounterDanger.IMPOSSIBLE]:   {100: {nextState: stateKey.BATTLE, text: 'Сейчас поплатишься за дерзость!'},},
+                [encounterDanger.VERY_HIGH]:    {100: {nextState: stateKey.BATTLE, text: 'Приготовься быть униженным!'},},
+                [encounterDanger.HIGH]:         {100: {nextState: stateKey.BATTLE, text: 'Ты будешь повержен!'},},
+                [encounterDanger.MEDIUM]:       {100: {nextState: stateKey.BATTLE, text: 'Тролль атакует!'},},
+                [encounterDanger.LOW]:          {100: {nextState: stateKey.BATTLE, text: 'Ой-ей!'},},
+                [encounterDanger.NONE]:         {100: {nextState: stateKey.BATTLE, text: 'Нет! Пожалуйста, не трогай!'},},
+            },
+            [messages.GO_IN_PEACE]: {
+                [encounterDanger.IMPOSSIBLE]:   {100: {nextState: stateKey.END, text: 'Прочь с дороги.'},},
+                [encounterDanger.VERY_HIGH]:    {100: {nextState: stateKey.END, text: 'То-то же.'},},
+                [encounterDanger.HIGH]:         {100: {nextState: stateKey.END, text: 'Освободи путь.'},},
+                [encounterDanger.MEDIUM]:       {100: {nextState: stateKey.END, text: 'Сразу бы так.'},},
+                [encounterDanger.LOW]:          {100: {nextState: stateKey.END, text: 'Бывай, зеленый.'},},
+                [encounterDanger.NONE]:         {100: {nextState: stateKey.END, text: 'Спасибо, что не злишься.'},},
+            },
         }
     },
 }
