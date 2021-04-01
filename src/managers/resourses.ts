@@ -1,12 +1,12 @@
 import {gameState} from "../game-state";
-import {Enemy, Resource} from "../types";
+import {Enemy, ResourceKey} from "../types";
 import {eventBus, Evt} from "../event-bus";
 
 eventBus.on(Evt.PAYMENT_GIVEN, () => resourseManager.allPays())
 eventBus.on(Evt.ALL_GIVEN, () => resourseManager.allGivesAll())
 
 export const resourseManager = {
-    enemyPays(enemy: Enemy, resourse: Resource) {
+    enemyPays(enemy: Enemy, resourse: ResourceKey) {
         const howMuch = Math.ceil(enemy.resourses[resourse] * 0.33);
         gameState[resourse] += howMuch;
         enemy.resourses[resourse] -= howMuch;
@@ -41,9 +41,9 @@ export const resourseManager = {
         console.log('allPays');
         if (!gameState.passingBy) throw Error('no passingBy!');
 
-        gameState.passingBy.enemies.forEach(enemy => resourseManager.enemyPays(enemy, Resource.GOLD));
-        gameState.passingBy.stuff.forEach(enemy => resourseManager.enemyPays(enemy, Resource.GOLD));
-        gameState.passingBy.nonCombatants.forEach(enemy => resourseManager.enemyPays(enemy, Resource.GOLD));
+        gameState.passingBy.enemies.forEach(enemy => resourseManager.enemyPays(enemy, ResourceKey.GOLD));
+        gameState.passingBy.stuff.forEach(enemy => resourseManager.enemyPays(enemy, ResourceKey.GOLD));
+        gameState.passingBy.nonCombatants.forEach(enemy => resourseManager.enemyPays(enemy, ResourceKey.GOLD));
 
         eventBus.emit(Evt.RESOURSES_CHANGED);
     }

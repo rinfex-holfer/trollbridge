@@ -198,14 +198,16 @@ class RenderManager {
         } else {
             console.warn('cant remove sprite that doesnt exist:', id);
         }
+    }
 
-        // const animations = getAllAnimations(id);
-        // if (animations && animations.length) {
-        //     containersMap[id].destroy({children: true});
-        //     delete containersMap[id];
-        //     delete animationsMap[id];
-        //     return;
-        // }
+    destroyAnimation(id: string) {
+        const animations = this.getAllAnimations(id);
+        if (animations && animations.length) {
+            this.containersMap[id].destroy({children: true});
+            delete this.containersMap[id];
+            delete this.animationsMap[id];
+            return;
+        }
     }
 }
 

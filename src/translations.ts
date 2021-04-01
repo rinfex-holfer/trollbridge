@@ -20,6 +20,9 @@ export default i18n
                     "Loading": "Loading",
                     "Sound Volume": "Sound Volume",
                     "Music Volume": "Music Volume",
+                    "Chars": {
+                        "Farmer": "peasant"
+                    }
                 }
             },
             [Language.RU]: {
@@ -34,6 +37,9 @@ export default i18n
                     "Loading": "Загрузка",
                     "Sound Volume": "Громкость звука",
                     "Music Volume": "Громкость музыки",
+                    "Chars": {
+                        "Farmer": "крестьянин"
+                    }
                 }
             }
         },

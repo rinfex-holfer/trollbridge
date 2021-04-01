@@ -1,9 +1,9 @@
 import {rnd} from "../utils/utils-math";
 import {EncounterDanger} from "../types";
 import {eventBus, Evt} from "../event-bus";
-import {dangerKey} from "./encounter";
 import {gameState} from "../game-state";
 import {resourseManager} from "./resourses";
+import {charManager} from "./char-manager";
 
 export const enum NegotiationsState {
     START = 'START',
@@ -28,7 +28,7 @@ eventBus.on(Evt.TIME_PASSED, () => {
 });
 
 export function createNegotiation() {
-    const danger: EncounterDanger = dangerKey();
+    const danger: EncounterDanger = charManager.getDangerKey();
     let currentStateKey = NegotiationsState.START;
     let encounterState = negotiationTree[currentStateKey]
 

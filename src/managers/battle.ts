@@ -1,16 +1,17 @@
-import {dangerKey} from "./encounter";
 import {EncounterDanger} from "../types";
 import {rndBetween} from "../utils/utils-math";
 import {constants} from "../constants";
 import {gameState} from "../game-state";
 import {eventBus, Evt} from "../event-bus";
 import {trollManager} from "./troll-manager";
+import {charManager} from "./char-manager";
 
 export function battle() {
     console.log('onBattle');
 
     let damage = 0;
-    switch (dangerKey()) {
+    const dangerKey = charManager.getDangerKey();
+    switch (dangerKey) {
         case EncounterDanger.NONE:
             break;
         case EncounterDanger.LOW:
@@ -30,7 +31,7 @@ export function battle() {
             break;
     }
 
-    console.log('dangerCode was', dangerKey());
+    console.log('dangerCode was', dangerKey);
     console.log('damage taken', damage);
 
     if (damage > 0) trollManager.changeTrollHp(-damage, 'battle');

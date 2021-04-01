@@ -1,6 +1,3 @@
-import {createResources} from "./managers/enemies";
-import * as PIXI from 'pixi.js';
-
 export const enum EntityKey {
     FOOD =  'FOOD'
 }
@@ -12,21 +9,21 @@ export const enum Time {
     NIGHT = 'night',
 }
 
-export const enum EnemyKey {
-    FARMER = 'FARMER',
-    MILITIA = 'MILITIA',
-    SOLDIER = 'SOLDIER',
-    KNIGHT = 'KNIGHT',
-    ARISTORAT = 'ARISTORAT',
-    PRINCE = 'PRINCE',
-    KING = 'KING',
-    TRADER = 'TRADER',
-    CHILD = 'CHILD',
-    FARMER_WOMEN = 'FARMER_WOMEN',
-    PRINCESS = 'PRINCESS',
-    DONKEY = 'DONKEY',
-    TRADE_CART = 'TRADE_CART',
-    CARRIAGE = 'CARRIAGE',
+export const enum CharKey {
+    FARMER = 'farmer',
+    MILITIA = 'militia',
+    SOLDIER = 'soldier',
+    KNIGHT = 'knight',
+    ARISTOCRAT = 'aristorat',
+    PRINCE = 'prince',
+    KING = 'king',
+    TRADER = 'trader',
+    CHILD = 'child',
+    FARMER_WOMEN = 'farmer_women',
+    PRINCESS = 'princess',
+    DONKEY = 'donkey',
+    TRADE_CART = 'trade_cart',
+    CARRIAGE = 'carriage',
 }
 
 export const enum EncounterDanger {
@@ -40,9 +37,9 @@ export const enum EncounterDanger {
 
 export type EncounterTemplate = {
     level: number,
-    enemies: EnemyKey[],
-    stuff: EnemyKey[],
-    nonCombatants: EnemyKey[],
+    enemies: CharKey[],
+    stuff: CharKey[],
+    nonCombatants: CharKey[],
 }
 
 export type Encounter = {
@@ -52,20 +49,25 @@ export type Encounter = {
     nonCombatants: Enemy[],
 }
 
-export const enum Resource {
+export const enum ResourceKey {
     GOLD = 'gold',
     FOOD = 'food',
     MATERIALS = 'materials',
 }
 
 export type Resources = {
-    gold: number,
-    food: number,
-    materials: number,
+    [ResourceKey.FOOD]: number,
+    [ResourceKey.GOLD]: number,
+    [ResourceKey.MATERIALS]: number,
 }
 
 export type Enemy = {
-    key: EnemyKey,
-    name: string,
-    resourses: Resources
+    id: string,
+    key: CharKey,
+    resourses: Resources,
+    hp: number,
+    isCombatant: boolean,
+    isUnconscious: boolean,
+    isAlive: boolean,
+    isPrisoner: boolean,
 }

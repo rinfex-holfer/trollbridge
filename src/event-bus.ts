@@ -50,7 +50,7 @@ export const eventBus = {
     },
 
     emit: function<E extends Evt>(eventType: E, data?: EvtData[E]) {
-        // console.log('emit', eventType, this.subs[eventType]);
+        console.log('emit', eventType, this.subs[eventType]);
         this.subs[eventType]?.forEach(sub => sub[1](data))
     }
 }

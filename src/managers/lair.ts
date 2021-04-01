@@ -3,11 +3,19 @@ import {renderManager} from "./render-manager";
 import {getGameSize} from "../utils/utils-misc";
 import {trollManager} from "./troll-manager";
 import {FoodStorage} from "./food-storage";
+import {ResourceKey, Resources} from "../types";
+import {eventBus, Evt} from "../event-bus";
 
 class Lair {
     static CONTAINER_ID = 'lair'
 
     foodStorage: FoodStorage = new FoodStorage();
+
+    resources: Resources = {
+        [ResourceKey.FOOD]: 0,
+        [ResourceKey.GOLD]: 0,
+        [ResourceKey.MATERIALS]: 0
+    }
 
     init() {
         const container = renderManager.createContainer(Lair.CONTAINER_ID)
@@ -24,6 +32,11 @@ class Lair {
         container.addListener('click', trollManager.goToLair)
 
         this.foodStorage.init(this.getFoodStoragePosition());
+    }
+
+    changeResource(key: ResourceKey, val: number) {
+        this.resources[key] = Math.max(this.resources[key] + val, 0)
+        eventBus.emit(Evt.RESOURSES_CHANGED)
     }
 
     getLairPosition() {

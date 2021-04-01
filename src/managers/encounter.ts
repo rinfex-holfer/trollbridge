@@ -1,9 +1,9 @@
-import {Encounter, EncounterDanger, EncounterTemplate, EnemyKey} from "../types";
+import {EncounterDanger, EncounterTemplate, CharKey} from "../types";
 import {getRndItem, rndBetween} from "../utils/utils-math";
 import {gameState} from "../game-state";
-import {createEnemy} from "./enemies";
 import {eventBus, Evt} from "../event-bus";
 import {trollManager} from "./troll-manager";
+import {charManager} from "./char-manager";
 
 eventBus.on(Evt.BYPASSED, () => encounterManager.clearEncounter())
 eventBus.on(Evt.TIME_PASSED, () => encounterManager.createRandomEncounter());
@@ -12,23 +12,22 @@ class EncounterManager {
     createRandomEncounter() {
         const rnd = rndBetween(Math.max(0, gameState.troll.level - 1), gameState.troll.level + 1);
         const encounter = getRndItem(encounters[rnd]);
-        const item: Encounter = {
-            level: encounter.level,
-            enemies: encounter.enemies.map(createEnemy),
-            stuff: encounter.stuff.map(createEnemy),
-            nonCombatants: encounter.nonCombatants.map(createEnemy),
-        };
-
-        gameState.passingBy = item;
+        console.log(123);
+        charManager.createTravellers([
+            ...encounter.enemies,
+            ...encounter.stuff,
+            ...encounter.nonCombatants,
+        ], encounter.level)
 
         eventBus.emit(Evt.ENCOUNTER_CHANGED);
     }
 
     clearEncounter() {
-        gameState.passingBy = null;
-        eventBus.emit(Evt.ENCOUNTER_CHANGED);
+        charManager.clearTravellers();
 
         trollManager.goToLair();
+
+        eventBus.emit(Evt.ENCOUNTER_CHANGED);
     }
 }
 
@@ -39,36 +38,36 @@ const encounters: {[dangerLevel: number]: EncounterTemplate[]} = {
         {
             level: 0,
             enemies: [],
-            stuff: [EnemyKey.DONKEY],
-            nonCombatants: [EnemyKey.FARMER_WOMEN, EnemyKey.CHILD],
+            stuff: [CharKey.DONKEY],
+            nonCombatants: [CharKey.FARMER_WOMEN, CharKey.CHILD],
         },
 
         {
             level: 0,
-            enemies: [EnemyKey.FARMER],
-            stuff: [EnemyKey.DONKEY],
+            enemies: [CharKey.FARMER],
+            stuff: [CharKey.DONKEY],
             nonCombatants: [],
         },
 
         {
             level: 0,
-            enemies: [EnemyKey.FARMER],
-            stuff: [EnemyKey.DONKEY],
-            nonCombatants: [EnemyKey.FARMER_WOMEN, EnemyKey.CHILD],
+            enemies: [CharKey.FARMER],
+            stuff: [CharKey.DONKEY],
+            nonCombatants: [CharKey.FARMER_WOMEN, CharKey.CHILD],
         },
     ],
 
     1: [
         {
             level: 1,
-            enemies: [EnemyKey.FARMER, EnemyKey.FARMER],
+            enemies: [CharKey.FARMER, CharKey.FARMER],
             stuff: [],
             nonCombatants: [],
         },
 
         {
             level: 1,
-            enemies: [EnemyKey.FARMER, EnemyKey.FARMER, EnemyKey.FARMER],
+            enemies: [CharKey.FARMER, CharKey.FARMER, CharKey.FARMER],
             stuff: [],
             nonCombatants: [],
         },
@@ -77,14 +76,14 @@ const encounters: {[dangerLevel: number]: EncounterTemplate[]} = {
     2: [
         {
             level: 2,
-            enemies: [EnemyKey.SOLDIER],
-            nonCombatants: [EnemyKey.TRADER],
-            stuff: [EnemyKey.DONKEY],
+            enemies: [CharKey.SOLDIER],
+            nonCombatants: [CharKey.TRADER],
+            stuff: [CharKey.DONKEY],
         },
 
         {
             level: 2,
-            enemies: [EnemyKey.MILITIA, EnemyKey.MILITIA, EnemyKey.MILITIA],
+            enemies: [CharKey.MILITIA, CharKey.MILITIA, CharKey.MILITIA],
             stuff: [],
             nonCombatants: [],
         },
@@ -92,36 +91,16 @@ const encounters: {[dangerLevel: number]: EncounterTemplate[]} = {
     3: [
         {
             level: 3,
-            enemies: [EnemyKey.SOLDIER, EnemyKey.SOLDIER, EnemyKey.SOLDIER],
-            nonCombatants: [EnemyKey.TRADER],
-            stuff: [EnemyKey.TRADE_CART],
+            enemies: [CharKey.SOLDIER, CharKey.SOLDIER, CharKey.SOLDIER],
+            nonCombatants: [CharKey.TRADER],
+            stuff: [CharKey.TRADE_CART],
         },
 
         {
             level: 3,
-            enemies: [EnemyKey.MILITIA, EnemyKey.MILITIA, EnemyKey.MILITIA, EnemyKey.MILITIA, EnemyKey.MILITIA],
+            enemies: [CharKey.MILITIA, CharKey.MILITIA, CharKey.MILITIA, CharKey.MILITIA, CharKey.MILITIA],
             stuff: [],
             nonCombatants: [],
         },
     ],
-}
-
-function getDangerLevel() {
-    if (!gameState.passingBy) throw Error('nobody passing by!');
-
-    return gameState.troll.level - gameState.passingBy.level;
-}
-
-export function dangerKey() {
-    if (!gameState.passingBy) throw Error('nobody passing by!');
-
-    if (gameState.passingBy.level === 0) return EncounterDanger.NONE
-
-    const diff = getDangerLevel();
-    if (diff > 1) return EncounterDanger.LOW;
-    else if (diff === 1) return EncounterDanger.LOW;
-    else if (diff === 0) return EncounterDanger.MEDIUM;
-    else if (diff === -1) return EncounterDanger.HIGH;
-    else if (diff === -2) return EncounterDanger.VERY_HIGH;
-    else return EncounterDanger.IMPOSSIBLE;
 }
