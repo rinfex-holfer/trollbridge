@@ -14,3 +14,16 @@ export const constants = {
         5: 25,
     } as {[key: number]: number},
 }
+
+export const zLayers = {
+    GAME_OBJECTS_MIN: 100,
+    PARTICLES: 50,
+    LAIR_OBJECTS: 500,
+}
+
+export const colors = {
+    GREEN: '0x00AA00',
+    RED: '0xFF0000',
+    BLUE: '0x0000FF',
+    PURPLE: '0x080008',
+}

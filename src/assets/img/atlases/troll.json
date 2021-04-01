@@ -1,0 +1,190 @@
+{"frames": {
+
+"block1.png":
+{
+	"frame": {"x":0,"y":0,"w":60,"h":95},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":60,"h":95},
+	"sourceSize": {"w":60,"h":95}
+},
+"damaged1.png":
+{
+	"frame": {"x":0,"y":95,"w":60,"h":95},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":60,"h":95},
+	"sourceSize": {"w":60,"h":95}
+},
+"dead1.png":
+{
+	"frame": {"x":0,"y":190,"w":60,"h":95},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":60,"h":95},
+	"sourceSize": {"w":60,"h":95}
+},
+"devoure1.png":
+{
+	"frame": {"x":0,"y":285,"w":60,"h":95},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":60,"h":95},
+	"sourceSize": {"w":60,"h":95}
+},
+"devoure2.png":
+{
+	"frame": {"x":0,"y":380,"w":60,"h":95},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":60,"h":95},
+	"sourceSize": {"w":60,"h":95}
+},
+"fall1.png":
+{
+	"frame": {"x":0,"y":475,"w":60,"h":95},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":60,"h":95},
+	"sourceSize": {"w":60,"h":95}
+},
+"fall2.png":
+{
+	"frame": {"x":0,"y":570,"w":60,"h":95},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":60,"h":95},
+	"sourceSize": {"w":60,"h":95}
+},
+"grapple1.png":
+{
+	"frame": {"x":0,"y":665,"w":60,"h":95},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":60,"h":95},
+	"sourceSize": {"w":60,"h":95}
+},
+"idle1.png":
+{
+	"frame": {"x":0,"y":760,"w":60,"h":95},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":60,"h":95},
+	"sourceSize": {"w":60,"h":95}
+},
+"idle2.png":
+{
+	"frame": {"x":0,"y":855,"w":60,"h":95},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":60,"h":95},
+	"sourceSize": {"w":60,"h":95}
+},
+"strike1.png":
+{
+	"frame": {"x":0,"y":950,"w":60,"h":95},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":60,"h":95},
+	"sourceSize": {"w":60,"h":95}
+},
+"strike2.png":
+{
+	"frame": {"x":0,"y":1045,"w":60,"h":95},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":60,"h":95},
+	"sourceSize": {"w":60,"h":95}
+},
+"strikeDown1.png":
+{
+	"frame": {"x":0,"y":1140,"w":60,"h":95},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":60,"h":95},
+	"sourceSize": {"w":60,"h":95}
+},
+"strikeDown2.png":
+{
+	"frame": {"x":0,"y":1235,"w":60,"h":95},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":60,"h":95},
+	"sourceSize": {"w":60,"h":95}
+},
+"throw1.png":
+{
+	"frame": {"x":0,"y":1330,"w":60,"h":95},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":60,"h":95},
+	"sourceSize": {"w":60,"h":95}
+},
+"throw2.png":
+{
+	"frame": {"x":0,"y":1425,"w":60,"h":95},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":60,"h":95},
+	"sourceSize": {"w":60,"h":95}
+},
+"throwStone1.png":
+{
+	"frame": {"x":0,"y":1520,"w":60,"h":95},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":60,"h":95},
+	"sourceSize": {"w":60,"h":95}
+},
+"throwStone2.png":
+{
+	"frame": {"x":0,"y":1615,"w":60,"h":95},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":60,"h":95},
+	"sourceSize": {"w":60,"h":95}
+},
+"unconscious1.png":
+{
+	"frame": {"x":0,"y":1710,"w":60,"h":95},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":60,"h":95},
+	"sourceSize": {"w":60,"h":95}
+},
+"walk1.png":
+{
+	"frame": {"x":0,"y":1805,"w":60,"h":95},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":60,"h":95},
+	"sourceSize": {"w":60,"h":95}
+},
+"walk2.png":
+{
+	"frame": {"x":0,"y":1900,"w":60,"h":95},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":60,"h":95},
+	"sourceSize": {"w":60,"h":95}
+}},
+"animations": {
+	"devoure": ["devoure1.png","devoure2.png"],
+	"fall": ["fall1.png","fall2.png"],
+	"idle": ["idle1.png","idle2.png"],
+	"strike": ["strike1.png","strike2.png"],
+	"strikeDown": ["strikeDown1.png","strikeDown2.png"],
+	"throw": ["throw1.png","throw2.png"],
+	"throwStone": ["throwStone1.png","throwStone2.png"],
+	"walk": ["walk1.png","walk2.png"]
+},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "troll.png",
+	"format": "RGBA8888",
+	"size": {"w":60,"h":1995},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:e1f6a93c658d7c968d41dde74940abe1:563a986c5e25eec3a4dd51abfb7b7cf9:6a997b8fea3ff5b8053a1f04b0071f18$"
+}
+}

@@ -1,4 +1,9 @@
-import {createResources} from "./game/enemies";
+import {createResources} from "./managers/enemies";
+import * as PIXI from 'pixi.js';
+
+export const enum EntityKey {
+    FOOD =  'FOOD'
+}
 
 export const enum Time {
     MORNING = 'morning',

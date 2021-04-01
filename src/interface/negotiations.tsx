@@ -1,7 +1,7 @@
 import React, {useEffect, useRef, useState} from "react";
-import {timeManager} from "../game/time";
+import {timeManager} from "../managers/time-manager";
 import {eventBus, Evt} from "../event-bus";
-import {createNegotiation} from "../game/negotiations";
+import {createNegotiation} from "../managers/negotiations";
 import {gameState} from "../game-state";
 
 export const Negotiations = () => {

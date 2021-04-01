@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from "react";
-import {timeManager} from "../game/time";
+import {timeManager} from "../managers/time-manager";
 import {eventBus, Evt} from "../event-bus";
 import {gameState} from "../game-state";
-import {dangerKey} from "../game/encounter";
+import {dangerKey} from "../managers/encounter";
 
 export const PassingBy = () => {
     const [state, setState] = useState(gameState.passingBy);

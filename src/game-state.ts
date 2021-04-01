@@ -13,7 +13,7 @@ export const gameState = {
         location: 'lair' as 'lair' | 'bridge',
     },
 
-    food: 0,
+    food: 3,
     gold: 0,
     materials: 0,
 
