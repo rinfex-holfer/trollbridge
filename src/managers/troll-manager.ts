@@ -1,7 +1,7 @@
 import {constants} from "../constants";
 import {gameState} from "../game-state";
 import {eventBus, Evt} from "../event-bus";
-import {renderManager} from "./render-manager";
+import {render} from "./render";
 import { resoursePaths } from "../resourse-paths";
 import {lair} from "./lair";
 import {bridgeManager} from "./bridge-manager";
@@ -14,7 +14,7 @@ class TrollManager {
 
     initTroll() {
         const pos = lair.getLairPosition();
-        renderManager.createAnimation({
+        render.createAnimation({
             entityId: TrollManager.CONTAINER_ID,
             path: resoursePaths.atlases.troll,
             x: pos.x + pos.width / 2,
@@ -64,8 +64,8 @@ class TrollManager {
         gameState.troll.location = 'bridge';
 
         const bridgePos = bridgeManager.getBridgePosition();
-        renderManager.getContainer(TrollManager.CONTAINER_ID).x = bridgePos.x + bridgePos.width / 2
-        renderManager.getContainer(TrollManager.CONTAINER_ID).y = bridgePos.y + bridgePos.height / 2
+        render.getContainer(TrollManager.CONTAINER_ID).x = bridgePos.x + bridgePos.width / 2
+        render.getContainer(TrollManager.CONTAINER_ID).y = bridgePos.y + bridgePos.height / 2
 
         eventBus.emit(Evt.TROLL_LOCATION_CHANGED);
     }
@@ -75,8 +75,8 @@ class TrollManager {
         gameState.troll.location = 'lair';
 
         const lairPos = lair.getLairPosition();
-        renderManager.getContainer(TrollManager.CONTAINER_ID).x = lairPos.x + lairPos.width / 2
-        renderManager.getContainer(TrollManager.CONTAINER_ID).y = lairPos.y + lairPos.height / 2
+        render.getContainer(TrollManager.CONTAINER_ID).x = lairPos.x + lairPos.width / 2
+        render.getContainer(TrollManager.CONTAINER_ID).y = lairPos.y + lairPos.height / 2
 
         eventBus.emit(Evt.TROLL_LOCATION_CHANGED);
     }

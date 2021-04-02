@@ -1,5 +1,5 @@
 import {resoursePaths} from "../resourse-paths";
-import {renderManager} from "./render-manager";
+import {render} from "./render";
 import {getGameSize} from "../utils/utils-misc";
 import {trollManager} from "./troll-manager";
 
@@ -7,9 +7,9 @@ class BridgeManager {
     static CONTAINER_ID = 'bridge'
 
     init() {
-        const container = renderManager.createContainer(BridgeManager.CONTAINER_ID)
+        const container = render.createContainer(BridgeManager.CONTAINER_ID)
 
-        renderManager.createTiles({
+        render.createTiles({
             paths: [resoursePaths.images.floor],
             ...this.getBridgePosition(),
             container,

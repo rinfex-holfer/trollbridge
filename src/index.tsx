@@ -9,12 +9,13 @@ import {Resources} from "./interface/resourses";
 import {GameOver} from "./interface/game-over";
 import {PassingBy} from "./interface/passing-by";
 import {Negotiations} from "./interface/negotiations";
-import {renderManager} from "./managers/render-manager";
+import {render} from "./managers/render";
 import {resoursePaths} from "./resourse-paths";
 import {trollManager} from "./managers/troll-manager";
 import {lair} from "./managers/lair";
 import {bridgeManager} from "./managers/bridge-manager";
 import {encounterManager} from "./managers/encounter";
+import {charManager} from "./managers/char-manager";
 encounterManager;
 
 const appElement = document.createElement('app');
@@ -49,7 +50,19 @@ new Promise(res => {
         .onComplete.add(res)
 }).then(() => {
     console.log('LOADED');
-    renderManager.init();
+
+
+    const update = (lag: number) => {
+        const dt = (1000 / 60) + lag;
+
+        charManager.update(dt);
+
+        // @ts-ignore
+        // PIXI.tweenManager.update(dt);
+    }
+
+    render.init(update);
+
     bridgeManager.init()
     lair.init()
     trollManager.initTroll()

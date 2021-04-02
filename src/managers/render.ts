@@ -1,5 +1,13 @@
 import * as PIXI from "pixi.js";
-import {getRndItem, Vec} from "../utils/utils-math";
+import {
+    ceilTo,
+    getDistanceBetween,
+    getNormalizedVector,
+    getRndItem,
+    getVector,
+    getVectorLength,
+    Vec
+} from "../utils/utils-math";
 import {zLayers} from "../constants";
 import {createId, getGameSize} from "../utils/utils-misc";
 import {resoursePaths} from "../resourse-paths";
@@ -14,7 +22,7 @@ class RenderManager {
     tilesMap = {} as {[propName: string]: PIXI.Container}
     containersMap = {} as {[propName: string]: PIXI.Container}
 
-    init() {
+    init(update: (dt: number) => void) {
         this.pixiApp.stage.sortableChildren = true;
 
         PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
@@ -28,7 +36,6 @@ class RenderManager {
         window.addEventListener('resize', resize);
 
         const ticker = PIXI.Ticker.shared;
-        const update = () => {};
         ticker.add(update);
     }
 
@@ -86,6 +93,86 @@ class RenderManager {
         return map;
     }
 
+    changeAnimation(
+        options:
+        {entityId: string, animationName: string, time?: number, onLoop?: () => void}
+    ) {
+        const oldAnimation = this.getCurrentAnimation(options.entityId);
+        const newAnimation = this.getAnimation(options.entityId, options.animationName);
+
+        if (oldAnimation === newAnimation) return;
+
+        console.log(oldAnimation);
+
+        if (oldAnimation) {
+            oldAnimation.onLoop = undefined;
+            oldAnimation.gotoAndStop(0);
+            oldAnimation.renderable = false;
+            oldAnimation.interactive = false;
+
+            newAnimation.scale.x = oldAnimation.scale.x;
+            newAnimation.scale.y = oldAnimation.scale.y;
+            newAnimation.interactive = oldAnimation.interactive;
+        }
+
+        newAnimation.gotoAndPlay(0);
+        newAnimation.renderable = true;
+
+        if (options.time !== undefined) {
+            const oneFrameDuration = (1000 / 60);
+            const oneFrameDurationShouldBe = (options.time / newAnimation.textures.length);
+            newAnimation.animationSpeed = ceilTo(oneFrameDuration / oneFrameDurationShouldBe, 2);
+        }
+
+        if (options.onLoop) {
+            newAnimation.onLoop = options.onLoop;
+        }
+    }
+
+    moveTowards(entityId: string, x: number, y: number, byDistance: number, ySorting = false, directToTarget = false): number {
+        const obj = this.getContainer(entityId);
+        const target = {x, y};
+
+        const vec = getVector(obj, target)
+        const oldDistance = getVectorLength(vec);
+        const normalizedVec = getNormalizedVector(vec);
+
+        const xShift = normalizedVec.x * byDistance;
+        const yShift = normalizedVec.y * byDistance;
+
+        if (Math.abs(vec.x) < Math.abs(xShift)) obj.x = target.x;
+        else  obj.x += xShift
+
+        if (Math.abs(vec.y) < yShift) obj.y = target.y;
+        else  obj.y += yShift
+
+        if (ySorting) {
+            obj.zIndex = zLayers.GAME_OBJECTS_MIN + Math.round(y);
+        }
+
+        if (directToTarget) this.directToTarget(entityId, target)
+
+        return getDistanceBetween(obj, target);
+    }
+
+    move(entityId: string, x: number, y: number, ySorting = false) {
+        const container = this.getContainer(entityId);
+
+        container.x = x;
+        container.y = y;
+
+        if (ySorting) {
+            container.zIndex = zLayers.GAME_OBJECTS_MIN + Math.round(y);
+        }
+    }
+
+    directToTarget(id: string, target: Vec) {
+        const obj = this.getContainer(id);
+        if (!obj) throw Error('no container with id ' + id);
+
+        obj.scale.x = Math.sign(target.x - obj.x);
+    }
+
     createContainer(entityId: string): PIXI.Container {
         const container = new PIXI.Container();
         this.pixiApp.stage.addChild(container);
@@ -102,8 +189,14 @@ class RenderManager {
     }
 
     getAllAnimations(entityId: string): PIXI.AnimatedSprite[] {
-        console.log(this.animationsMap, entityId);
         return Object.values(this.animationsMap[entityId])
+    }
+
+    getCurrentAnimation(entityId: string) : PIXI.AnimatedSprite | null {
+        const animName = Object.keys(this.animationsMap[entityId]).find(aName => {
+            return this.animationsMap[entityId][aName].renderable
+        })
+        return animName ? this.animationsMap[entityId][animName] : null;
     }
 
     getAnimation(entityId: string, animationName: string): PIXI.AnimatedSprite {
@@ -270,4 +363,4 @@ const spriteDefaultOptions = {
     y: 0,
 };
 
-export const renderManager = new RenderManager();
+export const render = new RenderManager();

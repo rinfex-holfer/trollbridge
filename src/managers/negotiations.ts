@@ -31,6 +31,7 @@ export function createNegotiation() {
     const danger: EncounterDanger = charManager.getDangerKey();
     let currentStateKey = NegotiationsState.START;
     let encounterState = negotiationTree[currentStateKey]
+    charManager.stopAllTravellers()
 
     return {
         getMessages: () => encounterState ? Object.keys(encounterState) : null,
@@ -61,7 +62,7 @@ export function createNegotiation() {
                             charManager.battle();
                             break;
                         case NegotiationsState.END:
-                            charManager.makeAllTravellersGo();
+                            charManager.letAllTravellersPass();
                             break;
 
                     }

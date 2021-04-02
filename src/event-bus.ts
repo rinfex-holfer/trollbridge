@@ -12,6 +12,8 @@ export const enum Evt {
     TROLL_LOCATION_CHANGED = 'TROLL_LOCATION_CHANGED',
     RESOURSES_CHANGED = 'RESOURSES_CHANGED',
     ENCOUNTER_CHANGED = 'ENCOUNTER_CHANGED',
+
+    CHAR_LEFT_BRIDGE = 'CHAR_LEFT_BRIDGE',
 }
 
 export type EvtData = {
@@ -25,6 +27,7 @@ export type EvtData = {
     [Evt.RESOURSES_CHANGED]: undefined,
     [Evt.ENCOUNTER_CHANGED]: undefined,
     [Evt.TROLL_LOCATION_CHANGED]: undefined,
+    [Evt.CHAR_LEFT_BRIDGE]: string,
 }
 
 export const eventBus = {

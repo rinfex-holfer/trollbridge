@@ -1,5 +1,5 @@
 import {resoursePaths} from "../resourse-paths";
-import {renderManager} from "./render-manager";
+import {render} from "./render";
 import {getGameSize} from "../utils/utils-misc";
 import {trollManager} from "./troll-manager";
 import {FoodStorage} from "./food-storage";
@@ -18,9 +18,9 @@ class Lair {
     }
 
     init() {
-        const container = renderManager.createContainer(Lair.CONTAINER_ID)
+        const container = render.createContainer(Lair.CONTAINER_ID)
 
-        renderManager.createTiles({
+        render.createTiles({
             paths: [resoursePaths.images.grass],
             ...this.getLairPosition(),
             container,

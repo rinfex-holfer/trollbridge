@@ -1,4 +1,4 @@
-import {renderManager} from "./render-manager";
+import {render} from "./render";
 import {createId} from "../utils/utils-misc";
 import {trollManager} from "./troll-manager";
 import {gameState} from "../game-state";
@@ -21,7 +21,7 @@ export class FoodStorage {
     init(pos: Vec) {
         this.position = pos;
 
-        const container = renderManager.createContainer(FoodStorage.CONTAINER_ID)
+        const container = render.createContainer(FoodStorage.CONTAINER_ID)
         container.zIndex = zLayers.LAIR_OBJECTS
         container.interactive = true;
         container.buttonMode = true;
@@ -45,7 +45,7 @@ export class FoodStorage {
         if (lair.resources[ResourceKey.FOOD] < this.foodSprites.length) {
             while (lair.resources[ResourceKey.FOOD] < this.foodSprites.length) {
                 // @ts-ignore
-                renderManager.removeSprite(this.foodSprites.pop());
+                render.removeSprite(this.foodSprites.pop());
             }
         } else if (lair.resources[ResourceKey.FOOD] > this.foodSprites.length) {
             const lairPos = this.position;
@@ -53,11 +53,11 @@ export class FoodStorage {
             while (lair.resources[ResourceKey.FOOD] !== this.foodSprites.length) {
                 const entityId = createId(EntityKey.FOOD);
                 lairPos.x += 25;
-                renderManager.createSprite({
+                render.createSprite({
                     path: resoursePaths.images.meat,
                     ...lairPos,
                     entityId,
-                    container: renderManager.getContainer(FoodStorage.CONTAINER_ID)
+                    container: render.getContainer(FoodStorage.CONTAINER_ID)
                 })
                 this.foodSprites.push(entityId);
             }

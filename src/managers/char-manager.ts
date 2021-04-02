@@ -5,6 +5,7 @@ import {rndBetween} from "../utils/utils-math";
 import {constants} from "../constants";
 import {trollManager} from "./troll-manager";
 import {Char} from "../char/Char";
+import {eventBus, Evt} from "../event-bus";
 
 class CharManager {
     travellers: Char[] = []
@@ -12,6 +13,35 @@ class CharManager {
     dead: Char[] = []
 
     encounterLevel: number = 0;
+
+    constructor() {
+        eventBus.on(Evt.CHAR_LEFT_BRIDGE, charId => this.onCharLeftBridge(charId))
+    }
+
+    update(dt: number) {
+        this.travellers.forEach(t => t.update(dt));
+    }
+
+    onCharLeftBridge(charId: string) {
+        const traveller = this.travellers.find(t => t.id === charId);
+        if (!traveller) {
+            console.error('no traveller with id ' + charId);
+            return;
+        }
+
+        this.removeTraveller(charId);
+    }
+
+    removeTraveller(id: string) {
+        const idx = this.travellers.findIndex(t => t.id === id)
+        if (idx === undefined) {
+            console.error('no traveller with id ' + id)
+            return;
+        }
+
+        this.travellers[idx].destroy();
+        this.travellers.splice(idx, 1);
+    }
 
     createTravellers(keys: CharKey[], travellersLevel: number) {
         this.encounterLevel = travellersLevel;
@@ -23,6 +53,7 @@ class CharManager {
                 bridgePos.x + bridgePos.width - 50,
                 bridgePos.y + 100 + i * 100
             );
+            char.goAcrossBridge();
             this.travellers.push(char);
         })
     }
@@ -45,8 +76,13 @@ class CharManager {
         else return EncounterDanger.IMPOSSIBLE;
     }
 
-    makeAllTravellersGo() {
-        this.clearTravellers();
+    stopAllTravellers() {
+        this.travellers.forEach(t => t.startNegotiation());
+    }
+
+    letAllTravellersPass() {
+        this.travellers.forEach(t => t.goAcrossBridge());
+        // this.clearTravellers();
     }
 
     makeAllTravellersPay() {

@@ -16,6 +16,7 @@ export const resoursePaths = {
 
     atlases: {
         troll: `${atlasesUrl}/troll.json`,
+        peasant: `${atlasesUrl}/peasant.json`,
         pot: `${atlasesUrl}/pot.json`,
     },
 
