@@ -273,6 +273,14 @@ class RenderManager {
         sprite.x = x;
         sprite.y = y;
 
+        if (options.width !== undefined) {
+            sprite.width = options.width
+        }
+
+        if (options.height !== undefined) {
+            sprite.height = options.height
+        }
+
         if (options.visible === false) {
             sprite.renderable = false;
         }
@@ -357,6 +365,8 @@ interface SpriteOptions {
     container?: PIXI.Container
     visible?: boolean
     ySorting?: boolean,
+    width?: number,
+    height?: number,
 }
 const spriteDefaultOptions = {
     x: 0,

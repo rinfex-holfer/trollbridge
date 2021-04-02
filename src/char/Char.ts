@@ -7,6 +7,8 @@ import {CharState} from "./states/CharState";
 import {CharStateIdle} from "./states/CharStateIdle";
 import {CharStateGoAcross} from "./states/CharStateGoAcross";
 import {CharAnimation, CharStateKey} from "./char-constants";
+import {CharActionsMenu} from "../interface/char-actions-menu";
+import {CharStateSurrender} from "./states/CharStateSurrender";
 
 export class Char {
     key: CharKey
@@ -17,10 +19,13 @@ export class Char {
 
     speed: number = 100
     resources: Resources
-    isUnconscious: boolean = false
-    isAlive: boolean = true
+    isUnconscious = false
+    isAlive = true
+    isFleeing = false
 
     state: CharState
+
+    actionsMenu: CharActionsMenu
 
     constructor(key: CharKey, x: number, y: number) {
         const charTemplate = charTemplates[key]
@@ -33,8 +38,16 @@ export class Char {
         this.isCombatant = charTemplate.isCombatant
 
         this.createAnimation(x, y);
+
+        this.actionsMenu = new CharActionsMenu(this.id);
+
         this.state = this.getState(CharStateKey.GO_ACROSS)
         this.state.onStart();
+    }
+
+    destroy() {
+        this.actionsMenu.destroy();
+        render.destroyAnimation(this.id);
     }
 
     update(dt: number) {
@@ -47,7 +60,8 @@ export class Char {
                 return new CharStateIdle(this);
             case CharStateKey.GO_ACROSS:
                 return new CharStateGoAcross(this);
-                break;
+            case CharStateKey.SURRENDER:
+                return new CharStateSurrender(this);
             default:
                 throw Error('wrong state key ' + stateKey);
         }
@@ -78,10 +92,6 @@ export class Char {
         return {x: cont.x, y: cont.y};
     }
 
-    destroy() {
-        render.destroyAnimation(this.id);
-    }
-
     changeResources(key: ResourceKey, val: number) {
         this.resources[key] = Math.max(this.resources[key] + val, 0)
     }
@@ -102,6 +112,10 @@ export class Char {
         this.changeResources(ResourceKey.FOOD, -this.resources[ResourceKey.FOOD]);
     }
 
+    surrender() {
+        this.setState(CharStateKey.SURRENDER);
+    }
+
     setAnimation(key: CharAnimation) {
         render.changeAnimation({
             entityId: this.id,
@@ -114,6 +128,7 @@ export class Char {
     }
 
     goAcrossBridge() {
+        this.actionsMenu.hide();
         this.setState(CharStateKey.GO_ACROSS);
     }
 }

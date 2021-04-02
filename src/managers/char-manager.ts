@@ -80,9 +80,12 @@ class CharManager {
         this.travellers.forEach(t => t.startNegotiation());
     }
 
+    allSurrender() {
+        this.travellers.forEach(t => t.surrender());
+    }
+
     letAllTravellersPass() {
         this.travellers.forEach(t => t.goAcrossBridge());
-        // this.clearTravellers();
     }
 
     makeAllTravellersPay() {
@@ -91,6 +94,26 @@ class CharManager {
 
     makeAllTravellersGiveAll() {
         this.travellers.forEach(t => t.giveAll());
+    }
+
+    releaseTraveller(id: string) {
+        this.travellers.find(t => t.id === id)?.goAcrossBridge();
+    }
+
+    makeTravellerGiveAll(id: string) {
+        this.travellers.find(t => t.id === id)?.giveAll();
+    }
+
+    makeTravellerPay(id: string) {
+        this.travellers.find(t => t.id === id)?.pay();
+    }
+
+    killTraveler(id: string) {
+        const traveller = this.travellers.find(t => t.id === id);
+        if (!traveller) throw Error('wtf');
+
+        traveller.giveAll();
+        this.removeTraveller(id);
     }
 
     battle() {
@@ -120,8 +143,9 @@ class CharManager {
 
         if (gameState.gameover) return;
 
-        this.makeAllTravellersGiveAll();
-        this.clearTravellers();
+        this.allSurrender();
+        // this.makeAllTravellersGiveAll();
+        // this.clearTravellers();
     }
 }
 

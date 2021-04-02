@@ -16,9 +16,10 @@ export const constants = {
 }
 
 export const zLayers = {
-    GAME_OBJECTS_MIN: 100,
     PARTICLES: 50,
-    LAIR_OBJECTS: 500,
+    GAME_OBJECTS_MIN: 100,
+    LAIR_OBJECTS: 200,
+    CHAR_MENU: 300,
 }
 
 export const colors = {

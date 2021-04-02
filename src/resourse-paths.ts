@@ -12,6 +12,12 @@ export const resoursePaths = {
         floor: `${imagesUrl}/floor.png`,
         grass: `${imagesUrl}/tile_grass.png`,
         meat: `${imagesUrl}/meat.png`,
+        button_release: `${imagesUrl}/leg.png`,
+        button_rob: `${imagesUrl}/throwRock.png`,
+        button_imprison: `${imagesUrl}/prisoner.png`,
+        button_kill: `${imagesUrl}/strike.png`,
+        button_devour: `${imagesUrl}/devoure.png`,
+        button_make_food: `${imagesUrl}/makeFood_0.png`,
     },
 
     atlases: {

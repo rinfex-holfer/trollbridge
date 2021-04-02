@@ -12,11 +12,15 @@ export class CharStateGoAcross extends CharState {
     }
 
     update(dt: number) {
+
+        let speed = this.char.speed
+        if (this.char.isFleeing) speed *= 2
+
         const distanceLeft = render.moveTowards(
             this.char.id,
             0,
             this.char.getCoords().y,
-            dt * this.char.speed / 1000,
+            dt * speed / 1000,
             true,
             true,
         )
