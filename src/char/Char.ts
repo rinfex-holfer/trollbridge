@@ -3,9 +3,10 @@ import {charTemplates} from "../char-templates";
 import {createId} from "../utils/utils-misc";
 import {render} from "../managers/render";
 import {lair} from "../managers/lair";
-import {CharState, CharStateKey} from "./states/CharState";
+import {CharState} from "./states/CharState";
 import {CharStateIdle} from "./states/CharStateIdle";
 import {CharStateGoAcross} from "./states/CharStateGoAcross";
+import {CharAnimation, CharStateKey} from "./char-constants";
 
 export class Char {
     key: CharKey
@@ -101,17 +102,10 @@ export class Char {
         this.changeResources(ResourceKey.FOOD, -this.resources[ResourceKey.FOOD]);
     }
 
-    setMoveAnimation() {
+    setAnimation(key: CharAnimation) {
         render.changeAnimation({
             entityId: this.id,
-            animationName: 'walk'
-        })
-    }
-
-    setIdleAnimation() {
-        render.changeAnimation({
-            entityId: this.id,
-            animationName: 'idle'
+            animationName: key
         })
     }
 

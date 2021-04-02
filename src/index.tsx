@@ -14,9 +14,9 @@ import {resoursePaths} from "./resourse-paths";
 import {trollManager} from "./managers/troll-manager";
 import {lair} from "./managers/lair";
 import {bridgeManager} from "./managers/bridge-manager";
-import {encounterManager} from "./managers/encounter";
+import {encounter} from "./managers/encounter";
 import {charManager} from "./managers/char-manager";
-encounterManager;
+encounter;
 
 const appElement = document.createElement('app');
 appElement.id = 'app';

@@ -1,12 +1,13 @@
-import {CharState, CharStateKey} from "./CharState";
+import {CharState} from "./CharState";
 import {render} from "../../managers/render";
 import {eventBus, Evt} from "../../event-bus";
+import {CharAnimation, CharStateKey} from "../char-constants";
 
 export class CharStateGoAcross extends CharState {
     key = CharStateKey.GO_ACROSS
 
     onStart(): Promise<any> {
-        this.char.setMoveAnimation();
+        this.char.setAnimation(CharAnimation.WALK);
         return Promise.resolve();
     }
 

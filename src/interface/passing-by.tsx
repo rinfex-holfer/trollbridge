@@ -6,11 +6,11 @@ export const PassingBy = () => {
     const [state, setState] = useState([] as any[]);
 
     useEffect(() => {
-        const sub = eventBus.on(Evt.ENCOUNTER_CHANGED, () => {
+        const sub = eventBus.on(Evt.TRAVELLERS_APPEARS, () => {
             setState(charManager.travellers)
         })
         return () => {
-            eventBus.unsubscribe(Evt.ENCOUNTER_CHANGED, sub);
+            eventBus.unsubscribe(Evt.TRAVELLERS_APPEARS, sub);
         }
     }, [setState])
 

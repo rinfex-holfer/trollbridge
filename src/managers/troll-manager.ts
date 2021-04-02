@@ -6,6 +6,7 @@ import { resoursePaths } from "../resourse-paths";
 import {lair} from "./lair";
 import {bridgeManager} from "./bridge-manager";
 import {Resources} from "../types";
+import {encounter} from "./encounter";
 
 eventBus.on(Evt.TIME_PASSED, () => trollManager.increaseHunger());
 

@@ -2,16 +2,20 @@ import {EncounterDanger, EncounterTemplate, CharKey} from "../types";
 import {getRndItem, rndBetween} from "../utils/utils-math";
 import {gameState} from "../game-state";
 import {eventBus, Evt} from "../event-bus";
-import {trollManager} from "./troll-manager";
 import {charManager} from "./char-manager";
-
-eventBus.on(Evt.BYPASSED, () => encounterManager.clearEncounter())
-eventBus.on(Evt.TIME_PASSED, () => encounterManager.createRandomEncounter());
+import {encounterTemplates} from "../encounter-templates";
 
 class EncounterManager {
+    encounterFinished = true
+
+    constructor() {
+        eventBus.on(Evt.TIME_PASSED, () => this.createRandomEncounter());
+        eventBus.on(Evt.TROLL_LOCATION_CHANGED, () => this.onTrollLocationChange());
+    }
+
     createRandomEncounter() {
         const rnd = rndBetween(Math.max(0, gameState.troll.level - 1), gameState.troll.level + 1);
-        const encounter = getRndItem(encounters[rnd]);
+        const encounter = getRndItem(encounterTemplates[rnd]);
 
         charManager.createTravellers([
             ...encounter.enemies,
@@ -19,88 +23,21 @@ class EncounterManager {
             ...encounter.nonCombatants,
         ], encounter.level)
 
-        eventBus.emit(Evt.ENCOUNTER_CHANGED);
+        this.encounterFinished = false;
+
+        eventBus.emit(Evt.TRAVELLERS_APPEARS);
     }
 
-    clearEncounter() {
-        charManager.clearTravellers();
+    onTrollLocationChange() {
+        if (charManager.travellers.length && !this.encounterFinished) {
+            eventBus.emit(Evt.NEGOTIATION_STARTED);
+        }
+    }
 
-        trollManager.goToLair();
-
-        eventBus.emit(Evt.ENCOUNTER_CHANGED);
+    finishEncounter() {
+        this.encounterFinished = true;
     }
 }
 
-export const encounterManager = new EncounterManager();
+export const encounter = new EncounterManager();
 
-const encounters: {[dangerLevel: number]: EncounterTemplate[]} = {
-    0: [
-        {
-            level: 0,
-            enemies: [],
-            stuff: [CharKey.DONKEY],
-            nonCombatants: [CharKey.FARMER_WOMEN, CharKey.CHILD],
-        },
-
-        {
-            level: 0,
-            enemies: [CharKey.FARMER],
-            stuff: [CharKey.DONKEY],
-            nonCombatants: [],
-        },
-
-        {
-            level: 0,
-            enemies: [CharKey.FARMER],
-            stuff: [CharKey.DONKEY],
-            nonCombatants: [CharKey.FARMER_WOMEN, CharKey.CHILD],
-        },
-    ],
-
-    1: [
-        {
-            level: 1,
-            enemies: [CharKey.FARMER, CharKey.FARMER],
-            stuff: [],
-            nonCombatants: [],
-        },
-
-        {
-            level: 1,
-            enemies: [CharKey.FARMER, CharKey.FARMER, CharKey.FARMER],
-            stuff: [],
-            nonCombatants: [],
-        },
-    ],
-
-    2: [
-        {
-            level: 2,
-            enemies: [CharKey.SOLDIER],
-            nonCombatants: [CharKey.TRADER],
-            stuff: [CharKey.DONKEY],
-        },
-
-        {
-            level: 2,
-            enemies: [CharKey.MILITIA, CharKey.MILITIA, CharKey.MILITIA],
-            stuff: [],
-            nonCombatants: [],
-        },
-    ],
-    3: [
-        {
-            level: 3,
-            enemies: [CharKey.SOLDIER, CharKey.SOLDIER, CharKey.SOLDIER],
-            nonCombatants: [CharKey.TRADER],
-            stuff: [CharKey.TRADE_CART],
-        },
-
-        {
-            level: 3,
-            enemies: [CharKey.MILITIA, CharKey.MILITIA, CharKey.MILITIA, CharKey.MILITIA, CharKey.MILITIA],
-            stuff: [],
-            nonCombatants: [],
-        },
-    ],
-}

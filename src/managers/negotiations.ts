@@ -4,6 +4,7 @@ import {eventBus, Evt} from "../event-bus";
 import {gameState} from "../game-state";
 import {charManager} from "./char-manager";
 import {battleManager} from "./battle";
+import {encounter} from "./encounter";
 
 export const enum NegotiationsState {
     START = 'START',
@@ -24,7 +25,7 @@ const enum NegotiationsMessage {
 
 eventBus.on(Evt.TIME_PASSED, () => {
     gameState.encounterText = '';
-    eventBus.emit(Evt.ENCOUNTER_CHANGED);
+    eventBus.emit(Evt.TRAVELLERS_APPEARS);
 });
 
 export function createNegotiation() {
@@ -59,9 +60,11 @@ export function createNegotiation() {
                             charManager.makeAllTravellersPay();
                             break;
                         case NegotiationsState.BATTLE:
+                            encounter.finishEncounter();
                             charManager.battle();
                             break;
                         case NegotiationsState.END:
+                            encounter.finishEncounter();
                             charManager.letAllTravellersPass();
                             break;
 

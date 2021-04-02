@@ -1,24 +1,20 @@
 import React, {useEffect, useRef, useState} from "react";
-import {timeManager} from "../managers/time-manager";
 import {eventBus, Evt} from "../event-bus";
 import {createNegotiation} from "../managers/negotiations";
 import {gameState} from "../game-state";
-import {charManager} from "../managers/char-manager";
 
 export const Negotiations = () => {
     const negotiationRef = useRef<any>();
     const [options, setOptions] = useState<string[] | null>(null)
 
     useEffect(() => {
-        const sub = eventBus.on(Evt.TROLL_LOCATION_CHANGED, () => {
-            if (gameState.troll.location === 'bridge' && charManager.travellers.length) {
-                negotiationRef.current = createNegotiation();
-                setOptions(negotiationRef.current.getMessages());
-            }
+        const sub = eventBus.on(Evt.NEGOTIATION_STARTED, () => {
+            negotiationRef.current = createNegotiation();
+            setOptions(negotiationRef.current.getMessages());
         })
 
         return () => {
-            eventBus.unsubscribe(Evt.TROLL_LOCATION_CHANGED, sub);
+            eventBus.unsubscribe(Evt.NEGOTIATION_STARTED, sub);
         }
     }, [])
 

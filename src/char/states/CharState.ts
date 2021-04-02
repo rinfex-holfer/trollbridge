@@ -1,9 +1,5 @@
 import {Char} from "../Char";
-
-export const enum CharStateKey {
-    IDLE = 'IDLE',
-    GO_ACROSS = 'GO_ACROSS'
-}
+import {CharStateKey} from "../char-constants";
 
 export abstract class CharState {
     abstract key: CharStateKey
