@@ -5,6 +5,7 @@ import {trollManager} from "./troll-manager";
 import {FoodStorage} from "./food-storage";
 import {ResourceKey, Resources} from "../types";
 import {eventBus, Evt} from "../event-bus";
+import {charManager} from "./char-manager";
 
 class Lair {
     static CONTAINER_ID = 'lair'
@@ -47,6 +48,21 @@ class Lair {
             x: 0,
             y: gameSize.height / 2,
         }
+    }
+
+    feedChar(id: string) {
+        if (this.resources.food === 0) {
+            console.error('no food to feed', id)
+            return;
+        }
+        this.changeResource(ResourceKey.FOOD, -1);
+        charManager.feedChar(id);
+    }
+
+    makeFoodFrom(id: string) {
+        this.changeResource(ResourceKey.FOOD, 3);
+        charManager.makeCharGiveAll(id);
+        charManager.removeChar(id);
     }
 
     getFoodStoragePosition() {

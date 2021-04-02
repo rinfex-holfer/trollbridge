@@ -1,4 +1,4 @@
-import {constants} from "../constants";
+import {gameConstants} from "../constants";
 import {gameState} from "../game-state";
 import {eventBus, Evt} from "../event-bus";
 import {render} from "./render";
@@ -7,6 +7,7 @@ import {lair} from "./lair";
 import {bridgeManager} from "./bridge-manager";
 import {Resources} from "../types";
 import {encounter} from "./encounter";
+import {charManager} from "./char-manager";
 
 eventBus.on(Evt.TIME_PASSED, () => trollManager.increaseHunger());
 
@@ -27,13 +28,13 @@ class TrollManager {
         })
     }
 
-    increaseHunger(val: number = constants.HUNGER_PER_TIME) {
+    increaseHunger(val: number = gameConstants.HUNGER_PER_TIME) {
         const newHunger = gameState.troll.hunger + val;
-        if (newHunger > constants.MAX_HUNGER) {
-            this.changeTrollHp(-constants.HP_MINUS_WHEN_HUNGRY, 'hunger')
+        if (newHunger > gameConstants.MAX_HUNGER) {
+            this.changeTrollHp(-gameConstants.HP_MINUS_WHEN_HUNGRY, 'hunger')
         }
 
-        gameState.troll.hunger = Math.min(newHunger, constants.MAX_HUNGER);
+        gameState.troll.hunger = Math.min(newHunger, gameConstants.MAX_HUNGER);
 
         eventBus.emit(Evt.TROLL_STATS_CHANGED);
     }
@@ -51,7 +52,7 @@ class TrollManager {
 
     changeTrollHp(val: number, cause = 'hunger') {
         const newVal = gameState.troll.hp + val;
-        gameState.troll.hp = Math.max(Math.min(newVal, constants.MAX_HP[gameState.troll.level]), 0);
+        gameState.troll.hp = Math.max(Math.min(newVal, gameConstants.MAX_HP[gameState.troll.level]), 0);
         eventBus.emit(Evt.TROLL_STATS_CHANGED);
         if (gameState.troll.hp === 0 && !gameState.gameover) {
             gameState.gameover = cause;
@@ -80,6 +81,12 @@ class TrollManager {
         render.getContainer(TrollManager.CONTAINER_ID).y = lairPos.y + lairPos.height / 2
 
         eventBus.emit(Evt.TROLL_LOCATION_CHANGED);
+    }
+
+    devour(id: string) {
+        this.eat();
+        this.changeTrollHp(3);
+        charManager.removeChar(id);
     }
 }
 

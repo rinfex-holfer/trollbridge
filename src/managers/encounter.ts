@@ -29,7 +29,7 @@ class EncounterManager {
     }
 
     onTrollLocationChange() {
-        if (charManager.travellers.length && !this.encounterFinished) {
+        if (charManager.getTravellers().length && !this.encounterFinished) {
             eventBus.emit(Evt.NEGOTIATION_STARTED);
         }
     }

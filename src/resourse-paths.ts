@@ -18,6 +18,7 @@ export const resoursePaths = {
         button_kill: `${imagesUrl}/strike.png`,
         button_devour: `${imagesUrl}/devoure.png`,
         button_make_food: `${imagesUrl}/makeFood_0.png`,
+        button_feed: `${imagesUrl}/makeFood.png`,
     },
 
     atlases: {

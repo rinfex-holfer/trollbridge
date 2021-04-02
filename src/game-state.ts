@@ -1,4 +1,4 @@
-import {constants} from "./constants";
+import {gameConstants} from "./constants";
 import {Encounter, Time} from "./types";
 
 export const gameState = {
@@ -8,7 +8,7 @@ export const gameState = {
 
     troll: {
         level: 1,
-        hp: constants.MAX_HP[1],
+        hp: gameConstants.MAX_HP[1],
         hunger: 0,
         location: 'lair' as 'lair' | 'bridge',
     },

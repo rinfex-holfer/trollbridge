@@ -2,45 +2,48 @@ import {CharKey, EncounterDanger} from "../types";
 import {bridgeManager} from "./bridge-manager";
 import {gameState} from "../game-state";
 import {rndBetween} from "../utils/utils-math";
-import {constants} from "../constants";
+import {gameConstants} from "../constants";
 import {trollManager} from "./troll-manager";
 import {Char} from "../char/Char";
 import {eventBus, Evt} from "../event-bus";
 
 class CharManager {
-    travellers: Char[] = []
-    prisoners: Char[] = []
-    dead: Char[] = []
+    chars: Char[] = []
 
     encounterLevel: number = 0;
 
     constructor() {
         eventBus.on(Evt.CHAR_LEFT_BRIDGE, charId => this.onCharLeftBridge(charId))
+        eventBus.on(Evt.TIME_PASSED, () => {
+            this.chars.forEach(t => {
+                if (t.isPrisoner) t.timeWithoutFood++
+            })
+        })
     }
 
     update(dt: number) {
-        this.travellers.forEach(t => t.update(dt));
+        this.chars.forEach(t => t.update(dt));
     }
 
     onCharLeftBridge(charId: string) {
-        const traveller = this.travellers.find(t => t.id === charId);
+        const traveller = this.chars.find(t => t.id === charId);
         if (!traveller) {
-            console.error('no traveller with id ' + charId);
+            console.error('no char with id ' + charId);
             return;
         }
 
-        this.removeTraveller(charId);
+        this.removeChar(charId);
     }
 
-    removeTraveller(id: string) {
-        const idx = this.travellers.findIndex(t => t.id === id)
+    removeChar(id: string) {
+        const idx = this.chars.findIndex(t => t.id === id)
         if (idx === undefined) {
-            console.error('no traveller with id ' + id)
+            console.error('no char with id ' + id)
             return;
         }
 
-        this.travellers[idx].destroy();
-        this.travellers.splice(idx, 1);
+        this.chars[idx].destroy();
+        this.chars.splice(idx, 1);
     }
 
     createTravellers(keys: CharKey[], travellersLevel: number) {
@@ -54,14 +57,8 @@ class CharManager {
                 bridgePos.y + 100 + i * 100
             );
             char.goAcrossBridge();
-            this.travellers.push(char);
+            this.chars.push(char);
         })
-    }
-
-    clearTravellers() {
-        this.encounterLevel = 0;
-        this.travellers.forEach(t => t.destroy());
-        this.travellers = [];
     }
 
     getDangerKey() {
@@ -76,44 +73,58 @@ class CharManager {
         else return EncounterDanger.IMPOSSIBLE;
     }
 
+    getTravellers() {
+        return this.chars.filter(c => c.isAlive && !c.isPrisoner)
+    }
+
     stopAllTravellers() {
-        this.travellers.forEach(t => t.startNegotiation());
+        this.getTravellers().forEach(t => t.startNegotiation());
     }
 
     allSurrender() {
-        this.travellers.forEach(t => t.surrender());
+        this.getTravellers().forEach(t => t.surrender());
     }
 
     letAllTravellersPass() {
-        this.travellers.forEach(t => t.goAcrossBridge());
+        this.getTravellers().forEach(t => t.goAcrossBridge());
     }
 
     makeAllTravellersPay() {
-        this.travellers.forEach(t => t.pay());
+        this.getTravellers().forEach(t => t.pay());
     }
 
     makeAllTravellersGiveAll() {
-        this.travellers.forEach(t => t.giveAll());
+        this.getTravellers().forEach(t => t.giveAll());
     }
 
-    releaseTraveller(id: string) {
-        this.travellers.find(t => t.id === id)?.goAcrossBridge();
+    releaseChar(id: string) {
+        this.chars.find(t => t.id === id)?.goAcrossBridge();
     }
 
-    makeTravellerGiveAll(id: string) {
-        this.travellers.find(t => t.id === id)?.giveAll();
+    makeImprisoned(id: string) {
+        this.chars.find(t => t.id === id)?.makeImprisoned();
     }
 
-    makeTravellerPay(id: string) {
-        this.travellers.find(t => t.id === id)?.pay();
+    makeCharGiveAll(id: string) {
+        this.getTravellers().find(t => t.id === id)?.giveAll();
     }
 
-    killTraveler(id: string) {
-        const traveller = this.travellers.find(t => t.id === id);
-        if (!traveller) throw Error('wtf');
+    makeCharPay(id: string) {
+        this.getTravellers().find(t => t.id === id)?.pay();
+    }
 
-        traveller.giveAll();
-        this.removeTraveller(id);
+    killChar(id: string) {
+        let char = this.getTravellers().find(t => t.id === id);
+        if (!char) throw Error('wtf');
+
+        char.kill();
+    }
+
+    feedChar(id: string) {
+        let char = this.getTravellers().find(t => t.id === id);
+        if (!char) throw Error('wtf');
+
+        char.eat();
     }
 
     battle() {
@@ -126,16 +137,16 @@ class CharManager {
                 damage = rndBetween(0, 2);
                 break;
             case EncounterDanger.MEDIUM:
-                damage = rndBetween(2, constants.MAX_HP[gameState.troll.level] * 0.33)
+                damage = rndBetween(2, gameConstants.MAX_HP[gameState.troll.level] * 0.33)
                 break;
             case EncounterDanger.HIGH:
-                damage = rndBetween(2, constants.MAX_HP[gameState.troll.level] * 0.66)
+                damage = rndBetween(2, gameConstants.MAX_HP[gameState.troll.level] * 0.66)
                 break;
             case EncounterDanger.VERY_HIGH:
-                damage = rndBetween(2, constants.MAX_HP[gameState.troll.level] * 0.99)
+                damage = rndBetween(2, gameConstants.MAX_HP[gameState.troll.level] * 0.99)
                 break;
             case EncounterDanger.IMPOSSIBLE:
-                damage = constants.MAX_HP[gameState.troll.level];
+                damage = gameConstants.MAX_HP[gameState.troll.level];
                 break;
         }
 

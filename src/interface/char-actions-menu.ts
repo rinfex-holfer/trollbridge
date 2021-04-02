@@ -9,10 +9,12 @@ import {zLayers} from "../constants";
 export const enum CharAction {
     RELEASE = 'RELEASE',
     ROB = 'ROB',
+    TAKE_ALL = 'TAKE_ALL',
     IMPRISON = 'IMPRISON',
     KILL = 'KILL',
     DEVOUR = 'DEVOUR',
     MAKE_FOOD = 'MAKE_FOOD',
+    FEED = 'FEED',
 }
 
 type CharActionButtonTemplate = {
@@ -21,15 +23,14 @@ type CharActionButtonTemplate = {
 }
 
 const buttons = {
-    [CharAction.RELEASE]:   {resource: resoursePaths.images.button_release, onClick: (id: string) => charManager.releaseTraveller(id)},
-    [CharAction.ROB]:       {resource: resoursePaths.images.button_rob, onClick: (id: string) => charManager.makeTravellerPay(id)},
-    [CharAction.IMPRISON]:  {resource: resoursePaths.images.button_imprison, onClick: (id: string) => charManager.releaseTraveller(id)},
-    [CharAction.KILL]:      {resource: resoursePaths.images.button_kill, onClick: (id: string) => charManager.killTraveler(id)},
-    [CharAction.DEVOUR]:    {resource: resoursePaths.images.button_devour, onClick: (id: string) => charManager.killTraveler(id)},
-    [CharAction.MAKE_FOOD]: {resource: resoursePaths.images.button_make_food, onClick: (id: string) => {
-        lair.changeResource(ResourceKey.FOOD, 3);
-        charManager.killTraveler(id);
-    }},
+    [CharAction.RELEASE]:   {resource: resoursePaths.images.button_release, onClick: (id: string) => charManager.releaseChar(id)},
+    [CharAction.ROB]:       {resource: resoursePaths.images.button_rob, onClick: (id: string) => charManager.makeCharPay(id)},
+    [CharAction.TAKE_ALL]:       {resource: resoursePaths.images.button_rob, onClick: (id: string) => charManager.makeCharGiveAll(id)},
+    [CharAction.IMPRISON]:  {resource: resoursePaths.images.button_imprison, onClick: (id: string) => charManager.makeImprisoned(id)},
+    [CharAction.KILL]:      {resource: resoursePaths.images.button_kill, onClick: (id: string) => charManager.killChar(id)},
+    [CharAction.DEVOUR]:    {resource: resoursePaths.images.button_devour, onClick: (id: string) => trollManager.devour(id)},
+    [CharAction.FEED]:    {resource: resoursePaths.images.button_feed, onClick: (id: string) => lair.feedChar(id)},
+    [CharAction.MAKE_FOOD]: {resource: resoursePaths.images.button_make_food, onClick: (id: string) => lair.makeFoodFrom(id)},
 } as {[key: string]: CharActionButtonTemplate}
 
 export class CharActionsMenu {
@@ -70,6 +71,11 @@ export class CharActionsMenu {
     }
 
     show() {
+        Object.keys(buttons)
+            .forEach((key, idx) => {
+                render.getSprite(this.charId + '_' + key).renderable = false;
+            });
+
         this.activeButtons.forEach(key => {
             render.getSprite(this.charId + '_' + key).renderable = true;
         })

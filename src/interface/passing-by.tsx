@@ -7,7 +7,7 @@ export const PassingBy = () => {
 
     useEffect(() => {
         const sub = eventBus.on(Evt.TRAVELLERS_APPEARS, () => {
-            setState(charManager.travellers)
+            setState(charManager.getTravellers())
         })
         return () => {
             eventBus.unsubscribe(Evt.TRAVELLERS_APPEARS, sub);

@@ -9,6 +9,7 @@ import {CharStateGoAcross} from "./states/CharStateGoAcross";
 import {CharAnimation, CharStateKey} from "./char-constants";
 import {CharActionsMenu} from "../interface/char-actions-menu";
 import {CharStateSurrender} from "./states/CharStateSurrender";
+import {CharStateDead} from "./states/CharStateDead";
 
 export class Char {
     key: CharKey
@@ -21,9 +22,11 @@ export class Char {
     resources: Resources
     isUnconscious = false
     isAlive = true
+    isPrisoner = false
     isFleeing = false
 
     state: CharState
+    timeWithoutFood = 0
 
     actionsMenu: CharActionsMenu
 
@@ -62,6 +65,8 @@ export class Char {
                 return new CharStateGoAcross(this);
             case CharStateKey.SURRENDER:
                 return new CharStateSurrender(this);
+            case CharStateKey.DEAD:
+                return new CharStateDead(this);
             default:
                 throw Error('wrong state key ' + stateKey);
         }
@@ -102,6 +107,10 @@ export class Char {
         lair.changeResource(ResourceKey.GOLD, amount)
     }
 
+    eat() {
+        this.timeWithoutFood = 0;
+    }
+
     giveAll() {
         lair.changeResource(ResourceKey.GOLD, this.resources[ResourceKey.GOLD])
         lair.changeResource(ResourceKey.MATERIALS, this.resources[ResourceKey.MATERIALS])
@@ -125,6 +134,14 @@ export class Char {
 
     startNegotiation() {
         this.setState(CharStateKey.IDLE);
+    }
+
+    makeImprisoned() {
+
+    }
+
+    kill() {
+        this.setState(CharStateKey.DEAD);
     }
 
     goAcrossBridge() {

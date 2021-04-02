@@ -1,6 +1,6 @@
 import {EncounterDanger} from "../types";
 import {rndBetween} from "../utils/utils-math";
-import {constants} from "../constants";
+import {gameConstants} from "../constants";
 import {gameState} from "../game-state";
 import {eventBus, Evt} from "../event-bus";
 import {trollManager} from "./troll-manager";
