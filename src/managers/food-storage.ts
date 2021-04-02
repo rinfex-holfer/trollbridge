@@ -4,9 +4,10 @@ import {trollManager} from "./troll-manager";
 import {gameState} from "../game-state";
 import {eventBus, Evt} from "../event-bus";
 import {resoursePaths} from "../resourse-paths";
-import {EntityKey} from "../types";
+import {EntityKey, ResourceKey} from "../types";
 import {Vec} from "../utils/utils-math";
 import {zLayers} from "../constants";
+import {lair} from "./lair";
 
 export class FoodStorage {
     static CONTAINER_ID = 'food-storage'
@@ -41,15 +42,15 @@ export class FoodStorage {
     }
 
     updateFood() {
-        if (gameState.food < this.foodSprites.length) {
-            while (gameState.food < this.foodSprites.length) {
+        if (lair.resources[ResourceKey.FOOD] < this.foodSprites.length) {
+            while (lair.resources[ResourceKey.FOOD] < this.foodSprites.length) {
                 // @ts-ignore
                 renderManager.removeSprite(this.foodSprites.pop());
             }
-        } else if (gameState.food > this.foodSprites.length) {
+        } else if (lair.resources[ResourceKey.FOOD] > this.foodSprites.length) {
             const lairPos = this.position;
 
-            while (gameState.food !== this.foodSprites.length) {
+            while (lair.resources[ResourceKey.FOOD] !== this.foodSprites.length) {
                 const entityId = createId(EntityKey.FOOD);
                 lairPos.x += 25;
                 renderManager.createSprite({

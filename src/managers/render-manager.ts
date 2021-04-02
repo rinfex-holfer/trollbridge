@@ -81,6 +81,8 @@ class RenderManager {
             container.addChild(animatedSprite);
         });
 
+        this.setAnimations(entityId, map);
+
         return map;
     }
 
@@ -100,6 +102,7 @@ class RenderManager {
     }
 
     getAllAnimations(entityId: string): PIXI.AnimatedSprite[] {
+        console.log(this.animationsMap, entityId);
         return Object.values(this.animationsMap[entityId])
     }
 

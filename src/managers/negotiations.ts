@@ -2,8 +2,8 @@ import {rnd} from "../utils/utils-math";
 import {EncounterDanger} from "../types";
 import {eventBus, Evt} from "../event-bus";
 import {gameState} from "../game-state";
-import {resourseManager} from "./resourses";
 import {charManager} from "./char-manager";
+import {battleManager} from "./battle";
 
 export const enum NegotiationsState {
     START = 'START',
@@ -52,16 +52,16 @@ export function createNegotiation() {
 
                     switch (currentStateKey) {
                         case NegotiationsState.ALL_GIVEN:
-                            resourseManager.allGivesAll();
+                            charManager.makeAllTravellersGiveAll();
                             break;
                         case NegotiationsState.PAYMENT_GIVEN:
-                            resourseManager.allPays();
+                            charManager.makeAllTravellersPay();
                             break;
                         case NegotiationsState.BATTLE:
-                            eventBus.emit(Evt.BATTLE_STARTED);
+                            charManager.battle();
                             break;
                         case NegotiationsState.END:
-                            eventBus.emit(Evt.BYPASSED);
+                            charManager.makeAllTravellersGo();
                             break;
 
                     }

@@ -12,7 +12,7 @@ class EncounterManager {
     createRandomEncounter() {
         const rnd = rndBetween(Math.max(0, gameState.troll.level - 1), gameState.troll.level + 1);
         const encounter = getRndItem(encounters[rnd]);
-        console.log(123);
+
         charManager.createTravellers([
             ...encounter.enemies,
             ...encounter.stuff,

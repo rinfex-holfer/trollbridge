@@ -1,23 +1,15 @@
 import React, {useEffect, useState} from "react";
-import {gameState} from "../game-state";
 import {eventBus, Evt} from "../event-bus";
+import {lair} from "../managers/lair";
 
 export const Resources = () => {
-    const [state, setState] = useState({
-        gold: gameState.gold,
-        materials: gameState.materials,
-        food: gameState.food,
-    })
+    const [state, setState] = useState({...lair.resources})
 
     useEffect(() => {
         const sub = eventBus.on(
             Evt.RESOURSES_CHANGED,
             () => {
-                setState({
-                    gold: gameState.gold,
-                    materials: gameState.materials,
-                    food: gameState.food,
-                });
+                setState({...lair.resources});
             }
         );
         return () => {

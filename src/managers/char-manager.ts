@@ -1,54 +1,10 @@
-import {CharKey, EncounterDanger, Resources} from "../types";
-import i18next from "i18next";
-import {charTemplates} from "../char-templates";
-import {createId} from "../utils/utils-misc";
-import {renderManager} from "./render-manager";
+import {CharKey, EncounterDanger} from "../types";
 import {bridgeManager} from "./bridge-manager";
 import {gameState} from "../game-state";
-
-class Char {
-    key: CharKey
-    id: string
-    hp: number
-    name: string
-    isCombatant: boolean
-
-    resources: Resources
-    isUnconscious: boolean = false
-    isAlive: boolean = true
-
-    constructor(key: CharKey, x: number, y: number) {
-        const charTemplate = charTemplates[key]
-
-        this.id = createId(key);
-        this.key = key
-        this.hp = charTemplate.hp
-        this.name = charTemplate.name
-        this.resources = charTemplate.createResources()
-        this.isCombatant = charTemplate.isCombatant
-
-        this.createAnimation(x, y);
-    }
-
-    createAnimation(x: number, y: number) {
-        const a = renderManager.createAnimation({
-            path: charTemplates[this.key].animationsPath,
-            animationSpeed: 0.1,
-            currentAnimation: 'walk',
-            entityId: this.id,
-            x: x,
-            y: y,
-            ySorting: true,
-            autoplay: true,
-            anchor: {x: 0.5, y: 1}
-        })
-        console.log(123123, a);
-    }
-
-    destroy() {
-        renderManager.destroyAnimation(this.id);
-    }
-}
+import {rndBetween} from "../utils/utils-math";
+import {constants} from "../constants";
+import {trollManager} from "./troll-manager";
+import {Char} from "../char/Char";
 
 class CharManager {
     travellers: Char[] = []
@@ -74,11 +30,7 @@ class CharManager {
     clearTravellers() {
         this.encounterLevel = 0;
         this.travellers.forEach(t => t.destroy());
-    }
-
-    getDangerLevel() {
-        if (this.encounterLevel === null) return 0
-        return gameState.troll.level - this.encounterLevel;
+        this.travellers = [];
     }
 
     getDangerKey() {
@@ -91,6 +43,49 @@ class CharManager {
         else if (diff === -1) return EncounterDanger.HIGH;
         else if (diff === -2) return EncounterDanger.VERY_HIGH;
         else return EncounterDanger.IMPOSSIBLE;
+    }
+
+    makeAllTravellersGo() {
+        this.clearTravellers();
+    }
+
+    makeAllTravellersPay() {
+        this.travellers.forEach(t => t.pay());
+    }
+
+    makeAllTravellersGiveAll() {
+        this.travellers.forEach(t => t.giveAll());
+    }
+
+    battle() {
+        let damage = 0;
+        const dangerKey = this.getDangerKey();
+        switch (dangerKey) {
+            case EncounterDanger.NONE:
+                break;
+            case EncounterDanger.LOW:
+                damage = rndBetween(0, 2);
+                break;
+            case EncounterDanger.MEDIUM:
+                damage = rndBetween(2, constants.MAX_HP[gameState.troll.level] * 0.33)
+                break;
+            case EncounterDanger.HIGH:
+                damage = rndBetween(2, constants.MAX_HP[gameState.troll.level] * 0.66)
+                break;
+            case EncounterDanger.VERY_HIGH:
+                damage = rndBetween(2, constants.MAX_HP[gameState.troll.level] * 0.99)
+                break;
+            case EncounterDanger.IMPOSSIBLE:
+                damage = constants.MAX_HP[gameState.troll.level];
+                break;
+        }
+
+        if (damage > 0) trollManager.changeTrollHp(-damage, 'battle');
+
+        if (gameState.gameover) return;
+
+        this.makeAllTravellersGiveAll();
+        this.clearTravellers();
     }
 }
 

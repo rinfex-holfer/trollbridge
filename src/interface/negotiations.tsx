@@ -3,6 +3,7 @@ import {timeManager} from "../managers/time-manager";
 import {eventBus, Evt} from "../event-bus";
 import {createNegotiation} from "../managers/negotiations";
 import {gameState} from "../game-state";
+import {charManager} from "../managers/char-manager";
 
 export const Negotiations = () => {
     const negotiationRef = useRef<any>();
@@ -10,7 +11,7 @@ export const Negotiations = () => {
 
     useEffect(() => {
         const sub = eventBus.on(Evt.TROLL_LOCATION_CHANGED, () => {
-            if (gameState.troll.location === 'bridge' && gameState.passingBy) {
+            if (gameState.troll.location === 'bridge' && charManager.travellers.length) {
                 negotiationRef.current = createNegotiation();
                 setOptions(negotiationRef.current.getMessages());
             }
