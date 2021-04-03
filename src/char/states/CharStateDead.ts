@@ -12,7 +12,6 @@ export class CharStateDead extends CharState {
 
     rot() {
         this.rotTime++
-        console.log('rot', this.char.id, this.rotTime)
         if (this.rotTime >= 3) {
             this.char.toBones();
         }
@@ -25,14 +24,12 @@ export class CharStateDead extends CharState {
 
     onStart(): Promise<any> {
         this.unsub = eventBus.on(Evt.TIME_PASSED, () => this.rot())
-        console.log('dead state, sub:', this.unsub);
         this.char.isAlive = false;
         this.char.setAnimation(CharAnimation.DEAD);
         this.char.actionsMenu.changeActiveButtons([
             CharAction.DEVOUR,
             CharAction.MAKE_FOOD,
         ])
-        this.char.actionsMenu.show();
         return Promise.resolve();
     }
 }

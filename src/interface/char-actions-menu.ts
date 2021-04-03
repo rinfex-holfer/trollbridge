@@ -4,7 +4,8 @@ import {lair} from "../managers/lair";
 import {ResourceKey} from "../types";
 import {render} from "../managers/render";
 import {trollManager} from "../managers/troll-manager";
-import {zLayers} from "../constants";
+import {colors, zLayers} from "../constants";
+import * as PIXI from "pixi.js";
 
 export const enum CharAction {
     RELEASE = 'RELEASE',
@@ -19,71 +20,125 @@ export const enum CharAction {
 
 type CharActionButtonTemplate = {
     resource: string,
+    text: string,
     onClick: (id: string) => void
+    key: CharAction,
 }
 
-const buttons = {
-    [CharAction.RELEASE]:   {resource: resoursePaths.images.button_release, onClick: (id: string) => charManager.releaseChar(id)},
-    [CharAction.ROB]:       {resource: resoursePaths.images.button_rob, onClick: (id: string) => charManager.makeCharPay(id)},
-    [CharAction.TAKE_ALL]:       {resource: resoursePaths.images.button_rob, onClick: (id: string) => charManager.makeCharGiveAll(id)},
-    [CharAction.IMPRISON]:  {resource: resoursePaths.images.button_imprison, onClick: (id: string) => charManager.makeImprisoned(id)},
-    [CharAction.KILL]:      {resource: resoursePaths.images.button_kill, onClick: (id: string) => charManager.killChar(id)},
-    [CharAction.DEVOUR]:    {resource: resoursePaths.images.button_devour, onClick: (id: string) => trollManager.devour(id)},
-    [CharAction.FEED]:    {resource: resoursePaths.images.button_feed, onClick: (id: string) => lair.feedChar(id)},
-    [CharAction.MAKE_FOOD]: {resource: resoursePaths.images.button_make_food, onClick: (id: string) => lair.makeFoodFrom(id)},
-} as {[key: string]: CharActionButtonTemplate}
+const buttonsTemplate: CharActionButtonTemplate[] = [
+    {key: CharAction.RELEASE, text: 'Отпустить', resource: resoursePaths.images.button_release, onClick: (id: string) => charManager.releaseChar(id)},
+    {key: CharAction.ROB, text: 'Отобрать плату', resource: resoursePaths.images.button_rob, onClick: (id: string) => charManager.makeCharPay(id)},
+    {key: CharAction.TAKE_ALL, text: 'Отобрать все', resource: resoursePaths.images.button_rob, onClick: (id: string) => charManager.makeCharGiveAll(id)},
+    {key: CharAction.IMPRISON, text: 'Сделать пленником', resource: resoursePaths.images.button_imprison, onClick: (id: string) => charManager.makeImprisoned(id)},
+    {key: CharAction.KILL, text: 'Убить', resource: resoursePaths.images.button_kill, onClick: (id: string) => charManager.killChar(id)},
+    {key: CharAction.DEVOUR, text: 'Сожрать', resource: resoursePaths.images.button_devour, onClick: (id: string) => trollManager.devour(id)},
+    {key: CharAction.FEED, text: 'Накормить', resource: resoursePaths.images.button_feed, onClick: (id: string) => lair.feedChar(id)},
+    {key: CharAction.MAKE_FOOD, text: 'Сварить', resource: resoursePaths.images.button_make_food, onClick: (id: string) => lair.makeFoodFrom(id)},
+]
+
+const BUTTON_WIDTH = 32;
+const BUTTON_MARGIN = 10;
+
+const getButtonsRowWidth = (amount: number) => amount * BUTTON_WIDTH + (amount - 1) * BUTTON_MARGIN;
 
 export class CharActionsMenu {
-    activeButtons = [] as CharAction[]
+    buttons: {action: CharAction, id: string, active: boolean}[] = []
+    containerId: string
+    isShown = true;
+
+    text: PIXI.Text
 
     constructor(private charId: string) {
-        const charContainer = render.getContainer(this.charId);
+        // const charContainer = render.getContainer(this.charId);
 
-        Object.keys(buttons)
-            .forEach((key, idx) => {
-                const buttonTemplate = buttons[key];
-                const sprite = render.createSprite({
-                    entityId: this.charId + '_' + key,
-                    path: buttonTemplate.resource,
-                    container: charContainer,
-                    visible: false,
-                    x: -70 + idx * 35,
-                    y: -100,
-                    width: 32,
-                    height: 32
-                })
-                sprite.zIndex = zLayers.GAME_OBJECTS_MIN
-                sprite.interactive = true;
-                sprite.buttonMode = true;
-                sprite.addListener('click', () => buttonTemplate.onClick(this.charId));
+        this.containerId = charId + '_actions-menu';
+
+        const buttonsContainer = render.createContainer(this.containerId, this.charId);
+
+        render.move(this.containerId, 0, -100);
+
+        this.text = render.createText(this.containerId, '', 0, -BUTTON_WIDTH/2, {fill: colors.WHITE}, this.containerId)
+        this.text.anchor.set(0.5);
+
+        buttonsTemplate.forEach((template, idx) => {
+            const id = this.charId + '_' + template.key;
+            this.buttons.push({id, active: false, action: template.key});
+            const sprite = render.createSprite({
+                entityId: id,
+                path: template.resource,
+                container: buttonsContainer,
+                visible: true,
+                x: 0,
+                y: 0,
+                width: BUTTON_WIDTH,
+                height: BUTTON_WIDTH,
+                // anchor: {x: 0.5, y: 0.5},
             })
+            sprite.zIndex = zLayers.GAME_OBJECTS_MIN
+            sprite.interactive = true;
+            sprite.buttonMode = true;
+            sprite.on('mouseover', () => this.showText(template.text))
+            sprite.on('mouseout', () => this.hideText())
+            sprite.addListener('click', () => {
+                template.onClick(this.charId)
+                this.hideText();
+            });
+        })
+
+        this.changeActiveButtons([]);
+        this.hide();
+    }
+
+    showText(text: string) {
+        this.text.text = text;
+    }
+
+    hideText() {
+        this.text.text = '';
     }
 
     destroy() {
-        Object.keys(buttons)
-            .forEach((key, idx) => {
-                render.removeSprite(this.charId + '_' + key);
-            });
+        this.buttons.forEach(b => {
+            render.removeSprite(b.id);
+        })
+
+        render.destroyContainer(this.containerId);
     }
 
     changeActiveButtons(activeButtons: CharAction[]) {
-        this.activeButtons = activeButtons;
+        const fullWidth = getButtonsRowWidth(activeButtons.length);
+        let x = -fullWidth / 2
+        this.buttons.forEach(b => {
+            const isActive = activeButtons.includes(b.action)
+            b.active = isActive;
+            render.changeSpriteVisibility(b.id, isActive)
+            render.getSprite(b.id).interactive = isActive;
+
+            if (isActive) {
+                const buttonSprite = render.getSprite(b.id)
+                render.moveSprite(b.id, x, buttonSprite.y)
+                x += BUTTON_WIDTH + BUTTON_MARGIN
+            }
+        })
+
+        const cont = render.getContainer(this.containerId);
+        const width = getButtonsRowWidth(activeButtons.length) + BUTTON_WIDTH * 2
+        cont.hitArea = new PIXI.Rectangle(-width/2, -BUTTON_WIDTH, width, BUTTON_WIDTH * 3);
     }
 
     show() {
-        Object.keys(buttons)
-            .forEach((key, idx) => {
-                render.getSprite(this.charId + '_' + key).renderable = false;
-            });
-
-        this.activeButtons.forEach(key => {
-            render.getSprite(this.charId + '_' + key).renderable = true;
-        })
+        console.log('show');
+        if (this.isShown) return;
+        render.changeContainerVisibility(this.containerId, true);
+        const charSprite = render.getContainer(this.charId);
+        render.getContainer(this.containerId).scale.x = charSprite.scale.x
+        this.isShown = true;
     }
 
     hide() {
-        this.activeButtons.forEach(key => {
-            render.getSprite(this.charId + '_' + key).renderable = false;
-        })
+        console.log('hide');
+        if (!this.isShown) return;
+        render.changeContainerVisibility(this.containerId, false);
+        this.isShown = false;
     }
 }

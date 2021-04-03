@@ -17,7 +17,6 @@ export class CharStateSurrender extends CharState {
             CharAction.DEVOUR,
             CharAction.MAKE_FOOD,
         ])
-        this.char.actionsMenu.show();
         return Promise.resolve();
     }
 }

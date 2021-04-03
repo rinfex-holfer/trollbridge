@@ -20,6 +20,7 @@ export const resoursePaths = {
         button_devour: `${imagesUrl}/devoure.png`,
         button_make_food: `${imagesUrl}/makeFood_0.png`,
         button_feed: `${imagesUrl}/makeFood.png`,
+        empty_sprite: `${imagesUrl}/tile_empty.png`,
     },
 
     atlases: {

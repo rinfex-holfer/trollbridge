@@ -26,10 +26,10 @@ export class CharStateBones extends CharState {
 
     onStart(): Promise<any> {
         this.char.isBones = true;
+        this.char.isAlive = false;
         render.hideAnimation(this.char.id);
         render.changeSpriteVisibility(this.char.id + '_bones', true);
         this.char.actionsMenu.changeActiveButtons([])
-        this.char.actionsMenu.show();
         return Promise.resolve();
     }
 }

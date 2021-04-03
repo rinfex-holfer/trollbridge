@@ -55,18 +55,13 @@ export const eventBus = {
 
         nextId++;
 
-        console.log('subsribed', eventType, subId);
-
         return subId;
     },
 
     unsubscribe: function unsubscribe(eventType: Evt, id: number) {
-        console.log('unsubscribe', eventType, id, dumbClone(this.subs[eventType]));
         const subscriber = this.subs[eventType][id];
         if (!!subscriber) delete this.subs[eventType][id]
         else console.error('already unsubscribed', eventType, id)
-
-        console.log('after unsub', eventType, id, dumbClone(this.subs[eventType]));
     },
 
     emit: function<E extends Evt>(eventType: E, data?: EvtData[E]) {

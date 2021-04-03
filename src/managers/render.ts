@@ -136,6 +136,10 @@ class RenderManager {
         this.getSprite(entityId).renderable = val;
     }
 
+    changeContainerVisibility(entityId: string, val: boolean) {
+        this.getContainer(entityId).renderable = val;
+    }
+
     moveTowards(entityId: string, x: number, y: number, byDistance: number, ySorting = false, directToTarget = false): number {
         const obj = this.getContainer(entityId);
         const target = {x, y};
@@ -162,6 +166,19 @@ class RenderManager {
         return getDistanceBetween(obj, target);
     }
 
+    setInteractive(containerId: string, val: boolean){
+        const c = this.getContainer(containerId);
+        c.buttonMode = val;
+        c.interactive = val;
+    }
+
+    moveSprite(entityId: string, x: number, y: number) {
+        const container = this.getSprite(entityId);
+
+        container.x = x;
+        container.y = y;
+    }
+
     move(entityId: string, x: number, y: number, ySorting = false) {
         const container = this.getContainer(entityId);
 
@@ -180,9 +197,15 @@ class RenderManager {
         obj.scale.x = Math.sign(target.x - obj.x);
     }
 
-    createContainer(entityId: string): PIXI.Container {
+    createContainer(entityId: string, parentId?: string): PIXI.Container {
         const container = new PIXI.Container();
-        this.pixiApp.stage.addChild(container);
+
+        let parent = this.pixiApp.stage;
+        if (parentId) {
+            parent = this.getContainer(parentId);
+        }
+
+        parent.addChild(container);
         this.setContainer(entityId, container);
         return container;
     }
@@ -263,6 +286,15 @@ class RenderManager {
         return tiles;
     };
 
+    createText(id: string, text: string, x: number, y: number, style?: any, parentId?: string) {
+        const pixiText = new PIXI.Text(text, style || {});
+        pixiText.x = x;
+        pixiText.y = y;
+        let parent = parentId ? this.getContainer(parentId) : this.pixiApp.stage;
+        parent.addChild(pixiText);
+        return pixiText;
+    }
+
     createSprite(options: SpriteOptions) {
         options = {...spriteDefaultOptions, ...options};
         const {container, path, x, y, anchor, entityId} = options;
@@ -308,6 +340,16 @@ class RenderManager {
             delete this.spriteMap[id];
         } else {
             console.warn('cant remove sprite that doesnt exist:', id);
+        }
+    }
+
+    destroyContainer(id: string) {
+        const cont = this.getContainer(id);
+        if (cont) {
+            cont.destroy();
+            delete this.containersMap[id];
+        } else {
+            console.warn('cant remove container that doesnt exist:', id);
         }
     }
 

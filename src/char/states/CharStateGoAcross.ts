@@ -8,6 +8,7 @@ export class CharStateGoAcross extends CharState {
 
     onStart(): Promise<any> {
         this.char.setAnimation(CharAnimation.WALK);
+        this.char.actionsMenu.changeActiveButtons([]);
         return Promise.resolve();
     }
 

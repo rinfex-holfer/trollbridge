@@ -63,7 +63,7 @@ class CharManager {
             const char = new Char(
                 key,
                 bridgePos.x + bridgePos.width - 50,
-                bridgePos.y + 100 + i * 100
+                bridgePos.y + 150 + i * 150
             );
             char.goAcrossBridge();
             this.chars.push(char);
@@ -84,6 +84,10 @@ class CharManager {
 
     getTravellers() {
         return this.chars.filter(c => c.isAlive && !c.isPrisoner)
+    }
+
+    getPrisoners() {
+        return this.chars.filter(c => c.isAlive && c.isPrisoner);
     }
 
     stopAllTravellers() {

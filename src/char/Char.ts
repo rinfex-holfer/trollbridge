@@ -12,6 +12,7 @@ import {CharStateSurrender} from "./states/CharStateSurrender";
 import {CharStateDead} from "./states/CharStateDead";
 import {CharStateBones} from "./states/CharStateBones";
 import {resoursePaths} from "../resourse-paths";
+import {CharStatePrisoner} from "./states/CharStatePrisoner";
 
 export class Char {
     key: CharKey
@@ -75,6 +76,8 @@ export class Char {
                 return new CharStateDead(this);
             case CharStateKey.BONES:
                 return new CharStateBones(this);
+            case CharStateKey.PRISONER:
+                return new CharStatePrisoner(this);
             default:
                 throw Error('wrong state key ' + stateKey);
         }
@@ -98,6 +101,11 @@ export class Char {
             autoplay: true,
             anchor: {x: 0.5, y: 1}
         })
+
+        render.setInteractive(this.id, true);
+        const cont = render.getContainer(this.id);
+        cont.on('mouseover', () => this.actionsMenu.show())
+        cont.on('mouseout', () => this.actionsMenu.hide())
     }
 
     createBones() {
@@ -161,7 +169,7 @@ export class Char {
     }
 
     makeImprisoned() {
-
+        this.setState(CharStateKey.PRISONER);
     }
 
     kill() {
@@ -169,7 +177,6 @@ export class Char {
     }
 
     goAcrossBridge() {
-        this.actionsMenu.hide();
         this.setState(CharStateKey.GO_ACROSS);
     }
 }

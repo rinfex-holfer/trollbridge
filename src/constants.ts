@@ -27,4 +27,5 @@ export const colors = {
     RED: '0xFF0000',
     BLUE: '0x0000FF',
     PURPLE: '0x080008',
+    WHITE: '0xFFFFFF',
 }

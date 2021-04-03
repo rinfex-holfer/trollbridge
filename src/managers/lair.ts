@@ -72,6 +72,15 @@ class Lair {
             y: pos.y + pos.height * 3 / 4
         }
     }
+
+    getPrisonerPosition() {
+        const pos = this.getLairPosition();
+        const prisonersAmount = charManager.getPrisoners().length
+        return {
+            x: pos.x + pos.width / 2 + prisonersAmount * 50,
+            y: pos.y + pos.height * 0.5
+        }
+    }
 }
 
 export const lair = new Lair();
