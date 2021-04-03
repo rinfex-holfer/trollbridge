@@ -39,13 +39,9 @@ class TrollManager {
         eventBus.emit(Evt.TROLL_STATS_CHANGED);
     }
 
-    eat() {
-        // if (gameState.food <= 0) return;
-
-        gameState.food--;
-        gameState.troll.hunger = Math.max(gameState.troll.hunger - 2, 0);
-        this.changeTrollHp(1);
-        console.log('Поел');
+    eat(amount = 1) {
+        gameState.troll.hunger = Math.max(gameState.troll.hunger - amount * 2, 0);
+        this.changeTrollHp(amount);
         eventBus.emit(Evt.TROLL_STATS_CHANGED);
         eventBus.emit(Evt.RESOURSES_CHANGED);
     }
@@ -84,9 +80,8 @@ class TrollManager {
     }
 
     devour(id: string) {
-        this.eat();
-        this.changeTrollHp(3);
-        charManager.removeChar(id);
+        this.eat(3);
+        charManager.charToBones(id);
     }
 }
 

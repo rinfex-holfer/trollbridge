@@ -102,8 +102,6 @@ class RenderManager {
 
         if (oldAnimation === newAnimation) return;
 
-        console.log(oldAnimation);
-
         if (oldAnimation) {
             oldAnimation.onLoop = undefined;
             oldAnimation.gotoAndStop(0);
@@ -127,6 +125,15 @@ class RenderManager {
         if (options.onLoop) {
             newAnimation.onLoop = options.onLoop;
         }
+    }
+
+    hideAnimation(entityId: string) {
+        const anim = this.getCurrentAnimation(entityId);
+        if (anim) anim.renderable = false;
+    }
+
+    changeSpriteVisibility(entityId: string, val: boolean) {
+        this.getSprite(entityId).renderable = val;
     }
 
     moveTowards(entityId: string, x: number, y: number, byDistance: number, ySorting = false, directToTarget = false): number {

@@ -10,6 +10,8 @@ import {CharAnimation, CharStateKey} from "./char-constants";
 import {CharActionsMenu} from "../interface/char-actions-menu";
 import {CharStateSurrender} from "./states/CharStateSurrender";
 import {CharStateDead} from "./states/CharStateDead";
+import {CharStateBones} from "./states/CharStateBones";
+import {resoursePaths} from "../resourse-paths";
 
 export class Char {
     key: CharKey
@@ -18,12 +20,13 @@ export class Char {
     name: string
     isCombatant: boolean
 
-    speed: number = 100
+    speed: number = 300
     resources: Resources
     isUnconscious = false
     isAlive = true
     isPrisoner = false
     isFleeing = false
+    isBones = false
 
     state: CharState
     timeWithoutFood = 0
@@ -41,6 +44,7 @@ export class Char {
         this.isCombatant = charTemplate.isCombatant
 
         this.createAnimation(x, y);
+        this.createBones();
 
         this.actionsMenu = new CharActionsMenu(this.id);
 
@@ -49,7 +53,9 @@ export class Char {
     }
 
     destroy() {
+        this.state.onEnd();
         this.actionsMenu.destroy();
+        render.removeSprite(this.id + '_bones')
         render.destroyAnimation(this.id);
     }
 
@@ -67,6 +73,8 @@ export class Char {
                 return new CharStateSurrender(this);
             case CharStateKey.DEAD:
                 return new CharStateDead(this);
+            case CharStateKey.BONES:
+                return new CharStateBones(this);
             default:
                 throw Error('wrong state key ' + stateKey);
         }
@@ -89,6 +97,18 @@ export class Char {
             ySorting: true,
             autoplay: true,
             anchor: {x: 0.5, y: 1}
+        })
+    }
+
+    createBones() {
+        const container = render.getContainer(this.id);
+        render.createSprite({
+            entityId: this.id + '_bones',
+            path: resoursePaths.images.bones,
+            visible: false,
+            x: 0,
+            y: 0,
+            container
         })
     }
 
@@ -123,6 +143,10 @@ export class Char {
 
     surrender() {
         this.setState(CharStateKey.SURRENDER);
+    }
+
+    toBones() {
+        this.setState(CharStateKey.BONES);
     }
 
     setAnimation(key: CharAnimation) {

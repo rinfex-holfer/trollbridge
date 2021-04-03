@@ -35,6 +35,16 @@ class CharManager {
         this.removeChar(charId);
     }
 
+    charToBones(id: string) {
+        const idx = this.chars.findIndex(t => t.id === id)
+        if (idx === undefined) {
+            console.error('no char with id ' + id)
+            return;
+        }
+
+        this.chars[idx].toBones();
+    }
+
     removeChar(id: string) {
         const idx = this.chars.findIndex(t => t.id === id)
         if (idx === undefined) {
@@ -48,7 +58,6 @@ class CharManager {
 
     createTravellers(keys: CharKey[], travellersLevel: number) {
         this.encounterLevel = travellersLevel;
-        console.log(keys);
         keys.forEach((key, i) => {
             const bridgePos = bridgeManager.getBridgePosition()
             const char = new Char(

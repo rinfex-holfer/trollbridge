@@ -27,7 +27,8 @@ export class FoodStorage {
         container.buttonMode = true;
         container.addListener('click', () => {
             if (gameState.food > 0) {
-                trollManager.eat();
+                lair.changeResource(ResourceKey.FOOD, -1);
+                trollManager.eat(1);
             }
         })
 

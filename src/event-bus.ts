@@ -1,3 +1,5 @@
+import {dumbClone} from "./utils/utils-misc";
+
 let nextId = 0;
 
 export const enum Evt {
@@ -34,30 +36,47 @@ export type EvtData = {
     [Evt.CHAR_LEFT_BRIDGE]: string,
 }
 
+type Subscribers = {
+    [eventType: string]: {
+        [subId: number]: (data: any) => void
+    }
+}
+
 export const eventBus = {
-    subs: {} as {[key: string]: [number, any][]},
+    subs: {} as Subscribers,
 
     on: function on<E extends Evt>(eventType: E, callback: (data: EvtData[E]) => void) {
         if (!this.subs[eventType]) {
-            this.subs[eventType] = [];
+            this.subs[eventType] = {};
         }
 
-        this.subs[eventType].push([nextId++, callback]);
+        const subId = nextId;
+        this.subs[eventType][subId] = callback;
 
-        // console.log(eventType);
+        nextId++;
 
-        return nextId - 1;
+        console.log('subsribed', eventType, subId);
+
+        return subId;
     },
 
     unsubscribe: function unsubscribe(eventType: Evt, id: number) {
-        // console.log('unsubscribe', eventType, id);
-        const subIndex = this.subs[eventType].findIndex(sub => sub[0]);
-        if (subIndex > -1) this.subs[eventType].splice(subIndex, 1)
+        console.log('unsubscribe', eventType, id, dumbClone(this.subs[eventType]));
+        const subscriber = this.subs[eventType][id];
+        if (!!subscriber) delete this.subs[eventType][id]
         else console.error('already unsubscribed', eventType, id)
+
+        console.log('after unsub', eventType, id, dumbClone(this.subs[eventType]));
     },
 
     emit: function<E extends Evt>(eventType: E, data?: EvtData[E]) {
         console.log('emit', eventType, this.subs[eventType]);
-        this.subs[eventType]?.forEach(sub => sub[1](data))
+
+        if (!this.subs[eventType]) return;
+
+        Object.values(this.subs[eventType]).forEach(sub => sub(data))
     }
 }
+
+// @ts-ignore
+window.eventBus = eventBus;

@@ -3,6 +3,7 @@ export const enum CharStateKey {
     GO_ACROSS = 'GO_ACROSS',
     SURRENDER = 'SURRENDER',
     DEAD = 'DEAD',
+    BONES = 'BONES',
 }
 
 export const enum CharAnimation {
