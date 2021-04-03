@@ -10,7 +10,6 @@ class EncounterManager {
 
     constructor() {
         eventBus.on(Evt.TIME_PASSED, () => this.createRandomEncounter());
-        eventBus.on(Evt.TROLL_LOCATION_CHANGED, () => this.onTrollLocationChange());
     }
 
     createRandomEncounter() {
@@ -27,12 +26,6 @@ class EncounterManager {
         this.encounterFinished = false;
 
         eventBus.emit(Evt.TRAVELLERS_APPEARS);
-    }
-
-    onTrollLocationChange() {
-        if (charManager.getTravellers().length && !this.encounterFinished) {
-            eventBus.emit(Evt.NEGOTIATION_STARTED);
-        }
     }
 
     finishEncounter() {

@@ -2,11 +2,10 @@ import {gameConstants} from "../constants";
 import {gameState} from "../game-state";
 import {eventBus, Evt} from "../event-bus";
 import {render} from "./render";
-import { resoursePaths } from "../resourse-paths";
+import {resoursePaths} from "../resourse-paths";
 import {lair} from "./lair";
 import {bridgeManager} from "./bridge-manager";
-import {Resources} from "../types";
-import {encounter} from "./encounter";
+import {TrollLocation} from "../types";
 import {charManager} from "./char-manager";
 
 eventBus.on(Evt.TIME_PASSED, () => trollManager.increaseHunger());
@@ -65,7 +64,7 @@ class TrollManager {
         render.getContainer(TrollManager.CONTAINER_ID).x = bridgePos.x + bridgePos.width / 2
         render.getContainer(TrollManager.CONTAINER_ID).y = bridgePos.y + bridgePos.height / 2
 
-        eventBus.emit(Evt.TROLL_LOCATION_CHANGED);
+        eventBus.emit(Evt.TROLL_LOCATION_CHANGED, TrollLocation.BRIDGE);
     }
 
     goToLair() {
@@ -76,7 +75,7 @@ class TrollManager {
         render.getContainer(TrollManager.CONTAINER_ID).x = lairPos.x + lairPos.width / 2
         render.getContainer(TrollManager.CONTAINER_ID).y = lairPos.y + lairPos.height / 2
 
-        eventBus.emit(Evt.TROLL_LOCATION_CHANGED);
+        eventBus.emit(Evt.TROLL_LOCATION_CHANGED, TrollLocation.LAIR);
     }
 
     devour(id: string) {

@@ -82,6 +82,14 @@ class CharManager {
         else return EncounterDanger.IMPOSSIBLE;
     }
 
+    travellersSpeak(text: string) {
+        return this.getTravellers()[0].speak(text);
+    }
+
+    getNewTravellers() {
+        return this.getTravellers().filter(t => !t.isMetTroll);
+    }
+
     getTravellers() {
         return this.chars.filter(c => c.isAlive && !c.isPrisoner)
     }
@@ -91,7 +99,7 @@ class CharManager {
     }
 
     stopAllTravellers() {
-        this.getTravellers().forEach(t => t.startNegotiation());
+        this.getNewTravellers().forEach(t => t.startNegotiation());
     }
 
     allSurrender() {

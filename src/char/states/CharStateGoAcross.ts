@@ -25,6 +25,7 @@ export class CharStateGoAcross extends CharState {
             true,
             true,
         )
+        this.char.syncFlip();
 
         if (distanceLeft < 10) {
             eventBus.emit(Evt.CHAR_LEFT_BRIDGE, this.char.id);

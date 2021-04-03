@@ -1,4 +1,5 @@
 import {dumbClone} from "./utils/utils-misc";
+import {TrollLocation} from "./types";
 
 let nextId = 0;
 
@@ -31,7 +32,7 @@ export type EvtData = {
     [Evt.RESOURSES_CHANGED]: undefined,
     [Evt.NEGOTIATION_STARTED]: undefined,
     [Evt.TRAVELLERS_APPEARS]: undefined,
-    [Evt.TROLL_LOCATION_CHANGED]: undefined,
+    [Evt.TROLL_LOCATION_CHANGED]: TrollLocation,
     [Evt.ENCOUNTER_ENDED]: undefined,
     [Evt.CHAR_LEFT_BRIDGE]: string,
 }

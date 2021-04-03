@@ -1,14 +1,11 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as PIXI from 'pixi.js';
-import {eventBus, Evt} from "./event-bus";
 import {DateTime} from "./interface/date-time";
 import {WaitButton} from "./interface/wait-button";
 import {Troll} from "./interface/troll";
 import {Resources} from "./interface/resourses";
 import {GameOver} from "./interface/game-over";
-import {PassingBy} from "./interface/passing-by";
-import {Negotiations} from "./interface/negotiations";
 import {render} from "./managers/render";
 import {resoursePaths} from "./resourse-paths";
 import {trollManager} from "./managers/troll-manager";
@@ -16,7 +13,9 @@ import {lair} from "./managers/lair";
 import {bridgeManager} from "./managers/bridge-manager";
 import {encounter} from "./managers/encounter";
 import {charManager} from "./managers/char-manager";
+import {negotiations} from "./managers/negotiations";
 encounter;
+negotiations;
 
 const appElement = document.createElement('app');
 appElement.id = 'app';
@@ -29,8 +28,6 @@ const App = () => {
         <WaitButton />
         <Troll />
         <Resources />
-        <PassingBy />
-        <Negotiations />
     </div>;
 };
 

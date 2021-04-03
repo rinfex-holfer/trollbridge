@@ -286,12 +286,11 @@ class RenderManager {
         return tiles;
     };
 
-    createText(id: string, text: string, x: number, y: number, style?: any, parentId?: string) {
+    createText(text: string, x: number, y: number, style?: any, parent?: PIXI.Container) {
         const pixiText = new PIXI.Text(text, style || {});
         pixiText.x = x;
         pixiText.y = y;
-        let parent = parentId ? this.getContainer(parentId) : this.pixiApp.stage;
-        parent.addChild(pixiText);
+        (parent || this.pixiApp.stage).addChild(pixiText);
         return pixiText;
     }
 

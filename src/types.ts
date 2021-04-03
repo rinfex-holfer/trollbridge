@@ -2,6 +2,11 @@ export const enum EntityKey {
     FOOD =  'FOOD'
 }
 
+export const enum TrollLocation {
+    BRIDGE = 'BRIDGE',
+    LAIR = 'LAIR',
+}
+
 export const enum Time {
     MORNING = 'morning',
     AFTERNOON = 'afternoon',

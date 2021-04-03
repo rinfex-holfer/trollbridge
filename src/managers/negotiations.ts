@@ -1,9 +1,8 @@
 import {rnd} from "../utils/utils-math";
-import {EncounterDanger} from "../types";
+import {EncounterDanger, TrollLocation} from "../types";
 import {eventBus, Evt} from "../event-bus";
 import {gameState} from "../game-state";
 import {charManager} from "./char-manager";
-import {battleManager} from "./battle";
 import {encounter} from "./encounter";
 
 export const enum NegotiationsState {
@@ -28,58 +27,83 @@ eventBus.on(Evt.TIME_PASSED, () => {
     eventBus.emit(Evt.TRAVELLERS_APPEARS);
 });
 
-export function createNegotiation() {
-    const danger: EncounterDanger = charManager.getDangerKey();
-    let currentStateKey = NegotiationsState.START;
-    let encounterState = negotiationTree[currentStateKey]
-    charManager.stopAllTravellers()
+export class Negotiations {
+    currentStateKey = NegotiationsState.START;
+    encounterState: any
+    danger: EncounterDanger = EncounterDanger.NONE;
 
-    return {
-        getMessages: () => encounterState ? Object.keys(encounterState) : null,
-        getState: () => encounterState,
-        onMessage: (message: NegotiationsMessage): string[] => {
-            const roll = rnd() * 100;
+    constructor() {
+        eventBus.on(Evt.TROLL_LOCATION_CHANGED, (str) => this.onTrollLocationChange(str));
+    }
 
-            console.log(message);
-            if (!encounterState || !encounterState[message]) {
-                throw Error('wrong message')
+    startNegotiations(danger: EncounterDanger) {
+        this.danger = danger;
+        this.currentStateKey = NegotiationsState.START
+        this.encounterState = negotiationTree[this.currentStateKey]
+        this.onStateChange()
+    }
+
+    onTrollLocationChange(location: TrollLocation) {
+        if (
+            location === TrollLocation.BRIDGE &&
+            charManager.getNewTravellers().length
+        ) {
+            this.startNegotiations(charManager.getDangerKey());
+        }
+    }
+
+    onStateChange(travellersReaction: string = '') {
+        switch (this.currentStateKey) {
+            case NegotiationsState.START:
+                charManager.stopAllTravellers();
+                break;
+            case NegotiationsState.ALL_GIVEN:
+                charManager.makeAllTravellersGiveAll();
+                break;
+            case NegotiationsState.PAYMENT_GIVEN:
+                charManager.makeAllTravellersPay();
+                break;
+            case NegotiationsState.BATTLE:
+                encounter.finishEncounter();
+                charManager.battle();
+                break;
+            case NegotiationsState.END:
+                encounter.finishEncounter();
+                charManager.letAllTravellersPass();
+                break;
+            default:
+                throw Error('wtf ' + this.currentStateKey)
+        }
+        charManager.travellersSpeak(travellersReaction);
+    }
+
+    getDialogVariants() {
+        return Object.keys(this.encounterState);
+    }
+
+    onMessage(message: NegotiationsMessage) {
+        const roll = rnd() * 100;
+
+        if (!this.encounterState[message]) {
+            throw Error('wrong message ' + message)
+        }
+
+        const edges = this.encounterState[message][this.danger];
+
+        for (const chance in edges) {
+            if (roll < +chance) {
+                this.currentStateKey = edges[+chance].nextState;
+                this.encounterState = negotiationTree[this.currentStateKey];
+
+                this.onStateChange(edges[+chance].text);
+
+                return;
             }
-
-            const edges = encounterState[message]?.[danger];
-
-            for (const chance in edges) {
-                if (roll < +chance) {
-                    currentStateKey = edges[+chance].nextState;
-                    encounterState = negotiationTree[currentStateKey];
-
-                    switch (currentStateKey) {
-                        case NegotiationsState.ALL_GIVEN:
-                            charManager.makeAllTravellersGiveAll();
-                            break;
-                        case NegotiationsState.PAYMENT_GIVEN:
-                            charManager.makeAllTravellersPay();
-                            break;
-                        case NegotiationsState.BATTLE:
-                            encounter.finishEncounter();
-                            charManager.battle();
-                            break;
-                        case NegotiationsState.END:
-                            encounter.finishEncounter();
-                            charManager.letAllTravellersPass();
-                            break;
-
-                    }
-
-                    gameState.encounterText = edges[+chance].text;
-
-                    return Object.keys(encounterState);
-                }
-            }
-
-            throw Error('wtf');
         }
     }
 }
+
+export const negotiations = new Negotiations();
 
 type NegotiationTree = {
     [encounterStateKey in NegotiationsState]: {

@@ -6,6 +6,7 @@ import {render} from "../managers/render";
 import {trollManager} from "../managers/troll-manager";
 import {colors, zLayers} from "../constants";
 import * as PIXI from "pixi.js";
+import {Container} from "../type-aliases";
 
 export const enum CharAction {
     RELEASE = 'RELEASE',
@@ -44,6 +45,7 @@ const getButtonsRowWidth = (amount: number) => amount * BUTTON_WIDTH + (amount -
 export class CharActionsMenu {
     buttons: {action: CharAction, id: string, active: boolean}[] = []
     containerId: string
+    container: Container
     isShown = true;
 
     text: PIXI.Text
@@ -54,10 +56,11 @@ export class CharActionsMenu {
         this.containerId = charId + '_actions-menu';
 
         const buttonsContainer = render.createContainer(this.containerId, this.charId);
+        this.container = buttonsContainer;
 
         render.move(this.containerId, 0, -100);
 
-        this.text = render.createText(this.containerId, '', 0, -BUTTON_WIDTH/2, {fill: colors.WHITE}, this.containerId)
+        this.text = render.createText('', 0, -BUTTON_WIDTH/2, {fill: colors.WHITE}, this.container)
         this.text.anchor.set(0.5);
 
         buttonsTemplate.forEach((template, idx) => {
@@ -127,7 +130,6 @@ export class CharActionsMenu {
     }
 
     show() {
-        console.log('show');
         if (this.isShown) return;
         render.changeContainerVisibility(this.containerId, true);
         const charSprite = render.getContainer(this.charId);
@@ -136,7 +138,6 @@ export class CharActionsMenu {
     }
 
     hide() {
-        console.log('hide');
         if (!this.isShown) return;
         render.changeContainerVisibility(this.containerId, false);
         this.isShown = false;

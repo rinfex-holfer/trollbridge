@@ -13,6 +13,8 @@ import {CharStateDead} from "./states/CharStateDead";
 import {CharStateBones} from "./states/CharStateBones";
 import {resoursePaths} from "../resourse-paths";
 import {CharStatePrisoner} from "./states/CharStatePrisoner";
+import {Container} from "../type-aliases";
+import {CharSpeakText} from "../interface/char-speak-text";
 
 export class Char {
     key: CharKey
@@ -28,11 +30,15 @@ export class Char {
     isPrisoner = false
     isFleeing = false
     isBones = false
+    isMetTroll = false
 
     state: CharState
     timeWithoutFood = 0
 
     actionsMenu: CharActionsMenu
+    speakText: CharSpeakText
+
+    container: Container
 
     constructor(key: CharKey, x: number, y: number) {
         const charTemplate = charTemplates[key]
@@ -44,10 +50,11 @@ export class Char {
         this.resources = charTemplate.createResources()
         this.isCombatant = charTemplate.isCombatant
 
-        this.createAnimation(x, y);
+        this.container = this.createAnimation(x, y);
         this.createBones();
 
         this.actionsMenu = new CharActionsMenu(this.id);
+        this.speakText = new CharSpeakText(this.container);
 
         this.state = this.getState(CharStateKey.GO_ACROSS)
         this.state.onStart();
@@ -106,6 +113,8 @@ export class Char {
         const cont = render.getContainer(this.id);
         cont.on('mouseover', () => this.actionsMenu.show())
         cont.on('mouseout', () => this.actionsMenu.hide())
+
+        return cont;
     }
 
     createBones() {
@@ -165,6 +174,7 @@ export class Char {
     }
 
     startNegotiation() {
+        this.isMetTroll = true;
         this.setState(CharStateKey.IDLE);
     }
 
@@ -178,5 +188,18 @@ export class Char {
 
     goAcrossBridge() {
         this.setState(CharStateKey.GO_ACROSS);
+    }
+
+    syncFlip() {
+        this.actionsMenu.container.scale.x = this.container.scale.x;
+        this.speakText.text.scale.x = this.container.scale.x;
+    }
+
+    speak(text: string) {
+        this.speakText.showText(text);
+    }
+
+    clearText() {
+        this.speakText.hideText();
     }
 }
