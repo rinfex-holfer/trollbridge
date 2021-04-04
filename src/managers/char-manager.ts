@@ -7,11 +7,15 @@ import {trollManager} from "./troll-manager";
 import {Char} from "../char/Char";
 import {eventBus, Evt} from "../event-bus";
 import {encounterTemplates} from "../encounter-templates";
+import {DangerIndicator} from "../interface/danger-indicator";
 
 class CharManager {
     chars: Char[] = []
 
     encounterLevel: number = 0;
+
+    // @ts-ignore
+    dangerIndicator: DangerIndicator
 
     constructor() {
         eventBus.on(Evt.CHAR_LEFT_BRIDGE, charId => this.onCharLeftBridge(charId))
@@ -22,6 +26,13 @@ class CharManager {
         })
         eventBus.on(Evt.TIME_PASSED, () => this.createRandomEncounter());
         eventBus.on(Evt.TROLL_LOCATION_CHANGED, l => this.onTrollLocationChanged(l));
+    }
+
+    init() {
+        const bridgePos = bridgeManager.getBridgePosition();
+        const x = bridgePos.x + bridgePos.width;
+        const y = 0;
+        this.dangerIndicator = new DangerIndicator(x, y)
     }
 
     onTrollLocationChanged(location: TrollLocation) {
@@ -40,6 +51,8 @@ class CharManager {
             ...encounter.stuff,
             ...encounter.nonCombatants,
         ], encounter.level)
+
+        this.dangerIndicator.setDanger(this.getDangerKey());
     }
 
     update(dt: number) {
@@ -54,6 +67,10 @@ class CharManager {
         }
 
         this.removeChar(charId);
+
+        if (this.getTravellers().length === 0) {
+            this.dangerIndicator.clearDanger();
+        }
     }
 
     charToBones(id: string) {
@@ -133,6 +150,7 @@ class CharManager {
 
     letAllTravellersPass() {
         this.getTravellers().forEach(t => t.goAcrossBridge());
+        this.dangerIndicator.clearDanger();
     }
 
     makeAllTravellersPay() {

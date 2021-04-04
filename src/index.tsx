@@ -2,7 +2,6 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as PIXI from 'pixi.js';
 import {DateTime} from "./interface/date-time";
-import {WaitButton} from "./interface/wait-button";
 import {Troll} from "./interface/troll";
 import {Resources} from "./interface/resourses";
 import {GameOver} from "./interface/game-over";
@@ -62,4 +61,5 @@ new Promise(res => {
     bridgeManager.init()
     lair.init()
     trollManager.initTroll()
+    charManager.init();
 })
