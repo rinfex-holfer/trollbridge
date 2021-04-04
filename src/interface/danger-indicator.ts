@@ -20,14 +20,14 @@ export class DangerIndicator {
                 fontStyle: 'italic',
                 wordWrapWidth: 200,
                 fontSize: 18,
-                wordWrap: true
+                wordWrap: false
             }
         )
         this.text.anchor.set(1, 0);
     }
 
-    setDanger(dangerLevel: EncounterDanger) {
-        let text = 'опасность: ';
+    setDanger(dangerLevel: EncounterDanger, who: string) {
+        let text = 'мимо проходят: ' + who +  ', опасность: ';
         switch (dangerLevel) {
             case EncounterDanger.NONE:
                 text += 'НЕТ'

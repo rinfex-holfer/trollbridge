@@ -14,7 +14,7 @@ export class CharSpeakText {
         this.text = render.createText(
             '',
             120,
-            -50,
+            -10,
             {
                 align: 'center',
                 fill: colors.WHITE,

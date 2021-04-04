@@ -4,9 +4,7 @@
         <key>fileFormatVersion</key>
         <int>4</int>
         <key>texturePackerVersion</key>
-        <string>4.3.3</string>
-        <key>fileName</key>
-        <string>D:/GameDev/Trollbridge/src/img/shieldman/shieldman.tps</string>
+        <string>5.5.0</string>
         <key>autoSDSettings</key>
         <array>
             <struct type="AutoSDSettings">
@@ -28,13 +26,13 @@
             </struct>
         </array>
         <key>allowRotation</key>
-        <false/>
+        <true/>
         <key>shapeDebug</key>
         <false/>
         <key>dpi</key>
         <uint>72</uint>
         <key>dataFormat</key>
-        <string>phaser-json-hash</string>
+        <string>pixijs4</string>
         <key>textureFileName</key>
         <filename></filename>
         <key>flipPVR</key>
@@ -129,22 +127,6 @@
                 <uint>1</uint>
             </struct>
         </struct>
-        <key>andEngine</key>
-        <struct type="AndEngine">
-            <key>minFilter</key>
-            <enum type="AndEngine::MinFilter">Linear</enum>
-            <key>packageName</key>
-            <string>Texture</string>
-            <key>wrap</key>
-            <struct type="AndEngineWrap">
-                <key>s</key>
-                <enum type="AndEngineWrap::Wrap">Clamp</enum>
-                <key>t</key>
-                <enum type="AndEngineWrap::Wrap">Clamp</enum>
-            </struct>
-            <key>magFilter</key>
-            <enum type="AndEngine::MagFilter">MagLinear</enum>
-        </struct>
         <key>dataFileNames</key>
         <map type="GFileNameMap">
             <key>data</key>
@@ -172,6 +154,8 @@
         <false/>
         <key>prependSmartFolderName</key>
         <false/>
+        <key>autodetectAnimations</key>
+        <true/>
         <key>globalSpriteSettings</key>
         <struct type="SpriteSettings">
             <key>scale</key>
@@ -191,21 +175,27 @@
             <key>heuristicMask</key>
             <false/>
             <key>defaultPivotPoint</key>
-            <point_f>0.5,0.5</point_f>
+            <point_f>0,0</point_f>
             <key>writePivotPoints</key>
             <false/>
         </struct>
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
             <key type="filename">block1.png</key>
+            <key type="filename">block2.png</key>
             <key type="filename">counterattack1.png</key>
             <key type="filename">damaged1.png</key>
+            <key type="filename">damaged2.png</key>
             <key type="filename">dead1.png</key>
+            <key type="filename">dead2.png</key>
             <key type="filename">devoured1.png</key>
+            <key type="filename">devoured2.png</key>
             <key type="filename">fall1.png</key>
             <key type="filename">fall2.png</key>
             <key type="filename">idle1.png</key>
+            <key type="filename">idle2.png</key>
             <key type="filename">scared1.png</key>
+            <key type="filename">scared2.png</key>
             <key type="filename">strike1.png</key>
             <key type="filename">strike2.png</key>
             <key type="filename">unconscious1.png</key>
@@ -214,6 +204,8 @@
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
                 <key>scale9Enabled</key>
                 <false/>
                 <key>scale9Borders</key>
@@ -227,6 +219,8 @@
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
                 <key>scale9Enabled</key>
                 <false/>
                 <key>scale9Borders</key>
@@ -236,10 +230,28 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
+            <key type="filename">prisoner1.png</key>
+            <key type="filename">prisoner2.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>18,13,35,27</rect>
+                <key>scale9Paddings</key>
+                <rect>18,13,35,27</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
             <key type="filename">tornHead1.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
                 <key>scale9Enabled</key>
                 <false/>
                 <key>scale9Borders</key>
@@ -252,22 +264,7 @@
         </map>
         <key>fileList</key>
         <array>
-            <filename>block1.png</filename>
-            <filename>damaged1.png</filename>
-            <filename>dead1.png</filename>
-            <filename>devoured1.png</filename>
-            <filename>devouring1.png</filename>
-            <filename>fall1.png</filename>
-            <filename>fall2.png</filename>
-            <filename>idle1.png</filename>
-            <filename>scared1.png</filename>
-            <filename>strike1.png</filename>
-            <filename>strike2.png</filename>
-            <filename>unconscious1.png</filename>
-            <filename>walk1.png</filename>
-            <filename>walk2.png</filename>
-            <filename>counterattack1.png</filename>
-            <filename>tornHead1.png</filename>
+            <filename>.</filename>
         </array>
         <key>ignoreFileList</key>
         <array/>

@@ -46,13 +46,9 @@ class CharManager {
         const rnd = 0;
         const encounter = getRndItem(encounterTemplates[rnd]);
 
-        this.createTravellers([
-            ...encounter.enemies,
-            ...encounter.stuff,
-            ...encounter.nonCombatants,
-        ], encounter.level)
+        this.createTravellers(encounter.enemies, encounter.level)
 
-        this.dangerIndicator.setDanger(this.getDangerKey());
+        this.dangerIndicator.setDanger(this.getDangerKey(), encounter.text);
     }
 
     update(dt: number) {
@@ -101,7 +97,7 @@ class CharManager {
             const char = new Char(
                 key,
                 bridgePos.x + bridgePos.width - 50,
-                bridgePos.y + 150 + i * 150
+                bridgePos.y + 150 + i * 50
             );
             char.goAcrossBridge();
             this.chars.push(char);
@@ -178,7 +174,7 @@ class CharManager {
     }
 
     killChar(id: string) {
-        let char = this.getTravellers().find(t => t.id === id);
+        let char = this.chars.find(t => t.id === id);
         if (!char) throw Error('wtf');
 
         char.kill();

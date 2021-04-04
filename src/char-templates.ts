@@ -56,13 +56,13 @@ export const charTemplates = {
         hp: 10,
         createResources: (): Resources => ({gold: 1, materials: 1, food: 1}),
         isCombatant: true,
-        animationsPath: resoursePaths.atlases.peasant,
+        animationsPath: resoursePaths.atlases.knight,
     },[CharKey.MILITIA]: {
         name: 'chars.militia',
         hp: 10,
         createResources: (): Resources => ({gold: 1, materials: 1, food: 1}),
         isCombatant: true,
-        animationsPath: resoursePaths.atlases.peasant,
+        animationsPath: resoursePaths.atlases.militia,
     },[CharKey.PRINCE]: {
         name: 'chars.price',
         hp: 10,
@@ -82,7 +82,7 @@ export const charTemplates = {
         hp: 10,
         createResources: (): Resources => ({gold: 1, materials: 1, food: 1}),
         isCombatant: true,
-        animationsPath: resoursePaths.atlases.peasant,
+        animationsPath: resoursePaths.atlases.soldier,
     },
     [CharKey.TRADE_CART]: {
         name: 'chars.trade_card',

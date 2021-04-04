@@ -23,7 +23,7 @@ export class Char {
     name: string
     isCombatant: boolean
 
-    speed: number = 300
+    speed: number = 100
     resources: Resources
     isUnconscious = false
     isAlive = true

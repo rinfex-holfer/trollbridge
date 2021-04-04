@@ -188,6 +188,7 @@
             <key type="filename">dead1.png</key>
             <key type="filename">dead2.png</key>
             <key type="filename">devoured1.png</key>
+            <key type="filename">devoured2.png</key>
             <key type="filename">fall1.png</key>
             <key type="filename">fall2.png</key>
             <key type="filename">idle1.png</key>

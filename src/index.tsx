@@ -25,7 +25,6 @@ const App = () => {
         <GameOver />
         <DateTime />
         <Troll />
-        <Resources />
     </div>;
 };
 

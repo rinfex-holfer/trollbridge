@@ -43,8 +43,7 @@ export const enum EncounterDanger {
 export type EncounterTemplate = {
     level: number,
     enemies: CharKey[],
-    stuff: CharKey[],
-    nonCombatants: CharKey[],
+    text: string
 }
 
 export type Encounter = {
