@@ -8,9 +8,10 @@ import {
     getVectorLength,
     Vec
 } from "../utils/utils-math";
-import {zLayers} from "../constants";
+import {colors, colorsNum, zLayers} from "../constants";
 import {createId, getGameSize} from "../utils/utils-misc";
 import {resoursePaths} from "../resourse-paths";
+import {Container} from "../type-aliases";
 
 class RenderManager {
     pixiApp = new PIXI.Application({
@@ -361,6 +362,39 @@ class RenderManager {
             return;
         }
     }
+
+    createRectangle(options: RectangleOptions) {
+        const graphics = new PIXI.Graphics();
+
+        if (options.fill) {
+            graphics.beginFill(options.fill, options.alpha);
+        } else {
+            graphics.beginFill(colorsNum.WHITE, 0);
+        }
+
+        graphics.lineStyle(options.lineWidth || 1, options.lineColor, 1)
+
+        graphics.drawRect(options.x, options.y, options.width, options.height);
+
+        if (options.fill) graphics.endFill();
+
+        (options.parent || this.pixiApp.stage).addChild(graphics);
+
+        return graphics;
+    }
+}
+
+interface RectangleOptions {
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    parent?: PIXI.Container,
+    fill?: number,
+    alpha?: number,
+    stroke?: number,
+    lineWidth?: number,
+    lineColor?: number
 }
 
 interface AnimationOptions {

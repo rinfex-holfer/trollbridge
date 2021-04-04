@@ -24,8 +24,6 @@ class EncounterManager {
         ], encounter.level)
 
         this.encounterFinished = false;
-
-        eventBus.emit(Evt.TRAVELLERS_APPEARS);
     }
 
     finishEncounter() {

@@ -1,9 +1,14 @@
 import {rnd} from "../utils/utils-math";
 import {EncounterDanger, TrollLocation} from "../types";
 import {eventBus, Evt} from "../event-bus";
-import {gameState} from "../game-state";
 import {charManager} from "./char-manager";
 import {encounter} from "./encounter";
+import {Container} from "../type-aliases";
+import {render} from "./render";
+import {bridgeManager} from "./bridge-manager";
+import {BasicButton} from "../interface/basic/basic-button";
+import {colors, zLayers} from "../constants";
+import {SimpleButton} from "../interface/basic/simple-button";
 
 export const enum NegotiationsState {
     START = 'START',
@@ -22,18 +27,27 @@ const enum NegotiationsMessage {
     TO_BATTLE = 'TO_BATTLE',
 }
 
-eventBus.on(Evt.TIME_PASSED, () => {
-    gameState.encounterText = '';
-    eventBus.emit(Evt.TRAVELLERS_APPEARS);
-});
+const BUTTON_WIDTH = 150;
+const BUTTON_MARGIN = 30;
+
+const getButtonsRowWidth = (amount: number) => amount * BUTTON_WIDTH + (amount - 1) * BUTTON_MARGIN;
 
 export class Negotiations {
     currentStateKey = NegotiationsState.START;
     encounterState: any
     danger: EncounterDanger = EncounterDanger.NONE;
 
+    containerId = 'negotiations-container'
+    container: Container
+    buttons: BasicButton[] = []
+
     constructor() {
         eventBus.on(Evt.TROLL_LOCATION_CHANGED, (str) => this.onTrollLocationChange(str));
+
+        this.container = render.createContainer(this.containerId)
+        this.container.zIndex = zLayers.CHAR_MENU;
+        const bridgePos = bridgeManager.getBridgePosition();
+        render.move(this.containerId, bridgePos.x + bridgePos.width / 2, bridgePos.height)
     }
 
     startNegotiations(danger: EncounterDanger) {
@@ -70,14 +84,52 @@ export class Negotiations {
             case NegotiationsState.END:
                 encounter.finishEncounter();
                 charManager.letAllTravellersPass();
+                this.onEnd()
                 break;
-            default:
-                throw Error('wtf ' + this.currentStateKey)
         }
         charManager.travellersSpeak(travellersReaction);
+        this.updateDialogButtons();
     }
 
-    getDialogVariants() {
+    onEnd() {
+        this.buttons.forEach(b => b.destroy());
+        this.buttons = [];
+        this.encounterState = null;
+        this.danger = EncounterDanger.NONE;
+    }
+
+    updateDialogButtons() {
+        this.buttons.forEach(b => b.destroy());
+
+        if (!this.encounterState) return;
+
+        const answers = this.getDialogVariants();
+        const fullWidth = getButtonsRowWidth(answers.length)
+
+        let x = - fullWidth / 2
+        this.buttons = answers.map((text, idx) => {
+            const b = new SimpleButton({
+                text,
+                onClick: () => this.onMessage(text),
+                parentId: this.containerId,
+                style: {
+                    align: 'center',
+                    fill: colors.WHITE,
+                    wordWrapWidth: BUTTON_WIDTH,
+                    fontSize: 18,
+                    wordWrap: true
+                },
+                x
+            })
+
+            x += (BUTTON_WIDTH + BUTTON_MARGIN);
+
+            return b;
+        })
+    }
+
+    getDialogVariants(): NegotiationsMessage[] {
+        // @ts-ignore
         return Object.keys(this.encounterState);
     }
 

@@ -20,6 +20,7 @@ export const zLayers = {
     GAME_OBJECTS_MIN: 100,
     LAIR_OBJECTS: 200,
     CHAR_MENU: 300,
+    DIALOG_OPTIONS: 400,
 }
 
 export const colors = {
@@ -28,4 +29,14 @@ export const colors = {
     BLUE: '0x0000FF',
     PURPLE: '0x080008',
     WHITE: '0xFFFFFF',
+    BLACK: '0x000000',
+}
+
+export const colorsNum = {
+    GREEN: 0x00AA00,
+    RED: 0xFF0000,
+    BLUE: 0x0000FF,
+    PURPLE: 0x080008,
+    WHITE: 0xFFFFFF,
+    BLACK: 0x000000,
 }
