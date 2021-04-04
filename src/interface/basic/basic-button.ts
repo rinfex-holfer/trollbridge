@@ -3,7 +3,7 @@ import {Container, GameText} from "../../type-aliases";
 
 export interface ButtonOptions {
     text: string
-    onClick: () => void
+    onClick?: () => void
     parentId?: string
     x?: number
     y?: number
@@ -31,13 +31,16 @@ export class BasicButton {
             options.style,
             this.container,
         )
-        this.text.interactive = true;
-        this.text.buttonMode = true;
-        this.text.on('click', options.onClick)
+        this.container.interactive = true;
+        this.container.buttonMode = true;
+        if (options.onClick) this.container.on('click', () => this.onClick())
+    }
+
+    onClick() {
+        if (this.options.onClick) this.options.onClick();
     }
 
     destroy() {
-        this.text.destroy();
         this.container.destroy();
     }
 
@@ -47,5 +50,20 @@ export class BasicButton {
 
     set y(y: number) {
         this.text.y = y;
+    }
+
+    oldAlpha = 1
+
+    enable() {
+        this.container.alpha = this.oldAlpha
+        this.container.interactive = true;
+        this.container.buttonMode = true;
+    }
+
+    disable() {
+        this.oldAlpha = this.container.alpha;
+        this.container.alpha = 0.3
+        this.container.interactive = false;
+        this.container.buttonMode = false;
     }
 }

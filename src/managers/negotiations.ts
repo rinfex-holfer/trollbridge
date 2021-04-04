@@ -2,7 +2,6 @@ import {rnd} from "../utils/utils-math";
 import {EncounterDanger, TrollLocation} from "../types";
 import {eventBus, Evt} from "../event-bus";
 import {charManager} from "./char-manager";
-import {encounter} from "./encounter";
 import {Container} from "../type-aliases";
 import {render} from "./render";
 import {bridgeManager} from "./bridge-manager";
@@ -69,6 +68,7 @@ export class Negotiations {
     onStateChange(travellersReaction: string = '') {
         switch (this.currentStateKey) {
             case NegotiationsState.START:
+                eventBus.emit(Evt.ENCOUNTER_STARTED);
                 charManager.stopAllTravellers();
                 break;
             case NegotiationsState.ALL_GIVEN:
@@ -78,11 +78,10 @@ export class Negotiations {
                 charManager.makeAllTravellersPay();
                 break;
             case NegotiationsState.BATTLE:
-                encounter.finishEncounter();
                 charManager.battle();
                 break;
             case NegotiationsState.END:
-                encounter.finishEncounter();
+                eventBus.emit(Evt.ENCOUNTER_ENDED);
                 charManager.letAllTravellersPass();
                 this.onEnd()
                 break;

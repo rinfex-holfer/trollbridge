@@ -11,11 +11,11 @@ import {resoursePaths} from "./resourse-paths";
 import {trollManager} from "./managers/troll-manager";
 import {lair} from "./managers/lair";
 import {bridgeManager} from "./managers/bridge-manager";
-import {encounter} from "./managers/encounter";
 import {charManager} from "./managers/char-manager";
 import {negotiations} from "./managers/negotiations";
-encounter;
+import translations from "./translations";
 negotiations;
+translations;
 
 const appElement = document.createElement('app');
 appElement.id = 'app';
@@ -25,7 +25,6 @@ const App = () => {
     return <div id='temp-interface'>
         <GameOver />
         <DateTime />
-        <WaitButton />
         <Troll />
         <Resources />
     </div>;

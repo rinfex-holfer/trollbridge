@@ -6,11 +6,18 @@ import {FoodStorage} from "./food-storage";
 import {ResourceKey, Resources} from "../types";
 import {eventBus, Evt} from "../event-bus";
 import {charManager} from "./char-manager";
+import {WaitButton} from "../interface/wait-button";
+import {Container} from "../type-aliases";
 
 class Lair {
     static CONTAINER_ID = 'lair'
 
-    foodStorage: FoodStorage = new FoodStorage();
+    foodStorage = new FoodStorage()
+
+    // @ts-ignore
+    waitButton: WaitButton
+    // @ts-ignore
+    container: Container
 
     resources: Resources = {
         [ResourceKey.FOOD]: 0,
@@ -20,6 +27,7 @@ class Lair {
 
     init() {
         const container = render.createContainer(Lair.CONTAINER_ID)
+        this.container = container;
 
         render.createTiles({
             paths: [resoursePaths.images.grass],
@@ -33,6 +41,25 @@ class Lair {
         container.addListener('click', trollManager.goToLair)
 
         this.foodStorage.init(this.getFoodStoragePosition());
+
+        this.waitButton = new WaitButton(this.getLairPosition())
+
+        eventBus.on(Evt.ENCOUNTER_ENDED, () => this.enableInterface())
+        eventBus.on(Evt.ENCOUNTER_STARTED, () => this.disableInterface())
+    }
+
+    enableInterface() {
+        this.container.interactive = true;
+        this.container.buttonMode = true;
+
+        this.waitButton.enable()
+    }
+
+    disableInterface() {
+        this.container.interactive = false;
+        this.container.buttonMode = false;
+
+        this.waitButton.disable()
     }
 
     changeResource(key: ResourceKey, val: number) {

@@ -22,7 +22,8 @@ export default i18n
                     "Music Volume": "Music Volume",
                     "Chars": {
                         "Farmer": "peasant"
-                    }
+                    },
+                    "wait": "Wait",
                 }
             },
             [Language.RU]: {
@@ -39,7 +40,8 @@ export default i18n
                     "Music Volume": "Громкость музыки",
                     "Chars": {
                         "Farmer": "крестьянин"
-                    }
+                    },
+                    "wait": "Ждать",
                 }
             }
         },

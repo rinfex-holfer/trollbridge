@@ -17,6 +17,7 @@ export const enum Evt {
     NEGOTIATION_STARTED = 'NEGOTIATION_STARTED',
 
     ENCOUNTER_ENDED = 'ENCOUNTER_ENDED',
+    ENCOUNTER_STARTED = 'ENCOUNTER_STARTED',
     CHAR_LEFT_BRIDGE = 'CHAR_LEFT_BRIDGE',
 }
 
@@ -32,6 +33,7 @@ export type EvtData = {
     [Evt.NEGOTIATION_STARTED]: undefined,
     [Evt.TROLL_LOCATION_CHANGED]: TrollLocation,
     [Evt.ENCOUNTER_ENDED]: undefined,
+    [Evt.ENCOUNTER_STARTED]: undefined,
     [Evt.CHAR_LEFT_BRIDGE]: string,
 }
 

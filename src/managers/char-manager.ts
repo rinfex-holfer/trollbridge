@@ -1,11 +1,12 @@
-import {CharKey, EncounterDanger} from "../types";
+import {CharKey, EncounterDanger, TrollLocation} from "../types";
 import {bridgeManager} from "./bridge-manager";
 import {gameState} from "../game-state";
-import {rndBetween} from "../utils/utils-math";
+import {getRndItem, rndBetween} from "../utils/utils-math";
 import {gameConstants} from "../constants";
 import {trollManager} from "./troll-manager";
 import {Char} from "../char/Char";
 import {eventBus, Evt} from "../event-bus";
+import {encounterTemplates} from "../encounter-templates";
 
 class CharManager {
     chars: Char[] = []
@@ -19,6 +20,26 @@ class CharManager {
                 if (t.isPrisoner) t.timeWithoutFood++
             })
         })
+        eventBus.on(Evt.TIME_PASSED, () => this.createRandomEncounter());
+        eventBus.on(Evt.TROLL_LOCATION_CHANGED, l => this.onTrollLocationChanged(l));
+    }
+
+    onTrollLocationChanged(location: TrollLocation) {
+        if (location === TrollLocation.LAIR) {
+            this.letAllTravellersPass();
+        }
+    }
+
+    createRandomEncounter() {
+        // const rnd = rndBetween(Math.max(0, gameState.troll.level - 1), gameState.troll.level + 1);
+        const rnd = 0;
+        const encounter = getRndItem(encounterTemplates[rnd]);
+
+        this.createTravellers([
+            ...encounter.enemies,
+            ...encounter.stuff,
+            ...encounter.nonCombatants,
+        ], encounter.level)
     }
 
     update(dt: number) {
@@ -68,6 +89,10 @@ class CharManager {
             char.goAcrossBridge();
             this.chars.push(char);
         })
+    }
+
+    removeTravellers() {
+        this.getTravellers().map(t => this.removeChar(t.id))
     }
 
     getDangerKey() {
@@ -176,6 +201,8 @@ class CharManager {
         if (gameState.gameover) return;
 
         this.allSurrender();
+
+        eventBus.emit(Evt.ENCOUNTER_ENDED);
         // this.makeAllTravellersGiveAll();
         // this.clearTravellers();
     }
