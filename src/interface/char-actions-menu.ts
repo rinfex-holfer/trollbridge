@@ -1,5 +1,5 @@
 import {resoursePaths} from "../resourse-paths";
-import {charManager} from "../managers/characters";
+import {characters} from "../managers/characters";
 import {lair} from "../managers/lair";
 import {ResourceKey} from "../types";
 import {render} from "../managers/render";
@@ -7,6 +7,7 @@ import {trollManager} from "../managers/troll-manager";
 import {colors, zLayers} from "../constants";
 import * as PIXI from "pixi.js";
 import {Container} from "../type-aliases";
+import {eventBus, Evt} from "../event-bus";
 
 export const enum CharAction {
     RELEASE = 'RELEASE',
@@ -15,8 +16,12 @@ export const enum CharAction {
     IMPRISON = 'IMPRISON',
     KILL = 'KILL',
     DEVOUR = 'DEVOUR',
+
     MAKE_FOOD = 'MAKE_FOOD',
     FEED = 'FEED',
+
+    BATTLE_HIT = 'BATTLE_HIT',
+    BATTLE_DEVOUR = 'BATTLE_DEVOUR',
 }
 
 type CharActionButtonTemplate = {
@@ -27,14 +32,23 @@ type CharActionButtonTemplate = {
 }
 
 const buttonsTemplate: CharActionButtonTemplate[] = [
-    {key: CharAction.RELEASE, text: 'Отпустить', resource: resoursePaths.images.button_release, onClick: (id: string) => charManager.releaseChar(id)},
-    {key: CharAction.ROB, text: 'Отобрать плату', resource: resoursePaths.images.button_rob, onClick: (id: string) => charManager.makeCharPay(id)},
-    {key: CharAction.TAKE_ALL, text: 'Отобрать все', resource: resoursePaths.images.button_rob, onClick: (id: string) => charManager.makeCharGiveAll(id)},
-    {key: CharAction.IMPRISON, text: 'Сделать пленником', resource: resoursePaths.images.button_imprison, onClick: (id: string) => charManager.makeImprisoned(id)},
-    {key: CharAction.KILL, text: 'Убить', resource: resoursePaths.images.button_kill, onClick: (id: string) => charManager.killChar(id)},
+    {key: CharAction.RELEASE, text: 'Отпустить', resource: resoursePaths.images.button_release, onClick: (id: string) => characters.releaseChar(id)},
+    {key: CharAction.ROB, text: 'Отобрать плату', resource: resoursePaths.images.button_rob, onClick: (id: string) => characters.makeCharPay(id)},
+    {key: CharAction.TAKE_ALL, text: 'Отобрать все', resource: resoursePaths.images.button_rob, onClick: (id: string) => characters.makeCharGiveAll(id)},
+    {key: CharAction.IMPRISON, text: 'Сделать пленником', resource: resoursePaths.images.button_imprison, onClick: (id: string) => characters.makeImprisoned(id)},
+    {key: CharAction.KILL, text: 'Убить', resource: resoursePaths.images.button_kill, onClick: (id: string) => characters.killChar(id)},
     {key: CharAction.DEVOUR, text: 'Сожрать', resource: resoursePaths.images.button_devour, onClick: (id: string) => trollManager.devour(id)},
     {key: CharAction.FEED, text: 'Накормить', resource: resoursePaths.images.button_feed, onClick: (id: string) => lair.feedChar(id)},
     {key: CharAction.MAKE_FOOD, text: 'Сварить', resource: resoursePaths.images.button_make_food, onClick: (id: string) => lair.makeFoodFrom(id)},
+
+    {key: CharAction.BATTLE_DEVOUR, text: 'Сожрать', resource: resoursePaths.images.button_devour, onClick: (id: string) => {
+        trollManager.devour(id);
+        eventBus.emit(Evt.TROLL_TURN_END);
+    }},
+    {key: CharAction.BATTLE_HIT, text: 'Ударить', resource: resoursePaths.images.button_kill, onClick: (id: string) => {
+        characters.hitChar(id, trollManager.rollDmg());
+        eventBus.emit(Evt.TROLL_TURN_END);
+    }},
 ]
 
 const BUTTON_WIDTH = 32;

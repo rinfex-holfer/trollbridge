@@ -7,6 +7,7 @@ export class CharStateSurrender extends CharState {
     key = CharStateKey.SURRENDER
 
     onStart(): Promise<any> {
+        this.char.isSurrender = true
         this.char.isFleeing = true;
         this.char.speed = gameConstants.CHAR_VERY_FAST
         this.char.setAnimation(CharAnimation.SURRENDER);

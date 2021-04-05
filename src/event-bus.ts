@@ -21,6 +21,7 @@ export const enum Evt {
     ENCOUNTER_STARTED = 'ENCOUNTER_STARTED',
     CHAR_LEFT_BRIDGE = 'CHAR_LEFT_BRIDGE',
     CHAR_READY_TO_TALK = 'CHAR_READY_TO_TALK',
+    TROLL_TURN_END = 'TROLL_TURN_END',
 }
 
 export type EvtData = {
@@ -39,6 +40,7 @@ export type EvtData = {
     [Evt.ENCOUNTER_STARTED]: undefined,
     [Evt.CHAR_LEFT_BRIDGE]: string,
     [Evt.CHAR_READY_TO_TALK]: string,
+    [Evt.TROLL_TURN_END]: undefined,
 }
 
 type Subscribers = {

@@ -18,20 +18,30 @@ import {CharSpeakText} from "../interface/char-speak-text";
 import {eventBus, Evt} from "../event-bus";
 import {CharStateGoToTalk} from "./states/CharStateGoToTalk";
 import {gameConstants} from "../constants";
+import {audioManager, SOUND_KEY} from "../managers/audio";
+import {CharStateFightingIdle} from "./states/CharStateFightingIdle";
+import {trollManager} from "../managers/troll-manager";
+import {rndBetween} from "../utils/utils-math";
+import {pause} from "../utils/utils-async";
+import {particleManager} from "../managers/particles";
+import {CharStateFightingAttack} from "./states/CharStateFightingAttack";
 
 export class Char {
     key: CharKey
     id: string
     hp: number
+    morale: number
     name: string
     isCombatant: boolean
+    dmg = 0
 
-    speed = gameConstants.CHAR_SPEED
+    speed = gameConstants.CHAR_SPEED * 3
     resources: Resources
     isUnconscious = false
     isAlive = true
     isPrisoner = false
     isFleeing = false
+    isSurrender = false
     isBones = false
     isMetTroll = false
 
@@ -49,9 +59,11 @@ export class Char {
         this.id = createId(key)
         this.key = key
         this.hp = charTemplate.hp
+        this.morale = charTemplate.morale
         this.name = charTemplate.name
         this.resources = charTemplate.createResources()
         this.isCombatant = charTemplate.isCombatant
+        this.dmg = charTemplate.dmg;
 
         this.container = this.createAnimation(x, y);
         this.createBones();
@@ -90,6 +102,10 @@ export class Char {
                 return new CharStatePrisoner(this);
             case CharStateKey.GO_TO_TALK:
                 return new CharStateGoToTalk(this);
+            case CharStateKey.FIGHTING_IDLE:
+                return new CharStateFightingIdle(this);
+            case CharStateKey.FIGHTING_ATTACK:
+                return new CharStateFightingAttack(this);
             default:
                 throw Error('wrong state key ' + stateKey);
         }
@@ -122,6 +138,15 @@ export class Char {
         return cont;
     }
 
+    disableActionsMenu() {
+        render.setInteractive(this.id, false);
+        this.actionsMenu.hide()
+    }
+
+    enableActionsMenu() {
+        render.setInteractive(this.id, true);
+    }
+
     createBones() {
         const container = render.getContainer(this.id);
         render.createSprite({
@@ -142,6 +167,21 @@ export class Char {
 
     changeResources(key: ResourceKey, val: number) {
         this.resources[key] = Math.max(this.resources[key] + val, 0)
+    }
+
+    moveTowards(dt: number, x: number, y: number, directToTarget?: boolean): number {
+        const distanceLeft = render.moveTowards(
+            this.id,
+            x,
+            y,
+            dt * this.speed / 1000,
+            true,
+            directToTarget,
+        )
+
+        this.syncFlip();
+
+        return distanceLeft;
     }
 
     pay() {
@@ -168,14 +208,21 @@ export class Char {
         this.setState(CharStateKey.SURRENDER);
     }
 
+    becomeEaten() {
+        audioManager.playSound(SOUND_KEY.TORN);
+        this.toBones();
+    }
+
     toBones() {
         this.setState(CharStateKey.BONES);
     }
 
-    setAnimation(key: CharAnimation) {
+    setAnimation(key: CharAnimation, loop?: boolean, onComplete?: () => void) {
         render.changeAnimation({
             entityId: this.id,
-            animationName: key
+            animationName: key,
+            loop,
+            onComplete
         })
     }
 
@@ -193,12 +240,20 @@ export class Char {
         this.setState(CharStateKey.PRISONER);
     }
 
-    kill() {
+    getKilled() {
         this.setState(CharStateKey.DEAD);
     }
 
     goAcrossBridge() {
         this.setState(CharStateKey.GO_ACROSS);
+    }
+
+    startFighting() {
+        if (!this.isCombatant) {
+            this.setState(CharStateKey.SURRENDER);
+        } else {
+            this.setState(CharStateKey.FIGHTING_IDLE);
+        }
     }
 
     syncFlip() {
@@ -212,5 +267,45 @@ export class Char {
 
     clearText() {
         this.speakText.hideText();
+    }
+
+    rollDmg() {
+        return this.dmg + rndBetween(1, 5);
+    }
+
+    getHit(dmg: number) {
+        audioManager.playSound(SOUND_KEY.HIT);
+        particleManager.createHitBurst(this.id + '_emitter', this.container.x, this.container.y);
+
+        this.hp = Math.max(0, this.hp - dmg);
+        if (this.state.key === CharStateKey.SURRENDER && this.hp <= 0) {
+            this.getKilled()
+        }
+    }
+
+    startAttack() {
+        if (trollManager.hp > 0) {
+            this.setState(CharStateKey.FIGHTING_ATTACK);
+        } else {
+            this.endAttack();
+        }
+    }
+
+    endAttack() {
+        this.onAttackEnd();
+        this.setState(CharStateKey.FIGHTING_IDLE);
+    }
+
+    attackPromise = new Promise(() => {})
+    onAttackEnd: any = () => {}
+
+    async performBattleAction() {
+        await pause(300)
+
+        this.attackPromise = new Promise(res => this.onAttackEnd = res)
+
+        this.startAttack();
+
+        return this.attackPromise;
     }
 }

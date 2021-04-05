@@ -27,7 +27,9 @@ class BridgeManager {
         container.buttonMode = true;
         container.addListener('click', () => trollManager.goToBridge())
 
-        eventBus.on(Evt.ENCOUNTER_ENDED, () => this.enableInterface())
+        // eventBus.on(Evt.ENCOUNTER_ENDED, () => {
+        //     if (trollManager.location !== TrollLocation.BRIDGE) this.enableInterface()
+        // })
         eventBus.on(Evt.ENCOUNTER_STARTED, () => this.disableInterface())
         eventBus.on(Evt.TROLL_LOCATION_CHANGED, l => this.onTrollLocationChanged(l))
     }

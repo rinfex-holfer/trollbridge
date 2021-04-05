@@ -1,7 +1,7 @@
 import {rnd} from "../utils/utils-math";
 import {EncounterDanger, TrollLocation} from "../types";
 import {eventBus, Evt} from "../event-bus";
-import {charManager} from "./characters";
+import {characters} from "./characters";
 import {Container} from "../type-aliases";
 import {render} from "./render";
 import {BasicButton} from "../interface/basic/basic-button";
@@ -9,6 +9,7 @@ import {colors, zLayers} from "../constants";
 import {SimpleButton} from "../interface/basic/simple-button";
 import {positioner} from "./positioner";
 import {trollManager} from "./troll-manager";
+import {battleManager} from "./battle";
 
 export const enum NegotiationsState {
     START = 'START',
@@ -70,7 +71,7 @@ export class Negotiations {
     onTrollLocationChange(location: TrollLocation) {
         if (
             location === TrollLocation.BRIDGE &&
-            charManager.getNewTravellers().length
+            characters.getNewTravellers().length
         ) {
             this.startEncounter();
         }
@@ -78,14 +79,14 @@ export class Negotiations {
 
     startEncounter() {
         eventBus.emit(Evt.ENCOUNTER_STARTED);
-        charManager.travellersGoToTalk();
+        characters.travellersGoToTalk();
     }
 
     onTravellerReadyToTalk(id: string) {
         this.travellersReadyToTalk.push(id);
-        if (this.travellersReadyToTalk.length === charManager.getTravellers().length) {
+        if (this.travellersReadyToTalk.length === characters.getTravellers().length) {
             this.travellersReadyToTalk = [];
-            this.startNegotiations(charManager.getDangerKey());
+            this.startNegotiations(characters.getDangerKey());
         }
     }
 
@@ -99,24 +100,24 @@ export class Negotiations {
     onStateChange(travellersReaction: string = '') {
         switch (this.currentStateKey) {
             case NegotiationsState.START:
-                charManager.stopAllTravellers();
+                characters.stopAllTravellers();
                 break;
             case NegotiationsState.ALL_GIVEN:
-                charManager.makeAllTravellersGiveAll();
+                characters.makeAllTravellersGiveAll();
                 break;
             case NegotiationsState.PAYMENT_GIVEN:
-                charManager.makeAllTravellersPay();
+                characters.makeAllTravellersPay();
                 break;
             case NegotiationsState.BATTLE:
-                charManager.battle();
+                battleManager.startBattle()
                 break;
             case NegotiationsState.END:
                 eventBus.emit(Evt.ENCOUNTER_ENDED);
-                charManager.letAllTravellersPass();
+                characters.letAllTravellersPass();
                 this.onEnd()
                 break;
         }
-        charManager.travellersSpeak(travellersReaction);
+        characters.travellersSpeak(travellersReaction);
         this.updateDialogButtons();
     }
 

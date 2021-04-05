@@ -96,7 +96,7 @@ class RenderManager {
 
     changeAnimation(
         options:
-        {entityId: string, animationName: string, time?: number, onLoop?: () => void}
+        {entityId: string, animationName: string, time?: number, onLoop?: () => void, onComplete?: () => void, loop?: boolean}
     ) {
         const oldAnimation = this.getCurrentAnimation(options.entityId);
         const newAnimation = this.getAnimation(options.entityId, options.animationName);
@@ -114,6 +114,10 @@ class RenderManager {
             newAnimation.interactive = oldAnimation.interactive;
         }
 
+        if (options.loop === false) {
+            newAnimation.loop = false;
+        }
+
         newAnimation.gotoAndPlay(0);
         newAnimation.renderable = true;
 
@@ -123,9 +127,8 @@ class RenderManager {
             newAnimation.animationSpeed = ceilTo(oneFrameDuration / oneFrameDurationShouldBe, 2);
         }
 
-        if (options.onLoop) {
-            newAnimation.onLoop = options.onLoop;
-        }
+        if (options.onLoop) newAnimation.onLoop = options.onLoop
+        if (options.onComplete) newAnimation.onComplete = options.onComplete;
     }
 
     hideAnimation(entityId: string) {
@@ -199,15 +202,21 @@ class RenderManager {
     }
 
     createContainer(entityId: string, parentId?: string): PIXI.Container {
-        const container = new PIXI.Container();
 
         let parent = this.pixiApp.stage;
         if (parentId) {
             parent = this.getContainer(parentId);
         }
 
-        parent.addChild(container);
+        const container = this.createContainerNew(parent);
+
         this.setContainer(entityId, container);
+        return container;
+    }
+
+    createContainerNew(parent?: PIXI.Container): PIXI.Container {
+        const container = new PIXI.Container();
+        (parent || this.pixiApp.stage).addChild(container);
         return container;
     }
 
@@ -262,27 +271,30 @@ class RenderManager {
         const TILE_WIDTH = texture.width;
         const TILE_HEIGHT = texture.height;
 
-        const tiles = new PIXI.Container();
+
+
+        const tiles = new PIXI.TilingSprite(texture, width, height);
         tiles.position.set(x, y);
 
-        for (let col = 0; col < Math.ceil(width / TILE_WIDTH); col++) {
-            for (let row = 0; row < Math.ceil(height / TILE_HEIGHT); row++) {
-                this.createSprite({
-                    entityId: createId(entityId+'_tile'),
-                    path: getRndItem(paths),
-                    x: col * TILE_WIDTH,
-                    y: row * TILE_HEIGHT,
-                    container: tiles,
-                    anchor: {x: 0, y: 0}
-                });
-            }
-        }
+
+        // for (let col = 0; col < Math.ceil(width / TILE_WIDTH); col++) {
+        //     for (let row = 0; row < Math.ceil(height / TILE_HEIGHT); row++) {
+        //         this.createSprite({
+        //             entityId: createId(entityId+'_tile'),
+        //             path: getRndItem(paths),
+        //             x: col * TILE_WIDTH,
+        //             y: row * TILE_HEIGHT,
+        //             container: tiles,
+        //             anchor: {x: 0, y: 0}
+        //         });
+        //     }
+        // }
 
         (container || this.pixiApp.stage).addChild(tiles);
-
-        if (cacheAsBitmap) {
-            tiles.cacheAsBitmap = true;
-        }
+        //
+        // if (cacheAsBitmap) {
+        //     tiles.cacheAsBitmap = true;
+        // }
 
         return tiles;
     };

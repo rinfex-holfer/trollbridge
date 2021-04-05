@@ -22,26 +22,26 @@ export const encounterTemplates: {[dangerLevel: number]: EncounterTemplate[]} = 
             level: 1,
             enemies: [CharKey.MILITIA, CharKey.MILITIA],
         },
-        {
-            text: 'Отряд ополчения',
-            level: 2,
-            enemies: [CharKey.MILITIA, CharKey.MILITIA, CharKey.MILITIA, CharKey.MILITIA, CharKey.MILITIA],
-        },
-        {
-            text: 'Отряд солдат',
-            level: 2,
-            enemies: [CharKey.SOLDIER, CharKey.SOLDIER, CharKey.SOLDIER],
-        },
-        {
-            text: 'Рыцарь с оруженосцем',
-            level: 3,
-            enemies: [CharKey.SOLDIER, CharKey.KNIGHT],
-        },
-        {
-            text: 'Отряд Его Величества',
-            level: 4,
-            enemies: [CharKey.SOLDIER, CharKey.KNIGHT, CharKey.SOLDIER, CharKey.KNIGHT, CharKey.SOLDIER],
-        },
+        // {
+        //     text: 'Отряд ополчения',
+        //     level: 2,
+        //     enemies: [CharKey.MILITIA, CharKey.MILITIA, CharKey.MILITIA, CharKey.MILITIA, CharKey.MILITIA],
+        // },
+        // {
+        //     text: 'Отряд солдат',
+        //     level: 2,
+        //     enemies: [CharKey.SOLDIER, CharKey.SOLDIER, CharKey.SOLDIER],
+        // },
+        // {
+        //     text: 'Рыцарь с оруженосцем',
+        //     level: 3,
+        //     enemies: [CharKey.SOLDIER, CharKey.KNIGHT],
+        // },
+        // {
+        //     text: 'Отряд Его Величества',
+        //     level: 4,
+        //     enemies: [CharKey.SOLDIER, CharKey.KNIGHT, CharKey.SOLDIER, CharKey.KNIGHT, CharKey.SOLDIER],
+        // },
         // {
         //     level: 0,
         //     enemies: [CharKey.FARMER_WOMEN, CharKey.CHILD],

@@ -1,5 +1,5 @@
 import {getGameSize} from "../utils/utils-misc";
-import {charManager} from "./characters";
+import {characters} from "./characters";
 
 export const positioner = {
     negotiationX() {
@@ -13,7 +13,7 @@ export const positioner = {
             x: 0,
             y: gameSize.height / 6,
             width: gameSize.width,
-            height: gameSize.height / 3,
+            height: gameSize.height / 2,
         }
     },
 
@@ -37,7 +37,7 @@ export const positioner = {
 
     getPrisonerPosition() {
         const pos = positioner.getLairPosition();
-        const prisonersAmount = charManager.getPrisoners().length
+        const prisonersAmount = characters.getPrisoners().length
         return {
             x: pos.x + pos.width / 2 + prisonersAmount * 50,
             y: pos.y + pos.height * 0.5

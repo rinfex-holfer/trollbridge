@@ -22,6 +22,8 @@ export const resoursePaths = {
         button_make_food: `${imagesUrl}/makeFood_0.png`,
         button_feed: `${imagesUrl}/makeFood.png`,
         empty_sprite: `${imagesUrl}/tile_empty.png`,
+        particle_hit: `${imagesUrl}/particle_hit.png`,
+        particle_smoke: `${imagesUrl}/particle_smoke.png`,
     },
 
     atlases: {
@@ -34,7 +36,9 @@ export const resoursePaths = {
     },
 
     sounds: {
-        hit: `${audioUrl}/hit.wav`,
+        hitByTroll: `${audioUrl}/hit.wav`,
+        block: `${audioUrl}/block.wav`,
+        torn: `${audioUrl}/torn.wav`,
     },
 
     music: {

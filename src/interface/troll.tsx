@@ -16,7 +16,7 @@ export const Troll = () => {
         const sub = eventBus.on(Evt.TROLL_STATS_CHANGED, () => {
             setStats({
                 level: gameState.troll.level,
-                hp: gameState.troll.hp,
+                hp: trollManager.hp,
                 hunger: gameState.troll.hunger,
             })
         })

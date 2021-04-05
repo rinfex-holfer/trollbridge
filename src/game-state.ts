@@ -8,7 +8,7 @@ export const gameState = {
 
     troll: {
         level: 1,
-        hp: gameConstants.MAX_HP[1],
+        hp: gameConstants.MAX_TROLL_HP[1],
         hunger: 0,
         location: 'lair' as 'lair' | 'bridge',
     },

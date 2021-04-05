@@ -6,12 +6,26 @@ export const gameConstants = {
     MAX_HUNGER: 10,
     HUNGER_PER_TIME: 1,
     HP_MINUS_WHEN_HUNGRY: 1,
-    MAX_HP: {
+    MAX_TROLL_HP: {
         1: 10,
         2: 13,
         3: 16,
         4: 20,
         5: 25,
+    } as {[key: number]: number},
+    TROLL_ARMOR: {
+        1: 1,
+        2: 2,
+        3: 3,
+        4: 4,
+        5: 5,
+    } as {[key: number]: number},
+    TROLL_DMG: {
+        1: 1,
+        2: 2,
+        3: 3,
+        4: 4,
+        5: 5,
     } as {[key: number]: number},
 
     CHAR_SPEED: 100,
@@ -20,7 +34,7 @@ export const gameConstants = {
 }
 
 export const zLayers = {
-    PARTICLES: 50,
+    PARTICLES: 1050,
     GAME_OBJECTS_MIN: 100,
     LAIR_OBJECTS: 200,
     CHAR_MENU: 1300,

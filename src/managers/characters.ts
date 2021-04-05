@@ -70,6 +70,16 @@ class Characters {
         }
     }
 
+    charEaten(id: string) {
+        const idx = this.chars.findIndex(t => t.id === id)
+        if (idx === undefined) {
+            console.error('no char with id ' + id)
+            return;
+        }
+
+        this.chars[idx].becomeEaten();
+    }
+
     charToBones(id: string) {
         const idx = this.chars.findIndex(t => t.id === id)
         if (idx === undefined) {
@@ -96,14 +106,15 @@ class Characters {
 
         const bridgePos = positioner.bridgePosition()
         const margin = 75;
-        const topY = bridgePos.y + bridgePos.height - (keys.length * margin) / 2
+        let y = bridgePos.y + bridgePos.height / 2 - ((keys.length - 1) * margin) / 2
 
         keys.forEach((key, i) => {
             const char = new Char(
                 key,
                 bridgePos.x + bridgePos.width - 50,
-                topY + i * margin
+                y
             );
+            y += margin;
             char.goAcrossBridge();
             this.chars.push(char);
         })
@@ -138,6 +149,10 @@ class Characters {
         return this.chars.filter(c => c.isAlive && !c.isPrisoner)
     }
 
+    getFighters() {
+        return this.getTravellers().filter(c => !c.isSurrender)
+    }
+
     getPrisoners() {
         return this.chars.filter(c => c.isAlive && c.isPrisoner);
     }
@@ -158,6 +173,10 @@ class Characters {
     letAllTravellersPass() {
         this.getTravellers().forEach(t => t.goAcrossBridge());
         this.dangerIndicator.clearDanger();
+    }
+
+    startFighting() {
+        this.getTravellers().forEach(t => t.startFighting());
     }
 
     makeAllTravellersPay() {
@@ -188,7 +207,7 @@ class Characters {
         let char = this.chars.find(t => t.id === id);
         if (!char) throw Error('wtf');
 
-        char.kill();
+        char.getKilled();
     }
 
     feedChar(id: string) {
@@ -198,42 +217,23 @@ class Characters {
         char.eat();
     }
 
-    battle() {
-        let damage = 0;
-        const dangerKey = this.getDangerKey();
-        switch (dangerKey) {
-            case EncounterDanger.NONE:
-                break;
-            case EncounterDanger.LOW:
-                damage = rndBetween(0, 2);
-                break;
-            case EncounterDanger.MEDIUM:
-                damage = rndBetween(2, gameConstants.MAX_HP[gameState.troll.level] * 0.33)
-                break;
-            case EncounterDanger.HIGH:
-                damage = rndBetween(2, gameConstants.MAX_HP[gameState.troll.level] * 0.66)
-                break;
-            case EncounterDanger.VERY_HIGH:
-                damage = rndBetween(2, gameConstants.MAX_HP[gameState.troll.level] * 0.99)
-                break;
-            case EncounterDanger.IMPOSSIBLE:
-                damage = gameConstants.MAX_HP[gameState.troll.level];
-                break;
-        }
+    hitChar(id: string, dmg: number) {
+        let char = this.getTravellers().find(t => t.id === id);
+        if (!char) throw Error('wtf');
 
-        if (damage > 0) trollManager.changeTrollHp(-damage, 'battle');
+        char.getHit(dmg);
+    }
 
-        if (gameState.gameover) return;
+    disableActionMenuForAll() {
+        this.chars.forEach(f => f.disableActionsMenu())
+    }
 
-        this.allSurrender();
-
-        eventBus.emit(Evt.ENCOUNTER_ENDED);
-        // this.makeAllTravellersGiveAll();
-        // this.clearTravellers();
+    enableActionMenuForAll() {
+        this.chars.forEach(f => f.enableActionsMenu())
     }
 }
 
-export const charManager = new Characters();
+export const characters = new Characters();
 
 // @ts-ignore
-window.charManager = charManager;
+window.characters = characters;

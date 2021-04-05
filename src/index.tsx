@@ -10,10 +10,13 @@ import {resoursePaths} from "./resourse-paths";
 import {trollManager} from "./managers/troll-manager";
 import {lair} from "./managers/lair";
 import {bridgeManager} from "./managers/bridge-manager";
-import {charManager} from "./managers/characters";
+import {characters} from "./managers/characters";
 import {negotiations} from "./managers/negotiations";
 import translations from "./translations";
 import {Environment} from "./managers/environment";
+import {audioManager} from "./managers/audio";
+import {particleManager} from "./managers/particles";
+import {getGameSize} from "./utils/utils-misc";
 negotiations;
 translations;
 
@@ -50,7 +53,8 @@ new Promise(res => {
     const update = (lag: number) => {
         const dt = (1000 / 60) + lag;
 
-        charManager.update(dt);
+        characters.update(dt);
+        particleManager.update(dt);
 
         // @ts-ignore
         // PIXI.tweenManager.update(dt);
@@ -58,10 +62,13 @@ new Promise(res => {
 
     new Environment()
 
+    audioManager.createSounds()
+    // audioManager.setSoundVolume(50)
+
     render.init(update);
 
     bridgeManager.init()
     lair.init()
     trollManager.initTroll()
-    charManager.init();
+    characters.init();
 })

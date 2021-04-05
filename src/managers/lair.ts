@@ -5,7 +5,7 @@ import {trollManager} from "./troll-manager";
 import {FoodStorage} from "./food-storage";
 import {ResourceKey, Resources} from "../types";
 import {eventBus, Evt} from "../event-bus";
-import {charManager} from "./characters";
+import {characters} from "./characters";
 import {WaitButton} from "../interface/wait-button";
 import {Container} from "../type-aliases";
 import {positioner} from "./positioner";
@@ -74,13 +74,13 @@ class Lair {
             return;
         }
         this.changeResource(ResourceKey.FOOD, -1);
-        charManager.feedChar(id);
+        characters.feedChar(id);
     }
 
     makeFoodFrom(id: string) {
         this.changeResource(ResourceKey.FOOD, 3);
-        charManager.makeCharGiveAll(id);
-        charManager.removeChar(id);
+        characters.makeCharGiveAll(id);
+        characters.removeChar(id);
     }
 
 
