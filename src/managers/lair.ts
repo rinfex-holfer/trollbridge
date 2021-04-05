@@ -5,9 +5,10 @@ import {trollManager} from "./troll-manager";
 import {FoodStorage} from "./food-storage";
 import {ResourceKey, Resources} from "../types";
 import {eventBus, Evt} from "../event-bus";
-import {charManager} from "./char-manager";
+import {charManager} from "./characters";
 import {WaitButton} from "../interface/wait-button";
 import {Container} from "../type-aliases";
+import {positioner} from "./positioner";
 
 class Lair {
     static CONTAINER_ID = 'lair'
@@ -31,18 +32,18 @@ class Lair {
 
         render.createTiles({
             paths: [resoursePaths.images.grass],
-            ...this.getLairPosition(),
+            ...positioner.getLairPosition(),
             container,
             entityId: Lair.CONTAINER_ID + '_tiles'
         })
 
         container.interactive = true;
         container.buttonMode = true;
-        container.addListener('click', trollManager.goToLair)
+        container.addListener('click', () => trollManager.goToLair())
 
-        this.foodStorage.init(this.getFoodStoragePosition());
+        this.foodStorage.init(positioner.getFoodStoragePosition());
 
-        this.waitButton = new WaitButton(this.getLairPosition())
+        this.waitButton = new WaitButton(positioner.getLairPosition())
 
         eventBus.on(Evt.ENCOUNTER_ENDED, () => this.enableInterface())
         eventBus.on(Evt.ENCOUNTER_STARTED, () => this.disableInterface())
@@ -67,16 +68,6 @@ class Lair {
         eventBus.emit(Evt.RESOURSES_CHANGED)
     }
 
-    getLairPosition() {
-        const gameSize = getGameSize();
-        return {
-            width: gameSize.width,
-            height: gameSize.height / 2,
-            x: 0,
-            y: gameSize.height / 2,
-        }
-    }
-
     feedChar(id: string) {
         if (this.resources.food === 0) {
             console.error('no food to feed', id)
@@ -92,22 +83,7 @@ class Lair {
         charManager.removeChar(id);
     }
 
-    getFoodStoragePosition() {
-        const pos = this.getLairPosition();
-        return {
-            x: pos.x + 50,
-            y: pos.y + pos.height * 3 / 4
-        }
-    }
 
-    getPrisonerPosition() {
-        const pos = this.getLairPosition();
-        const prisonersAmount = charManager.getPrisoners().length
-        return {
-            x: pos.x + pos.width / 2 + prisonersAmount * 50,
-            y: pos.y + pos.height * 0.5
-        }
-    }
 }
 
 export const lair = new Lair();

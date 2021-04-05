@@ -3,6 +3,7 @@ import {CharAnimation, CharStateKey} from "../char-constants";
 import {CharAction} from "../../interface/char-actions-menu";
 import {render} from "../../managers/render";
 import {lair} from "../../managers/lair";
+import {positioner} from "../../managers/positioner";
 
 export class CharStatePrisoner extends CharState {
     key = CharStateKey.PRISONER
@@ -10,7 +11,7 @@ export class CharStatePrisoner extends CharState {
     onStart(): Promise<any> {
         this.char.isPrisoner = true;
         this.char.setAnimation(CharAnimation.PRISONER);
-        const pos = lair.getPrisonerPosition()
+        const pos = positioner.getPrisonerPosition()
         render.move(this.char.id, pos.x, pos.y);
         this.char.actionsMenu.changeActiveButtons([
             CharAction.RELEASE,

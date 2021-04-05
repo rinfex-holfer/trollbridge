@@ -1,6 +1,7 @@
 export const enum CharStateKey {
     IDLE = 'IDLE',
     GO_ACROSS = 'GO_ACROSS',
+    GO_TO_TALK = 'GO_TO_TALK',
     SURRENDER = 'SURRENDER',
     PRISONER = 'PRISONER',
     DEAD = 'DEAD',

@@ -16,9 +16,11 @@ export const enum Evt {
     RESOURSES_CHANGED = 'RESOURSES_CHANGED',
     NEGOTIATION_STARTED = 'NEGOTIATION_STARTED',
 
+    TRAVELLERS_APPEAR = 'TRAVELLERS_APPEAR',
     ENCOUNTER_ENDED = 'ENCOUNTER_ENDED',
     ENCOUNTER_STARTED = 'ENCOUNTER_STARTED',
     CHAR_LEFT_BRIDGE = 'CHAR_LEFT_BRIDGE',
+    CHAR_READY_TO_TALK = 'CHAR_READY_TO_TALK',
 }
 
 export type EvtData = {
@@ -32,9 +34,11 @@ export type EvtData = {
     [Evt.RESOURSES_CHANGED]: undefined,
     [Evt.NEGOTIATION_STARTED]: undefined,
     [Evt.TROLL_LOCATION_CHANGED]: TrollLocation,
+    [Evt.TRAVELLERS_APPEAR]: undefined,
     [Evt.ENCOUNTER_ENDED]: undefined,
     [Evt.ENCOUNTER_STARTED]: undefined,
     [Evt.CHAR_LEFT_BRIDGE]: string,
+    [Evt.CHAR_READY_TO_TALK]: string,
 }
 
 type Subscribers = {

@@ -10,9 +10,10 @@ import {resoursePaths} from "./resourse-paths";
 import {trollManager} from "./managers/troll-manager";
 import {lair} from "./managers/lair";
 import {bridgeManager} from "./managers/bridge-manager";
-import {charManager} from "./managers/char-manager";
+import {charManager} from "./managers/characters";
 import {negotiations} from "./managers/negotiations";
 import translations from "./translations";
+import {Environment} from "./managers/environment";
 negotiations;
 translations;
 
@@ -54,6 +55,8 @@ new Promise(res => {
         // @ts-ignore
         // PIXI.tweenManager.update(dt);
     }
+
+    new Environment()
 
     render.init(update);
 

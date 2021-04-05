@@ -8,6 +8,7 @@ export enum CursorType {
 
 export const resoursePaths = {
     images: {
+        background: `${imagesUrl}/bg.png`,
         cursor_default: `${imagesUrl}/cursor_default.png`,
         floor: `${imagesUrl}/floor.png`,
         grass: `${imagesUrl}/tile_grass.png`,

@@ -1,7 +1,7 @@
 import {SimpleButton} from "./basic/simple-button";
 import {timeManager} from "../managers/time-manager";
 import i18next from "i18next";
-import {charManager} from "../managers/char-manager";
+import {charManager} from "../managers/characters";
 import {Vec} from "../utils/utils-math";
 
 export class WaitButton {

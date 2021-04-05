@@ -1,13 +1,14 @@
 import {rnd} from "../utils/utils-math";
 import {EncounterDanger, TrollLocation} from "../types";
 import {eventBus, Evt} from "../event-bus";
-import {charManager} from "./char-manager";
+import {charManager} from "./characters";
 import {Container} from "../type-aliases";
 import {render} from "./render";
-import {bridgeManager} from "./bridge-manager";
 import {BasicButton} from "../interface/basic/basic-button";
 import {colors, zLayers} from "../constants";
 import {SimpleButton} from "../interface/basic/simple-button";
+import {positioner} from "./positioner";
+import {trollManager} from "./troll-manager";
 
 export const enum NegotiationsState {
     START = 'START',
@@ -39,14 +40,53 @@ export class Negotiations {
     containerId = 'negotiations-container'
     container: Container
     buttons: BasicButton[] = []
+    travellersReadyToTalk = [] as string[];
 
     constructor() {
         eventBus.on(Evt.TROLL_LOCATION_CHANGED, (str) => this.onTrollLocationChange(str));
+        eventBus.on(Evt.CHAR_READY_TO_TALK, id => this.onTravellerReadyToTalk(id));
+        eventBus.on(Evt.TRAVELLERS_APPEAR, () => this.onTravellersAppear());
 
         this.container = render.createContainer(this.containerId)
         this.container.zIndex = zLayers.CHAR_MENU;
-        const bridgePos = bridgeManager.getBridgePosition();
-        render.move(this.containerId, bridgePos.x + bridgePos.width / 2, bridgePos.height)
+        const bridgePos = positioner.bridgePosition();
+        // @ts-ignore
+        window.bridgePosition = positioner.bridgePosition;
+        console.log(this.container, this.container.y, bridgePos.y, bridgePos.height);
+        render.move(
+            this.containerId,
+            bridgePos.x + bridgePos.width / 2,
+            bridgePos.y  + bridgePos.height + 64
+        )
+        console.log(this.container, this.container.y);
+    }
+
+    onTravellersAppear() {
+        if (trollManager.location === TrollLocation.BRIDGE) {
+            this.startEncounter();
+        }
+    }
+
+    onTrollLocationChange(location: TrollLocation) {
+        if (
+            location === TrollLocation.BRIDGE &&
+            charManager.getNewTravellers().length
+        ) {
+            this.startEncounter();
+        }
+    }
+
+    startEncounter() {
+        eventBus.emit(Evt.ENCOUNTER_STARTED);
+        charManager.travellersGoToTalk();
+    }
+
+    onTravellerReadyToTalk(id: string) {
+        this.travellersReadyToTalk.push(id);
+        if (this.travellersReadyToTalk.length === charManager.getTravellers().length) {
+            this.travellersReadyToTalk = [];
+            this.startNegotiations(charManager.getDangerKey());
+        }
     }
 
     startNegotiations(danger: EncounterDanger) {
@@ -56,19 +96,9 @@ export class Negotiations {
         this.onStateChange()
     }
 
-    onTrollLocationChange(location: TrollLocation) {
-        if (
-            location === TrollLocation.BRIDGE &&
-            charManager.getNewTravellers().length
-        ) {
-            this.startNegotiations(charManager.getDangerKey());
-        }
-    }
-
     onStateChange(travellersReaction: string = '') {
         switch (this.currentStateKey) {
             case NegotiationsState.START:
-                eventBus.emit(Evt.ENCOUNTER_STARTED);
                 charManager.stopAllTravellers();
                 break;
             case NegotiationsState.ALL_GIVEN:
@@ -125,6 +155,8 @@ export class Negotiations {
 
             return b;
         })
+
+        console.log(this.container, this.container.y);
     }
 
     getDialogVariants(): NegotiationsMessage[] {

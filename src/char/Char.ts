@@ -15,6 +15,9 @@ import {resoursePaths} from "../resourse-paths";
 import {CharStatePrisoner} from "./states/CharStatePrisoner";
 import {Container} from "../type-aliases";
 import {CharSpeakText} from "../interface/char-speak-text";
+import {eventBus, Evt} from "../event-bus";
+import {CharStateGoToTalk} from "./states/CharStateGoToTalk";
+import {gameConstants} from "../constants";
 
 export class Char {
     key: CharKey
@@ -23,7 +26,7 @@ export class Char {
     name: string
     isCombatant: boolean
 
-    speed: number = 100
+    speed = gameConstants.CHAR_SPEED
     resources: Resources
     isUnconscious = false
     isAlive = true
@@ -85,6 +88,8 @@ export class Char {
                 return new CharStateBones(this);
             case CharStateKey.PRISONER:
                 return new CharStatePrisoner(this);
+            case CharStateKey.GO_TO_TALK:
+                return new CharStateGoToTalk(this);
             default:
                 throw Error('wrong state key ' + stateKey);
         }
@@ -125,7 +130,8 @@ export class Char {
             visible: false,
             x: 0,
             y: 0,
-            container
+            container,
+            anchor: {x: 0.5, y: 0.5}
         })
     }
 
@@ -173,9 +179,14 @@ export class Char {
         })
     }
 
-    startNegotiation() {
+    goToTalk() {
+        this.setState(CharStateKey.GO_TO_TALK);
+    }
+
+    readyToTalk() {
         this.isMetTroll = true;
         this.setState(CharStateKey.IDLE);
+        eventBus.emit(Evt.CHAR_READY_TO_TALK, this.id);
     }
 
     makeImprisoned() {

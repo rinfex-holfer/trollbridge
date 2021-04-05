@@ -4,19 +4,21 @@ import {eventBus, Evt} from "../event-bus";
 import {render} from "./render";
 import {resoursePaths} from "../resourse-paths";
 import {lair} from "./lair";
-import {bridgeManager} from "./bridge-manager";
 import {TrollLocation} from "../types";
-import {charManager} from "./char-manager";
+import {charManager} from "./characters";
+import {positioner} from "./positioner";
 
 eventBus.on(Evt.TIME_PASSED, () => trollManager.increaseHunger());
 
 class TrollManager {
-    static CONTAINER_ID = 'troll'
+    containerId = 'troll'
+
+    location: TrollLocation = TrollLocation.LAIR
 
     initTroll() {
-        const pos = lair.getLairPosition();
+        const pos = positioner.getLairPosition();
         render.createAnimation({
-            entityId: TrollManager.CONTAINER_ID,
+            entityId: this.containerId,
             path: resoursePaths.atlases.troll,
             x: pos.x + pos.width / 2,
             y: pos.y + pos.height / 2,
@@ -56,24 +58,24 @@ class TrollManager {
     }
 
     goToBridge() {
-        if (gameState.troll.location === 'bridge') return;
+        if (this.location === TrollLocation.BRIDGE) return;
 
-        gameState.troll.location = 'bridge';
+        this.location = TrollLocation.BRIDGE;
 
-        const bridgePos = bridgeManager.getBridgePosition();
-        render.getContainer(TrollManager.CONTAINER_ID).x = bridgePos.x + bridgePos.width / 2
-        render.getContainer(TrollManager.CONTAINER_ID).y = bridgePos.y + bridgePos.height / 2
+        const bridgePos = positioner.bridgePosition();
+        render.getContainer(this.containerId).x = bridgePos.x + bridgePos.width / 2
+        render.getContainer(this.containerId).y = bridgePos.y + bridgePos.height / 2
 
         eventBus.emit(Evt.TROLL_LOCATION_CHANGED, TrollLocation.BRIDGE);
     }
 
     goToLair() {
-        if (gameState.troll.location === 'lair') return;
-        gameState.troll.location = 'lair';
+        if (this.location === TrollLocation.LAIR) return;
+        this.location = TrollLocation.LAIR;
 
-        const lairPos = lair.getLairPosition();
-        render.getContainer(TrollManager.CONTAINER_ID).x = lairPos.x + lairPos.width / 2
-        render.getContainer(TrollManager.CONTAINER_ID).y = lairPos.y + lairPos.height / 2
+        const lairPos = positioner.getLairPosition();
+        render.getContainer(this.containerId).x = lairPos.x + lairPos.width / 2
+        render.getContainer(this.containerId).y = lairPos.y + lairPos.height / 2
 
         eventBus.emit(Evt.TROLL_LOCATION_CHANGED, TrollLocation.LAIR);
     }

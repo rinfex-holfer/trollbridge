@@ -13,14 +13,18 @@ export const gameConstants = {
         4: 20,
         5: 25,
     } as {[key: number]: number},
+
+    CHAR_SPEED: 100,
+    CHAR_FAST: 150,
+    CHAR_VERY_FAST: 250,
 }
 
 export const zLayers = {
     PARTICLES: 50,
     GAME_OBJECTS_MIN: 100,
     LAIR_OBJECTS: 200,
-    CHAR_MENU: 300,
-    DIALOG_OPTIONS: 400,
+    CHAR_MENU: 1300,
+    DIALOG_OPTIONS: 1400,
 }
 
 export const colors = {

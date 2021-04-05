@@ -1,5 +1,5 @@
 import {resoursePaths} from "../resourse-paths";
-import {charManager} from "../managers/char-manager";
+import {charManager} from "../managers/characters";
 import {lair} from "../managers/lair";
 import {ResourceKey} from "../types";
 import {render} from "../managers/render";
@@ -58,7 +58,7 @@ export class CharActionsMenu {
         const buttonsContainer = render.createContainer(this.containerId, this.charId);
         this.container = buttonsContainer;
 
-        render.move(this.containerId, 0, -100);
+        render.move(this.containerId, 0, -50);
 
         this.text = render.createText('', 0, -BUTTON_WIDTH/2, {fill: colors.WHITE}, this.container)
         this.text.anchor.set(0.5);

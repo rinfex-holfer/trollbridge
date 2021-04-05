@@ -8,8 +8,9 @@ import {Char} from "../char/Char";
 import {eventBus, Evt} from "../event-bus";
 import {encounterTemplates} from "../encounter-templates";
 import {DangerIndicator} from "../interface/danger-indicator";
+import {positioner} from "./positioner";
 
-class CharManager {
+class Characters {
     chars: Char[] = []
 
     encounterLevel: number = 0;
@@ -29,7 +30,7 @@ class CharManager {
     }
 
     init() {
-        const bridgePos = bridgeManager.getBridgePosition();
+        const bridgePos = positioner.bridgePosition();
         const x = bridgePos.x + bridgePos.width;
         const y = 0;
         this.dangerIndicator = new DangerIndicator(x, y)
@@ -92,16 +93,21 @@ class CharManager {
 
     createTravellers(keys: CharKey[], travellersLevel: number) {
         this.encounterLevel = travellersLevel;
+
+        const bridgePos = positioner.bridgePosition()
+        const margin = 75;
+        const topY = bridgePos.y + bridgePos.height - (keys.length * margin) / 2
+
         keys.forEach((key, i) => {
-            const bridgePos = bridgeManager.getBridgePosition()
             const char = new Char(
                 key,
                 bridgePos.x + bridgePos.width - 50,
-                bridgePos.y + 150 + i * 50
+                topY + i * margin
             );
             char.goAcrossBridge();
             this.chars.push(char);
         })
+        eventBus.emit(Evt.TRAVELLERS_APPEAR);
     }
 
     removeTravellers() {
@@ -136,8 +142,13 @@ class CharManager {
         return this.chars.filter(c => c.isAlive && c.isPrisoner);
     }
 
+    travellersGoToTalk() {
+        this.getNewTravellers().forEach(t => t.goToTalk());
+    }
+
+
     stopAllTravellers() {
-        this.getNewTravellers().forEach(t => t.startNegotiation());
+        // this.getNewTravellers().forEach(t => t.startNegotiation());
     }
 
     allSurrender() {
@@ -222,7 +233,7 @@ class CharManager {
     }
 }
 
-export const charManager = new CharManager();
+export const charManager = new Characters();
 
 // @ts-ignore
 window.charManager = charManager;

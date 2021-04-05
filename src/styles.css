@@ -23,6 +23,7 @@ body {
 
 canvas {
     display: block;
+    max-width: 100%;
 }
 
 #time {

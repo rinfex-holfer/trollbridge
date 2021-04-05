@@ -3,7 +3,7 @@ import {CharAnimation, CharStateKey} from "../char-constants";
 import {CharAction} from "../../interface/char-actions-menu";
 import {render} from "../../managers/render";
 import {eventBus, Evt} from "../../event-bus";
-import {charManager} from "../../managers/char-manager";
+import {charManager} from "../../managers/characters";
 
 export class CharStateBones extends CharState {
     key = CharStateKey.BONES
@@ -30,6 +30,7 @@ export class CharStateBones extends CharState {
         render.hideAnimation(this.char.id);
         render.changeSpriteVisibility(this.char.id + '_bones', true);
         this.char.actionsMenu.changeActiveButtons([])
+        render.setInteractive(this.char.id, false);
         return Promise.resolve();
     }
 }

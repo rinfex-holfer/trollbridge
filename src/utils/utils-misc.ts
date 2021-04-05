@@ -1,5 +1,3 @@
-import {EntityKey} from "../types";
-
 let GAME_WIDTH = 0;
 let GAME_HEIGHT = 0;
 export const getGameSize = () => {

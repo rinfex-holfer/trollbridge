@@ -4,7 +4,7 @@ import {gameConstants} from "../constants";
 import {gameState} from "../game-state";
 import {eventBus, Evt} from "../event-bus";
 import {trollManager} from "./troll-manager";
-import {charManager} from "./char-manager";
+import {charManager} from "./characters";
 
 class BattleManager {
 
