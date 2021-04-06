@@ -9,11 +9,10 @@ import {trollManager} from "../../managers/troll-manager";
 export class CharStateGoToTalk extends CharState {
     key = CharStateKey.GO_TO_TALK
 
-    onStart(): Promise<any> {
+    onStart() {
         this.char.speed = gameConstants.CHAR_VERY_FAST
         this.char.setAnimation(CharAnimation.WALK);
         this.char.actionsMenu.changeActiveButtons([]);
-        return Promise.resolve();
     }
 
     update(dt: number) {
@@ -35,9 +34,8 @@ export class CharStateGoToTalk extends CharState {
         }
     }
 
-    onEnd(): Promise<any> {
+    onEnd() {
         render.directToTarget(this.char.id, render.getContainer(trollManager.containerId))
         this.char.syncFlip();
-        return Promise.resolve();
     }
 }

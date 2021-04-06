@@ -77,7 +77,7 @@ class Characters {
             return;
         }
 
-        this.chars[idx].becomeEaten();
+        this.chars[idx].becomeDevoured();
     }
 
     charToBones(id: string) {
@@ -141,21 +141,10 @@ class Characters {
         return this.getTravellers()[0].speak(text);
     }
 
-    getNewTravellers() {
-        return this.getTravellers().filter(t => !t.isMetTroll);
-    }
-
-    getTravellers() {
-        return this.chars.filter(c => c.isAlive && !c.isPrisoner)
-    }
-
-    getFighters() {
-        return this.getTravellers().filter(c => !c.isSurrender)
-    }
-
-    getPrisoners() {
-        return this.chars.filter(c => c.isAlive && c.isPrisoner);
-    }
+    getNewTravellers() { return this.chars.filter(c => c.getIsNewTraveller())}
+    getTravellers() { return this.chars.filter(c => c.getIsTraveller())}
+    getFighters() { return this.chars.filter(c => c.getIsFighter())}
+    getPrisoners() { return this.chars.filter(c => c.getIsPrisoner())}
 
     travellersGoToTalk() {
         this.getNewTravellers().forEach(t => t.goToTalk());
@@ -224,12 +213,12 @@ class Characters {
         char.getHit(dmg);
     }
 
-    disableActionMenuForAll() {
-        this.chars.forEach(f => f.disableActionsMenu())
+    disableInteractivityAll() {
+        this.chars.forEach(f => f.disableInteractivity())
     }
 
-    enableActionMenuForAll() {
-        this.chars.forEach(f => f.enableActionsMenu())
+    enableInteractivityAll() {
+        this.chars.forEach(f => f.enableInteractivity())
     }
 }
 

@@ -3,9 +3,12 @@ import {CharAnimation, CharStateKey} from "../char-constants";
 import {CharAction} from "../../interface/char-actions-menu";
 import {gameConstants} from "../../constants";
 import {battleManager} from "../../managers/battle";
+import {eventBus, Evt} from "../../event-bus";
 
-export class CharStateSurrender extends CharState {
-    key = CharStateKey.SURRENDER
+export class CharStateBattleSurrender extends CharState {
+    key = CharStateKey.BATTLE_SURRENDER
+
+    unsub: any
 
     onStart() {
         this.char.isSurrender = true
@@ -13,13 +16,12 @@ export class CharStateSurrender extends CharState {
         this.char.speed = gameConstants.CHAR_VERY_FAST
         this.char.setAnimation(CharAnimation.SURRENDER);
         this.char.actionsMenu.changeActiveButtons([
-            CharAction.RELEASE,
-            CharAction.ROB,
-            CharAction.TAKE_ALL,
-            CharAction.IMPRISON,
-            CharAction.KILL,
-            CharAction.DEVOUR,
-            CharAction.MAKE_FOOD,
+            CharAction.BATTLE_DEVOUR,
         ])
+        this.unsub = eventBus.once(Evt.ENCOUNTER_ENDED, () => this.char.surrender())
+    }
+
+    onEnd() {
+        eventBus.unsubscribe(Evt.ENCOUNTER_ENDED, this.unsub);
     }
 }

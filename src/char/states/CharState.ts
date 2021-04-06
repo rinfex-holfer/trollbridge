@@ -13,11 +13,11 @@ export abstract class CharState {
 
     }
 
-    onStart(): Promise<any> {
-        return Promise.resolve();
+    onStart() {
+
     }
 
-    onEnd(): Promise<any> {
-        return Promise.resolve();
+    onEnd() {
+
     }
 }

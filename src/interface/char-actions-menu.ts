@@ -1,6 +1,7 @@
 import {resoursePaths} from "../resourse-paths";
 import {characters} from "../managers/characters";
 import {lair} from "../managers/lair";
+import {ResourceKey} from "../types";
 import {render} from "../managers/render";
 import {trollManager} from "../managers/troll-manager";
 import {colors, zLayers} from "../constants";
@@ -60,12 +61,12 @@ export class CharActionsMenu {
     buttonSprites: GameSprite[] = []
     containerId: string
     container: Container
+    parentContainer: Container
     isShown = true;
 
     text: PIXI.Text
 
     constructor(private charId: string) {
-        // const charContainer = render.getContainer(this.charId);
 
         this.containerId = charId + '_actions-menu';
 
@@ -106,6 +107,11 @@ export class CharActionsMenu {
             this.buttonSprites.push(sprite)
         })
 
+        const parentContainer = render.getContainer(this.charId);
+        parentContainer.on('mouseover', () => this.show())
+        parentContainer.on('mouseout', () => this.hide())
+        this.parentContainer = parentContainer;
+
         this.changeActiveButtons([]);
         this.hide();
     }
@@ -145,17 +151,23 @@ export class CharActionsMenu {
         const cont = render.getContainer(this.containerId);
         const width = getButtonsRowWidth(activeButtons.length) + BUTTON_WIDTH * 2
         cont.hitArea = new PIXI.Rectangle(-width/2, -BUTTON_WIDTH, width, BUTTON_WIDTH * 3);
+
+        this.checkIsHovered();
     }
 
     show() {
-        if (this.isShown) return;
         render.changeContainerVisibility(this.containerId, true);
         this.isShown = true;
     }
 
     hide() {
-        if (!this.isShown) return;
         render.changeContainerVisibility(this.containerId, false);
         this.isShown = false;
+    }
+
+    checkIsHovered() {
+        if (render.getIsHovered(this.parentContainer)) {
+            this.show();
+        }
     }
 }

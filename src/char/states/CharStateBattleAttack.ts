@@ -3,8 +3,8 @@ import {CharAnimation, CharStateKey} from "../char-constants";
 import {positioner} from "../../managers/positioner";
 import {trollManager} from "../../managers/troll-manager";
 
-export class CharStateFightingAttack extends CharState {
-    key = CharStateKey.FIGHTING_ATTACK
+export class CharStateBattleAttack extends CharState {
+    key = CharStateKey.BATTLE_ATTACK
 
     toTroll = true
     attackInProcess = false;
@@ -12,10 +12,6 @@ export class CharStateFightingAttack extends CharState {
 
     beforeAttack = 300
 
-    onStart(): Promise<any> {
-
-        return Promise.resolve();
-    }
 
     update(dt: number) {
         if (this.beforeAttack > 0) {

@@ -6,8 +6,9 @@ export const enum CharStateKey {
     PRISONER = 'PRISONER',
     DEAD = 'DEAD',
     BONES = 'BONES',
-    FIGHTING_IDLE = 'FIGHTING_IDLE',
-    FIGHTING_ATTACK = 'FIGHTING_ATTACK',
+    BATTLE_IDLE = 'BATTLE_IDLE',
+    BATTLE_ATTACK = 'BATTLE_ATTACK',
+    BATTLE_SURRENDER = 'BATTLE_SURRENDER',
 }
 
 export const enum CharAnimation {

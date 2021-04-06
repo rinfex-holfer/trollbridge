@@ -6,10 +6,9 @@ import {CharAnimation, CharStateKey} from "../char-constants";
 export class CharStateGoAcross extends CharState {
     key = CharStateKey.GO_ACROSS
 
-    onStart(): Promise<any> {
+    onStart() {
         this.char.setAnimation(CharAnimation.WALK);
         this.char.actionsMenu.changeActiveButtons([]);
-        return Promise.resolve();
     }
 
     update(dt: number) {

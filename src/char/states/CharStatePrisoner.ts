@@ -8,7 +8,7 @@ import {positioner} from "../../managers/positioner";
 export class CharStatePrisoner extends CharState {
     key = CharStateKey.PRISONER
 
-    onStart(): Promise<any> {
+    onStart() {
         this.char.isPrisoner = true;
         this.char.setAnimation(CharAnimation.PRISONER);
         const pos = positioner.getPrisonerPosition()
@@ -19,11 +19,9 @@ export class CharStatePrisoner extends CharState {
             CharAction.DEVOUR,
             CharAction.MAKE_FOOD,
         ])
-        return Promise.resolve();
     }
 
-    onEnd(): Promise<any> {
+    onEnd() {
         this.char.isPrisoner = false;
-        return Promise.resolve();
     }
 }

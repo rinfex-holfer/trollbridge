@@ -17,12 +17,11 @@ export class CharStateDead extends CharState {
         }
     }
 
-    onEnd(): Promise<any> {
+    onEnd() {
         eventBus.unsubscribe(Evt.TIME_PASSED, this.unsub);
-        return Promise.resolve();
     }
 
-    onStart(): Promise<any> {
+    onStart() {
         this.unsub = eventBus.on(Evt.TIME_PASSED, () => this.rot())
         this.char.isAlive = false;
         this.char.setAnimation(CharAnimation.DEAD);
@@ -30,6 +29,5 @@ export class CharStateDead extends CharState {
             CharAction.DEVOUR,
             CharAction.MAKE_FOOD,
         ])
-        return Promise.resolve();
     }
 }

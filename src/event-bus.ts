@@ -1,5 +1,5 @@
 import {dumbClone} from "./utils/utils-misc";
-import {TrollLocation} from "./types";
+import {CharKey, TrollLocation} from "./types";
 
 let nextId = 0;
 
@@ -22,6 +22,9 @@ export const enum Evt {
     CHAR_LEFT_BRIDGE = 'CHAR_LEFT_BRIDGE',
     CHAR_READY_TO_TALK = 'CHAR_READY_TO_TALK',
     TROLL_TURN_END = 'TROLL_TURN_END',
+
+    CHAR_DEFEATED = 'CHAR_DEFEATED',
+    CHAR_DEVOURED_IN_BATTLE = 'CHAR_DEVOURED_IN_BATTLE',
 }
 
 export type EvtData = {
@@ -41,6 +44,9 @@ export type EvtData = {
     [Evt.CHAR_LEFT_BRIDGE]: string,
     [Evt.CHAR_READY_TO_TALK]: string,
     [Evt.TROLL_TURN_END]: undefined,
+
+    [Evt.CHAR_DEFEATED]: CharKey,
+    [Evt.CHAR_DEVOURED_IN_BATTLE]: CharKey,
 }
 
 type Subscribers = {
@@ -65,10 +71,18 @@ export const eventBus = {
         return subId;
     },
 
+    once: function once<E extends Evt>(eventType: E, callback: (data: EvtData[E]) => void) {
+        let id = -1;
+        id = this.on(eventType, (...args) => {
+            this.unsubscribe(eventType, id);
+            callback(...args);
+        })
+        return id;
+    },
+
     unsubscribe: function unsubscribe(eventType: Evt, id: number) {
         const subscriber = this.subs[eventType][id];
         if (!!subscriber) delete this.subs[eventType][id]
-        else console.error('already unsubscribed', eventType, id)
     },
 
     emit: function<E extends Evt>(eventType: E, data?: EvtData[E]) {

@@ -2,13 +2,13 @@ import {render} from "../managers/render";
 import {colors} from "../constants";
 import * as PIXI from "pixi.js";
 import {Container} from "../type-aliases";
-import {lair} from "../managers/lair";
-import {bridgeManager} from "../managers/bridge-manager";
 
 export class CharSpeakText {
     isShown = true;
 
     text: PIXI.Text
+
+    timeout: number | null = null
 
     constructor(private container: Container) {
         this.text = render.createText(
@@ -28,8 +28,20 @@ export class CharSpeakText {
         this.text.anchor.set(0.5, 1);
     }
 
-    showText(text: string) {
+    clearTimeout() {
+        if (this.timeout) {
+            clearTimeout(this.timeout);
+            this.timeout = null;
+        }
+    }
+
+    showText(text: string, timeout?: number) {
         this.text.text = text;
+
+        if (timeout) {
+            this.clearTimeout();
+            this.timeout = window.setTimeout(() => this.hideText(), 2000);
+        }
     }
 
     hideText() {

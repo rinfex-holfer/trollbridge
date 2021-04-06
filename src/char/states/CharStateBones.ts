@@ -10,7 +10,7 @@ export class CharStateBones extends CharState {
 
     collapseTime = 0
 
-    unsub = 0
+    unsub = -1
 
     collapse() {
         this.collapseTime++
@@ -20,7 +20,7 @@ export class CharStateBones extends CharState {
         }
     }
 
-    onStart(): Promise<any> {
+    onStart() {
         this.unsub = eventBus.on(Evt.TIME_PASSED, () => this.collapse());
 
         this.char.isBones = true;
@@ -28,12 +28,10 @@ export class CharStateBones extends CharState {
         render.hideAnimation(this.char.id);
         render.changeSpriteVisibility(this.char.id + '_bones', true);
         this.char.actionsMenu.changeActiveButtons([])
-        render.setInteractive(this.char.id, false);
-        return Promise.resolve();
+        this.char.disableInteractivity()
     }
 
-    onEnd(): Promise<any> {
+    onEnd() {
         eventBus.unsubscribe(Evt.TIME_PASSED, this.unsub);
-        return Promise.resolve();
     }
 }

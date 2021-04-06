@@ -5,7 +5,11 @@ import {trollManager} from "./troll-manager";
 class BattleManager {
     unsub: any[] = []
 
+    isBattle = false
+
     startBattle() {
+        this.isBattle = true;
+
         const fighters = characters.getFighters();
         if (fighters.length === 0) {
             return characters.allSurrender();
@@ -19,18 +23,17 @@ class BattleManager {
     }
 
     trollTurn() {
-        characters.enableActionMenuForAll();
+        characters.enableInteractivityAll();
     }
 
     async travellersTurn() {
         const fighters = characters.getFighters();
 
-        console.log(fighters);
         if (fighters.length === 0) {
             return this.win();
         }
 
-        characters.disableActionMenuForAll();
+        characters.disableInteractivityAll();
 
         for (let i = 0; i < fighters.length; i++) {
             await fighters[i].performBattleAction();
@@ -44,13 +47,18 @@ class BattleManager {
     }
 
     fail() {
+        this.onBattleEnd();
         characters.letAllTravellersPass()
-        eventBus.emit(Evt.ENCOUNTER_ENDED);
     }
 
     win() {
-        eventBus.emit(Evt.ENCOUNTER_ENDED);
+        this.onBattleEnd();
+    }
+
+    onBattleEnd() {
+        this.isBattle = false;
         this.unsub.forEach(u => u())
+        eventBus.emit(Evt.ENCOUNTER_ENDED);
     }
 }
 

@@ -21,7 +21,7 @@ export const gameConstants = {
         5: 5,
     } as {[key: number]: number},
     TROLL_DMG: {
-        1: 1,
+        1: 10,
         2: 2,
         3: 3,
         4: 4,

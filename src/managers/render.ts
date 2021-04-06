@@ -5,7 +5,7 @@ import {
     getNormalizedVector,
     getRndItem,
     getVector,
-    getVectorLength,
+    getVectorLength, inBounds,
     Vec
 } from "../utils/utils-math";
 import {colors, colorsNum, zLayers} from "../constants";
@@ -17,6 +17,7 @@ class RenderManager {
     pixiApp = new PIXI.Application({
         ...getGameSize()
     })
+    interactionManager = new PIXI.InteractionManager(this.pixiApp.renderer)
 
     animationsMap = {} as AnimationsMap
     spriteMap = {} as {[propName: string]: PIXI.Sprite}
@@ -393,6 +394,11 @@ class RenderManager {
         (options.parent || this.pixiApp.stage).addChild(graphics);
 
         return graphics;
+    }
+
+    getIsHovered(obj: PIXI.Container) {
+        const pos = this.interactionManager.mouse.global
+        return obj.getBounds().contains(pos.x, pos.y);
     }
 }
 

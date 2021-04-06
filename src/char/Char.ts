@@ -17,20 +17,28 @@ import {Container} from "../type-aliases";
 import {CharSpeakText} from "../interface/char-speak-text";
 import {eventBus, Evt} from "../event-bus";
 import {CharStateGoToTalk} from "./states/CharStateGoToTalk";
-import {gameConstants} from "../constants";
+import {colors, gameConstants} from "../constants";
 import {audioManager, SOUND_KEY} from "../managers/audio";
-import {CharStateFightingIdle} from "./states/CharStateFightingIdle";
+import {CharStateBattleIdle} from "./states/CharStateBattleIdle";
 import {trollManager} from "../managers/troll-manager";
-import {rndBetween} from "../utils/utils-math";
+import {clamp, rndBetween} from "../utils/utils-math";
 import {pause} from "../utils/utils-async";
 import {particleManager} from "../managers/particles";
-import {CharStateFightingAttack} from "./states/CharStateFightingAttack";
+import {CharStateBattleAttack} from "./states/CharStateBattleAttack";
+import {flyingStatusChange} from "../interface/basic/flying-status-change";
+import {CharStateBattleSurrender} from "./states/CharStateBattleSurrender";
+import {battleManager} from "../managers/battle";
+import {CharHpIndicator} from "../interface/char-hp-indicator";
+import {CharMpIndicator} from "../interface/char-mp-indicator";
 
 export class Char {
     key: CharKey
     id: string
     hp: number
+    maxHp: number
     morale: number
+    maxMorale: number
+    moralePrice: number
     name: string
     isCombatant: boolean
     dmg = 0
@@ -50,16 +58,25 @@ export class Char {
 
     actionsMenu: CharActionsMenu
     speakText: CharSpeakText
+    hpIndicator: CharHpIndicator
+    mpIndicator: CharMpIndicator
 
     container: Container
+
+    unsub: (() => void)[] = []
 
     constructor(key: CharKey, x: number, y: number) {
         const charTemplate = charTemplates[key]
 
         this.id = createId(key)
         this.key = key
+
         this.hp = charTemplate.hp
+        this.maxHp = charTemplate.hp
         this.morale = charTemplate.morale
+        this.maxMorale = charTemplate.morale
+        this.moralePrice = charTemplate.moralePrice
+
         this.name = charTemplate.name
         this.resources = charTemplate.createResources()
         this.isCombatant = charTemplate.isCombatant
@@ -70,12 +87,41 @@ export class Char {
 
         this.actionsMenu = new CharActionsMenu(this.id);
         this.speakText = new CharSpeakText(this.container);
+        this.hpIndicator = new CharHpIndicator(this);
+        this.mpIndicator = new CharMpIndicator(this);
 
         this.state = this.getState(CharStateKey.GO_ACROSS)
         this.state.onStart();
+
+        const subId = eventBus.on(Evt.ENCOUNTER_ENDED, () => this.hpIndicator.hide())
+        this.unsub.push(() => eventBus.unsubscribe(Evt.ENCOUNTER_ENDED, subId))
+
+        const subId2 = eventBus.on(Evt.CHAR_DEFEATED, (key) => this.onCharDefeated(key))
+        this.unsub.push(() => eventBus.unsubscribe(Evt.CHAR_DEFEATED, subId2))
+
+        const subId3 = eventBus.on(Evt.CHAR_DEVOURED_IN_BATTLE, (key) => this.onCharDevoured(key))
+        this.unsub.push(() => eventBus.unsubscribe(Evt.CHAR_DEVOURED_IN_BATTLE, subId3))
+    }
+
+    getIsNewTraveller() { return !this.isMetTroll }
+    getIsTraveller() { return this.isAlive && !this.isPrisoner }
+    getIsFighter() { return this.getIsTraveller() && !this.isSurrender }
+    getIsPrisoner() { return this.isAlive && this.isPrisoner; }
+
+    onCharDefeated(key: CharKey) {
+        if (this.getIsFighter()) {
+            this.changeMp(-charTemplates[key].moralePrice)
+        }
+    }
+
+    onCharDevoured(key: CharKey) {
+        if (this.getIsFighter()) {
+            this.changeMp(-charTemplates[key].moralePrice * 2)
+        }
     }
 
     destroy() {
+        this.unsub.forEach(f => f());
         this.state.onEnd();
         this.actionsMenu.destroy();
         render.removeSprite(this.id + '_bones')
@@ -102,19 +148,21 @@ export class Char {
                 return new CharStatePrisoner(this);
             case CharStateKey.GO_TO_TALK:
                 return new CharStateGoToTalk(this);
-            case CharStateKey.FIGHTING_IDLE:
-                return new CharStateFightingIdle(this);
-            case CharStateKey.FIGHTING_ATTACK:
-                return new CharStateFightingAttack(this);
+            case CharStateKey.BATTLE_IDLE:
+                return new CharStateBattleIdle(this);
+            case CharStateKey.BATTLE_ATTACK:
+                return new CharStateBattleAttack(this);
+            case CharStateKey.BATTLE_SURRENDER:
+                return new CharStateBattleSurrender(this);
             default:
                 throw Error('wrong state key ' + stateKey);
         }
     }
 
-    async setState(stateKey: CharStateKey) {
-        await this.state.onEnd();
+    setState(stateKey: CharStateKey) {
+        this.state.onEnd();
         this.state = this.getState(stateKey)
-        await this.state.onStart();
+        this.state.onStart();
     }
 
     createAnimation(x: number, y: number) {
@@ -132,21 +180,21 @@ export class Char {
 
         render.setInteractive(this.id, true, false);
         const cont = render.getContainer(this.id);
-        cont.on('mouseover', () => this.actionsMenu.show())
-        cont.on('mouseout', () => this.actionsMenu.hide())
 
         return cont;
     }
 
-    disableActionsMenu() {
-        render.getContainer(this.id).interactiveChildren = false
-        render.getContainer(this.id).interactive = false
+    disableInteractivity() {
+        this.container.interactive = false;
+        this.container.interactiveChildren = false;
         this.actionsMenu.hide()
     }
 
-    enableActionsMenu() {
-        render.getContainer(this.id).interactiveChildren = true
-        render.getContainer(this.id).interactive = true
+    enableInteractivity() {
+        if (this.isBones) return;
+        this.container.interactive = true;
+        this.container.interactiveChildren = true;
+        this.actionsMenu.checkIsHovered();
     }
 
     createBones() {
@@ -207,10 +255,20 @@ export class Char {
     }
 
     surrender() {
-        this.setState(CharStateKey.SURRENDER);
+        this.hpIndicator.hide();
+        this.mpIndicator.hide();
+
+        if (battleManager.isBattle) {
+            this.setState(CharStateKey.BATTLE_SURRENDER);
+        } else {
+            this.setState(CharStateKey.SURRENDER);
+        }
     }
 
-    becomeEaten() {
+    becomeDevoured() {
+        if (battleManager.isBattle) {
+            eventBus.emit(Evt.CHAR_DEVOURED_IN_BATTLE, this.key)
+        }
         audioManager.playSound(SOUND_KEY.TORN);
         this.toBones();
     }
@@ -254,17 +312,19 @@ export class Char {
         if (!this.isCombatant) {
             this.setState(CharStateKey.SURRENDER);
         } else {
-            this.setState(CharStateKey.FIGHTING_IDLE);
+            this.setState(CharStateKey.BATTLE_IDLE);
         }
     }
 
     syncFlip() {
         this.actionsMenu.container.scale.x = this.container.scale.x;
         this.speakText.text.scale.x = this.container.scale.x;
+        this.hpIndicator.text.scale.x = this.container.scale.x;
+        this.mpIndicator.text.scale.x = this.container.scale.x;
     }
 
     speak(text: string) {
-        this.speakText.showText(text);
+        this.speakText.showText(text, 2000);
     }
 
     clearText() {
@@ -275,19 +335,51 @@ export class Char {
         return this.dmg + rndBetween(1, 5);
     }
 
+    changeMp(val: number) {
+        this.morale = clamp(this.morale+val, 0, this.maxMorale);
+        this.mpIndicator.update();
+
+        flyingStatusChange(
+            ''+val,
+            this.container.x,
+            this.container.y - this.container.height,
+            colors.BLUE
+        );
+
+        if (!this.isSurrender && this.morale <= 0) {
+            this.surrender();
+        }
+    }
+
+    changeHp(val: number) {
+        this.hp = clamp(this.hp+val, 0, this.maxHp);
+        this.hpIndicator.update();
+    }
+
     getHit(dmg: number) {
         audioManager.playSound(SOUND_KEY.HIT);
         particleManager.createHitBurst(this.id + '_emitter', this.container.x, this.container.y);
 
-        this.hp = Math.max(0, this.hp - dmg);
-        if (this.state.key === CharStateKey.SURRENDER && this.hp <= 0) {
+        this.changeHp(-dmg);
+
+        flyingStatusChange(
+            '-'+dmg,
+            this.container.x,
+            this.container.y - this.container.height,
+            colors.RED
+        );
+
+        if (!this.isSurrender && this.hp <= 0) {
+            this.surrender();
+            eventBus.emit(Evt.CHAR_DEFEATED, this.key)
+        } else {
             this.getKilled()
         }
     }
 
     startAttack() {
         if (trollManager.hp > 0) {
-            this.setState(CharStateKey.FIGHTING_ATTACK);
+            this.setState(CharStateKey.BATTLE_ATTACK);
         } else {
             this.endAttack();
         }
@@ -295,7 +387,7 @@ export class Char {
 
     endAttack() {
         this.onAttackEnd();
-        this.setState(CharStateKey.FIGHTING_IDLE);
+        this.setState(CharStateKey.BATTLE_IDLE);
     }
 
     attackPromise = new Promise(() => {})

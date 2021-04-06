@@ -1,4 +1,4 @@
-import {gameConstants} from "../constants";
+import {colors, gameConstants} from "../constants";
 import {gameState} from "../game-state";
 import {eventBus, Evt} from "../event-bus";
 import {render} from "./render";
@@ -11,6 +11,7 @@ import {CharAnimation} from "../char/char-constants";
 import {rndBetween} from "../utils/utils-math";
 import {particleManager} from "./particles";
 import {Container} from "../type-aliases";
+import {flyingStatusChange} from "../interface/basic/flying-status-change";
 
 eventBus.on(Evt.TIME_PASSED, () => trollManager.increaseHunger());
 
@@ -124,12 +125,19 @@ class TrollManager {
             console.log(this.container);
             particleManager.createHitBurst(
                 this.containerId,
-                this.container.x + this.container.width / 2,
+                this.container.x,
                 this.container.y - this.container.height / 2
             )
 
             audioManager.playSound(SOUND_KEY.HIT);
             this.changeTrollHp(-dmg, 'battle');
+
+            flyingStatusChange(
+                '-'+dmg,
+                this.container.x,
+                this.container.y - this.container.height,
+                colors.RED
+            );
         } else {
             audioManager.playSound(SOUND_KEY.BLOCK);
 
@@ -138,6 +146,8 @@ class TrollManager {
                 this.container.x + this.container.width / 2,
                 this.container.y - this.container.height / 2
             )
+
+            flyingStatusChange('blocked', this.container.x, this.container.y - 100, colors.WHITE);
         }
     }
 

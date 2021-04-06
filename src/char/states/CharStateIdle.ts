@@ -4,8 +4,7 @@ import {CharAnimation, CharStateKey} from "../char-constants";
 export class CharStateIdle extends CharState {
     key = CharStateKey.IDLE
 
-    onStart(): Promise<any> {
+    onStart() {
         this.char.setAnimation(CharAnimation.IDLE);
-        return Promise.resolve();
     }
 }

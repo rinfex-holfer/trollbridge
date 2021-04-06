@@ -16,7 +16,12 @@ import translations from "./translations";
 import {Environment} from "./managers/environment";
 import {audioManager} from "./managers/audio";
 import {particleManager} from "./managers/particles";
-import {getGameSize} from "./utils/utils-misc";
+import { gsap } from "gsap";
+import { PixiPlugin } from "gsap/PixiPlugin";
+
+gsap.registerPlugin(PixiPlugin);
+PixiPlugin.registerPIXI(PIXI);
+
 negotiations;
 translations;
 
