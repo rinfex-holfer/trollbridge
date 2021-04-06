@@ -7,7 +7,7 @@ export const gameConstants = {
     HUNGER_PER_TIME: 1,
     HP_MINUS_WHEN_HUNGRY: 1,
     MAX_TROLL_HP: {
-        1: 10,
+        1: 100,
         2: 13,
         3: 16,
         4: 20,

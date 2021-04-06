@@ -1,12 +1,11 @@
 import {resoursePaths} from "../resourse-paths";
 import {characters} from "../managers/characters";
 import {lair} from "../managers/lair";
-import {ResourceKey} from "../types";
 import {render} from "../managers/render";
 import {trollManager} from "../managers/troll-manager";
 import {colors, zLayers} from "../constants";
 import * as PIXI from "pixi.js";
-import {Container} from "../type-aliases";
+import {Container, GameSprite} from "../type-aliases";
 import {eventBus, Evt} from "../event-bus";
 
 export const enum CharAction {
@@ -58,6 +57,7 @@ const getButtonsRowWidth = (amount: number) => amount * BUTTON_WIDTH + (amount -
 
 export class CharActionsMenu {
     buttons: {action: CharAction, id: string, active: boolean}[] = []
+    buttonSprites: GameSprite[] = []
     containerId: string
     container: Container
     isShown = true;
@@ -94,12 +94,16 @@ export class CharActionsMenu {
             sprite.zIndex = zLayers.GAME_OBJECTS_MIN
             sprite.interactive = true;
             sprite.buttonMode = true;
-            sprite.on('mouseover', () => this.showText(template.text))
+            sprite.on('mouseover', () => {
+                this.showText(template.text)
+            })
             sprite.on('mouseout', () => this.hideText())
             sprite.addListener('click', () => {
                 template.onClick(this.charId)
                 this.hideText();
             });
+
+            this.buttonSprites.push(sprite)
         })
 
         this.changeActiveButtons([]);
@@ -146,8 +150,6 @@ export class CharActionsMenu {
     show() {
         if (this.isShown) return;
         render.changeContainerVisibility(this.containerId, true);
-        const charSprite = render.getContainer(this.charId);
-        render.getContainer(this.containerId).scale.x = charSprite.scale.x
         this.isShown = true;
     }
 

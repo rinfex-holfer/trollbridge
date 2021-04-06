@@ -130,7 +130,7 @@ export class Char {
             anchor: {x: 0.5, y: 1}
         })
 
-        render.setInteractive(this.id, true);
+        render.setInteractive(this.id, true, false);
         const cont = render.getContainer(this.id);
         cont.on('mouseover', () => this.actionsMenu.show())
         cont.on('mouseout', () => this.actionsMenu.hide())
@@ -139,12 +139,14 @@ export class Char {
     }
 
     disableActionsMenu() {
-        render.setInteractive(this.id, false);
+        render.getContainer(this.id).interactiveChildren = false
+        render.getContainer(this.id).interactive = false
         this.actionsMenu.hide()
     }
 
     enableActionsMenu() {
-        render.setInteractive(this.id, true);
+        render.getContainer(this.id).interactiveChildren = true
+        render.getContainer(this.id).interactive = true
     }
 
     createBones() {

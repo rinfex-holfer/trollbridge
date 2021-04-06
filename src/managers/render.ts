@@ -170,10 +170,10 @@ class RenderManager {
         return getDistanceBetween(obj, target);
     }
 
-    setInteractive(containerId: string, val: boolean){
+    setInteractive(containerId: string, interactive: boolean, buttonMode = interactive){
         const c = this.getContainer(containerId);
-        c.buttonMode = val;
-        c.interactive = val;
+        c.buttonMode = buttonMode;
+        c.interactive = interactive;
     }
 
     moveSprite(entityId: string, x: number, y: number) {
