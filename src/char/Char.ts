@@ -369,11 +369,13 @@ export class Char {
             colors.RED
         );
 
-        if (!this.isSurrender && this.hp <= 0) {
-            this.surrender();
-            eventBus.emit(Evt.CHAR_DEFEATED, this.key)
-        } else {
-            this.getKilled()
+        if (this.hp <= 0) {
+            if (!this.isSurrender) {
+                this.surrender();
+                eventBus.emit(Evt.CHAR_DEFEATED, this.key)
+            } else {
+                this.getKilled()
+            }
         }
     }
 

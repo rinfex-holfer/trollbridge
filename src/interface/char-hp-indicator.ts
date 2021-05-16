@@ -13,7 +13,7 @@ export class CharHpIndicator {
         this.text = render.createText(
             '',
             0,
-            -120,
+            -70,
             {
                 align: 'center',
                 fill: colors.WHITE,

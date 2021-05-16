@@ -13,7 +13,7 @@ export class CharMpIndicator {
         this.text = render.createText(
             '',
             0,
-            -100,
+            -50,
             {
                 align: 'center',
                 fill: colors.WHITE,

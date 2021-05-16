@@ -1,3 +1,9 @@
+export type Experience = {
+    food: number,
+    gold: number,
+    enemies: number
+}
+
 export const enum EntityKey {
     FOOD =  'FOOD'
 }

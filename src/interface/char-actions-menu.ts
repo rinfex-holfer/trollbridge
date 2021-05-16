@@ -72,6 +72,7 @@ export class CharActionsMenu {
 
         const buttonsContainer = render.createContainer(this.containerId, this.charId);
         this.container = buttonsContainer;
+        this.container.zIndex = zLayers.GAME_OBJECTS_MIN
 
         render.move(this.containerId, 0, -50);
 
@@ -92,7 +93,6 @@ export class CharActionsMenu {
                 height: BUTTON_WIDTH,
                 // anchor: {x: 0.5, y: 0.5},
             })
-            sprite.zIndex = zLayers.GAME_OBJECTS_MIN
             sprite.interactive = true;
             sprite.buttonMode = true;
             sprite.on('mouseover', () => {
