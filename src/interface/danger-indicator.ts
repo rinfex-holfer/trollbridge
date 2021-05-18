@@ -1,13 +1,12 @@
 import {render} from "../managers/render";
 import {colors} from "../constants";
-import * as PIXI from "pixi.js";
-import {Container} from "../type-aliases";
+import {Container, GameText} from "../type-aliases";
 import {lair} from "../managers/lair";
 import {bridgeManager} from "../managers/bridge-manager";
 import {EncounterDanger} from "../types";
 
 export class DangerIndicator {
-    text: PIXI.Text
+    text: GameText
 
     constructor(x: number, y: number) {
         this.text = render.createText(
@@ -23,7 +22,7 @@ export class DangerIndicator {
                 wordWrap: false
             }
         )
-        this.text.anchor.set(1, 0);
+        // this.text.anchor.set(1, 0);
     }
 
     setDanger(dangerLevel: EncounterDanger, who: string) {

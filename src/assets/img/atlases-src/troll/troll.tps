@@ -26,15 +26,15 @@
             </struct>
         </array>
         <key>allowRotation</key>
-        <true/>
+        <false/>
         <key>shapeDebug</key>
         <false/>
         <key>dpi</key>
         <uint>72</uint>
         <key>dataFormat</key>
-        <string>pixijs4</string>
+        <string>phaser</string>
         <key>textureFileName</key>
-        <filename></filename>
+        <filename>../../atlases/troll.png</filename>
         <key>flipPVR</key>
         <false/>
         <key>pvrCompressionQuality</key>
@@ -102,7 +102,7 @@
         <key>algorithmSettings</key>
         <struct type="AlgorithmSettings">
             <key>algorithm</key>
-            <enum type="AlgorithmSettings::AlgorithmId">Basic</enum>
+            <enum type="AlgorithmSettings::AlgorithmId">MaxRects</enum>
             <key>freeSizeMode</key>
             <enum type="AlgorithmSettings::AlgorithmFreeSizeMode">Best</enum>
             <key>sizeConstraints</key>
@@ -129,7 +129,7 @@
         </struct>
         <key>dataFileNames</key>
         <map type="GFileNameMap">
-            <key>data</key>
+            <key>json</key>
             <struct type="DataFile">
                 <key>name</key>
                 <filename>../../atlases/troll.json</filename>
@@ -163,13 +163,13 @@
             <key>scaleMode</key>
             <enum type="ScaleMode">Smooth</enum>
             <key>extrude</key>
-            <uint>0</uint>
+            <uint>1</uint>
             <key>trimThreshold</key>
             <uint>1</uint>
             <key>trimMargin</key>
             <uint>1</uint>
             <key>trimMode</key>
-            <enum type="SpriteSettings::TrimMode">CropKeepPos</enum>
+            <enum type="SpriteSettings::TrimMode">Trim</enum>
             <key>tracerTolerance</key>
             <int>200</int>
             <key>heuristicMask</key>
@@ -182,13 +182,17 @@
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
             <key type="filename">block1.png</key>
+            <key type="filename">block2.png</key>
             <key type="filename">damaged1.png</key>
+            <key type="filename">damaged2.png</key>
             <key type="filename">dead1.png</key>
+            <key type="filename">dead2.png</key>
             <key type="filename">devoure1.png</key>
             <key type="filename">devoure2.png</key>
             <key type="filename">fall1.png</key>
             <key type="filename">fall2.png</key>
             <key type="filename">grapple1.png</key>
+            <key type="filename">grapple2.png</key>
             <key type="filename">idle1.png</key>
             <key type="filename">idle2.png</key>
             <key type="filename">strike1.png</key>
@@ -200,30 +204,12 @@
             <key type="filename">throwStone1.png</key>
             <key type="filename">throwStone2.png</key>
             <key type="filename">unconscious1.png</key>
+            <key type="filename">unconscious2.png</key>
             <key type="filename">walk1.png</key>
             <key type="filename">walk2.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
-                <key>spriteScale</key>
-                <double>1</double>
-                <key>scale9Enabled</key>
-                <false/>
-                <key>scale9Borders</key>
-                <rect>15,24,30,47</rect>
-                <key>scale9Paddings</key>
-                <rect>15,24,30,47</rect>
-                <key>scale9FromFile</key>
-                <false/>
-            </struct>
-            <key type="filename">block2.png</key>
-            <key type="filename">damaged2.png</key>
-            <key type="filename">dead2.png</key>
-            <key type="filename">grapple2.png</key>
-            <key type="filename">unconscious2.png</key>
-            <struct type="IndividualSpriteSettings">
-                <key>pivotPoint</key>
-                <point_f>0,0</point_f>
                 <key>spriteScale</key>
                 <double>1</double>
                 <key>scale9Enabled</key>

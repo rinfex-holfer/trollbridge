@@ -5,8 +5,7 @@ import {ResourceKey} from "../types";
 import {render} from "../managers/render";
 import {trollManager} from "../managers/troll-manager";
 import {colors, zLayers} from "../constants";
-import * as PIXI from "pixi.js";
-import {Container, GameSprite} from "../type-aliases";
+import {Container, GameSprite, GameText} from "../type-aliases";
 import {eventBus, Evt} from "../event-bus";
 
 export const enum CharAction {
@@ -64,7 +63,7 @@ export class CharActionsMenu {
     parentContainer: Container
     isShown = true;
 
-    text: PIXI.Text
+    text: GameText
 
     constructor(private charId: string) {
 
@@ -77,7 +76,7 @@ export class CharActionsMenu {
         render.move(this.containerId, 0, -50);
 
         this.text = render.createText('', 0, -BUTTON_WIDTH/2, {fill: colors.WHITE}, this.container)
-        this.text.anchor.set(0.5);
+        // this.text.anchor.set(0.5);
 
         buttonsTemplate.forEach((template, idx) => {
             const id = this.charId + '_' + template.key;
@@ -150,7 +149,7 @@ export class CharActionsMenu {
 
         const cont = render.getContainer(this.containerId);
         const width = getButtonsRowWidth(activeButtons.length) + BUTTON_WIDTH * 2
-        cont.hitArea = new PIXI.Rectangle(-width/2, -BUTTON_WIDTH, width, BUTTON_WIDTH * 3);
+        // cont.hitArea = new PIXI.Rectangle(-width/2, -BUTTON_WIDTH, width, BUTTON_WIDTH * 3);
 
         this.checkIsHovered();
     }

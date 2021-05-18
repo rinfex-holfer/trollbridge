@@ -1,13 +1,12 @@
 import {render} from "../managers/render";
 import {colors} from "../constants";
-import * as PIXI from "pixi.js";
-import {Container} from "../type-aliases";
+import {Container, GameText} from "../type-aliases";
 import {Char} from "../char/Char";
 
 export class CharHpIndicator {
     isShown = false;
 
-    text: PIXI.Text
+    text: GameText
 
     constructor(private char: Char) {
         this.text = render.createText(
@@ -21,7 +20,7 @@ export class CharHpIndicator {
             },
             char.container
         )
-        this.text.anchor.set(0.5, 1);
+        // this.text.anchor.set(0.5, 1);
     }
 
     update() {

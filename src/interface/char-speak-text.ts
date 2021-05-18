@@ -1,12 +1,11 @@
 import {render} from "../managers/render";
 import {colors} from "../constants";
-import * as PIXI from "pixi.js";
-import {Container} from "../type-aliases";
+import {Container, GameText} from "../type-aliases";
 
 export class CharSpeakText {
     isShown = true;
 
-    text: PIXI.Text
+    text: GameText
 
     timeout: number | null = null
 
@@ -25,7 +24,7 @@ export class CharSpeakText {
             },
             container
         )
-        this.text.anchor.set(0.5, 1);
+        // this.text.anchor.set(0.5, 1);
     }
 
     clearTimeout() {

@@ -1,7 +1,7 @@
-import {GameSprite, ParticleContainer} from "../type-aliases";
+import {Container, GameSprite, ParticleContainer} from "../type-aliases";
 import {getRndSign, rndBetween, rotate, Vec} from "../utils/utils-math";
 import {resoursePaths} from "../resourse-paths";
-import * as PIXI from "pixi.js";
+// import * as PIXI from "pixi.js";
 import {zLayers} from "../constants";
 import {render} from "./render";
 
@@ -40,7 +40,7 @@ type CreateEmitterOptions = {
     direction: Vec,
     spread: number,
     maxScale: number,
-    container?: PIXI.Container,
+    container?: Container,
     minAlpha?: number,
     burst?: boolean,
 }
@@ -61,6 +61,7 @@ class ParticleManager {
     }
 
     createEmitter(options: CreateEmitterOptions) {
+        // @ts-ignore
         const container = new PIXI.ParticleContainer(options.maxParticles, {});
         container.zIndex = zLayers.PARTICLES;
         container.position.set(options.coord.x, options.coord.y);
@@ -189,7 +190,8 @@ class ParticleManager {
     };
 
     createParticle(emitter: ParticleEmitter) {
-        const sprite = new PIXI.Sprite(render.getTexture(emitter.path));
+        // @ts-ignore
+        const sprite = new GameSprite(render.getTexture(emitter.path));
         sprite.position.set(0, 0);
         emitter.container.addChild(sprite);
 

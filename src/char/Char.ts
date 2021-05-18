@@ -318,8 +318,11 @@ export class Char {
 
     syncFlip() {
         this.actionsMenu.container.scale.x = this.container.scale.x;
+        // @ts-ignore
         this.speakText.text.scale.x = this.container.scale.x;
+        // @ts-ignore
         this.hpIndicator.text.scale.x = this.container.scale.x;
+        // @ts-ignore
         this.mpIndicator.text.scale.x = this.container.scale.x;
     }
 

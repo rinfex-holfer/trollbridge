@@ -1,4 +1,4 @@
-import PixiSound from 'pixi-sound';
+// import PixiSound from 'pixi-sound';
 import {resoursePaths} from "../resourse-paths";
 
 type AudioType = 'sound' | 'music';
@@ -45,8 +45,8 @@ class AudioManager {
 
     createSounds() {
         sounds.forEach(options => {
-            this.sounds[options.key] = PixiSound.Sound.from({url: options.src, loop: options.loop});
-            this.sounds[options.key].volume = options.volume
+            // this.sounds[options.key] = PixiSound.Sound.from({url: options.src, loop: options.loop});
+            // this.sounds[options.key].volume = options.volume
         });
 
         music.forEach(options => {
@@ -83,7 +83,7 @@ class AudioManager {
     }
 
     stopAll = () => {
-        PixiSound.stopAll();
+        // PixiSound.stopAll();
     }
 
     setMusicVolume(val: number) {
