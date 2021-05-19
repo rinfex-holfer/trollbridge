@@ -1,39 +1,33 @@
 import {render} from "../../managers/render";
-import {Container, GameGraphics, GameText} from "../../type-aliases";
 import {BasicButton, ButtonOptions} from "./basic-button";
 import {colors, colorsNum} from "../../constants";
 
-const PADDING = 10;
-
 export class SimpleButton extends BasicButton {
-    rect: GameGraphics
+    rect: Phaser.GameObjects.Graphics
 
     constructor(options: ButtonOptions) {
         if (!options.style) options.style = {};
         options.style.fill = colors.BLACK
         super(options);
 
-        this.rect = render.createRectangle({
-            parent: this.container,
-            x: -PADDING,
-            y: -PADDING,
-            height: this.text.height + PADDING * 2,
-            width: this.text.width + PADDING * 2,
-            // lineColor: colorsNum.GREEN,
-            // lineWidth: 2,
-            fill: colorsNum.WHITE,
-        })
+        const rect = this.getRect();
+        this.rect = new Phaser.GameObjects.Graphics(render.scene, {x: 0, y: 0})
+        this.rect.lineStyle(2, colorsNum.BLACK, 1);
+        this.rect.fillStyle(colorsNum.WHITE)
+        this.rect.fillRect(rect.x, rect.y, rect.width, rect.height);
+
+        this.container.obj.add(this.rect);
+        this.container.obj.swap(this.rect, this.text.obj)
+        this.text.obj.setDepth(2);
 
         this.rect.alpha = 0.5
 
-        this.container.swapChildren(this.rect, this.text);
+        // this.container.swapChildren(this.rect, this.text);
 
-        this.container.interactive = true;
-        this.container.buttonMode = true;
-        this.container.on('mouseover', () => {
+        this.container.onPointerOver(() => {
             this.rect.alpha = 1
         })
-        this.container.on('mouseout', () => {
+        this.container.onPointerOut(() => {
             this.rect.alpha = 0.5
         })
     }

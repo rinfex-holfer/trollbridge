@@ -65,7 +65,7 @@ class ParticleManager {
         const container = new PIXI.ParticleContainer(options.maxParticles, {});
         container.zIndex = zLayers.PARTICLES;
         container.position.set(options.coord.x, options.coord.y);
-        (options.container || render.pixiApp.stage).addChild(container);
+        // (options.container || render.pixiApp.stage).addChild(container);
 
         this.emitters[options.id] =  {
             ...options,

@@ -1,14 +1,18 @@
 import Phaser from "phaser";
 import {resoursePaths} from "./resourse-paths";
 import {resourseLoader} from "./resource-loader";
-import {AnimatedSprite, render, Sprite} from "./managers/render";
-// negotiations;
-// translations;
-//
+import {render} from "./managers/render";
+import {Troll} from "./managers/troll";
+import {getGameSize} from "./utils/utils-misc";
+import {bridgeManager} from "./managers/bridge-manager";
+import {Environment} from "./managers/environment";
+import {lair} from "./managers/lair";
+
+const size = getGameSize()
 var config: Phaser.Types.Core.GameConfig = {
     type: Phaser.AUTO,
-    width: 800,
-    height: 600,
+    width: size.width,
+    height: size.height,
     physics: {
         default: 'arcade',
         arcade: {
@@ -33,9 +37,11 @@ const preload = (scene: Phaser.Scene) => {
 
 const create = (scene: Phaser.Scene) => {
     render.init(scene);
-    new Sprite('background', 0, 0);
-    const s = new AnimatedSprite({key: 'troll', animations: [{key: 'idle'}, {key: 'walk', repeat: -1, frameRate: 24}], x: 100, y: 100});
-    s.play('walk');
+    new Environment();
+
+    bridgeManager.init();
+    lair.init();
+    new Troll()
 }
 
 export const newGame = () => new Phaser.Game(config);

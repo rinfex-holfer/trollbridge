@@ -1,4 +1,3 @@
-import {dumbClone} from "./utils/utils-misc";
 import {CharKey, TrollLocation} from "./types";
 
 let nextId = 0;

@@ -8,7 +8,7 @@ import {BasicButton} from "../interface/basic/basic-button";
 import {colors, zLayers} from "../constants";
 import {SimpleButton} from "../interface/basic/simple-button";
 import {positioner} from "./positioner";
-import {trollManager} from "./troll-manager";
+import {trollManager} from "./troll";
 import {battleManager} from "./battle";
 
 export const enum NegotiationsState {

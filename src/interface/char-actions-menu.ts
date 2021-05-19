@@ -3,7 +3,7 @@ import {characters} from "../managers/characters";
 import {lair} from "../managers/lair";
 import {ResourceKey} from "../types";
 import {render} from "../managers/render";
-import {trollManager} from "../managers/troll-manager";
+import {trollManager} from "../managers/troll";
 import {colors, zLayers} from "../constants";
 import {Container, GameSprite, GameText} from "../type-aliases";
 import {eventBus, Evt} from "../event-bus";

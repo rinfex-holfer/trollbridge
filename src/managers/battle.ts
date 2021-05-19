@@ -1,6 +1,6 @@
 import {characters} from "./characters";
 import {eventBus, Evt} from "../event-bus";
-import {trollManager} from "./troll-manager";
+import {trollManager} from "./troll";
 
 class BattleManager {
     unsub: any[] = []

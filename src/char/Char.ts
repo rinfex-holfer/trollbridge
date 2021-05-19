@@ -1,7 +1,7 @@
 import {CharKey, ResourceKey, Resources} from "../types";
 import {charTemplates} from "../char-templates";
 import {createId} from "../utils/utils-misc";
-import {render} from "../managers/render";
+import {AnimatedSprite, Container, render, Sprite} from "../managers/render";
 import {lair} from "../managers/lair";
 import {CharState} from "./states/CharState";
 import {CharStateIdle} from "./states/CharStateIdle";
@@ -13,14 +13,12 @@ import {CharStateDead} from "./states/CharStateDead";
 import {CharStateBones} from "./states/CharStateBones";
 import {resoursePaths} from "../resourse-paths";
 import {CharStatePrisoner} from "./states/CharStatePrisoner";
-import {Container} from "../type-aliases";
 import {CharSpeakText} from "../interface/char-speak-text";
 import {eventBus, Evt} from "../event-bus";
 import {CharStateGoToTalk} from "./states/CharStateGoToTalk";
 import {colors, gameConstants} from "../constants";
 import {audioManager, SOUND_KEY} from "../managers/audio";
 import {CharStateBattleIdle} from "./states/CharStateBattleIdle";
-import {trollManager} from "../managers/troll-manager";
 import {clamp, rndBetween} from "../utils/utils-math";
 import {pause} from "../utils/utils-async";
 import {particleManager} from "../managers/particles";
@@ -56,11 +54,13 @@ export class Char {
     state: CharState
     timeWithoutFood = 0
 
-    actionsMenu: CharActionsMenu
-    speakText: CharSpeakText
-    hpIndicator: CharHpIndicator
-    mpIndicator: CharMpIndicator
+    // actionsMenu: CharActionsMenu
+    // speakText: CharSpeakText
+    // hpIndicator: CharHpIndicator
+    // mpIndicator: CharMpIndicator
 
+    // bones: Sprite
+    sprite: AnimatedSprite
     container: Container
 
     unsub: (() => void)[] = []
@@ -82,19 +82,20 @@ export class Char {
         this.isCombatant = charTemplate.isCombatant
         this.dmg = charTemplate.dmg;
 
-        this.container = this.createAnimation(x, y);
+        this.container = new Container(x, y);
+        this.sprite = this.createSprite(x, y);
         this.createBones();
 
-        this.actionsMenu = new CharActionsMenu(this.id);
-        this.speakText = new CharSpeakText(this.container);
-        this.hpIndicator = new CharHpIndicator(this);
-        this.mpIndicator = new CharMpIndicator(this);
+        // this.actionsMenu = new CharActionsMenu(this.id);
+        // this.speakText = new CharSpeakText(this.container);
+        // this.hpIndicator = new CharHpIndicator(this);
+        // this.mpIndicator = new CharMpIndicator(this);
 
         this.state = this.getState(CharStateKey.GO_ACROSS)
         this.state.onStart();
 
-        const subId = eventBus.on(Evt.ENCOUNTER_ENDED, () => this.hpIndicator.hide())
-        this.unsub.push(() => eventBus.unsubscribe(Evt.ENCOUNTER_ENDED, subId))
+        // const subId = eventBus.on(Evt.ENCOUNTER_ENDED, () => this.hpIndicator.hide())
+        // this.unsub.push(() => eventBus.unsubscribe(Evt.ENCOUNTER_ENDED, subId))
 
         const subId2 = eventBus.on(Evt.CHAR_DEFEATED, (key) => this.onCharDefeated(key))
         this.unsub.push(() => eventBus.unsubscribe(Evt.CHAR_DEFEATED, subId2))
@@ -123,9 +124,9 @@ export class Char {
     destroy() {
         this.unsub.forEach(f => f());
         this.state.onEnd();
-        this.actionsMenu.destroy();
-        render.removeSprite(this.id + '_bones')
-        render.destroyAnimation(this.id);
+        // this.actionsMenu.destroy();
+        // render.removeSprite(this.id + '_bones')
+        // render.destroyAnimation(this.id);
     }
 
     update(dt: number) {
@@ -165,23 +166,25 @@ export class Char {
         this.state.onStart();
     }
 
-    createAnimation(x: number, y: number) {
-        render.createAnimation({
-            path: charTemplates[this.key].animationsPath,
-            animationSpeed: 0.1,
-            currentAnimation: 'walk',
-            entityId: this.id,
+    createSprite(x: number, y: number) {
+
+        const sprite = new AnimatedSprite({
+            // @ts-ignore
+            key: charTemplates[this.key].atlasKey,
+            animations:  [
+                {key: 'idle', repeat: -1, frameRate: 4},
+                {key: CharAnimation.WALK, repeat: -1, frameRate: 4},
+                {key: CharAnimation.IDLE, repeat: -1, frameRate: 4},
+                {key: CharAnimation.DEAD, repeat: -1, frameRate: 4},
+                {key: CharAnimation.STRIKE, frameRate: 4},
+                {key: CharAnimation.PRISONER, repeat: -1, frameRate: 4},
+                {key: CharAnimation.SURRENDER, repeat: -1, frameRate: 4},
+            ],
             x: x,
             y: y,
-            ySorting: true,
-            autoplay: true,
-            anchor: {x: 0.5, y: 1}
         })
-
-        render.setInteractive(this.id, true, false);
-        const cont = render.getContainer(this.id);
-
-        return cont;
+        sprite.setOrigin(0.5, 1);
+        return sprite;
     }
 
     disableInteractivity() {

@@ -1,20 +1,13 @@
-import {GameSprite} from "../type-aliases";
-import {render} from "./render";
-import {resoursePaths} from "../resourse-paths";
+import {Sprite} from "./render";
 import {getGameSize} from "../utils/utils-misc";
 
 export class Environment {
-    bg: GameSprite
-    bgId = 'background'
+    bg: Sprite
 
     constructor() {
-        const {width} = getGameSize();
-        this.bg = render.createSprite({
-            entityId: this.bgId,
-            path: resoursePaths.images.background,
-            x: 0,
-            y: 0,
-            width,
-        })
+        const size = getGameSize();
+        console.log(size);
+        this.bg = new Sprite('background', 0, 0, { width: size.width, height: size.height } )
+        this.bg.setOrigin(0, 0);
     }
 }

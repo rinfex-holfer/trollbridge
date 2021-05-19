@@ -4,7 +4,7 @@ import {eventBus, Evt} from "../../event-bus";
 import {CharAnimation, CharStateKey} from "../char-constants";
 import {positioner} from "../../managers/positioner";
 import {gameConstants} from "../../constants";
-import {trollManager} from "../../managers/troll-manager";
+import {trollManager} from "../../managers/troll";
 
 export class CharStateGoToTalk extends CharState {
     key = CharStateKey.GO_TO_TALK

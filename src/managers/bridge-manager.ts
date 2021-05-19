@@ -1,55 +1,32 @@
-import {resoursePaths} from "../resourse-paths";
-import {render} from "./render";
-import {trollManager} from "./troll-manager";
+import {TileSprite} from "./render";
 import {eventBus, Evt} from "../event-bus";
-import {Container} from "../type-aliases";
 import {positioner} from "./positioner";
 import {TrollLocation} from "../types";
+import {stub} from "../utils/utils-misc";
 
 class BridgeManager {
-    static CONTAINER_ID = 'bridge'
-
     // @ts-ignore
-    container: Container
+    sprite: TileSprite
+
+    trollLocation: TrollLocation = TrollLocation.LAIR
 
     init() {
-        const container = render.createContainer(BridgeManager.CONTAINER_ID)
-        this.container = container;
+        const bridgePos = positioner.bridgePosition();
+        this.sprite = new TileSprite('floor', bridgePos.x, bridgePos.y, bridgePos.width, bridgePos.height);
+        this.sprite.setOrigin(0, 0);
 
-        render.createTiles({
-            paths: [resoursePaths.images.floor],
-            ...positioner.bridgePosition(),
-            container,
-            entityId: 'bridge',
-        })
-
-        container.interactive = true;
-        container.buttonMode = true;
-        container.addListener('click', () => trollManager.goToBridge())
-
-        // eventBus.on(Evt.ENCOUNTER_ENDED, () => {
-        //     if (trollManager.location !== TrollLocation.BRIDGE) this.enableInterface()
-        // })
-        eventBus.on(Evt.ENCOUNTER_STARTED, () => this.disableInterface())
-        eventBus.on(Evt.TROLL_LOCATION_CHANGED, l => this.onTrollLocationChanged(l))
+        this.enableInterface();
+        this.sprite.onClick(() => this.onClick())
     }
 
+    onClick: (() => void) = stub
+
     enableInterface() {
-        this.container.interactive = true;
-        this.container.buttonMode = true;
+        this.sprite.setInteractive(true, {cursor: 'pointer'});
     }
 
     disableInterface() {
-        this.container.interactive = false;
-        this.container.buttonMode = false;
-    }
-
-    onTrollLocationChanged(loc: TrollLocation) {
-        if (loc === TrollLocation.BRIDGE) {
-            this.disableInterface()
-        } else {
-            this.enableInterface()
-        }
+        this.sprite.setInteractive(false);
     }
 }
 

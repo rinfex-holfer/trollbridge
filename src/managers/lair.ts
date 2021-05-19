@@ -1,24 +1,18 @@
-import {resoursePaths} from "../resourse-paths";
-import {render} from "./render";
-import {getGameSize} from "../utils/utils-misc";
-import {trollManager} from "./troll-manager";
-import {FoodStorage} from "./food-storage";
+import {TileSprite} from "./render";
+import {stub} from "../utils/utils-misc";
 import {ResourceKey, Resources} from "../types";
 import {eventBus, Evt} from "../event-bus";
 import {characters} from "./characters";
 import {WaitButton} from "../interface/wait-button";
-import {Container} from "../type-aliases";
 import {positioner} from "./positioner";
 
 class Lair {
     static CONTAINER_ID = 'lair'
 
-    foodStorage = new FoodStorage()
+    // foodStorage = new FoodStorage()
 
     // @ts-ignore
     waitButton: WaitButton
-    // @ts-ignore
-    container: Container
 
     resources: Resources = {
         [ResourceKey.FOOD]: 0,
@@ -26,41 +20,33 @@ class Lair {
         [ResourceKey.MATERIALS]: 0
     }
 
+    // @ts-ignore
+    sprite: TileSprite
+
     init() {
-        const container = render.createContainer(Lair.CONTAINER_ID)
-        this.container = container;
+        const pos = positioner.getLairPosition();
+        this.sprite = new TileSprite('grass', pos.x, pos.y, pos.width, pos.height);
+        this.sprite.setOrigin(0, 0);
 
-        render.createTiles({
-            paths: [resoursePaths.images.grass],
-            ...positioner.getLairPosition(),
-            container,
-            entityId: Lair.CONTAINER_ID + '_tiles'
-        })
+        this.sprite.onClick(() => this.onClick())
 
-        container.interactive = true;
-        container.buttonMode = true;
-        container.addListener('click', () => trollManager.goToLair())
-
-        this.foodStorage.init(positioner.getFoodStoragePosition());
+        // this.foodStorage.init(positioner.getFoodStoragePosition());
 
         this.waitButton = new WaitButton(positioner.getLairPosition())
-
-        eventBus.on(Evt.ENCOUNTER_ENDED, () => this.enableInterface())
-        eventBus.on(Evt.ENCOUNTER_STARTED, () => this.disableInterface())
     }
 
+    onClick: (() => void) = stub
+
     enableInterface() {
-        this.container.interactive = true;
-        this.container.buttonMode = true;
+        this.sprite.setInteractive(true, {cursor: 'pointer'});
 
         this.waitButton.enable()
     }
 
-    disableInterface() {
-        this.container.interactive = false;
-        this.container.buttonMode = false;
+    disableInterface(completely?: boolean) {
+        this.sprite.setInteractive(false);
 
-        this.waitButton.disable()
+        if (completely) this.waitButton.disable()
     }
 
     changeResource(key: ResourceKey, val: number) {
@@ -68,22 +54,20 @@ class Lair {
         eventBus.emit(Evt.RESOURSES_CHANGED)
     }
 
-    feedChar(id: string) {
-        if (this.resources.food === 0) {
-            console.error('no food to feed', id)
-            return;
-        }
-        this.changeResource(ResourceKey.FOOD, -1);
-        characters.feedChar(id);
-    }
-
-    makeFoodFrom(id: string) {
-        this.changeResource(ResourceKey.FOOD, 3);
-        characters.makeCharGiveAll(id);
-        characters.removeChar(id);
-    }
-
-
+    // feedChar(id: string) {
+    //     if (this.resources.food === 0) {
+    //         console.error('no food to feed', id)
+    //         return;
+    //     }
+    //     this.changeResource(ResourceKey.FOOD, -1);
+    //     characters.feedChar(id);
+    // }
+    //
+    // makeFoodFrom(id: string) {
+    //     this.changeResource(ResourceKey.FOOD, 3);
+    //     characters.makeCharGiveAll(id);
+    //     characters.removeChar(id);
+    // }
 }
 
 export const lair = new Lair();

@@ -1,28 +1,110 @@
 import {
-    ceilTo,
-    getDistanceBetween,
-    getNormalizedVector,
-    getRndItem,
-    getVector,
-    getVectorLength, inBounds,
     Vec
 } from "../utils/utils-math";
-// import {colors, colorsNum, zLayers} from "../constants";
-// import {createId, getGameSize} from "../utils/utils-misc";
 import {resoursePaths} from "../resourse-paths";
-import {Container} from "../type-aliases";
-import * as Phaser from "phaser";
+import Phaser from "phaser";
+
+type GameObject = Container | Sprite | AnimatedSprite | GameText;
+
+export class Container {
+    obj: Phaser.GameObjects.Container
+
+    constructor(x: number, y: number) {
+        this.obj = render.scene.add.container(x, y);
+    }
+
+    setInteractive(val: boolean, options?: any, options2?: any) {
+        if (val) this.obj.setInteractive(options, options2)
+        else this.obj.disableInteractive()
+    }
+
+    add(obj: GameObject) {
+        this.obj.add(obj.obj)
+    }
+
+    onClick(callback: () => void) {
+        this.obj.on('pointerdown', callback)
+    }
+
+    onPointerOver(callback: () => void) {
+        this.obj.on('pointerover', callback)
+    }
+
+    onPointerOut(callback: () => void) {
+        this.obj.on('pointerout', callback)
+    }
+
+    move(x: number, y: number) {
+        this.obj.setPosition(x, y);
+    }
+}
+
+export class GameText {
+    obj: Phaser.GameObjects.Text
+
+    constructor(text: string, x: number, y: number, style: Phaser.Types.GameObjects.Text.TextStyle, options?: {parent?: Container}) {
+        this.obj = new Phaser.GameObjects.Text(render.scene, x, y, text, style);
+
+        if (options?.parent) {
+            options.parent.add(this)
+        }
+    }
+
+    setOrigin(x: number, y: number) {
+        this.obj.setOrigin(x, y)
+    }
+}
 
 export class Sprite {
-    sprite: Phaser.GameObjects.Sprite
+    obj: Phaser.GameObjects.Sprite
 
-    constructor(key: keyof typeof resoursePaths.images, x: number, y: number) {
-        this.sprite = render.scene.add.sprite(x, y, key)
+    constructor(key: keyof typeof resoursePaths.images, x: number, y: number, options?: {width?: number, height?: number, parent?: Container}) {
+        this.obj = new Phaser.GameObjects.Sprite(render.scene, x, y, key);
+
+        if (options?.parent) {
+            this.obj = new Phaser.GameObjects.Sprite(render.scene, x, y, key);
+            options.parent.add(this);
+        } else {
+            this.obj = render.scene.add.sprite(x, y, key)
+        }
+
+        if (options?.width) this.obj.displayWidth = options.width;
+        if (options?.height) this.obj.displayHeight = options.height;
+    }
+
+    setInteractive(val: boolean) {
+        if (val) this.obj.setInteractive()
+        else this.obj.disableInteractive()
+    }
+
+    setOrigin(x: number, y: number) {
+        this.obj.setOrigin(x, y)
+    }
+}
+
+export class TileSprite {
+    obj: Phaser.GameObjects.TileSprite
+
+    constructor(key: keyof typeof resoursePaths.images, x: number, y: number, width: number, height: number) {
+        this.obj = render.scene.add.tileSprite(x, y, width, height, key);
+    }
+
+    setInteractive(val: boolean, options?: any) {
+        if (val) this.obj.setInteractive(options)
+        else this.obj.disableInteractive()
+    }
+
+    onClick(callback: () => void) {
+        this.obj.on('pointerdown', callback)
+    }
+
+    setOrigin(x: number, y: number) {
+        this.obj.setOrigin(x, y)
     }
 }
 
 export class AnimatedSprite {
-    sprite: Phaser.GameObjects.Sprite
+    obj: Phaser.GameObjects.Sprite
 
     constructor(
         options: {
@@ -34,11 +116,24 @@ export class AnimatedSprite {
     ) {
         if (!render.animations[options.key]) render.createAnimations(options);
 
-        this.sprite = render.scene.add.sprite(options.x, options.y, options.key);
+        this.obj = render.scene.add.sprite(options.x, options.y, options.key);
     }
 
     play(anim: string) {
-        this.sprite.play(anim);
+        this.obj.play(anim);
+    }
+
+    move(x: number, y: number) {
+        this.obj.setPosition(x, y);
+    }
+
+    setInteractive(val: boolean) {
+        if (val) this.obj.setInteractive()
+        else this.obj.disableInteractive()
+    }
+
+    setOrigin(x: number, y: number) {
+        this.obj.setOrigin(x, y)
     }
 }
 
@@ -70,12 +165,14 @@ class RenderManager {
 
         options.animations.forEach(animation => {
             console.log(animation, atlasTexture.frames);
-            const framesNumber = Object.keys(atlasTexture.frames).filter(frameKey => frameKey.startsWith(animation.key)).length
+            const framesNumber = Object.keys(atlasTexture.frames).filter(frameKey => {
+                return frameKey.startsWith(animation.key) && !isNaN(+frameKey[animation.key.length])
+            }).length
             const animConfig = {
                 key: animation.key,
                 frames: this.scene.anims.generateFrameNames(options.key, {prefix: animation.key, suffix: '.png', start: 1, end: framesNumber}),
                 frameRate: animation.frameRate,
-                repeat: animation.repeat || -1
+                repeat: animation.repeat
             };
             const anim = this.scene.anims.create(animConfig);
             if (!anim) throw Error('wrong config for animation: ' + animation.key);

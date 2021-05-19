@@ -1,13 +1,10 @@
 import {CharKey, EncounterDanger, TrollLocation} from "../types";
-import {bridgeManager} from "./bridge-manager";
 import {gameState} from "../game-state";
-import {getRndItem, rndBetween} from "../utils/utils-math";
-import {gameConstants} from "../constants";
-import {trollManager} from "./troll-manager";
+import {getRndItem} from "../utils/utils-math";
 import {Char} from "../char/Char";
 import {eventBus, Evt} from "../event-bus";
 import {encounterTemplates} from "../encounter-templates";
-import {DangerIndicator} from "../interface/danger-indicator";
+// import {DangerIndicator} from "../interface/danger-indicator";
 import {positioner} from "./positioner";
 
 class Characters {
@@ -16,7 +13,7 @@ class Characters {
     encounterLevel: number = 0;
 
     // @ts-ignore
-    dangerIndicator: DangerIndicator
+    // dangerIndicator: DangerIndicator
 
     constructor() {
         eventBus.on(Evt.CHAR_LEFT_BRIDGE, charId => this.onCharLeftBridge(charId))
@@ -33,7 +30,7 @@ class Characters {
         const bridgePos = positioner.bridgePosition();
         const x = bridgePos.x + bridgePos.width;
         const y = 0;
-        this.dangerIndicator = new DangerIndicator(x, y)
+        // this.dangerIndicator = new DangerIndicator(x, y)
     }
 
     onTrollLocationChanged(location: TrollLocation) {
@@ -49,7 +46,7 @@ class Characters {
 
         this.createTravellers(encounter.enemies, encounter.level)
 
-        this.dangerIndicator.setDanger(this.getDangerKey(), encounter.text);
+        // this.dangerIndicator.setDanger(this.getDangerKey(), encounter.text);
     }
 
     update(dt: number) {
@@ -66,7 +63,7 @@ class Characters {
         this.removeChar(charId);
 
         if (this.getTravellers().length === 0) {
-            this.dangerIndicator.clearDanger();
+            // this.dangerIndicator.clearDanger();
         }
     }
 
@@ -161,7 +158,7 @@ class Characters {
 
     letAllTravellersPass() {
         this.getTravellers().forEach(t => t.goAcrossBridge());
-        this.dangerIndicator.clearDanger();
+        // this.dangerIndicator.clearDanger();
     }
 
     startFighting() {

@@ -1,6 +1,6 @@
 import {render} from "./render";
 import {createId} from "../utils/utils-misc";
-import {trollManager} from "./troll-manager";
+import {trollManager} from "./troll";
 import {gameState} from "../game-state";
 import {eventBus, Evt} from "../event-bus";
 import {resoursePaths} from "../resourse-paths";

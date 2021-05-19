@@ -3,7 +3,6 @@
 import React, {useEffect, useState} from "react";
 import {eventBus, Evt} from "../event-bus";
 import {gameState} from "../game-state";
-import {trollManager} from "../managers/troll-manager";
 
 export const Troll = () => {
     const [stats, setStats] = useState({

@@ -11,11 +11,12 @@ import {newGame} from "./game";
 // import {bridgeManager} from "./managers/bridge-manager";
 // import {characters} from "./managers/characters";
 // import {negotiations} from "./managers/negotiations";
-// import translations from "./translations";
+import translations from "./translations";
 // import {Environment} from "./managers/environment";
 // import {audioManager} from "./managers/audio";
 // import {particleManager} from "./managers/particles";
 
+translations
 
 const appElement = document.createElement('app');
 appElement.id = 'app';

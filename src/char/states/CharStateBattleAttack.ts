@@ -1,7 +1,7 @@
 import {CharState} from "./CharState";
 import {CharAnimation, CharStateKey} from "../char-constants";
 import {positioner} from "../../managers/positioner";
-import {trollManager} from "../../managers/troll-manager";
+import {trollManager} from "../../managers/troll";
 
 export class CharStateBattleAttack extends CharState {
     key = CharStateKey.BATTLE_ATTACK
