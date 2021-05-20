@@ -1,6 +1,6 @@
 import {characters} from "./characters";
 import {eventBus, Evt} from "../event-bus";
-import {trollManager} from "./troll";
+import {getTroll} from "./troll";
 
 class BattleManager {
     unsub: any[] = []
@@ -39,7 +39,7 @@ class BattleManager {
             await fighters[i].performBattleAction();
         }
 
-        if (trollManager.getIsAlive()) {
+        if (getTroll().getIsAlive()) {
             this.trollTurn();
         } else {
             this.fail();

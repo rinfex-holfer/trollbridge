@@ -1,16 +1,25 @@
 import {
+    getDistanceBetween,
+    getNormalizedVector,
+    getVector, getVectorLength,
     Vec
 } from "../utils/utils-math";
 import {resoursePaths} from "../resourse-paths";
 import Phaser from "phaser";
+import {CharAnimation} from "../char/char-constants";
 
 type GameObject = Container | Sprite | AnimatedSprite | GameText;
 
 export class Container {
     obj: Phaser.GameObjects.Container
 
-    constructor(x: number, y: number) {
-        this.obj = render.scene.add.container(x, y);
+    constructor(x: number, y: number, options?: {parent?: Container}) {
+        this.obj = new Phaser.GameObjects.Container(render.scene, x, y);
+        if (options?.parent) {
+            options.parent.add(this)
+        } else {
+            render.scene.add.existing(this.obj);
+        }
     }
 
     setInteractive(val: boolean, options?: any, options2?: any) {
@@ -37,6 +46,23 @@ export class Container {
     move(x: number, y: number) {
         this.obj.setPosition(x, y);
     }
+
+    getCoords() {
+        return {x: this.obj.x, y: this.obj.y}
+    }
+
+    setVisibility(val: boolean) {
+        this.obj.visible = val;
+    }
+
+    get x() { return this.obj.x }
+    set x(x) { this.obj.x = x }
+    get y() { return this.obj.y }
+    set y(y) { this.obj.y = y }
+    get height() {return this.obj.height }
+    get width() {return this.obj.width }
+    destroy() { this.obj.destroy() }
+    addPhysics() { render.scene.physics.add.existing(this.obj) }
 }
 
 export class GameText {
@@ -53,6 +79,12 @@ export class GameText {
     setOrigin(x: number, y: number) {
         this.obj.setOrigin(x, y)
     }
+
+    setText(str: string) {
+        this.obj.text = str;
+    }
+
+    addPhysics() { render.scene.physics.add.existing(this.obj) }
 }
 
 export class Sprite {
@@ -72,14 +104,43 @@ export class Sprite {
         if (options?.height) this.obj.displayHeight = options.height;
     }
 
-    setInteractive(val: boolean) {
-        if (val) this.obj.setInteractive()
+    setInteractive(val: boolean, options?: any) {
+        if (val) this.obj.setInteractive(options)
         else this.obj.disableInteractive()
     }
 
     setOrigin(x: number, y: number) {
         this.obj.setOrigin(x, y)
     }
+
+    move(x: number, y: number) {
+        this.obj.setPosition(x, y);
+    }
+
+    onClick(callback: () => void) {
+        this.obj.on('pointerdown', callback)
+    }
+
+    onPointerOver(callback: () => void) {
+        this.obj.on('pointerover', callback)
+    }
+
+    onPointerOut(callback: () => void) {
+        this.obj.on('pointerout', callback)
+    }
+
+    setVisibility(val: boolean) {
+        this.obj.visible = val;
+    }
+
+    get x() { return this.obj.x }
+    set x(x) { this.obj.x = x }
+    get y() { return this.obj.y }
+    set y(y) { this.obj.y = y }
+    get height() {return this.obj.height }
+    get width() {return this.obj.width }
+    destroy() { this.obj.destroy() }
+    addPhysics() { render.scene.physics.add.existing(this.obj) }
 }
 
 export class TileSprite {
@@ -101,6 +162,12 @@ export class TileSprite {
     setOrigin(x: number, y: number) {
         this.obj.setOrigin(x, y)
     }
+
+    setVisibility(val: boolean) {
+        this.obj.visible = val;
+    }
+
+    addPhysics() { render.scene.physics.add.existing(this.obj) }
 }
 
 export class AnimatedSprite {
@@ -112,14 +179,21 @@ export class AnimatedSprite {
             animations: { key: string, frameRate?: number, repeat?: number }[],
             x: number,
             y: number,
+            parent?: Container
         }
     ) {
         if (!render.animations[options.key]) render.createAnimations(options);
 
-        this.obj = render.scene.add.sprite(options.x, options.y, options.key);
+        this.obj = new Phaser.GameObjects.Sprite(render.scene, options.x, options.y, options.key);
+        if (options?.parent) {
+            options.parent.add(this);
+        } else {
+            render.scene.add.existing(this.obj)
+        }
     }
 
     play(anim: string) {
+        console.log('play', anim)
         this.obj.play(anim);
     }
 
@@ -135,6 +209,40 @@ export class AnimatedSprite {
     setOrigin(x: number, y: number) {
         this.obj.setOrigin(x, y)
     }
+
+    setVisibility(val: boolean) {
+        this.obj.visible = val;
+    }
+
+    get x() {
+        return this.obj.x
+    }
+
+    set x(x) {
+        this.obj.x = x
+    }
+
+    get y() {
+        return this.obj.y
+    }
+
+    set y(y) {
+        this.obj.y = y
+    }
+
+    get height() {
+        return this.obj.height
+    }
+
+    get width() {
+        return this.obj.width
+    }
+
+    destroy() {
+        this.obj.destroy()
+    }
+
+    addPhysics() { render.scene.physics.add.existing(this.obj) }
 }
 
 class RenderManager {
@@ -164,12 +272,12 @@ class RenderManager {
         const atlasTexture = this.scene.textures.get(options.key);
 
         options.animations.forEach(animation => {
-            console.log(animation, atlasTexture.frames);
             const framesNumber = Object.keys(atlasTexture.frames).filter(frameKey => {
                 return frameKey.startsWith(animation.key) && !isNaN(+frameKey[animation.key.length])
             }).length
+            console.log('create animation', options.key + '_' + animation.key);
             const animConfig = {
-                key: animation.key,
+                key: options.key + '_' + animation.key,
                 frames: this.scene.anims.generateFrameNames(options.key, {prefix: animation.key, suffix: '.png', start: 1, end: framesNumber}),
                 frameRate: animation.frameRate,
                 repeat: animation.repeat
@@ -179,6 +287,14 @@ class RenderManager {
 
             this.animations[options.key][animation.key] = anim
         })
+    }
+
+    moveTowards(obj: GameObject, x: number, y: number, speed: number, maxTime?: number) {
+        this.scene.physics.moveTo(obj.obj, x, y, speed, maxTime);
+    }
+
+    directToTarget(obj: GameObject, target: Vec) {
+        obj.obj.scaleX = Math.sign(target.x - obj.obj.x);
     }
 
     // createAnimatedSprite(textureKey: keyof typeof resoursePaths.atlases, animName: string, frameRate: number, repeat) {
@@ -277,31 +393,6 @@ class RenderManager {
     //     this.getContainer(entityId).renderable = val;
     // }
     //
-    // moveTowards(entityId: string, x: number, y: number, byDistance: number, ySorting = false, directToTarget = false): number {
-    //     const obj = this.getContainer(entityId);
-    //     const target = {x, y};
-    //
-    //     const vec = getVector(obj, target)
-    //     const oldDistance = getVectorLength(vec);
-    //     const normalizedVec = getNormalizedVector(vec);
-    //
-    //     const xShift = normalizedVec.x * byDistance;
-    //     const yShift = normalizedVec.y * byDistance;
-    //
-    //     if (Math.abs(vec.x) < Math.abs(xShift)) obj.x = target.x;
-    //     else  obj.x += xShift
-    //
-    //     if (Math.abs(vec.y) < yShift) obj.y = target.y;
-    //     else  obj.y += yShift
-    //
-    //     if (ySorting) {
-    //         obj.zIndex = zLayers.GAME_OBJECTS_MIN + Math.round(y);
-    //     }
-    //
-    //     if (directToTarget) this.directToTarget(entityId, target)
-    //
-    //     return getDistanceBetween(obj, target);
-    // }
     //
     // setInteractive(containerId: string, interactive: boolean, buttonMode = interactive){
     //     const c = this.getContainer(containerId);
@@ -327,12 +418,6 @@ class RenderManager {
     //     }
     // }
     //
-    // directToTarget(id: string, target: Vec) {
-    //     const obj = this.getContainer(id);
-    //     if (!obj) throw Error('no container with id ' + id);
-    //
-    //     obj.scale.x = Math.sign(target.x - obj.x);
-    // }
     //
     // createContainer(entityId: string, parentId?: string): PIXI.Container {
     //

@@ -1,4 +1,5 @@
 import {getGameSize} from "../utils/utils-misc";
+import {characters} from "./characters";
 // import {characters} from "./characters";
 
 export const positioner = {
@@ -35,12 +36,12 @@ export const positioner = {
         }
     },
 
-    // getPrisonerPosition() {
-    //     const pos = positioner.getLairPosition();
-    //     const prisonersAmount = characters.getPrisoners().length
-    //     return {
-    //         x: pos.x + pos.width / 2 + prisonersAmount * 50,
-    //         y: pos.y + pos.height * 0.5
-    //     }
-    // }
+    getPrisonerPosition() {
+        const pos = positioner.getLairPosition();
+        const prisonersAmount = characters.getPrisoners().length
+        return {
+            x: pos.x + pos.width / 2 + prisonersAmount * 50,
+            y: pos.y + pos.height * 0.5
+        }
+    }
 }

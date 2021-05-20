@@ -7,6 +7,7 @@ export interface ButtonOptions {
     x?: number
     y?: number
     style?: any
+    parent?: Container
 }
 
 export class BasicButton {
@@ -19,7 +20,7 @@ export class BasicButton {
     constructor(options: ButtonOptions) {
         this.options = {...options};
 
-        this.container = new Container(options.x || 0, options.y || 0)
+        this.container = options.parent || new Container(options.x || 0, options.y || 0)
         this.text = new GameText(options.text, 0, 0, { fontFamily: 'serif', color: colors.BLACK }, {parent: this.container})
         this.text.setOrigin(0, 0);
 
@@ -69,5 +70,9 @@ export class BasicButton {
         // this.container.alpha = 0.3
         // this.container.interactive = false;
         // this.container.buttonMode = false;
+    }
+
+    destroy() {
+        this.container.destroy()
     }
 }

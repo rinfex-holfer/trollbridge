@@ -1,6 +1,5 @@
-import {render} from "../managers/render";
+import {GameText, render} from "../managers/render";
 import {colors} from "../constants";
-import {Container, GameText} from "../type-aliases";
 import {Char} from "../char/Char";
 
 export class CharMpIndicator {
@@ -9,16 +8,16 @@ export class CharMpIndicator {
     text: GameText
 
     constructor(private char: Char) {
-        this.text = render.createText(
+        this.text = new GameText(
             '',
             0,
             -50,
             {
                 align: 'center',
-                fill: colors.WHITE,
-                fontSize: 14,
+                color: colors.WHITE,
+                fontSize: '14px',
             },
-            char.container
+            {parent: char.container}
         )
         // this.text.anchor.set(0.5, 1);
     }
@@ -32,10 +31,10 @@ export class CharMpIndicator {
     }
 
     show() {
-        this.text.text = this.getText();
+        this.text.setText(this.getText());
     }
 
     hide() {
-        this.text.text = ''
+        this.text.setText('');
     }
 }

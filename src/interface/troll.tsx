@@ -3,6 +3,7 @@
 import React, {useEffect, useState} from "react";
 import {eventBus, Evt} from "../event-bus";
 import {gameState} from "../game-state";
+import {getTroll} from "../managers/troll";
 
 export const Troll = () => {
     const [stats, setStats] = useState({
@@ -15,7 +16,7 @@ export const Troll = () => {
         const sub = eventBus.on(Evt.TROLL_STATS_CHANGED, () => {
             setStats({
                 level: gameState.troll.level,
-                hp: trollManager.hp,
+                hp: getTroll().hp,
                 hunger: gameState.troll.hunger,
             })
         })

@@ -1,34 +1,35 @@
-import {render} from "./render";
+import {Container, render, Sprite} from "./render";
 import {createId} from "../utils/utils-misc";
-import {trollManager} from "./troll";
 import {gameState} from "../game-state";
 import {eventBus, Evt} from "../event-bus";
-import {resoursePaths} from "../resourse-paths";
 import {EntityKey, ResourceKey} from "../types";
 import {Vec} from "../utils/utils-math";
-import {zLayers} from "../constants";
 import {lair} from "./lair";
+import {getTroll} from "./troll";
 
 export class FoodStorage {
     static CONTAINER_ID = 'food-storage'
 
-    foodSprites = [] as string[];
+    foodSprites = [] as Sprite[];
 
     unsub = [] as any[]
 
     position: Vec = {x: 0, y: 0}
 
+    // @ts-ignore
+    container: Container;
+
     init(pos: Vec) {
         this.position = pos;
 
-        const container = render.createContainer(FoodStorage.CONTAINER_ID)
-        container.zIndex = zLayers.LAIR_OBJECTS
-        container.interactive = true;
-        container.buttonMode = true;
-        container.addListener('click', () => {
+        const container = new Container(0, 0)
+        this.container = container
+        // container.zIndex = zLayers.LAIR_OBJECTS
+        container.setInteractive(true, {cursor: 'pointer'});
+        container.onClick( () => {
             if (gameState.food > 0) {
                 lair.changeResource(ResourceKey.FOOD, -1);
-                trollManager.eat(1);
+                getTroll().eat(1);
             }
         })
 
@@ -45,22 +46,20 @@ export class FoodStorage {
     updateFood() {
         if (lair.resources[ResourceKey.FOOD] < this.foodSprites.length) {
             while (lair.resources[ResourceKey.FOOD] < this.foodSprites.length) {
-                // @ts-ignore
-                render.removeSprite(this.foodSprites.pop());
+                this.foodSprites.pop()?.destroy()
             }
         } else if (lair.resources[ResourceKey.FOOD] > this.foodSprites.length) {
             const lairPos = this.position;
 
             while (lair.resources[ResourceKey.FOOD] !== this.foodSprites.length) {
-                const entityId = createId(EntityKey.FOOD);
                 lairPos.x += 25;
-                render.createSprite({
-                    path: resoursePaths.images.meat,
-                    ...lairPos,
-                    entityId,
-                    container: render.getContainer(FoodStorage.CONTAINER_ID)
-                })
-                this.foodSprites.push(entityId);
+
+                this.foodSprites.push(new Sprite(
+                    'meat',
+                    lairPos.x,
+                    lairPos.y,
+                    {parent: this.container}
+                ));
             }
         }
     }

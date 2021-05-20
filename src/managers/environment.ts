@@ -6,7 +6,6 @@ export class Environment {
 
     constructor() {
         const size = getGameSize();
-        console.log(size);
         this.bg = new Sprite('background', 0, 0, { width: size.width, height: size.height } )
         this.bg.setOrigin(0, 0);
     }

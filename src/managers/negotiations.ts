@@ -2,14 +2,13 @@ import {rnd} from "../utils/utils-math";
 import {EncounterDanger, TrollLocation} from "../types";
 import {eventBus, Evt} from "../event-bus";
 import {characters} from "./characters";
-import {Container} from "../type-aliases";
-import {render} from "./render";
+import {Container, render} from "./render";
 import {BasicButton} from "../interface/basic/basic-button";
 import {colors, zLayers} from "../constants";
 import {SimpleButton} from "../interface/basic/simple-button";
 import {positioner} from "./positioner";
-import {trollManager} from "./troll";
 import {battleManager} from "./battle";
+import {getTroll} from "./troll";
 
 export const enum NegotiationsState {
     START = 'START',
@@ -48,22 +47,13 @@ export class Negotiations {
         eventBus.on(Evt.CHAR_READY_TO_TALK, id => this.onTravellerReadyToTalk(id));
         eventBus.on(Evt.TRAVELLERS_APPEAR, () => this.onTravellersAppear());
 
-        this.container = render.createContainer(this.containerId)
-        this.container.zIndex = zLayers.CHAR_MENU;
-        const bridgePos = positioner.bridgePosition();
-        // @ts-ignore
-        window.bridgePosition = positioner.bridgePosition;
-        console.log(this.container, this.container.y, bridgePos.y, bridgePos.height);
-        render.move(
-            this.containerId,
-            bridgePos.x + bridgePos.width / 2,
-            bridgePos.y  + bridgePos.height + 64
-        )
-        console.log(this.container, this.container.y);
+        const bridgePos = positioner.bridgePosition()
+        this.container = new Container(bridgePos.x + bridgePos.width / 2, bridgePos.y  + bridgePos.height + 64)
+        // this.container.zIndex = zLayers.CHAR_MENU;
     }
 
     onTravellersAppear() {
-        if (trollManager.location === TrollLocation.BRIDGE) {
+        if (getTroll().location === TrollLocation.BRIDGE) {
             this.startEncounter();
         }
     }
@@ -141,7 +131,6 @@ export class Negotiations {
             const b = new SimpleButton({
                 text,
                 onClick: () => this.onMessage(text),
-                parentId: this.containerId,
                 style: {
                     align: 'center',
                     fill: colors.WHITE,
@@ -149,7 +138,8 @@ export class Negotiations {
                     fontSize: 18,
                     wordWrap: true
                 },
-                x
+                x,
+                parent: this.container
             })
 
             x += (BUTTON_WIDTH + BUTTON_MARGIN);

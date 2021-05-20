@@ -1,17 +1,19 @@
 import {CharState} from "./CharState";
 import {CharAnimation, CharStateKey} from "../char-constants";
 import {positioner} from "../../managers/positioner";
-import {trollManager} from "../../managers/troll";
+import {getTroll} from "../../managers/troll";
+import {getDistanceBetween} from "../../utils/utils-math";
 
 export class CharStateBattleAttack extends CharState {
     key = CharStateKey.BATTLE_ATTACK
 
-    toTroll = true
-    attackInProcess = false;
     phase: 'forward' | 'backward' | 'attacking' = 'forward'
 
     beforeAttack = 300
 
+    onStart() {
+        this.char.moveTowards(getTroll().sprite.x, this.char.getCoords().y)
+    }
 
     update(dt: number) {
         if (this.beforeAttack > 0) {
@@ -22,24 +24,25 @@ export class CharStateBattleAttack extends CharState {
             return;
         }
         const startX = positioner.negotiationX()
-        const trollX = trollManager.container.x;
+        const trollX = getTroll().sprite.x;
         const y = this.char.getCoords().y;
 
         if (this.phase === 'attacking') return;
 
         if (this.phase === 'forward') {
-            const distanceLeft = this.char.moveTowards(dt, trollX, y)
+            const distanceLeft = getDistanceBetween(this.char.container, {x: trollX, y})
 
             if (distanceLeft <= 100) {
                 this.phase = 'attacking'
                 this.char.setAnimation(CharAnimation.STRIKE, false, () => {
                     this.attack();
                     this.phase = 'backward'
+                    this.char.moveTowards(startX, y)
                     this.char.setAnimation(CharAnimation.WALK)
                 })
             }
         } else if (this.phase === 'backward') {
-            const distanceLeft = this.char.moveTowards(dt, startX, y)
+            const distanceLeft = getDistanceBetween(this.char.container, {x: startX, y})
 
             if (distanceLeft <= 0) {
                 this.char.endAttack();
@@ -48,6 +51,6 @@ export class CharStateBattleAttack extends CharState {
     }
 
     attack() {
-        trollManager.getHit(this.char.rollDmg());
+        getTroll().getHit(this.char.rollDmg());
     }
 }

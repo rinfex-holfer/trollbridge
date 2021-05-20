@@ -10,6 +10,8 @@ import {rndBetween} from "../utils/utils-math";
 import {bridgeManager} from "./bridge-manager";
 import {lair} from "./lair";
 
+let troll: Troll
+
 export class Troll {
 
     location: TrollLocation = TrollLocation.LAIR
@@ -21,6 +23,7 @@ export class Troll {
     sprite: AnimatedSprite
 
     constructor() {
+        troll = this;
         const pos = positioner.getLairPosition();
         this.sprite = new AnimatedSprite({
             key: 'troll',
@@ -34,7 +37,8 @@ export class Troll {
             x: pos.x + pos.width / 2,
             y: pos.y + pos.height / 2,
         })
-        this.sprite.play(CharAnimation.WALK)
+        this.sprite.addPhysics();
+        this.setAnimation(CharAnimation.WALK)
         this.onNewLevel();
 
         eventBus.on(Evt.TIME_PASSED, () => this.increaseHunger());
@@ -77,29 +81,30 @@ export class Troll {
 
         eventBus.emit(Evt.TROLL_STATS_CHANGED);
     }
-    //
-    // eat(amount = 1) {
-    //     gameState.troll.hunger = Math.max(gameState.troll.hunger - amount * 2, 0);
-    //     this.changeTrollHp(amount);
-    //     eventBus.emit(Evt.TROLL_STATS_CHANGED);
-    //     eventBus.emit(Evt.RESOURSES_CHANGED);
-    // }
-    //
-    // changeTrollHp(val: number, cause = 'hunger') {
-    //     const newVal = this.hp + val;
-    //     this.hp = Math.max(Math.min(newVal, gameConstants.MAX_TROLL_HP[this.level]), 0);
-    //     eventBus.emit(Evt.TROLL_STATS_CHANGED);
-    //     if (this.hp === 0 && !gameState.gameover) {
-    //         gameState.gameover = cause;
-    //         eventBus.emit(Evt.GAME_OVER);
-    //         this.setAnimation(CharAnimation.DEAD)
-    //     }
-    // }
-    //
-    // setAnimation(key: CharAnimation, onComplete?: () => void) {
-    //     this.sprite.play(key);
-    // }
-    //
+
+    eat(amount = 1) {
+        gameState.troll.hunger = Math.max(gameState.troll.hunger - amount * 2, 0);
+        this.changeTrollHp(amount);
+        eventBus.emit(Evt.TROLL_STATS_CHANGED);
+        eventBus.emit(Evt.RESOURSES_CHANGED);
+    }
+
+    changeTrollHp(val: number, cause = 'hunger') {
+        const newVal = this.hp + val;
+        this.hp = Math.max(Math.min(newVal, gameConstants.MAX_TROLL_HP[this.level]), 0);
+        eventBus.emit(Evt.TROLL_STATS_CHANGED);
+        if (this.hp === 0 && !gameState.gameover) {
+            gameState.gameover = cause;
+            eventBus.emit(Evt.GAME_OVER);
+            this.setAnimation(CharAnimation.DEAD)
+        }
+    }
+
+    setAnimation(key: CharAnimation, onComplete?: () => void) {
+        console.log(this.sprite)
+        this.sprite.play('troll_' + key);
+    }
+
     goToBridge() {
         if (this.location === TrollLocation.BRIDGE) return;
 
@@ -126,44 +131,48 @@ export class Troll {
         lair.disableInterface();
         bridgeManager.enableInterface();
     }
-    //
-    // devour(id: string) {
-    //     this.eat(3);
-    //     characters.charEaten(id);
-    // }
-    //
-    // getHit(dmg: number) {
-    //     if (dmg > this.armor + rndBetween(1, 5)) {
-    //         // console.log(this.container);
-    //         // particleManager.createHitBurst(
-    //         //     this.containerId,
-    //         //     this.container.x,
-    //         //     this.container.y - this.container.height / 2
-    //         // )
-    //         //
-    //         // audioManager.playSound(SOUND_KEY.HIT);
-    //         // this.changeTrollHp(-dmg, 'battle');
-    //         //
-    //         // flyingStatusChange(
-    //         //     '-'+dmg,
-    //         //     this.container.x,
-    //         //     this.container.y - this.container.height,
-    //         //     colors.RED
-    //         // );
-    //     } else {
-    //         // audioManager.playSound(SOUND_KEY.BLOCK);
-    //         //
-    //         // particleManager.createBlockBurst(
-    //         //     this.containerId,
-    //         //     this.container.x + this.container.width / 2,
-    //         //     this.container.y - this.container.height / 2
-    //         // )
-    //         //
-    //         // flyingStatusChange('blocked', this.container.x, this.container.y - 100, colors.WHITE);
-    //     }
-    // }
-    //
-    // rollDmg() {
-    //     return gameConstants.TROLL_DMG[this.level] + rndBetween(1, 5)
-    // }
+
+    devour(id: string) {
+        this.eat(3);
+        characters.charEaten(id);
+    }
+
+    getHit(dmg: number) {
+        if (dmg > this.armor + rndBetween(1, 5)) {
+            // console.log(this.container);
+            // particleManager.createHitBurst(
+            //     this.containerId,
+            //     this.container.x,
+            //     this.container.y - this.container.height / 2
+            // )
+            //
+            // audioManager.playSound(SOUND_KEY.HIT);
+            // this.changeTrollHp(-dmg, 'battle');
+            //
+            // flyingStatusChange(
+            //     '-'+dmg,
+            //     this.container.x,
+            //     this.container.y - this.container.height,
+            //     colors.RED
+            // );
+        } else {
+            // audioManager.playSound(SOUND_KEY.BLOCK);
+            //
+            // particleManager.createBlockBurst(
+            //     this.containerId,
+            //     this.container.x + this.container.width / 2,
+            //     this.container.y - this.container.height / 2
+            // )
+            //
+            // flyingStatusChange('blocked', this.container.x, this.container.y - 100, colors.WHITE);
+        }
+    }
+
+    rollDmg() {
+        return gameConstants.TROLL_DMG[this.level] + rndBetween(1, 5)
+    }
+}
+
+export const getTroll = () => {
+    return troll;
 }

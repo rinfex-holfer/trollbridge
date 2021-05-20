@@ -1,30 +1,26 @@
-import {render} from "../managers/render";
+import {Container, GameText, render} from "../managers/render";
 import {colors} from "../constants";
-import {Container, GameText} from "../type-aliases";
 
 export class CharSpeakText {
-    isShown = true;
-
     text: GameText
 
     timeout: number | null = null
 
     constructor(private container: Container) {
-        this.text = render.createText(
+        this.text = new GameText(
             '',
             120,
             -10,
             {
                 align: 'center',
-                fill: colors.WHITE,
+                color: colors.WHITE,
                 fontStyle: 'italic',
-                wordWrapWidth: 200,
-                fontSize: 18,
-                wordWrap: true
+                fontSize: '18px',
+                wordWrap: {width: 200}
             },
-            container
+            {parent: container}
         )
-        // this.text.anchor.set(0.5, 1);
+        this.text.setOrigin(0.5, 1);
     }
 
     clearTimeout() {
@@ -35,15 +31,15 @@ export class CharSpeakText {
     }
 
     showText(text: string, timeout?: number) {
-        this.text.text = text;
+        this.text.setText(text);
 
         if (timeout) {
             this.clearTimeout();
-            this.timeout = window.setTimeout(() => this.hideText(), 2000);
+            this.timeout = window.setTimeout(() => this.hideText(), timeout);
         }
     }
 
     hideText() {
-        this.text.text = '';
+        this.text.setText('');
     }
 }

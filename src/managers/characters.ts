@@ -112,7 +112,7 @@ class Characters {
                 y
             );
             y += margin;
-            char.goAcrossBridge();
+            // char.goAcrossBridge();
             this.chars.push(char);
         })
         eventBus.emit(Evt.TRAVELLERS_APPEAR);

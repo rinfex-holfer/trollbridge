@@ -19,7 +19,7 @@ import {CharStateGoToTalk} from "./states/CharStateGoToTalk";
 import {colors, gameConstants} from "../constants";
 import {audioManager, SOUND_KEY} from "../managers/audio";
 import {CharStateBattleIdle} from "./states/CharStateBattleIdle";
-import {clamp, rndBetween} from "../utils/utils-math";
+import {clamp, rndBetween, Vec} from "../utils/utils-math";
 import {pause} from "../utils/utils-async";
 import {particleManager} from "../managers/particles";
 import {CharStateBattleAttack} from "./states/CharStateBattleAttack";
@@ -28,6 +28,7 @@ import {CharStateBattleSurrender} from "./states/CharStateBattleSurrender";
 import {battleManager} from "../managers/battle";
 import {CharHpIndicator} from "../interface/char-hp-indicator";
 import {CharMpIndicator} from "../interface/char-mp-indicator";
+import {getTroll} from "../managers/troll";
 
 export class Char {
     key: CharKey
@@ -54,13 +55,14 @@ export class Char {
     state: CharState
     timeWithoutFood = 0
 
-    // actionsMenu: CharActionsMenu
-    // speakText: CharSpeakText
-    // hpIndicator: CharHpIndicator
-    // mpIndicator: CharMpIndicator
+    actionsMenu: CharActionsMenu
+    speakText: CharSpeakText
+    hpIndicator: CharHpIndicator
+    mpIndicator: CharMpIndicator
 
     // bones: Sprite
     sprite: AnimatedSprite
+    bones: Sprite
     container: Container
 
     unsub: (() => void)[] = []
@@ -82,14 +84,17 @@ export class Char {
         this.isCombatant = charTemplate.isCombatant
         this.dmg = charTemplate.dmg;
 
-        this.container = new Container(x, y);
-        this.sprite = this.createSprite(x, y);
-        this.createBones();
+        this.container = new Container(x, y)
+        this.container.addPhysics()
 
-        // this.actionsMenu = new CharActionsMenu(this.id);
-        // this.speakText = new CharSpeakText(this.container);
-        // this.hpIndicator = new CharHpIndicator(this);
-        // this.mpIndicator = new CharMpIndicator(this);
+        this.sprite = this.createSprite(0, 0)
+        this.bones = this.createBones()
+        this.bones.setVisibility(false);
+
+        this.actionsMenu = new CharActionsMenu(this);
+        this.speakText = new CharSpeakText(this.container);
+        this.hpIndicator = new CharHpIndicator(this);
+        this.mpIndicator = new CharMpIndicator(this);
 
         this.state = this.getState(CharStateKey.GO_ACROSS)
         this.state.onStart();
@@ -167,12 +172,11 @@ export class Char {
     }
 
     createSprite(x: number, y: number) {
-
+        console.log(charTemplates[this.key].atlasKey);
         const sprite = new AnimatedSprite({
             // @ts-ignore
             key: charTemplates[this.key].atlasKey,
             animations:  [
-                {key: 'idle', repeat: -1, frameRate: 4},
                 {key: CharAnimation.WALK, repeat: -1, frameRate: 4},
                 {key: CharAnimation.IDLE, repeat: -1, frameRate: 4},
                 {key: CharAnimation.DEAD, repeat: -1, frameRate: 4},
@@ -182,59 +186,45 @@ export class Char {
             ],
             x: x,
             y: y,
+            parent: this.container
         })
+        console.log(sprite);
         sprite.setOrigin(0.5, 1);
         return sprite;
     }
 
     disableInteractivity() {
-        this.container.interactive = false;
-        this.container.interactiveChildren = false;
+        this.container.setInteractive(false);
         this.actionsMenu.hide()
     }
 
     enableInteractivity() {
         if (this.isBones) return;
-        this.container.interactive = true;
-        this.container.interactiveChildren = true;
+        this.container.setInteractive(true);
         this.actionsMenu.checkIsHovered();
     }
 
     createBones() {
-        const container = render.getContainer(this.id);
-        render.createSprite({
-            entityId: this.id + '_bones',
-            path: resoursePaths.images.bones,
-            visible: false,
-            x: 0,
-            y: 0,
-            container,
-            anchor: {x: 0.5, y: 0.5}
-        })
+        const bones = new Sprite('bones', 0, 0, {parent: this.container});
+        bones.setOrigin(0.5, 0.5);
+        return bones;
     }
 
-    getCoords() {
-        const cont = render.getContainer(this.id);
-        return {x: cont.x, y: cont.y};
+    getCoords(): Vec {
+        return this.container.getCoords();
     }
 
     changeResources(key: ResourceKey, val: number) {
         this.resources[key] = Math.max(this.resources[key] + val, 0)
     }
 
-    moveTowards(dt: number, x: number, y: number, directToTarget?: boolean): number {
-        const distanceLeft = render.moveTowards(
-            this.id,
+    moveTowards(x: number, y: number) {
+        render.moveTowards(
+            this.container,
             x,
             y,
-            dt * this.speed / 1000,
-            true,
-            directToTarget,
+            this.speed,
         )
-
-        this.syncFlip();
-
-        return distanceLeft;
     }
 
     pay() {
@@ -281,12 +271,7 @@ export class Char {
     }
 
     setAnimation(key: CharAnimation, loop?: boolean, onComplete?: () => void) {
-        render.changeAnimation({
-            entityId: this.id,
-            animationName: key,
-            loop,
-            onComplete
-        })
+        this.sprite.play(this.key + '_' + key);
     }
 
     goToTalk() {
@@ -318,16 +303,16 @@ export class Char {
             this.setState(CharStateKey.BATTLE_IDLE);
         }
     }
-
-    syncFlip() {
-        this.actionsMenu.container.scale.x = this.container.scale.x;
-        // @ts-ignore
-        this.speakText.text.scale.x = this.container.scale.x;
-        // @ts-ignore
-        this.hpIndicator.text.scale.x = this.container.scale.x;
-        // @ts-ignore
-        this.mpIndicator.text.scale.x = this.container.scale.x;
-    }
+    //
+    // syncFlip() {
+    //     this.actionsMenu.container.scale.x = this.container.scale.x;
+    //     // @ts-ignore
+    //     this.speakText.text.scale.x = this.container.scale.x;
+    //     // @ts-ignore
+    //     this.hpIndicator.text.scale.x = this.container.scale.x;
+    //     // @ts-ignore
+    //     this.mpIndicator.text.scale.x = this.container.scale.x;
+    // }
 
     speak(text: string) {
         this.speakText.showText(text, 2000);
@@ -347,8 +332,8 @@ export class Char {
 
         flyingStatusChange(
             ''+val,
-            this.container.x,
-            this.container.y - this.container.height,
+            this.sprite.x,
+            this.sprite.y - this.sprite.height,
             colors.BLUE
         );
 
@@ -364,7 +349,7 @@ export class Char {
 
     getHit(dmg: number) {
         audioManager.playSound(SOUND_KEY.HIT);
-        particleManager.createHitBurst(this.id + '_emitter', this.container.x, this.container.y);
+        particleManager.burstBlood(this.container.x, this.container.y);
 
         this.changeHp(-dmg);
 
@@ -386,7 +371,7 @@ export class Char {
     }
 
     startAttack() {
-        if (trollManager.hp > 0) {
+        if (getTroll().hp > 0) {
             this.setState(CharStateKey.BATTLE_ATTACK);
         } else {
             this.endAttack();

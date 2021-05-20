@@ -25,8 +25,8 @@ export class CharStateBones extends CharState {
 
         this.char.isBones = true;
         this.char.isAlive = false;
-        render.hideAnimation(this.char.id);
-        render.changeSpriteVisibility(this.char.id + '_bones', true);
+        this.char.sprite.setVisibility(false);
+        this.char.bones.setVisibility(true);
         this.char.actionsMenu.changeActiveButtons([])
         this.char.disableInteractivity()
     }

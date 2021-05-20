@@ -5,7 +5,9 @@ import {createPromiseAndHandlers} from "./utils/utils-async";
 const load = (scene: Phaser.Scene): Promise<any> => {
     const {promise, done, fail} = createPromiseAndHandlers();
 
-    scene.load.on('progress', (a: string) => console.log(a));
+    scene.load.on('progress', (a: string) => {
+        // console.log(a)
+    });
     scene.load.on('complete', done);
     scene.load.on('loaderror', fail);
 

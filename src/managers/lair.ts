@@ -54,20 +54,20 @@ class Lair {
         eventBus.emit(Evt.RESOURSES_CHANGED)
     }
 
-    // feedChar(id: string) {
-    //     if (this.resources.food === 0) {
-    //         console.error('no food to feed', id)
-    //         return;
-    //     }
-    //     this.changeResource(ResourceKey.FOOD, -1);
-    //     characters.feedChar(id);
-    // }
-    //
-    // makeFoodFrom(id: string) {
-    //     this.changeResource(ResourceKey.FOOD, 3);
-    //     characters.makeCharGiveAll(id);
-    //     characters.removeChar(id);
-    // }
+    feedChar(id: string) {
+        if (this.resources.food === 0) {
+            console.error('no food to feed', id)
+            return;
+        }
+        this.changeResource(ResourceKey.FOOD, -1);
+        characters.feedChar(id);
+    }
+
+    makeFoodFrom(id: string) {
+        this.changeResource(ResourceKey.FOOD, 3);
+        characters.makeCharGiveAll(id);
+        characters.removeChar(id);
+    }
 }
 
 export const lair = new Lair();
