@@ -7,6 +7,7 @@ import {
 import {resoursePaths} from "../resourse-paths";
 import Phaser from "phaser";
 import {CharAnimation} from "../char/char-constants";
+import {CharAction} from "../interface/char-actions-menu";
 
 type GameObject = Container | Sprite | AnimatedSprite | GameText;
 
@@ -84,6 +85,13 @@ export class GameText {
         this.obj.text = str;
     }
 
+    get x() { return this.obj.x }
+    set x(x) { this.obj.x = x }
+    get y() { return this.obj.y }
+    set y(y) { this.obj.y = y }
+    get height() { return this.obj.height }
+    get width() { return this.obj.width }
+    destroy() { this.obj.destroy() }
     addPhysics() { render.scene.physics.add.existing(this.obj) }
 }
 
@@ -167,34 +175,44 @@ export class TileSprite {
         this.obj.visible = val;
     }
 
+    get x() { return this.obj.x }
+    set x(x) { this.obj.x = x }
+    get y() { return this.obj.y }
+    set y(y) { this.obj.y = y }
+    get height() { return this.obj.height }
+    get width() { return this.obj.width }
+    destroy() { this.obj.destroy() }
     addPhysics() { render.scene.physics.add.existing(this.obj) }
 }
 
 export class AnimatedSprite {
     obj: Phaser.GameObjects.Sprite
 
+    atlasKey: keyof typeof resoursePaths.atlases
+
     constructor(
         options: {
-            key: keyof typeof resoursePaths.atlases,
-            animations: { key: string, frameRate?: number, repeat?: number }[],
+            atlasKey: keyof typeof resoursePaths.atlases,
+            animations: { framesPrefix: string, frameRate?: number, repeat?: number }[],
             x: number,
             y: number,
             parent?: Container
         }
     ) {
-        if (!render.animations[options.key]) render.createAnimations(options);
+        this.atlasKey = options.atlasKey;
 
-        this.obj = new Phaser.GameObjects.Sprite(render.scene, options.x, options.y, options.key);
+        if (!render.animations[options.atlasKey]) render.createAnimations(options);
+
+        this.obj = new Phaser.GameObjects.Sprite(render.scene, options.x, options.y, options.atlasKey);
         if (options?.parent) {
             options.parent.add(this);
-        } else {
-            render.scene.add.existing(this.obj)
         }
+        render.scene.add.existing(this.obj)
     }
 
     play(anim: string) {
         console.log('play', anim)
-        this.obj.play(anim);
+        this.obj.play(render.getAnimKey(this.atlasKey, anim));
     }
 
     move(x: number, y: number) {
@@ -214,34 +232,13 @@ export class AnimatedSprite {
         this.obj.visible = val;
     }
 
-    get x() {
-        return this.obj.x
-    }
-
-    set x(x) {
-        this.obj.x = x
-    }
-
-    get y() {
-        return this.obj.y
-    }
-
-    set y(y) {
-        this.obj.y = y
-    }
-
-    get height() {
-        return this.obj.height
-    }
-
-    get width() {
-        return this.obj.width
-    }
-
-    destroy() {
-        this.obj.destroy()
-    }
-
+    get x() { return this.obj.x }
+    set x(x) { this.obj.x = x }
+    get y() { return this.obj.y }
+    set y(y) { this.obj.y = y }
+    get height() { return this.obj.height }
+    get width() { return this.obj.width }
+    destroy() { this.obj.destroy() }
     addPhysics() { render.scene.physics.add.existing(this.obj) }
 }
 
@@ -260,32 +257,46 @@ class RenderManager {
         this.scene = scene;
     }
 
+    getAnimKey(atlasKey: string, actionKey: string) {
+        return atlasKey + '_' + actionKey
+    }
+
     createAnimations(
         options: {
-            key: keyof typeof resoursePaths.atlases,
-            animations: { key: string, frameRate?: number, repeat?: number }[],
+            atlasKey: keyof typeof resoursePaths.atlases,
+            animations: { framesPrefix: string, frameRate?: number, repeat?: number }[],
         }
     ) {
 
-        this.animations[options.key] = {}
+        this.animations[options.atlasKey] = {}
 
-        const atlasTexture = this.scene.textures.get(options.key);
+        const atlasTexture = this.scene.textures.get(options.atlasKey);
 
         options.animations.forEach(animation => {
             const framesNumber = Object.keys(atlasTexture.frames).filter(frameKey => {
-                return frameKey.startsWith(animation.key) && !isNaN(+frameKey[animation.key.length])
+                return frameKey.startsWith(animation.framesPrefix) && !isNaN(+frameKey[animation.framesPrefix.length])
             }).length
-            console.log('create animation', options.key + '_' + animation.key);
+
+            const animationKey = this.getAnimKey(options.atlasKey, animation.framesPrefix);
+            console.log('create animation', animationKey);
+            // animation
+            // key: 'peasant_walk'
+            // frames: 'walk_0' 'walk_1'
+
+            // animations
+            // { peasant: { walk: ...animation } }
             const animConfig = {
-                key: options.key + '_' + animation.key,
-                frames: this.scene.anims.generateFrameNames(options.key, {prefix: animation.key, suffix: '.png', start: 1, end: framesNumber}),
+                key: animationKey,
+                frames: this.scene.anims.generateFrameNames(options.atlasKey, {prefix: animation.framesPrefix, suffix: '.png', start: 1, end: framesNumber}),
                 frameRate: animation.frameRate,
                 repeat: animation.repeat
             };
             const anim = this.scene.anims.create(animConfig);
-            if (!anim) throw Error('wrong config for animation: ' + animation.key);
+            if (!anim) {
+                throw Error('wrong config for animation: ' + options.atlasKey + ' ' + animation.framesPrefix);
+            }
 
-            this.animations[options.key][animation.key] = anim
+            this.animations[options.atlasKey][animation.framesPrefix] = anim
         })
     }
 

@@ -7,6 +7,7 @@ import {getGameSize} from "./utils/utils-misc";
 import {bridgeManager} from "./managers/bridge-manager";
 import {Environment} from "./managers/environment";
 import {lair} from "./managers/lair";
+import {characters} from "./managers/characters";
 
 const size = getGameSize()
 var config: Phaser.Types.Core.GameConfig = {
@@ -26,7 +27,7 @@ var config: Phaser.Types.Core.GameConfig = {
         },
         create: function() {
             create(this);
-        },
+        }
     }
 };
 
@@ -38,10 +39,13 @@ const preload = (scene: Phaser.Scene) => {
 const create = (scene: Phaser.Scene) => {
     render.init(scene);
     new Environment();
-
     bridgeManager.init();
     lair.init();
-    new Troll()
+    const troll = new Troll()
+
+    scene.update = function(time, delta) {
+        characters.update(delta);
+    }
 }
 
 export const newGame = () => new Phaser.Game(config);

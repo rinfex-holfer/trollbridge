@@ -1,5 +1,4 @@
 import {CharState} from "./CharState";
-import {render} from "../../managers/render";
 import {eventBus, Evt} from "../../event-bus";
 import {CharAnimation, CharStateKey} from "../char-constants";
 import {getDistanceBetween} from "../../utils/utils-math";
@@ -7,10 +6,13 @@ import {getDistanceBetween} from "../../utils/utils-math";
 export class CharStateGoAcross extends CharState {
     key = CharStateKey.GO_ACROSS
 
+    target = {x: 0, y: this.char.getCoords().y}
+
     onStart() {
         this.char.setAnimation(CharAnimation.WALK);
         this.char.actionsMenu.changeActiveButtons([]);
-        this.char.moveTowards(0, this.char.getCoords().y);
+        this.char.moveTowards(this.target.x, this.target.y);
+        this.char.directToTarget(this.target)
     }
 
     update(dt: number) {

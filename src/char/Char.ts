@@ -99,8 +99,8 @@ export class Char {
         this.state = this.getState(CharStateKey.GO_ACROSS)
         this.state.onStart();
 
-        // const subId = eventBus.on(Evt.ENCOUNTER_ENDED, () => this.hpIndicator.hide())
-        // this.unsub.push(() => eventBus.unsubscribe(Evt.ENCOUNTER_ENDED, subId))
+        const subId = eventBus.on(Evt.ENCOUNTER_ENDED, () => this.hpIndicator.hide())
+        this.unsub.push(() => eventBus.unsubscribe(Evt.ENCOUNTER_ENDED, subId))
 
         const subId2 = eventBus.on(Evt.CHAR_DEFEATED, (key) => this.onCharDefeated(key))
         this.unsub.push(() => eventBus.unsubscribe(Evt.CHAR_DEFEATED, subId2))
@@ -127,11 +127,10 @@ export class Char {
     }
 
     destroy() {
+        console.log('destroy', this.id);
         this.unsub.forEach(f => f());
         this.state.onEnd();
-        // this.actionsMenu.destroy();
-        // render.removeSprite(this.id + '_bones')
-        // render.destroyAnimation(this.id);
+        this.container.destroy();
     }
 
     update(dt: number) {
@@ -172,20 +171,20 @@ export class Char {
     }
 
     createSprite(x: number, y: number) {
-        console.log(charTemplates[this.key].atlasKey);
+        const atlasKey = charTemplates[this.key].atlasKey;
         const sprite = new AnimatedSprite({
             // @ts-ignore
-            key: charTemplates[this.key].atlasKey,
+            atlasKey,
             animations:  [
-                {key: CharAnimation.WALK, repeat: -1, frameRate: 4},
-                {key: CharAnimation.IDLE, repeat: -1, frameRate: 4},
-                {key: CharAnimation.DEAD, repeat: -1, frameRate: 4},
-                {key: CharAnimation.STRIKE, frameRate: 4},
-                {key: CharAnimation.PRISONER, repeat: -1, frameRate: 4},
-                {key: CharAnimation.SURRENDER, repeat: -1, frameRate: 4},
+                {framesPrefix: CharAnimation.WALK, repeat: -1, frameRate: 4},
+                {framesPrefix: CharAnimation.IDLE, repeat: -1, frameRate: 4},
+                {framesPrefix: CharAnimation.DEAD, repeat: -1, frameRate: 4},
+                {framesPrefix: CharAnimation.STRIKE, frameRate: 4},
+                {framesPrefix: CharAnimation.PRISONER, repeat: -1, frameRate: 4},
+                {framesPrefix: CharAnimation.SURRENDER, repeat: -1, frameRate: 4},
             ],
-            x: x,
-            y: y,
+            x,
+            y,
             parent: this.container
         })
         console.log(sprite);
@@ -271,7 +270,7 @@ export class Char {
     }
 
     setAnimation(key: CharAnimation, loop?: boolean, onComplete?: () => void) {
-        this.sprite.play(this.key + '_' + key);
+        this.sprite.play(key);
     }
 
     goToTalk() {
@@ -368,6 +367,10 @@ export class Char {
                 this.getKilled()
             }
         }
+    }
+
+    directToTarget(target: Vec) {
+        render.directToTarget(this.sprite, {x: target.x - this.container.x, y: target.y - this.container.y});
     }
 
     startAttack() {

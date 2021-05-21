@@ -26,13 +26,12 @@ export class Troll {
         troll = this;
         const pos = positioner.getLairPosition();
         this.sprite = new AnimatedSprite({
-            key: 'troll',
+            atlasKey: 'troll',
             animations:  [
-                {key: 'idle', repeat: -1, frameRate: 4},
-                {key: CharAnimation.WALK, repeat: -1, frameRate: 4},
-                {key: CharAnimation.IDLE, repeat: -1, frameRate: 4},
-                {key: CharAnimation.DEAD, repeat: -1, frameRate: 4},
-                {key: CharAnimation.STRIKE, repeat: -1, frameRate: 4},
+                {framesPrefix: CharAnimation.WALK, repeat: -1, frameRate: 4},
+                {framesPrefix: CharAnimation.IDLE, repeat: -1, frameRate: 4},
+                {framesPrefix: CharAnimation.DEAD, repeat: -1, frameRate: 4},
+                {framesPrefix: CharAnimation.STRIKE, repeat: -1, frameRate: 4},
             ],
             x: pos.x + pos.width / 2,
             y: pos.y + pos.height / 2,
@@ -102,7 +101,7 @@ export class Troll {
 
     setAnimation(key: CharAnimation, onComplete?: () => void) {
         console.log(this.sprite)
-        this.sprite.play('troll_' + key);
+        this.sprite.play(key);
     }
 
     goToBridge() {
