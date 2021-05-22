@@ -21,7 +21,7 @@ export const enum Time {
 }
 
 export const enum CharKey {
-    FARMER = 'farmer',
+    FARMER = 'peasant',
     MILITIA = 'militia',
     SOLDIER = 'soldier',
     KNIGHT = 'knight',

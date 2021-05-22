@@ -1,13 +1,11 @@
 import {resoursePaths} from "../resourse-paths";
-import {characters} from "../managers/characters";
-import {lair} from "../managers/lair";
-import {ResourceKey} from "../types";
-import {render} from "../managers/render";
-import {trollManager} from "../managers/troll-manager";
-import {colors, zLayers} from "../constants";
-import * as PIXI from "pixi.js";
-import {Container, GameSprite} from "../type-aliases";
+import {colors, colorsCSS} from "../constants";
 import {eventBus, Evt} from "../event-bus";
+import {Char} from "../char/Char";
+import {o_} from "../managers/locator";
+import {O_Sprite} from "../managers/core/render/sprite";
+import {O_Container} from "../managers/core/render/container";
+import {O_Text} from "../managers/core/render/text";
 
 export const enum CharAction {
     RELEASE = 'RELEASE',
@@ -25,28 +23,28 @@ export const enum CharAction {
 }
 
 type CharActionButtonTemplate = {
-    resource: string,
+    resource: keyof typeof resoursePaths.images,
     text: string,
     onClick: (id: string) => void
     key: CharAction,
 }
 
 const buttonsTemplate: CharActionButtonTemplate[] = [
-    {key: CharAction.RELEASE, text: 'Отпустить', resource: resoursePaths.images.button_release, onClick: (id: string) => characters.releaseChar(id)},
-    {key: CharAction.ROB, text: 'Отобрать плату', resource: resoursePaths.images.button_rob, onClick: (id: string) => characters.makeCharPay(id)},
-    {key: CharAction.TAKE_ALL, text: 'Отобрать все', resource: resoursePaths.images.button_rob, onClick: (id: string) => characters.makeCharGiveAll(id)},
-    {key: CharAction.IMPRISON, text: 'Сделать пленником', resource: resoursePaths.images.button_imprison, onClick: (id: string) => characters.makeImprisoned(id)},
-    {key: CharAction.KILL, text: 'Убить', resource: resoursePaths.images.button_kill, onClick: (id: string) => characters.killChar(id)},
-    {key: CharAction.DEVOUR, text: 'Сожрать', resource: resoursePaths.images.button_devour, onClick: (id: string) => trollManager.devour(id)},
-    {key: CharAction.FEED, text: 'Накормить', resource: resoursePaths.images.button_feed, onClick: (id: string) => lair.feedChar(id)},
-    {key: CharAction.MAKE_FOOD, text: 'Сварить', resource: resoursePaths.images.button_make_food, onClick: (id: string) => lair.makeFoodFrom(id)},
+    {key: CharAction.RELEASE, text: 'Отпустить', resource: 'button_release', onClick: (id: string) => o_.characters.releaseChar(id)},
+    {key: CharAction.ROB, text: 'Отобрать плату', resource: 'button_rob', onClick: (id: string) => o_.characters.makeCharPay(id)},
+    {key: CharAction.TAKE_ALL, text: 'Отобрать все', resource: 'button_rob', onClick: (id: string) => o_.characters.makeCharGiveAll(id)},
+    {key: CharAction.IMPRISON, text: 'Сделать пленником', resource: 'button_imprison', onClick: (id: string) => o_.characters.makeImprisoned(id)},
+    {key: CharAction.KILL, text: 'Убить', resource: 'button_kill', onClick: (id: string) => o_.characters.killChar(id)},
+    {key: CharAction.DEVOUR, text: 'Сожрать', resource: 'button_devour', onClick: (id: string) => o_.troll.devour(id)},
+    {key: CharAction.FEED, text: 'Накормить', resource: 'button_feed', onClick: (id: string) => o_.lair.feedChar(id)},
+    {key: CharAction.MAKE_FOOD, text: 'Сварить', resource: 'button_make_food', onClick: (id: string) => o_.lair.makeFoodFrom(id)},
 
-    {key: CharAction.BATTLE_DEVOUR, text: 'Сожрать', resource: resoursePaths.images.button_devour, onClick: (id: string) => {
-        trollManager.devour(id);
+    {key: CharAction.BATTLE_DEVOUR, text: 'Сожрать', resource: 'button_devour', onClick: (id: string) => {
+        o_.troll.devour(id);
         eventBus.emit(Evt.TROLL_TURN_END);
     }},
-    {key: CharAction.BATTLE_HIT, text: 'Ударить', resource: resoursePaths.images.button_kill, onClick: (id: string) => {
-        characters.hitChar(id, trollManager.rollDmg());
+    {key: CharAction.BATTLE_HIT, text: 'Ударить', resource: 'button_kill', onClick: (id: string) => {
+        o_.characters.hitChar(id, o_.troll.rollDmg());
         eventBus.emit(Evt.TROLL_TURN_END);
     }},
 ]
@@ -57,79 +55,48 @@ const BUTTON_MARGIN = 10;
 const getButtonsRowWidth = (amount: number) => amount * BUTTON_WIDTH + (amount - 1) * BUTTON_MARGIN;
 
 export class CharActionsMenu {
-    buttons: {action: CharAction, id: string, active: boolean}[] = []
-    buttonSprites: GameSprite[] = []
-    containerId: string
-    container: Container
-    parentContainer: Container
+    buttons: {action: CharAction, sprite: O_Sprite, active: boolean}[] = []
+    container: O_Container
     isShown = true;
 
-    text: PIXI.Text
+    text: O_Text
 
-    constructor(private charId: string) {
+    constructor(private char: Char) {
+        this.container = o_.render.createContainer(0, -100, {parent: this.char.container});
+        // this.container.zIndex = zLayers.GAME_OBJECTS_MIN
 
-        this.containerId = charId + '_actions-menu';
-
-        const buttonsContainer = render.createContainer(this.containerId, this.charId);
-        this.container = buttonsContainer;
-        this.container.zIndex = zLayers.GAME_OBJECTS_MIN
-
-        render.move(this.containerId, 0, -50);
-
-        this.text = render.createText('', 0, -BUTTON_WIDTH/2, {fill: colors.WHITE}, this.container)
-        this.text.anchor.set(0.5);
+        this.text =  o_.render.createText('', 0, 0, {color: colorsCSS.WHITE}, {parent: this.container})
+        this.text.setOrigin(0.5, 1);
 
         buttonsTemplate.forEach((template, idx) => {
-            const id = this.charId + '_' + template.key;
-            this.buttons.push({id, active: false, action: template.key});
-            const sprite = render.createSprite({
-                entityId: id,
-                path: template.resource,
-                container: buttonsContainer,
-                visible: true,
-                x: 0,
-                y: 0,
-                width: BUTTON_WIDTH,
-                height: BUTTON_WIDTH,
-                // anchor: {x: 0.5, y: 0.5},
-            })
-            sprite.interactive = true;
-            sprite.buttonMode = true;
-            sprite.on('mouseover', () => {
+            const sprite =  o_.render.createSprite(template.resource, 0, -this.text.height-10, {width: BUTTON_WIDTH, height: BUTTON_WIDTH, parent: this.container})
+            sprite.setInteractive(true, {cursor: 'pointer'})
+            sprite.onPointerOver(() => {
                 this.showText(template.text)
             })
-            sprite.on('mouseout', () => this.hideText())
-            sprite.addListener('click', () => {
-                template.onClick(this.charId)
+            sprite.onPointerOut(() => this.hideText())
+            sprite.onClick(() => {
+                template.onClick(this.char.id)
                 this.hideText();
             });
+            sprite.setOrigin(0, 1);
 
-            this.buttonSprites.push(sprite)
+            this.buttons.push({active: false, action: template.key, sprite: sprite});
         })
 
-        const parentContainer = render.getContainer(this.charId);
-        parentContainer.on('mouseover', () => this.show())
-        parentContainer.on('mouseout', () => this.hide())
-        this.parentContainer = parentContainer;
+        this.char.container.onPointerOver(() => this.show())
+        this.char.container.onPointerOut(() => this.hide())
 
         this.changeActiveButtons([]);
         this.hide();
     }
 
     showText(text: string) {
-        this.text.text = text;
+        this.text.setText(text);
     }
 
     hideText() {
-        this.text.text = '';
-    }
-
-    destroy() {
-        this.buttons.forEach(b => {
-            render.removeSprite(b.id);
-        })
-
-        render.destroyContainer(this.containerId);
+        this.text.setText('');
     }
 
     changeActiveButtons(activeButtons: CharAction[]) {
@@ -138,36 +105,35 @@ export class CharActionsMenu {
         this.buttons.forEach(b => {
             const isActive = activeButtons.includes(b.action)
             b.active = isActive;
-            render.changeSpriteVisibility(b.id, isActive)
-            render.getSprite(b.id).interactive = isActive;
+            b.sprite.setVisibility(isActive)
+            b.sprite.setInteractive(isActive)
 
             if (isActive) {
-                const buttonSprite = render.getSprite(b.id)
-                render.moveSprite(b.id, x, buttonSprite.y)
+                b.sprite.x = x;
                 x += BUTTON_WIDTH + BUTTON_MARGIN
             }
         })
 
-        const cont = render.getContainer(this.containerId);
-        const width = getButtonsRowWidth(activeButtons.length) + BUTTON_WIDTH * 2
-        cont.hitArea = new PIXI.Rectangle(-width/2, -BUTTON_WIDTH, width, BUTTON_WIDTH * 3);
+        // const cont = render.getContainer(this.containerId);
+        // const width = getButtonsRowWidth(activeButtons.length) + BUTTON_WIDTH * 2
+        // cont.hitArea = new PIXI.Rectangle(-width/2, -BUTTON_WIDTH, width, BUTTON_WIDTH * 3);
 
-        this.checkIsHovered();
+        // this.checkIsHovered();
     }
 
     show() {
-        render.changeContainerVisibility(this.containerId, true);
+        this.container.setVisibility(true);
         this.isShown = true;
     }
 
     hide() {
-        render.changeContainerVisibility(this.containerId, false);
+        this.container.setVisibility(false);
         this.isShown = false;
     }
 
     checkIsHovered() {
-        if (render.getIsHovered(this.parentContainer)) {
-            this.show();
-        }
+        // if (render.getIsHovered(this.parentContainer)) {
+        //     this.show();
+        // }
     }
 }

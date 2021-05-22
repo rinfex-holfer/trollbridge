@@ -2,22 +2,21 @@
 
 import React, {useEffect, useState} from "react";
 import {eventBus, Evt} from "../event-bus";
-import {gameState} from "../game-state";
-import {trollManager} from "../managers/troll-manager";
+import {o_} from "../managers/locator";
 
 export const Troll = () => {
     const [stats, setStats] = useState({
-        level: gameState.troll.level,
-        hp: gameState.troll.hp,
-        hunger: gameState.troll.hunger,
+        level: o_.troll.level,
+        hp: o_.troll.hp,
+        hunger: o_.troll.hunger,
     });
 
     useEffect(() => {
         const sub = eventBus.on(Evt.TROLL_STATS_CHANGED, () => {
             setStats({
-                level: gameState.troll.level,
-                hp: trollManager.hp,
-                hunger: gameState.troll.hunger,
+                level: o_.troll.level,
+                hp: o_.troll.hp,
+                hunger: o_.troll.hunger,
             })
         })
 

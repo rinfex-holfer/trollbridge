@@ -1,27 +1,26 @@
-import {render} from "../managers/render";
-import {colors} from "../constants";
-import * as PIXI from "pixi.js";
-import {Container} from "../type-aliases";
+import {colors, colorsCSS} from "../constants";
 import {Char} from "../char/Char";
+import {O_Text} from "../managers/core/render/text";
+import {o_} from "../managers/locator";
 
 export class CharMpIndicator {
     isShown = false;
 
-    text: PIXI.Text
+    text: O_Text
 
     constructor(private char: Char) {
-        this.text = render.createText(
+        this.text = o_.render.createText(
             '',
             0,
             -50,
             {
                 align: 'center',
-                fill: colors.WHITE,
-                fontSize: 14,
+                color: colorsCSS.WHITE,
+                fontSize: '14px',
             },
-            char.container
+            {parent: char.container}
         )
-        this.text.anchor.set(0.5, 1);
+        this.text.setOrigin(0.5, 1);
     }
 
     update() {
@@ -33,10 +32,10 @@ export class CharMpIndicator {
     }
 
     show() {
-        this.text.text = this.getText();
+        this.text.setText(this.getText());
     }
 
     hide() {
-        this.text.text = ''
+        this.text.setText('');
     }
 }

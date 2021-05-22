@@ -21,3 +21,5 @@ export function createId(key: string): string {
 }
 
 export const dumbClone = (obj: any) => JSON.parse(JSON.stringify(obj));
+
+export const stub = () => void 0;

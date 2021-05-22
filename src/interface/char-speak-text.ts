@@ -1,31 +1,28 @@
-import {render} from "../managers/render";
-import {colors} from "../constants";
-import * as PIXI from "pixi.js";
-import {Container} from "../type-aliases";
+import {colors, colorsCSS} from "../constants";
+import {O_Text} from "../managers/core/render/text";
+import {O_Container} from "../managers/core/render/container";
+import {o_} from "../managers/locator";
 
 export class CharSpeakText {
-    isShown = true;
-
-    text: PIXI.Text
+    text: O_Text
 
     timeout: number | null = null
 
-    constructor(private container: Container) {
-        this.text = render.createText(
+    constructor(private container: O_Container) {
+        this.text = o_.render.createText(
             '',
             120,
             -10,
             {
                 align: 'center',
-                fill: colors.WHITE,
+                color: colorsCSS.WHITE,
                 fontStyle: 'italic',
-                wordWrapWidth: 200,
-                fontSize: 18,
-                wordWrap: true
+                fontSize: '18px',
+                wordWrap: {width: 200}
             },
-            container
+            {parent: container}
         )
-        this.text.anchor.set(0.5, 1);
+        this.text.setOrigin(0.5, 1);
     }
 
     clearTimeout() {
@@ -36,15 +33,19 @@ export class CharSpeakText {
     }
 
     showText(text: string, timeout?: number) {
-        this.text.text = text;
+        this.text.setText(text);
 
         if (timeout) {
             this.clearTimeout();
-            this.timeout = window.setTimeout(() => this.hideText(), 2000);
+            this.timeout = window.setTimeout(() => this.hideText(), timeout);
         }
     }
 
     hideText() {
-        this.text.text = '';
+        this.text.setText('');
+    }
+
+    destroy() {
+        this.clearTimeout();
     }
 }

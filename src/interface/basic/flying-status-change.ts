@@ -1,46 +1,28 @@
-import {render} from "../../managers/render";
-import {colors, zLayers} from "../../constants";
-import { gsap } from "gsap";
-
-const moveEnd = 2.0;
-const alphaChangeStart = 1.0;
-const alphaChangeDuration = moveEnd - alphaChangeStart + 0.1
-const L_ALPHA = 'alpha'
+import {colors} from "../../constants";
+import {o_} from "../../managers/locator";
 
 export function flyingStatusChange(text: string, x: number, y: number, color?: string) {
-    const status = render.createText(
+    const status = o_.render.createText(
         text,
         x,
         y,
         {
             align: 'center',
-            fill: color || colors.WHITE,
+            color: color || colors.WHITE,
             fontStyle: 'italic',
-            fontSize: 22,
-            wordWrap: false
+            fontSize: '22px',
         }
-    );
-    status.zIndex = zLayers.PARTICLES
+    )
 
-    const timeline = gsap.timeline()
-    timeline.addLabel(L_ALPHA, alphaChangeStart)
-
-    timeline.to(
-        status,
-        {
-            pixi: {y: y - 100},
-            duration: moveEnd,
-            ease: 'power2.out',
-        }
-    );
-
-    timeline.to(
-        status,
-        {
-            pixi: {alpha: 0},
-            duration: alphaChangeDuration,
-            onComplete: () => status.destroy(),
-        },
-        L_ALPHA
-    );
+    const timeline = o_.render.scene.tweens.timeline({
+        targets: status,
+        duration: 2100,
+        delay: Math.random() * 2,
+        ease: 'Power2',
+        tweens: [
+            {y: y - 100, duration: 2000},
+            {alpha: 0, duration: 2000, offset: 1000},
+        ]
+    });
+    timeline.play();
 }

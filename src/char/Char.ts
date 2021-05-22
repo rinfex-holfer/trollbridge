@@ -1,8 +1,6 @@
 import {CharKey, ResourceKey, Resources} from "../types";
 import {charTemplates} from "../char-templates";
 import {createId} from "../utils/utils-misc";
-import {render} from "../managers/render";
-import {lair} from "../managers/lair";
 import {CharState} from "./states/CharState";
 import {CharStateIdle} from "./states/CharStateIdle";
 import {CharStateGoAcross} from "./states/CharStateGoAcross";
@@ -11,25 +9,25 @@ import {CharActionsMenu} from "../interface/char-actions-menu";
 import {CharStateSurrender} from "./states/CharStateSurrender";
 import {CharStateDead} from "./states/CharStateDead";
 import {CharStateBones} from "./states/CharStateBones";
-import {resoursePaths} from "../resourse-paths";
 import {CharStatePrisoner} from "./states/CharStatePrisoner";
-import {Container} from "../type-aliases";
 import {CharSpeakText} from "../interface/char-speak-text";
 import {eventBus, Evt} from "../event-bus";
 import {CharStateGoToTalk} from "./states/CharStateGoToTalk";
 import {colors, gameConstants} from "../constants";
-import {audioManager, SOUND_KEY} from "../managers/audio";
+import {SOUND_KEY} from "../managers/core/audio";
 import {CharStateBattleIdle} from "./states/CharStateBattleIdle";
-import {trollManager} from "../managers/troll-manager";
-import {clamp, rndBetween} from "../utils/utils-math";
+import {clamp, rndBetween, Vec} from "../utils/utils-math";
 import {pause} from "../utils/utils-async";
-import {particleManager} from "../managers/particles";
 import {CharStateBattleAttack} from "./states/CharStateBattleAttack";
 import {flyingStatusChange} from "../interface/basic/flying-status-change";
 import {CharStateBattleSurrender} from "./states/CharStateBattleSurrender";
-import {battleManager} from "../managers/battle";
 import {CharHpIndicator} from "../interface/char-hp-indicator";
 import {CharMpIndicator} from "../interface/char-mp-indicator";
+import {O_AnimatedSprite} from "../managers/core/render/animated-sprite";
+import {O_Sprite} from "../managers/core/render/sprite";
+import {O_Container} from "../managers/core/render/container";
+import {o_} from "../managers/locator";
+import {LayerKey} from "../managers/core/layers";
 
 export class Char {
     key: CharKey
@@ -61,7 +59,9 @@ export class Char {
     hpIndicator: CharHpIndicator
     mpIndicator: CharMpIndicator
 
-    container: Container
+    sprite: O_AnimatedSprite
+    bones: O_Sprite
+    container: O_Container
 
     unsub: (() => void)[] = []
 
@@ -82,10 +82,16 @@ export class Char {
         this.isCombatant = charTemplate.isCombatant
         this.dmg = charTemplate.dmg;
 
-        this.container = this.createAnimation(x, y);
-        this.createBones();
+        this.container = o_.render.createContainer(x, y)
+        this.container.addPhysics()
 
-        this.actionsMenu = new CharActionsMenu(this.id);
+        this.sprite = this.createSprite(0, 0)
+        o_.layers.add(this.container, LayerKey.FIELD_OBJECTS)
+
+        this.bones = this.createBones()
+        this.bones.setVisibility(false);
+
+        this.actionsMenu = new CharActionsMenu(this);
         this.speakText = new CharSpeakText(this.container);
         this.hpIndicator = new CharHpIndicator(this);
         this.mpIndicator = new CharMpIndicator(this);
@@ -121,11 +127,11 @@ export class Char {
     }
 
     destroy() {
+        // this.actionsMenu.destroy();
         this.unsub.forEach(f => f());
         this.state.onEnd();
-        this.actionsMenu.destroy();
-        render.removeSprite(this.id + '_bones')
-        render.destroyAnimation(this.id);
+        this.speakText.destroy();
+        this.container.destroy();
     }
 
     update(dt: number) {
@@ -165,79 +171,70 @@ export class Char {
         this.state.onStart();
     }
 
-    createAnimation(x: number, y: number) {
-        render.createAnimation({
-            path: charTemplates[this.key].animationsPath,
-            animationSpeed: 0.1,
-            currentAnimation: 'walk',
-            entityId: this.id,
-            x: x,
-            y: y,
-            ySorting: true,
-            autoplay: true,
-            anchor: {x: 0.5, y: 1}
+    createSprite(x: number, y: number) {
+        const atlasKey = charTemplates[this.key].atlasKey;
+        const sprite = o_.render.createAnimatedSprite({
+            // @ts-ignore
+            atlasKey,
+            animations:  [
+                {framesPrefix: CharAnimation.WALK, repeat: -1, frameRate: 4},
+                {framesPrefix: CharAnimation.IDLE, repeat: -1, frameRate: 4},
+                {framesPrefix: CharAnimation.DEAD, repeat: -1, frameRate: 4},
+                {framesPrefix: CharAnimation.STRIKE, frameRate: 4},
+                {framesPrefix: CharAnimation.PRISONER, repeat: -1, frameRate: 4},
+                {framesPrefix: CharAnimation.SURRENDER, repeat: -1, frameRate: 4},
+            ],
+            x,
+            y,
+            parent: this.container
         })
-
-        render.setInteractive(this.id, true, false);
-        const cont = render.getContainer(this.id);
-
-        return cont;
+        sprite.setOrigin(0.5, 1);
+        return sprite;
     }
 
     disableInteractivity() {
-        this.container.interactive = false;
-        this.container.interactiveChildren = false;
+        this.container.setInteractive(false);
         this.actionsMenu.hide()
     }
 
     enableInteractivity() {
         if (this.isBones) return;
-        this.container.interactive = true;
-        this.container.interactiveChildren = true;
+        this.container.setInteractive(true);
         this.actionsMenu.checkIsHovered();
+        this.actionsMenu.show()
     }
 
     createBones() {
-        const container = render.getContainer(this.id);
-        render.createSprite({
-            entityId: this.id + '_bones',
-            path: resoursePaths.images.bones,
-            visible: false,
-            x: 0,
-            y: 0,
-            container,
-            anchor: {x: 0.5, y: 0.5}
-        })
+        const bones = o_.render.createSprite('bones', 0, 0, {parent: this.container});
+        bones.setOrigin(0.5, 0.5);
+        return bones;
     }
 
-    getCoords() {
-        const cont = render.getContainer(this.id);
-        return {x: cont.x, y: cont.y};
+    getCoords(): Vec {
+        return this.container.getCoords();
     }
 
     changeResources(key: ResourceKey, val: number) {
         this.resources[key] = Math.max(this.resources[key] + val, 0)
     }
 
-    moveTowards(dt: number, x: number, y: number, directToTarget?: boolean): number {
-        const distanceLeft = render.moveTowards(
-            this.id,
+    moveTowards(x: number, y: number) {
+        o_.render.moveTowards(
+            this.container,
             x,
             y,
-            dt * this.speed / 1000,
-            true,
-            directToTarget,
+            this.speed,
         )
+    }
 
-        this.syncFlip();
-
-        return distanceLeft;
+    stop() {
+        this.container.stop()
     }
 
     pay() {
         const amount = Math.ceil(this.resources.gold * 0.33);
         this.changeResources(ResourceKey.GOLD, -amount);
-        lair.changeResource(ResourceKey.GOLD, amount)
+        o_.lair.changeResource(ResourceKey.GOLD, amount)
     }
 
     eat() {
@@ -245,9 +242,9 @@ export class Char {
     }
 
     giveAll() {
-        lair.changeResource(ResourceKey.GOLD, this.resources[ResourceKey.GOLD])
-        lair.changeResource(ResourceKey.MATERIALS, this.resources[ResourceKey.MATERIALS])
-        lair.changeResource(ResourceKey.FOOD, this.resources[ResourceKey.FOOD])
+        o_.lair.changeResource(ResourceKey.GOLD, this.resources[ResourceKey.GOLD])
+        o_.lair.changeResource(ResourceKey.MATERIALS, this.resources[ResourceKey.MATERIALS])
+        o_.lair.changeResource(ResourceKey.FOOD, this.resources[ResourceKey.FOOD])
 
         this.changeResources(ResourceKey.GOLD, -this.resources[ResourceKey.GOLD]);
         this.changeResources(ResourceKey.MATERIALS, -this.resources[ResourceKey.MATERIALS]);
@@ -258,7 +255,7 @@ export class Char {
         this.hpIndicator.hide();
         this.mpIndicator.hide();
 
-        if (battleManager.isBattle) {
+        if (o_.battle.isBattle) {
             this.setState(CharStateKey.BATTLE_SURRENDER);
         } else {
             this.setState(CharStateKey.SURRENDER);
@@ -266,10 +263,10 @@ export class Char {
     }
 
     becomeDevoured() {
-        if (battleManager.isBattle) {
+        if (o_.battle.isBattle) {
             eventBus.emit(Evt.CHAR_DEVOURED_IN_BATTLE, this.key)
         }
-        audioManager.playSound(SOUND_KEY.TORN);
+        o_.audio.playSound(SOUND_KEY.TORN);
         this.toBones();
     }
 
@@ -278,12 +275,7 @@ export class Char {
     }
 
     setAnimation(key: CharAnimation, loop?: boolean, onComplete?: () => void) {
-        render.changeAnimation({
-            entityId: this.id,
-            animationName: key,
-            loop,
-            onComplete
-        })
+        this.sprite.play(key, onComplete && {onComplete});
     }
 
     goToTalk() {
@@ -316,15 +308,8 @@ export class Char {
         }
     }
 
-    syncFlip() {
-        this.actionsMenu.container.scale.x = this.container.scale.x;
-        this.speakText.text.scale.x = this.container.scale.x;
-        this.hpIndicator.text.scale.x = this.container.scale.x;
-        this.mpIndicator.text.scale.x = this.container.scale.x;
-    }
-
     speak(text: string) {
-        this.speakText.showText(text, 2000);
+        this.speakText.showText(text, 5000);
     }
 
     clearText() {
@@ -341,8 +326,8 @@ export class Char {
 
         flyingStatusChange(
             ''+val,
-            this.container.x,
-            this.container.y - this.container.height,
+            this.sprite.x,
+            this.sprite.y - this.sprite.height,
             colors.BLUE
         );
 
@@ -357,8 +342,8 @@ export class Char {
     }
 
     getHit(dmg: number) {
-        audioManager.playSound(SOUND_KEY.HIT);
-        particleManager.createHitBurst(this.id + '_emitter', this.container.x, this.container.y);
+        o_.audio.playSound(SOUND_KEY.HIT);
+        o_.render.burstBlood(this.container.x, this.container.y);
 
         this.changeHp(-dmg);
 
@@ -379,8 +364,12 @@ export class Char {
         }
     }
 
+    directToTarget(target: Vec) {
+        o_.render.directToTarget(this.sprite, {x: target.x - this.container.x, y: target.y - this.container.y});
+    }
+
     startAttack() {
-        if (trollManager.hp > 0) {
+        if (o_.troll.hp > 0) {
             this.setState(CharStateKey.BATTLE_ATTACK);
         } else {
             this.endAttack();

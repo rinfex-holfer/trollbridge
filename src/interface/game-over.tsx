@@ -1,14 +1,13 @@
 import React, {useEffect, useState} from "react";
-import {timeManager} from "../managers/time-manager";
 import {eventBus, Evt} from "../event-bus";
-import {gameState} from "../game-state";
+import {o_} from "../managers/locator";
 
 export const GameOver = () => {
     const [state, setState] = useState('');
 
     useEffect(() => {
         const sub = eventBus.on(Evt.GAME_OVER, () => {
-            setState(gameState.gameover)
+            setState(o_.game.gameoverCause)
         })
         return () => {
             eventBus.unsubscribe(Evt.GAME_OVER, sub);

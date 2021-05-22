@@ -36,7 +36,7 @@ export const charTemplates = {
         dmg: 1,
         createResources: (): Resources => ({gold: 1, materials: 1, food: 1}),
         isCombatant: true,
-        animationsPath: resoursePaths.atlases.peasant,
+        atlasKey: 'peasant',
     },
 
     [CharKey.MILITIA]: {
@@ -47,7 +47,7 @@ export const charTemplates = {
         dmg: 2,
         createResources: (): Resources => ({gold: 1, materials: 1, food: 1}),
         isCombatant: true,
-        animationsPath: resoursePaths.atlases.militia,
+        atlasKey: 'militia',
     },
 
     [CharKey.SOLDIER]: {
@@ -58,7 +58,7 @@ export const charTemplates = {
         dmg: 6,
         createResources: (): Resources => ({gold: 1, materials: 1, food: 1}),
         isCombatant: true,
-        animationsPath: resoursePaths.atlases.soldier,
+        atlasKey: 'soldier',
     },
     [CharKey.KNIGHT]: {
         name: 'chars.knight',
@@ -68,7 +68,7 @@ export const charTemplates = {
         dmg: 8,
         createResources: (): Resources => ({gold: 1, materials: 1, food: 1}),
         isCombatant: true,
-        animationsPath: resoursePaths.atlases.knight,
+        atlasKey: 'knight',
     },
 
 
