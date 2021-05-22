@@ -13,7 +13,7 @@ import {CharStatePrisoner} from "./states/CharStatePrisoner";
 import {CharSpeakText} from "../interface/char-speak-text";
 import {eventBus, Evt} from "../event-bus";
 import {CharStateGoToTalk} from "./states/CharStateGoToTalk";
-import {colors, gameConstants} from "../constants";
+import {colorsCSS, gameConstants} from "../constants";
 import {SOUND_KEY} from "../managers/core/audio";
 import {CharStateBattleIdle} from "./states/CharStateBattleIdle";
 import {clamp, rndBetween, Vec} from "../utils/utils-math";
@@ -328,7 +328,7 @@ export class Char {
             ''+val,
             this.sprite.x,
             this.sprite.y - this.sprite.height,
-            colors.BLUE
+            colorsCSS.BLUE
         );
 
         if (!this.isSurrender && this.morale <= 0) {
@@ -351,7 +351,7 @@ export class Char {
             '-'+dmg,
             this.container.x,
             this.container.y - this.container.height,
-            colors.RED
+            colorsCSS.RED
         );
 
         if (this.hp <= 0) {

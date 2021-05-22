@@ -2,7 +2,7 @@ import {RenderManager} from "./core/render/render-manager";
 import {CharactersManager} from "./game/characters";
 import {BridgeManager} from "./game/bridge";
 import {Lair} from "./game/lair";
-import {Troll} from "./game/troll";
+import {Troll} from "./game/troll/troll";
 import {AudioManager} from "./core/audio";
 import {TimeManager} from "./core/time";
 import {GameManager} from "./game/game-manager";

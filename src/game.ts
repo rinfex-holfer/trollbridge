@@ -2,7 +2,7 @@ import Phaser from "phaser";
 import {resoursePaths} from "./resourse-paths";
 import {resourseLoader} from "./resource-loader";
 import {RenderManager} from "./managers/core/render/render-manager";
-import {Troll} from "./managers/game/troll";
+import {Troll} from "./managers/game/troll/troll";
 import {getGameSize} from "./utils/utils-misc";
 import {BridgeManager} from "./managers/game/bridge";
 import {Environment} from "./managers/game/environment";

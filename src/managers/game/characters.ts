@@ -101,8 +101,8 @@ export class CharactersManager {
         this.encounterLevel = travellersLevel;
 
         const bridgePos = positioner.bridgePosition()
-        const margin = 25;
-        let y = bridgePos.y + bridgePos.height - ((keys.length - 1) * margin) / 2
+        const margin = 75;
+        let y = bridgePos.y + bridgePos.height / 2 - ((keys.length - 1) * margin) / 2
 
         keys.forEach((key, i) => {
             const char = new Char(
@@ -110,7 +110,7 @@ export class CharactersManager {
                 bridgePos.x + bridgePos.width - 50,
                 y
             );
-            y -= margin;
+            y += margin;
             // char.goAcrossBridge();
             this.chars.push(char);
         })

@@ -11,8 +11,8 @@ export class CharSpeakText {
     constructor(private container: O_Container) {
         this.text = o_.render.createText(
             '',
-            120,
-            -10,
+            -120,
+            -50,
             {
                 align: 'center',
                 color: colorsCSS.WHITE,

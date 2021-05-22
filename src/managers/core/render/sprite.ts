@@ -54,6 +54,8 @@ export class O_Sprite {
     set y(y) { this.obj.y = y }
     get height() {return this.obj.height }
     get width() {return this.obj.width }
+    get alpha() { return this.obj.alpha }
+    set alpha(val: number) { this.obj.alpha = val }
     destroy() { this.obj.destroy() }
     addPhysics() { this.scene.physics.add.existing(this.obj) }
     // @ts-ignore

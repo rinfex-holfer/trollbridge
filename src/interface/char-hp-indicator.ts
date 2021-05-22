@@ -11,16 +11,17 @@ export class CharHpIndicator {
     constructor(private char: Char) {
         this.text = o_.render.createText(
             '',
-            0,
+            100,
             -70,
             {
-                align: 'center',
+                // align: 'center',
+                align: 'left',
                 color: colorsCSS.WHITE,
                 fontSize: '14px',
             },
             {parent: char.container}
         )
-        this.text.setOrigin(0.5, 1);
+        this.text.setOrigin(0, 0);
     }
 
     update() {

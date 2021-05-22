@@ -28,6 +28,8 @@ export const gameConstants = {
         5: 5,
     } as {[key: number]: number},
 
+    TROLL_SPEED: 500,
+
     CHAR_SPEED: 100,
     CHAR_FAST: 150,
     CHAR_VERY_FAST: 250,

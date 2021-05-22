@@ -17,6 +17,8 @@ export class BasicButton {
     text: O_Text
     container: O_Container
 
+    disabled = false
+
     PADDING = 10
 
     constructor(options: ButtonOptions) {
@@ -60,18 +62,20 @@ export class BasicButton {
     oldAlpha = 1
 
     enable() {
+        if (!this.disabled) return;
+        this.disabled = false;
+
         this.container.setInteractive(true);
-        // this.text.alpha = this.oldAlpha
-        // this.container.interactive = true;
-        // this.container.buttonMode = true;
+        this.container.alpha = this.oldAlpha
     }
 
     disable() {
+        if (this.disabled) return;
+        this.disabled = true;
+
         this.container.setInteractive(false);
-        // this.oldAlpha = this.container.alpha;
-        // this.container.alpha = 0.3
-        // this.container.interactive = false;
-        // this.container.buttonMode = false;
+        this.oldAlpha = this.container.alpha;
+        this.container.alpha = 0.3
     }
 
     destroy() {

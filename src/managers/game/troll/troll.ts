@@ -1,13 +1,17 @@
-import {colors, gameConstants} from "../../constants";
-import {eventBus, Evt} from "../../event-bus";
-import {TrollLocation} from "../../types";
-import {positioner} from "./positioner";
-import {CharAnimation} from "../../char/char-constants";
-import {rndBetween} from "../../utils/utils-math";
-import {flyingStatusChange} from "../../interface/basic/flying-status-change";
-import {O_AnimatedSprite} from "../core/render/animated-sprite";
-import {o_} from "../locator";
-import {SOUND_KEY} from "../core/audio";
+import {colorsCSS, gameConstants} from "../../../constants";
+import {eventBus, Evt} from "../../../event-bus";
+import {TrollLocation} from "../../../types";
+import {positioner} from "../positioner";
+import {CharAnimation} from "../../../char/char-constants";
+import {rndBetween, Vec} from "../../../utils/utils-math";
+import {flyingStatusChange} from "../../../interface/basic/flying-status-change";
+import {O_AnimatedSprite} from "../../core/render/animated-sprite";
+import {o_} from "../../locator";
+import {SOUND_KEY} from "../../core/audio";
+import {TrollState, TrollStateKey} from "./troll-state";
+import {TrollStateIdle} from "./troll-state-idle";
+import {TrollStateGoToBridge} from "./troll-state-go-to-bridge";
+import {TrollStateGoToLair} from "./troll-state-go-to-lair";
 
 let troll: Troll
 
@@ -21,6 +25,10 @@ export class Troll {
     hunger = 0
 
     sprite: O_AnimatedSprite
+
+    speed = gameConstants.TROLL_SPEED
+
+    state: TrollState
 
     constructor() {
         o_.register.troll(this)
@@ -39,7 +47,6 @@ export class Troll {
             y: pos.y + pos.height / 2,
         })
         this.sprite.addPhysics();
-        this.setAnimation(CharAnimation.WALK)
         this.onNewLevel();
 
         eventBus.on(Evt.TIME_PASSED, () => this.increaseHunger());
@@ -66,7 +73,10 @@ export class Troll {
             if (this.location !== TrollLocation.LAIR) o_.lair.enableInterface()
         })
 
+        o_.time.sub(dt => this.update(dt))
 
+        this.state = this.getState(TrollStateKey.IDLE)
+        this.state.onStart();
     }
 
     onNewLevel() {
@@ -107,36 +117,31 @@ export class Troll {
     }
 
     setAnimation(key: CharAnimation, onComplete?: () => void) {
-        console.log(this.sprite)
         this.sprite.play(key);
     }
 
-    goToBridge() {
-        if (this.location === TrollLocation.BRIDGE) return;
-
-        this.location = TrollLocation.BRIDGE;
-
-        const bridgePos = positioner.bridgePosition();
-        this.sprite.move(bridgePos.x + bridgePos.width / 2, bridgePos.y + bridgePos.height / 2)
-
-        eventBus.emit(Evt.TROLL_LOCATION_CHANGED, TrollLocation.BRIDGE);
-
-        // lair.enableInterface();
-        // _l.bridge.disableInterface();
+    getState(stateKey: TrollStateKey): TrollState {
+        switch (stateKey) {
+            case TrollStateKey.IDLE:
+                return new TrollStateIdle(this);
+            case TrollStateKey.GO_TO_BRIDGE:
+                return new TrollStateGoToBridge(this);
+            case TrollStateKey.GO_TO_LAIR:
+                return new TrollStateGoToLair(this);
+            default:
+                throw Error('wrong state key ' + stateKey);
+        }
     }
-    //
-    goToLair() {
-        if (this.location === TrollLocation.LAIR) return;
-        this.location = TrollLocation.LAIR;
 
-        const lairPos = positioner.getLairPosition();
-        this.sprite.move(lairPos.x + lairPos.width / 2, lairPos.y + lairPos.height / 2)
-
-        eventBus.emit(Evt.TROLL_LOCATION_CHANGED, TrollLocation.LAIR);
-
-        // lair.disableInterface();
-        // _l.bridge.enableInterface();
+    setState(stateKey: TrollStateKey) {
+        this.state.onEnd();
+        this.state = this.getState(stateKey)
+        this.state.onStart();
     }
+
+    goToBridge() { this.setState(TrollStateKey.GO_TO_BRIDGE) }
+    goToLair() { this.setState(TrollStateKey.GO_TO_LAIR) }
+    goIdle() { this.setState(TrollStateKey.IDLE) }
 
     devour(id: string) {
         this.eat(3);
@@ -157,7 +162,7 @@ export class Troll {
                 '-'+dmg,
                 this.sprite.x,
                 this.sprite.y - this.sprite.height,
-                colors.RED
+                colorsCSS.RED
             );
         } else {
             o_.audio.playSound(SOUND_KEY.BLOCK);
@@ -167,11 +172,32 @@ export class Troll {
                 this.sprite.y - this.sprite.height / 2
             )
 
-            flyingStatusChange('blocked', this.sprite.x, this.sprite.y - 100, colors.WHITE);
+            flyingStatusChange('blocked', this.sprite.x, this.sprite.y - 100, colorsCSS.WHITE);
         }
+    }
+
+    moveTowards(x: number, y: number) {
+        o_.render.moveTowards(
+            this.sprite,
+            x,
+            y,
+            this.speed,
+        )
+    }
+
+    directToTarget(target: Vec) {
+        o_.render.directToTarget(this.sprite, {x: target.x - this.sprite.x, y: target.y - this.sprite.y});
     }
 
     rollDmg() {
         return gameConstants.TROLL_DMG[this.level] + rndBetween(1, 5)
+    }
+
+    stop() {
+        this.sprite.stop()
+    }
+
+    update(dt: number) {
+        this.state.update(dt)
     }
 }
