@@ -1,8 +1,6 @@
 import {CharKey, ResourceKey, Resources} from "../types";
 import {charTemplates} from "../char-templates";
 import {createId} from "../utils/utils-misc";
-import {AnimatedSprite, Container, render, Sprite} from "../managers/render";
-import {lair} from "../managers/lair";
 import {CharState} from "./states/CharState";
 import {CharStateIdle} from "./states/CharStateIdle";
 import {CharStateGoAcross} from "./states/CharStateGoAcross";
@@ -11,24 +9,25 @@ import {CharActionsMenu} from "../interface/char-actions-menu";
 import {CharStateSurrender} from "./states/CharStateSurrender";
 import {CharStateDead} from "./states/CharStateDead";
 import {CharStateBones} from "./states/CharStateBones";
-import {resoursePaths} from "../resourse-paths";
 import {CharStatePrisoner} from "./states/CharStatePrisoner";
 import {CharSpeakText} from "../interface/char-speak-text";
 import {eventBus, Evt} from "../event-bus";
 import {CharStateGoToTalk} from "./states/CharStateGoToTalk";
 import {colors, gameConstants} from "../constants";
-import {audioManager, SOUND_KEY} from "../managers/audio";
+import {SOUND_KEY} from "../managers/core/audio";
 import {CharStateBattleIdle} from "./states/CharStateBattleIdle";
 import {clamp, rndBetween, Vec} from "../utils/utils-math";
 import {pause} from "../utils/utils-async";
-import {particleManager} from "../managers/particles";
 import {CharStateBattleAttack} from "./states/CharStateBattleAttack";
 import {flyingStatusChange} from "../interface/basic/flying-status-change";
 import {CharStateBattleSurrender} from "./states/CharStateBattleSurrender";
-import {battleManager} from "../managers/battle";
 import {CharHpIndicator} from "../interface/char-hp-indicator";
 import {CharMpIndicator} from "../interface/char-mp-indicator";
-import {getTroll} from "../managers/troll";
+import {O_AnimatedSprite} from "../managers/core/render/animated-sprite";
+import {O_Sprite} from "../managers/core/render/sprite";
+import {O_Container} from "../managers/core/render/container";
+import {o_} from "../managers/locator";
+import {LayerKey} from "../managers/core/layers";
 
 export class Char {
     key: CharKey
@@ -60,10 +59,9 @@ export class Char {
     hpIndicator: CharHpIndicator
     mpIndicator: CharMpIndicator
 
-    // bones: Sprite
-    sprite: AnimatedSprite
-    bones: Sprite
-    container: Container
+    sprite: O_AnimatedSprite
+    bones: O_Sprite
+    container: O_Container
 
     unsub: (() => void)[] = []
 
@@ -84,10 +82,12 @@ export class Char {
         this.isCombatant = charTemplate.isCombatant
         this.dmg = charTemplate.dmg;
 
-        this.container = new Container(x, y)
+        this.container = o_.render.createContainer(x, y)
         this.container.addPhysics()
 
         this.sprite = this.createSprite(0, 0)
+        o_.layers.add(this.container, LayerKey.FIELD_OBJECTS)
+
         this.bones = this.createBones()
         this.bones.setVisibility(false);
 
@@ -127,9 +127,10 @@ export class Char {
     }
 
     destroy() {
-        this.speakText.destroy();
+        // this.actionsMenu.destroy();
         this.unsub.forEach(f => f());
         this.state.onEnd();
+        this.speakText.destroy();
         this.container.destroy();
     }
 
@@ -172,7 +173,7 @@ export class Char {
 
     createSprite(x: number, y: number) {
         const atlasKey = charTemplates[this.key].atlasKey;
-        const sprite = new AnimatedSprite({
+        const sprite = o_.render.createAnimatedSprite({
             // @ts-ignore
             atlasKey,
             animations:  [
@@ -187,7 +188,6 @@ export class Char {
             y,
             parent: this.container
         })
-        console.log(sprite);
         sprite.setOrigin(0.5, 1);
         return sprite;
     }
@@ -201,10 +201,11 @@ export class Char {
         if (this.isBones) return;
         this.container.setInteractive(true);
         this.actionsMenu.checkIsHovered();
+        this.actionsMenu.show()
     }
 
     createBones() {
-        const bones = new Sprite('bones', 0, 0, {parent: this.container});
+        const bones = o_.render.createSprite('bones', 0, 0, {parent: this.container});
         bones.setOrigin(0.5, 0.5);
         return bones;
     }
@@ -218,7 +219,7 @@ export class Char {
     }
 
     moveTowards(x: number, y: number) {
-        render.moveTowards(
+        o_.render.moveTowards(
             this.container,
             x,
             y,
@@ -233,7 +234,7 @@ export class Char {
     pay() {
         const amount = Math.ceil(this.resources.gold * 0.33);
         this.changeResources(ResourceKey.GOLD, -amount);
-        lair.changeResource(ResourceKey.GOLD, amount)
+        o_.lair.changeResource(ResourceKey.GOLD, amount)
     }
 
     eat() {
@@ -241,9 +242,9 @@ export class Char {
     }
 
     giveAll() {
-        lair.changeResource(ResourceKey.GOLD, this.resources[ResourceKey.GOLD])
-        lair.changeResource(ResourceKey.MATERIALS, this.resources[ResourceKey.MATERIALS])
-        lair.changeResource(ResourceKey.FOOD, this.resources[ResourceKey.FOOD])
+        o_.lair.changeResource(ResourceKey.GOLD, this.resources[ResourceKey.GOLD])
+        o_.lair.changeResource(ResourceKey.MATERIALS, this.resources[ResourceKey.MATERIALS])
+        o_.lair.changeResource(ResourceKey.FOOD, this.resources[ResourceKey.FOOD])
 
         this.changeResources(ResourceKey.GOLD, -this.resources[ResourceKey.GOLD]);
         this.changeResources(ResourceKey.MATERIALS, -this.resources[ResourceKey.MATERIALS]);
@@ -254,7 +255,7 @@ export class Char {
         this.hpIndicator.hide();
         this.mpIndicator.hide();
 
-        if (battleManager.isBattle) {
+        if (o_.battle.isBattle) {
             this.setState(CharStateKey.BATTLE_SURRENDER);
         } else {
             this.setState(CharStateKey.SURRENDER);
@@ -262,10 +263,10 @@ export class Char {
     }
 
     becomeDevoured() {
-        if (battleManager.isBattle) {
+        if (o_.battle.isBattle) {
             eventBus.emit(Evt.CHAR_DEVOURED_IN_BATTLE, this.key)
         }
-        audioManager.playSound(SOUND_KEY.TORN);
+        o_.audio.playSound(SOUND_KEY.TORN);
         this.toBones();
     }
 
@@ -306,16 +307,6 @@ export class Char {
             this.setState(CharStateKey.BATTLE_IDLE);
         }
     }
-    //
-    // syncFlip() {
-    //     this.actionsMenu.container.scale.x = this.container.scale.x;
-    //     // @ts-ignore
-    //     this.speakText.text.scale.x = this.container.scale.x;
-    //     // @ts-ignore
-    //     this.hpIndicator.text.scale.x = this.container.scale.x;
-    //     // @ts-ignore
-    //     this.mpIndicator.text.scale.x = this.container.scale.x;
-    // }
 
     speak(text: string) {
         this.speakText.showText(text, 5000);
@@ -351,8 +342,8 @@ export class Char {
     }
 
     getHit(dmg: number) {
-        audioManager.playSound(SOUND_KEY.HIT);
-        particleManager.burstBlood(this.container.x, this.container.y);
+        o_.audio.playSound(SOUND_KEY.HIT);
+        o_.render.burstBlood(this.container.x, this.container.y);
 
         this.changeHp(-dmg);
 
@@ -374,11 +365,11 @@ export class Char {
     }
 
     directToTarget(target: Vec) {
-        render.directToTarget(this.sprite, {x: target.x - this.container.x, y: target.y - this.container.y});
+        o_.render.directToTarget(this.sprite, {x: target.x - this.container.x, y: target.y - this.container.y});
     }
 
     startAttack() {
-        if (getTroll().hp > 0) {
+        if (o_.troll.hp > 0) {
             this.setState(CharStateKey.BATTLE_ATTACK);
         } else {
             this.endAttack();

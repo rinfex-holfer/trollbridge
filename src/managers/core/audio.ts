@@ -1,4 +1,5 @@
-import {resoursePaths} from "../resourse-paths";
+import {resoursePaths} from "../../resourse-paths";
+import {o_} from "../locator";
 
 type AudioType = 'sound' | 'music';
 
@@ -35,29 +36,26 @@ type AudioRecord<K extends keyof any, T> = {
 type SoundsRecord = AudioRecord<SOUND_KEY, any>
 type MusicRecord = AudioRecord<MUSIC_KEY, any>
 
-class AudioManager {
+export class AudioManager {
     soundVolume = 1;
     musicVolume = 1;
 
     sounds: {[soundKey: string]: Phaser.Sound.BaseSound} = {};
     music: {[musicKey: string]: Phaser.Sound.BaseSound} = {};
 
-    // @ts-ignore
     scene: Phaser.Scene
 
-    createSounds(scene: Phaser.Scene) {
+    constructor(scene: Phaser.Scene) {
         this.scene = scene;
         sounds.forEach(options => {
             this.sounds[options.key] = scene.sound.add(options.src, {loop: options.loop, volume: options.volume});
-            // this.sounds[options.key].volume = options.volume
         });
 
         music.forEach(options => {
-            // @ts-ignore
             this.music[options.key] = scene.sound.add(options.src, {loop: options.loop, volume: options.volume});
         });
 
-
+        o_.register.audio(this);
         // this.playMusic(MUSIC_KEY.GAMEPLAY_MUSIC);
     }
 
@@ -99,5 +97,3 @@ class AudioManager {
         // Object.values(this.sounds).forEach(m => m.volume = Math.min(val / 100, 1));
     }
 }
-
-export const audioManager = new AudioManager();

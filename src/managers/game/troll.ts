@@ -1,17 +1,13 @@
-import {colors, gameConstants} from "../constants";
-import {gameState} from "../game-state";
-import {eventBus, Evt} from "../event-bus";
-import {AnimatedSprite} from "./render";
-import {TrollLocation} from "../types";
-import {characters} from "./characters";
+import {colors, gameConstants} from "../../constants";
+import {eventBus, Evt} from "../../event-bus";
+import {TrollLocation} from "../../types";
 import {positioner} from "./positioner";
-import {CharAnimation} from "../char/char-constants";
-import {rndBetween} from "../utils/utils-math";
-import {bridgeManager} from "./bridge-manager";
-import {lair} from "./lair";
-import {particleManager} from "./particles";
-import {audioManager, SOUND_KEY} from "./audio";
-import {flyingStatusChange} from "../interface/basic/flying-status-change";
+import {CharAnimation} from "../../char/char-constants";
+import {rndBetween} from "../../utils/utils-math";
+import {flyingStatusChange} from "../../interface/basic/flying-status-change";
+import {O_AnimatedSprite} from "../core/render/animated-sprite";
+import {o_} from "../locator";
+import {SOUND_KEY} from "../core/audio";
 
 let troll: Troll
 
@@ -22,13 +18,16 @@ export class Troll {
     hp = 1
     armor = 0
     level = 1
+    hunger = 0
 
-    sprite: AnimatedSprite
+    sprite: O_AnimatedSprite
 
     constructor() {
+        o_.register.troll(this)
+
         troll = this;
         const pos = positioner.getLairPosition();
-        this.sprite = new AnimatedSprite({
+        this.sprite = o_.render.createAnimatedSprite({
             atlasKey: 'troll',
             animations:  [
                 {framesPrefix: CharAnimation.WALK, repeat: -1, frameRate: 4},
@@ -45,23 +44,29 @@ export class Troll {
 
         eventBus.on(Evt.TIME_PASSED, () => this.increaseHunger());
 
-        bridgeManager.enableInterface();
+        o_.bridge.enableInterface();
 
-        bridgeManager.onClick = () => {
+        o_.bridge.onClick = () => {
             if (this.location !== TrollLocation.BRIDGE) this.goToBridge()
         }
-        lair.onClick = () => {
+        o_.lair.onClick = () => {
             if (this.location !== TrollLocation.LAIR) this.goToLair()
         }
 
+        eventBus.on(Evt.TROLL_LOCATION_CHANGED, (loc) => {
+            if (loc !== TrollLocation.BRIDGE) o_.bridge.enableInterface()
+            if (loc !== TrollLocation.LAIR) o_.lair.enableInterface()
+        })
         eventBus.on(Evt.ENCOUNTER_STARTED, () => {
-            bridgeManager.disableInterface()
-            lair.disableInterface()
+            o_.bridge.disableInterface()
+            o_.lair.disableInterface(true)
         })
         eventBus.on(Evt.ENCOUNTER_ENDED, () => {
-            if (this.location !== TrollLocation.BRIDGE) bridgeManager.enableInterface()
-            if (this.location !== TrollLocation.LAIR) lair.enableInterface()
+            if (this.location !== TrollLocation.BRIDGE) o_.bridge.enableInterface()
+            if (this.location !== TrollLocation.LAIR) o_.lair.enableInterface()
         })
+
+
     }
 
     onNewLevel() {
@@ -74,18 +79,18 @@ export class Troll {
     }
 
     increaseHunger(val: number = gameConstants.HUNGER_PER_TIME) {
-        const newHunger = gameState.troll.hunger + val;
+        const newHunger = this.hunger + val;
         if (newHunger > gameConstants.MAX_HUNGER) {
             // this.changeTrollHp(-gameConstants.HP_MINUS_WHEN_HUNGRY, 'hunger')
         }
 
-        gameState.troll.hunger = Math.min(newHunger, gameConstants.MAX_HUNGER);
+        this.hunger = Math.min(newHunger, gameConstants.MAX_HUNGER);
 
         eventBus.emit(Evt.TROLL_STATS_CHANGED);
     }
 
     eat(amount = 1) {
-        gameState.troll.hunger = Math.max(gameState.troll.hunger - amount * 2, 0);
+        this.hunger = Math.max(this.hunger - amount * 2, 0);
         this.changeTrollHp(amount);
         eventBus.emit(Evt.TROLL_STATS_CHANGED);
         eventBus.emit(Evt.RESOURSES_CHANGED);
@@ -95,9 +100,8 @@ export class Troll {
         const newVal = this.hp + val;
         this.hp = Math.max(Math.min(newVal, gameConstants.MAX_TROLL_HP[this.level]), 0);
         eventBus.emit(Evt.TROLL_STATS_CHANGED);
-        if (this.hp === 0 && !gameState.gameover) {
-            gameState.gameover = cause;
-            eventBus.emit(Evt.GAME_OVER);
+        if (this.hp === 0) {
+            o_.game.gameOver(cause);
             this.setAnimation(CharAnimation.DEAD)
         }
     }
@@ -117,8 +121,8 @@ export class Troll {
 
         eventBus.emit(Evt.TROLL_LOCATION_CHANGED, TrollLocation.BRIDGE);
 
-        lair.enableInterface();
-        bridgeManager.disableInterface();
+        // lair.enableInterface();
+        // _l.bridge.disableInterface();
     }
     //
     goToLair() {
@@ -130,23 +134,23 @@ export class Troll {
 
         eventBus.emit(Evt.TROLL_LOCATION_CHANGED, TrollLocation.LAIR);
 
-        lair.disableInterface();
-        bridgeManager.enableInterface();
+        // lair.disableInterface();
+        // _l.bridge.enableInterface();
     }
 
     devour(id: string) {
         this.eat(3);
-        characters.charEaten(id);
+        o_.characters.charEaten(id);
     }
 
     getHit(dmg: number) {
         if (dmg > this.armor + rndBetween(1, 5)) {
-            particleManager.burstBlood(
+            o_.render.burstBlood(
                 this.sprite.x,
                 this.sprite.y - this.sprite.height / 2
             )
 
-            audioManager.playSound(SOUND_KEY.HIT);
+            o_.audio.playSound(SOUND_KEY.HIT);
             this.changeTrollHp(-dmg, 'battle');
 
             flyingStatusChange(
@@ -156,9 +160,9 @@ export class Troll {
                 colors.RED
             );
         } else {
-            audioManager.playSound(SOUND_KEY.BLOCK);
+            o_.audio.playSound(SOUND_KEY.BLOCK);
 
-            particleManager.burstBlood(
+            o_.render.burstBlood(
                 this.sprite.x + this.sprite.width / 2,
                 this.sprite.y - this.sprite.height / 2
             )
@@ -170,8 +174,4 @@ export class Troll {
     rollDmg() {
         return gameConstants.TROLL_DMG[this.level] + rndBetween(1, 5)
     }
-}
-
-export const getTroll = () => {
-    return troll;
 }

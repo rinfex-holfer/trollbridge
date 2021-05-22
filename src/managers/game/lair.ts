@@ -1,36 +1,33 @@
-import {TileSprite} from "./render";
-import {stub} from "../utils/utils-misc";
-import {ResourceKey, Resources} from "../types";
-import {eventBus, Evt} from "../event-bus";
-import {characters} from "./characters";
-import {WaitButton} from "../interface/wait-button";
+import {stub} from "../../utils/utils-misc";
+import {ResourceKey, Resources} from "../../types";
+import {eventBus, Evt} from "../../event-bus";
+import {WaitButton} from "../../interface/wait-button";
 import {positioner} from "./positioner";
+import {o_} from "../locator";
+import {Tiles} from "../core/render/tiles";
+import {FoodStorage} from "./food-storage";
 
-class Lair {
-    static CONTAINER_ID = 'lair'
-
-    // foodStorage = new FoodStorage()
-
-    // @ts-ignore
+export class Lair {
+    foodStorage: FoodStorage
     waitButton: WaitButton
 
     resources: Resources = {
-        [ResourceKey.FOOD]: 0,
+        [ResourceKey.FOOD]: 3,
         [ResourceKey.GOLD]: 0,
         [ResourceKey.MATERIALS]: 0
     }
 
-    // @ts-ignore
-    sprite: TileSprite
+    sprite: Tiles
 
-    init() {
+    constructor() {
+        o_.register.lair(this);
         const pos = positioner.getLairPosition();
-        this.sprite = new TileSprite('grass', pos.x, pos.y, pos.width, pos.height);
+        this.sprite = o_.render.createTiles('grass', pos.x, pos.y, pos.width, pos.height);
         this.sprite.setOrigin(0, 0);
 
         this.sprite.onClick(() => this.onClick())
 
-        // this.foodStorage.init(positioner.getFoodStoragePosition());
+        this.foodStorage = new FoodStorage(positioner.getFoodStoragePosition())
 
         this.waitButton = new WaitButton(positioner.getLairPosition())
     }
@@ -43,10 +40,10 @@ class Lair {
         this.waitButton.enable()
     }
 
-    disableInterface(completely?: boolean) {
+    disableInterface(withButton?: boolean) {
         this.sprite.setInteractive(false);
 
-        if (completely) this.waitButton.disable()
+        if (withButton) this.waitButton.disable()
     }
 
     changeResource(key: ResourceKey, val: number) {
@@ -60,14 +57,12 @@ class Lair {
             return;
         }
         this.changeResource(ResourceKey.FOOD, -1);
-        characters.feedChar(id);
+        o_.characters.feedChar(id);
     }
 
     makeFoodFrom(id: string) {
         this.changeResource(ResourceKey.FOOD, 3);
-        characters.makeCharGiveAll(id);
-        characters.removeChar(id);
+        o_.characters.makeCharGiveAll(id);
+        o_.characters.removeChar(id);
     }
 }
-
-export const lair = new Lair();

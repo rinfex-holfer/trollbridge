@@ -1,14 +1,14 @@
 import React, {useEffect, useState} from "react";
 import {eventBus, Evt} from "../event-bus";
-import {gameState} from "../game-state";
+import {o_} from "../managers/locator";
 
 export const DateTime = () => {
-    const [date, setDate] = useState({day: gameState.day, time: gameState.time});
+    const [date, setDate] = useState({day: o_.time.day, time: o_.time.time});
     useEffect(() => {
         const sub = eventBus.on(Evt.TIME_PASSED, () => {
             setDate({
-                day: gameState.day,
-                time: gameState.time,
+                day: o_.time.day,
+                time: o_.time.time,
             })
         })
         return () => {

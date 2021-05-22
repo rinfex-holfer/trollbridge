@@ -1,16 +1,18 @@
 import Phaser from "phaser";
 import {resoursePaths} from "./resourse-paths";
 import {resourseLoader} from "./resource-loader";
-import {render} from "./managers/render";
-import {Troll} from "./managers/troll";
+import {RenderManager} from "./managers/core/render/render-manager";
+import {Troll} from "./managers/game/troll";
 import {getGameSize} from "./utils/utils-misc";
-import {bridgeManager} from "./managers/bridge-manager";
-import {Environment} from "./managers/environment";
-import {lair} from "./managers/lair";
-import {characters} from "./managers/characters";
-import {Negotiations} from "./managers/negotiations";
-import {particleManager} from "./managers/particles";
-import {audioManager} from "./managers/audio";
+import {BridgeManager} from "./managers/game/bridge";
+import {Environment} from "./managers/game/environment";
+import {Lair} from "./managers/game/lair";
+import {CharactersManager} from "./managers/game/characters";
+import {Negotiations} from "./managers/game/negotiations";
+import {AudioManager} from "./managers/core/audio";
+import {TimeManager} from "./managers/core/time";
+import {BattleManager} from "./managers/game/battle";
+import {LayersManager} from "./managers/core/layers";
 
 const size = getGameSize()
 var config: Phaser.Types.Core.GameConfig = {
@@ -40,17 +42,20 @@ const preload = (scene: Phaser.Scene) => {
 }
 
 const create = (scene: Phaser.Scene) => {
-    render.init(scene);
-    new Environment();
-    bridgeManager.init();
-    lair.init();
-    const troll = new Troll()
+    const timeManager = new TimeManager()
+    new LayersManager(scene)
+    new RenderManager(scene)
+    new AudioManager(scene)
+    new Environment()
+    new BridgeManager()
+    new CharactersManager()
+    new Lair()
+    new Troll()
     new Negotiations()
-    particleManager.init(scene);
-    audioManager.createSounds(scene);
+    new BattleManager()
 
     scene.update = function(time, delta) {
-        characters.update(delta);
+        timeManager.onUpdate(delta);
     }
 }
 

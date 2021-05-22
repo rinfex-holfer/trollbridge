@@ -1,8 +1,7 @@
 import {SimpleButton} from "./basic/simple-button";
-import {timeManager} from "../managers/time-manager";
 import i18next from "i18next";
 import {Vec} from "../utils/utils-math";
-import {characters} from "../managers/characters";
+import {o_} from "../managers/locator";
 
 export class WaitButton {
     button: SimpleButton
@@ -17,8 +16,8 @@ export class WaitButton {
     }
 
     onClick() {
-        characters.removeTravellers()
-        timeManager.wait();
+        o_.characters.removeTravellers()
+        o_.time.wait();
     }
 
     enable() {

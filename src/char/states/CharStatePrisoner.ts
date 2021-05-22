@@ -1,7 +1,7 @@
 import {CharState} from "./CharState";
 import {CharAnimation, CharStateKey} from "../char-constants";
 import {CharAction} from "../../interface/char-actions-menu";
-import {positioner} from "../../managers/positioner";
+import {positioner} from "../../managers/game/positioner";
 
 export class CharStatePrisoner extends CharState {
     key = CharStateKey.PRISONER

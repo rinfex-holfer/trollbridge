@@ -35,8 +35,14 @@ ReactDOM.render(
     appElement
 );
 
-newGame()
-//
+declare global {
+    interface Window {
+        game: Phaser.Game
+    }
+}
+
+window.game = newGame();
+
 // new Promise(res => {
 //     PIXI.Loader.shared
 //         .add(Object.values(resoursePaths.atlases))

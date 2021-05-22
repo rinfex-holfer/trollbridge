@@ -1,13 +1,15 @@
-import {Container, GameText, render} from "../managers/render";
 import {colors, colorsCSS} from "../constants";
+import {O_Text} from "../managers/core/render/text";
+import {O_Container} from "../managers/core/render/container";
+import {o_} from "../managers/locator";
 
 export class CharSpeakText {
-    text: GameText
+    text: O_Text
 
     timeout: number | null = null
 
-    constructor(private container: Container) {
-        this.text = new GameText(
+    constructor(private container: O_Container) {
+        this.text = o_.render.createText(
             '',
             120,
             -10,

@@ -1,45 +1,48 @@
-import {characters} from "./characters";
-import {eventBus, Evt} from "../event-bus";
-import {getTroll} from "./troll";
+import {eventBus, Evt} from "../../event-bus";
+import {o_} from "../locator";
 
-class BattleManager {
+export class BattleManager {
     unsub: any[] = []
 
     isBattle = false
 
+    constructor() {
+        o_.register.battle(this);
+    }
+
     startBattle() {
         this.isBattle = true;
 
-        const fighters = characters.getFighters();
+        const fighters = o_.characters.getFighters();
         if (fighters.length === 0) {
-            return characters.allSurrender();
+            return o_.characters.allSurrender();
         }
 
         const sub = eventBus.on(Evt.TROLL_TURN_END, () => this.travellersTurn());
         this.unsub.push(() => eventBus.unsubscribe(Evt.TROLL_TURN_END, sub));
 
-        characters.startFighting();
+        o_.characters.startFighting();
         this.travellersTurn();
     }
 
     trollTurn() {
-        characters.enableInteractivityAll();
+        o_.characters.enableInteractivityAll();
     }
 
     async travellersTurn() {
-        const fighters = characters.getFighters();
+        const fighters = o_.characters.getFighters();
 
         if (fighters.length === 0) {
             return this.win();
         }
 
-        characters.disableInteractivityAll();
+        o_.characters.disableInteractivityAll();
 
         for (let i = 0; i < fighters.length; i++) {
             await fighters[i].performBattleAction();
         }
 
-        if (getTroll().getIsAlive()) {
+        if (o_.troll.getIsAlive()) {
             this.trollTurn();
         } else {
             this.fail();
@@ -48,7 +51,7 @@ class BattleManager {
 
     fail() {
         this.onBattleEnd();
-        characters.letAllTravellersPass()
+        o_.characters.letAllTravellersPass()
     }
 
     win() {
@@ -61,5 +64,3 @@ class BattleManager {
         eventBus.emit(Evt.ENCOUNTER_ENDED);
     }
 }
-
-export const battleManager = new BattleManager();

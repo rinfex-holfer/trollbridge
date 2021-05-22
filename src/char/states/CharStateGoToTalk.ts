@@ -1,10 +1,9 @@
 import {CharState} from "./CharState";
-import {render} from "../../managers/render";
 import {CharAnimation, CharStateKey} from "../char-constants";
-import {positioner} from "../../managers/positioner";
+import {positioner} from "../../managers/game/positioner";
 import {gameConstants} from "../../constants";
 import {getDistanceBetween} from "../../utils/utils-math";
-import {getTroll} from "../../managers/troll";
+import {o_} from "../../managers/locator";
 
 export class CharStateGoToTalk extends CharState {
     key = CharStateKey.GO_TO_TALK
@@ -26,7 +25,7 @@ export class CharStateGoToTalk extends CharState {
             this.char.stop();
             this.char.container.x = this.target.x
             this.char.container.y = this.target.y
-            this.char.directToTarget(getTroll().sprite)
+            this.char.directToTarget(o_.troll.sprite)
             this.char.readyToTalk()
         }
     }

@@ -1,5 +1,7 @@
-import {Container, GameText} from "../../managers/render";
-import {colors, colorsCSS} from "../../constants";
+import {colorsCSS} from "../../constants";
+import {O_Container} from "../../managers/core/render/container";
+import {O_Text} from "../../managers/core/render/text";
+import {o_} from "../../managers/locator";
 
 export interface ButtonOptions {
     text: string
@@ -7,21 +9,21 @@ export interface ButtonOptions {
     x?: number
     y?: number
     style?: any
-    parent?: Container
+    parent?: O_Container
 }
 
 export class BasicButton {
     private options: ButtonOptions
-    text: GameText
-    container: Container
+    text: O_Text
+    container: O_Container
 
     PADDING = 10
 
     constructor(options: ButtonOptions) {
         this.options = {...options};
 
-        this.container = new Container(options.x || 0, options.y || 0, options && {parent: options.parent})
-        this.text = new GameText(options.text, 0, 0, { fontFamily: 'serif', color: colorsCSS.BLACK }, {parent: this.container})
+        this.container = o_.render.createContainer(options.x || 0, options.y || 0, options && {parent: options.parent})
+        this.text = o_.render.createText(options.text, 0, 0, { fontFamily: 'serif', color: colorsCSS.BLACK }, {parent: this.container})
         this.text.setOrigin(0, 0);
 
         const rect = this.getRect();

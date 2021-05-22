@@ -1,8 +1,8 @@
 import {CharState} from "./CharState";
 import {CharAnimation, CharStateKey} from "../char-constants";
-import {positioner} from "../../managers/positioner";
-import {getTroll} from "../../managers/troll";
+import {positioner} from "../../managers/game/positioner";
 import {getDistanceBetween} from "../../utils/utils-math";
+import {o_} from "../../managers/locator";
 
 export class CharStateBattleAttack extends CharState {
     key = CharStateKey.BATTLE_ATTACK
@@ -12,7 +12,7 @@ export class CharStateBattleAttack extends CharState {
     beforeAttack = 300
 
     onStart() {
-        this.char.moveTowards(getTroll().sprite.x, this.char.getCoords().y)
+        this.char.moveTowards(o_.troll.sprite.x, this.char.getCoords().y)
     }
 
     update(dt: number) {
@@ -24,7 +24,7 @@ export class CharStateBattleAttack extends CharState {
             return;
         }
         const startX = positioner.negotiationX()
-        const trollX = getTroll().sprite.x;
+        const trollX = o_.troll.sprite.x;
         const y = this.char.getCoords().y;
 
         if (this.phase === 'attacking') return;
@@ -33,6 +33,7 @@ export class CharStateBattleAttack extends CharState {
             const distanceLeft = getDistanceBetween(this.char.container, {x: trollX, y})
 
             if (distanceLeft <= 100) {
+                this.char.stop();
                 this.phase = 'attacking'
                 this.char.setAnimation(CharAnimation.STRIKE, false, () => {
                     this.attack();
@@ -51,6 +52,6 @@ export class CharStateBattleAttack extends CharState {
     }
 
     attack() {
-        getTroll().getHit(this.char.rollDmg());
+        o_.troll.getHit(this.char.rollDmg());
     }
 }

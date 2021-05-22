@@ -1,9 +1,7 @@
 import {CharState} from "./CharState";
-import {CharAnimation, CharStateKey} from "../char-constants";
-import {CharAction} from "../../interface/char-actions-menu";
-import {render} from "../../managers/render";
+import {CharStateKey} from "../char-constants";
 import {eventBus, Evt} from "../../event-bus";
-import {characters} from "../../managers/characters";
+import {o_} from "../../managers/locator";
 
 export class CharStateBones extends CharState {
     key = CharStateKey.BONES
@@ -15,7 +13,7 @@ export class CharStateBones extends CharState {
     collapse() {
         this.collapseTime++
         if (this.collapseTime >= 3) {
-            characters.removeChar(this.char.id);
+            o_.characters.removeChar(this.char.id);
             eventBus.unsubscribe(Evt.TIME_PASSED, this.unsub);
         }
     }

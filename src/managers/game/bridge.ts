@@ -1,22 +1,23 @@
-import {TileSprite} from "./render";
-import {eventBus, Evt} from "../event-bus";
 import {positioner} from "./positioner";
-import {TrollLocation} from "../types";
-import {stub} from "../utils/utils-misc";
+import {TrollLocation} from "../../types";
+import {stub} from "../../utils/utils-misc";
+import {Tiles} from "../core/render/tiles";
+import {o_} from "../locator";
 
-class BridgeManager {
-    // @ts-ignore
-    sprite: TileSprite
+export class BridgeManager {
+    sprite: Tiles
 
     trollLocation: TrollLocation = TrollLocation.LAIR
 
-    init() {
+    constructor() {
         const bridgePos = positioner.bridgePosition();
-        this.sprite = new TileSprite('floor', bridgePos.x, bridgePos.y, bridgePos.width, bridgePos.height);
+        this.sprite = o_.render.createTiles('floor', bridgePos.x, bridgePos.y, bridgePos.width, bridgePos.height);
         this.sprite.setOrigin(0, 0);
 
         this.enableInterface();
         this.sprite.onClick(() => this.onClick())
+
+        o_.register.bridge(this);
     }
 
     onClick: (() => void) = stub
@@ -29,5 +30,3 @@ class BridgeManager {
         this.sprite.setInteractive(false);
     }
 }
-
-export const bridgeManager = new BridgeManager();

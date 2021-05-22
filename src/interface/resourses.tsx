@@ -1,15 +1,15 @@
 import React, {useEffect, useState} from "react";
 import {eventBus, Evt} from "../event-bus";
-import {lair} from "../managers/lair";
+import {o_} from "../managers/locator";
 
 export const Resources = () => {
-    const [state, setState] = useState({...lair.resources})
+    const [state, setState] = useState({...o_.lair.resources})
 
     useEffect(() => {
         const sub = eventBus.on(
             Evt.RESOURSES_CHANGED,
             () => {
-                setState({...lair.resources});
+                setState({...o_.lair.resources});
             }
         );
         return () => {

@@ -1,18 +1,16 @@
-import {CharKey, EncounterDanger, TrollLocation} from "../types";
-import {gameState} from "../game-state";
-import {getRndItem} from "../utils/utils-math";
-import {Char} from "../char/Char";
-import {eventBus, Evt} from "../event-bus";
-import {encounterTemplates} from "../encounter-templates";
-// import {DangerIndicator} from "../interface/danger-indicator";
+import {CharKey, EncounterDanger, TrollLocation} from "../../types";
+import {getRndItem} from "../../utils/utils-math";
+import {Char} from "../../char/Char";
+import {eventBus, Evt} from "../../event-bus";
+import {encounterTemplates} from "../../encounter-templates";
 import {positioner} from "./positioner";
+import {o_} from "../locator";
 
-class Characters {
+export class CharactersManager {
     chars: Char[] = []
 
     encounterLevel: number = 0;
 
-    // @ts-ignore
     // dangerIndicator: DangerIndicator
 
     constructor() {
@@ -24,13 +22,14 @@ class Characters {
         })
         eventBus.on(Evt.TIME_PASSED, () => this.createRandomEncounter());
         eventBus.on(Evt.TROLL_LOCATION_CHANGED, l => this.onTrollLocationChanged(l));
-    }
 
-    init() {
         const bridgePos = positioner.bridgePosition();
         const x = bridgePos.x + bridgePos.width;
         const y = 0;
         // this.dangerIndicator = new DangerIndicator(x, y)
+
+        o_.time.sub(dt => this.update(dt))
+        o_.register.characters(this);
     }
 
     onTrollLocationChanged(location: TrollLocation) {
@@ -102,8 +101,8 @@ class Characters {
         this.encounterLevel = travellersLevel;
 
         const bridgePos = positioner.bridgePosition()
-        const margin = 75;
-        let y = bridgePos.y + bridgePos.height / 2 - ((keys.length - 1) * margin) / 2
+        const margin = 25;
+        let y = bridgePos.y + bridgePos.height - ((keys.length - 1) * margin) / 2
 
         keys.forEach((key, i) => {
             const char = new Char(
@@ -111,7 +110,7 @@ class Characters {
                 bridgePos.x + bridgePos.width - 50,
                 y
             );
-            y += margin;
+            y -= margin;
             // char.goAcrossBridge();
             this.chars.push(char);
         })
@@ -124,7 +123,7 @@ class Characters {
 
     getDangerKey() {
         if (this.encounterLevel === 0) return EncounterDanger.NONE;
-        const diff = gameState.troll.level - this.encounterLevel;
+        const diff = o_.troll.level - this.encounterLevel;
 
         if (diff > 1) return EncounterDanger.LOW;
         else if (diff === 1) return EncounterDanger.LOW;
@@ -218,8 +217,3 @@ class Characters {
         this.chars.forEach(f => f.enableInteractivity())
     }
 }
-
-export const characters = new Characters();
-
-// @ts-ignore
-window.characters = characters;

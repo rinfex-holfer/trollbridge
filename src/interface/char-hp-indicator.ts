@@ -1,25 +1,26 @@
-import {GameText, render} from "../managers/render";
-import {colors} from "../constants";
+import {colors, colorsCSS} from "../constants";
 import {Char} from "../char/Char";
+import {o_} from "../managers/locator";
+import {O_Text} from "../managers/core/render/text";
 
 export class CharHpIndicator {
     isShown = false;
 
-    text: GameText
+    text: O_Text
 
     constructor(private char: Char) {
-        this.text = new GameText(
+        this.text = o_.render.createText(
             '',
             0,
             -70,
             {
                 align: 'center',
-                color: colors.WHITE,
+                color: colorsCSS.WHITE,
                 fontSize: '14px',
             },
             {parent: char.container}
         )
-        // this.text.anchor.set(0.5, 1);
+        this.text.setOrigin(0.5, 1);
     }
 
     update() {

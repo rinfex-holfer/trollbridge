@@ -1,14 +1,12 @@
-import {rnd} from "../utils/utils-math";
-import {EncounterDanger, TrollLocation} from "../types";
-import {eventBus, Evt} from "../event-bus";
-import {characters} from "./characters";
-import {Container} from "./render";
-import {BasicButton} from "../interface/basic/basic-button";
-import {colors} from "../constants";
-import {SimpleButton} from "../interface/basic/simple-button";
+import {rnd} from "../../utils/utils-math";
+import {EncounterDanger, TrollLocation} from "../../types";
+import {eventBus, Evt} from "../../event-bus";
+import {BasicButton} from "../../interface/basic/basic-button";
+import {colors} from "../../constants";
+import {SimpleButton} from "../../interface/basic/simple-button";
 import {positioner} from "./positioner";
-import {battleManager} from "./battle";
-import {getTroll} from "./troll";
+import {O_Container} from "../core/render/container";
+import {o_} from "../locator";
 
 export const enum NegotiationsState {
     START = 'START',
@@ -37,8 +35,7 @@ export class Negotiations {
     encounterState: any
     danger: EncounterDanger = EncounterDanger.NONE;
 
-    containerId = 'negotiations-container'
-    container: Container
+    container: O_Container
     buttons: BasicButton[] = []
     travellersReadyToTalk = [] as string[];
 
@@ -48,12 +45,12 @@ export class Negotiations {
         eventBus.on(Evt.TRAVELLERS_APPEAR, () => this.onTravellersAppear());
 
         const bridgePos = positioner.bridgePosition()
-        this.container = new Container(bridgePos.x + bridgePos.width / 2, bridgePos.y  + bridgePos.height + 64)
+        this.container = o_.render.createContainer(bridgePos.x + bridgePos.width / 2, bridgePos.y  + bridgePos.height + 64)
         // this.container.zIndex = zLayers.CHAR_MENU;
     }
 
     onTravellersAppear() {
-        if (getTroll().location === TrollLocation.BRIDGE) {
+        if (o_.troll.location === TrollLocation.BRIDGE) {
             this.startEncounter();
         }
     }
@@ -61,7 +58,7 @@ export class Negotiations {
     onTrollLocationChange(location: TrollLocation) {
         if (
             location === TrollLocation.BRIDGE &&
-            characters.getNewTravellers().length
+            o_.characters.getNewTravellers().length
         ) {
             this.startEncounter();
         }
@@ -69,14 +66,14 @@ export class Negotiations {
 
     startEncounter() {
         eventBus.emit(Evt.ENCOUNTER_STARTED);
-        characters.travellersGoToTalk();
+        o_.characters.travellersGoToTalk();
     }
 
     onTravellerReadyToTalk(id: string) {
         this.travellersReadyToTalk.push(id);
-        if (this.travellersReadyToTalk.length === characters.getTravellers().length) {
+        if (this.travellersReadyToTalk.length === o_.characters.getTravellers().length) {
             this.travellersReadyToTalk = [];
-            this.startNegotiations(characters.getDangerKey());
+            this.startNegotiations(o_.characters.getDangerKey());
         }
     }
 
@@ -90,24 +87,24 @@ export class Negotiations {
     onStateChange(travellersReaction: string = '') {
         switch (this.currentStateKey) {
             case NegotiationsState.START:
-                characters.stopAllTravellers();
+                o_.characters.stopAllTravellers();
                 break;
             case NegotiationsState.ALL_GIVEN:
-                characters.makeAllTravellersGiveAll();
+                o_.characters.makeAllTravellersGiveAll();
                 break;
             case NegotiationsState.PAYMENT_GIVEN:
-                characters.makeAllTravellersPay();
+                o_.characters.makeAllTravellersPay();
                 break;
             case NegotiationsState.BATTLE:
-                battleManager.startBattle()
+                o_.battle.startBattle()
                 break;
             case NegotiationsState.END:
                 eventBus.emit(Evt.ENCOUNTER_ENDED);
-                characters.letAllTravellersPass();
+                o_.characters.letAllTravellersPass();
                 this.onEnd()
                 break;
         }
-        characters.travellersSpeak(travellersReaction);
+        o_.characters.travellersSpeak(travellersReaction);
         this.updateDialogButtons();
     }
 

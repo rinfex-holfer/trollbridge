@@ -1,8 +1,8 @@
-import {GameText, render} from "../../managers/render";
-import {colors, zLayers} from "../../constants";
+import {colors} from "../../constants";
+import {o_} from "../../managers/locator";
 
 export function flyingStatusChange(text: string, x: number, y: number, color?: string) {
-    const status = new GameText(
+    const status = o_.render.createText(
         text,
         x,
         y,
@@ -14,7 +14,7 @@ export function flyingStatusChange(text: string, x: number, y: number, color?: s
         }
     )
 
-    const timeline = render.scene.tweens.timeline({
+    const timeline = o_.render.scene.tweens.timeline({
         targets: status,
         duration: 2100,
         delay: Math.random() * 2,

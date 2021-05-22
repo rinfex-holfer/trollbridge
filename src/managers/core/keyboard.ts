@@ -25,7 +25,7 @@ type KeyCodeListeners = Record<number, smf>
 type KeyEventListeners = Record<KeyCode, KeyCodeListeners>;
 type KeyListenersMap = Record<KeyEvent, KeyEventListeners>;
 
-class KeyManager {
+class Keyboard {
     constructor() {
         // window.addEventListener('keydown', this.callKeyDownListeners);
         // window.addEventListener('keyup', this.callKeyUpListeners);
@@ -73,4 +73,4 @@ class KeyManager {
     // private callClickListeners = (x, y) => values(this.clickListeners).forEach((listener: (x, y) => void) => listener(x, y));
 }
 
-export const keyManager = new KeyManager();
+export const keyManager = new Keyboard();
