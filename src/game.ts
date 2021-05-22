@@ -8,6 +8,9 @@ import {bridgeManager} from "./managers/bridge-manager";
 import {Environment} from "./managers/environment";
 import {lair} from "./managers/lair";
 import {characters} from "./managers/characters";
+import {Negotiations} from "./managers/negotiations";
+import {particleManager} from "./managers/particles";
+import {audioManager} from "./managers/audio";
 
 const size = getGameSize()
 var config: Phaser.Types.Core.GameConfig = {
@@ -42,6 +45,9 @@ const create = (scene: Phaser.Scene) => {
     bridgeManager.init();
     lair.init();
     const troll = new Troll()
+    new Negotiations()
+    particleManager.init(scene);
+    audioManager.createSounds(scene);
 
     scene.update = function(time, delta) {
         characters.update(delta);

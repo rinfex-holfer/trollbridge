@@ -1,33 +1,32 @@
-// import PixiSound from 'pixi-sound';
 import {resoursePaths} from "../resourse-paths";
 
 type AudioType = 'sound' | 'music';
 
-export enum MUSIC_KEY {
-    GAMEPLAY_MUSIC,
+export const enum MUSIC_KEY {
+    GAMEPLAY_MUSIC = 'GAMEPLAY_MUSIC',
 }
 
-export enum SOUND_KEY {
-    HIT,
-    BLOCK,
-    TORN
+export const enum SOUND_KEY {
+    HIT = 'HIT',
+    BLOCK = 'BLOCK',
+    TORN = 'TORN',
 }
 
 interface AudioOptions {
     key: SOUND_KEY | MUSIC_KEY;
-    src: string;
+    src: keyof typeof resoursePaths.sounds | keyof typeof resoursePaths.music;
     volume: number;
     loop?: boolean;
 }
 
 const sounds: AudioOptions[] = [
-    {key: SOUND_KEY.HIT, src: resoursePaths.sounds.hitByTroll, volume: 0.1, loop: false},
-    {key: SOUND_KEY.BLOCK, src: resoursePaths.sounds.block, volume: 0.2, loop: false},
-    {key: SOUND_KEY.TORN, src: resoursePaths.sounds.torn, volume: 0.02, loop: false},
+    {key: SOUND_KEY.HIT, src: 'hitByTroll', volume: 0.1, loop: false},
+    {key: SOUND_KEY.BLOCK, src: 'block', volume: 0.2, loop: false},
+    {key: SOUND_KEY.TORN, src: 'torn', volume: 0.02, loop: false},
 ];
 
 const music: AudioOptions[] = [
-    {key: MUSIC_KEY.GAMEPLAY_MUSIC, src: resoursePaths.music.gameplay_music, volume: 1, loop: true},
+    {key: MUSIC_KEY.GAMEPLAY_MUSIC, src: 'gameplay_music', volume: 1, loop: true},
 ];
 
 type AudioRecord<K extends keyof any, T> = {
@@ -40,18 +39,22 @@ class AudioManager {
     soundVolume = 1;
     musicVolume = 1;
 
-    sounds: SoundsRecord = {};
-    music: MusicRecord = {};
+    sounds: {[soundKey: string]: Phaser.Sound.BaseSound} = {};
+    music: {[musicKey: string]: Phaser.Sound.BaseSound} = {};
 
-    createSounds() {
+    // @ts-ignore
+    scene: Phaser.Scene
+
+    createSounds(scene: Phaser.Scene) {
+        this.scene = scene;
         sounds.forEach(options => {
-            // this.sounds[options.key] = PixiSound.Sound.from({url: options.src, loop: options.loop});
+            this.sounds[options.key] = scene.sound.add(options.src, {loop: options.loop, volume: options.volume});
             // this.sounds[options.key].volume = options.volume
         });
 
         music.forEach(options => {
             // @ts-ignore
-            this.music[options.key] = PixiSound.Sound.from({url: options.src, loop: options.loop});
+            this.music[options.key] = scene.sound.add(options.src, {loop: options.loop, volume: options.volume});
         });
 
 
@@ -88,12 +91,12 @@ class AudioManager {
 
     setMusicVolume(val: number) {
         // setMusicVolume(val);
-        Object.values(this.music).forEach(m => m.volume = Math.min(val / 100, 1));
+        // Object.values(this.music).forEach(m => m. = Math.min(val / 100, 1));
     }
 
     setSoundVolume(val: number) {
         // setSoundVolume(val);
-        Object.values(this.sounds).forEach(m => m.volume = Math.min(val / 100, 1));
+        // Object.values(this.sounds).forEach(m => m.volume = Math.min(val / 100, 1));
     }
 }
 

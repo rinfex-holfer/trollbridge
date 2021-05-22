@@ -127,7 +127,7 @@ export class Char {
     }
 
     destroy() {
-        console.log('destroy', this.id);
+        this.speakText.destroy();
         this.unsub.forEach(f => f());
         this.state.onEnd();
         this.container.destroy();
@@ -226,6 +226,10 @@ export class Char {
         )
     }
 
+    stop() {
+        this.container.stop()
+    }
+
     pay() {
         const amount = Math.ceil(this.resources.gold * 0.33);
         this.changeResources(ResourceKey.GOLD, -amount);
@@ -270,7 +274,7 @@ export class Char {
     }
 
     setAnimation(key: CharAnimation, loop?: boolean, onComplete?: () => void) {
-        this.sprite.play(key);
+        this.sprite.play(key, onComplete && {onComplete});
     }
 
     goToTalk() {
@@ -314,7 +318,7 @@ export class Char {
     // }
 
     speak(text: string) {
-        this.speakText.showText(text, 2000);
+        this.speakText.showText(text, 5000);
     }
 
     clearText() {

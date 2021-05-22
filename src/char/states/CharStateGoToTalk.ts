@@ -19,17 +19,15 @@ export class CharStateGoToTalk extends CharState {
     }
 
     update(dt: number) {
-
-        let speed = this.char.speed
-
+        const step = (this.char.speed / 1000) * dt
         const distanceLeft = getDistanceBetween(this.char.container, this.target);
 
-        if (distanceLeft < 10) {
+        if (distanceLeft <= step) {
+            this.char.stop();
+            this.char.container.x = this.target.x
+            this.char.container.y = this.target.y
+            this.char.directToTarget(getTroll().sprite)
             this.char.readyToTalk()
         }
-    }
-
-    onEnd() {
-        render.directToTarget(this.char.container, getTroll().sprite)
     }
 }

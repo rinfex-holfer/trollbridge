@@ -1,4 +1,4 @@
-import {gameConstants} from "../constants";
+import {colors, gameConstants} from "../constants";
 import {gameState} from "../game-state";
 import {eventBus, Evt} from "../event-bus";
 import {AnimatedSprite} from "./render";
@@ -9,6 +9,9 @@ import {CharAnimation} from "../char/char-constants";
 import {rndBetween} from "../utils/utils-math";
 import {bridgeManager} from "./bridge-manager";
 import {lair} from "./lair";
+import {particleManager} from "./particles";
+import {audioManager, SOUND_KEY} from "./audio";
+import {flyingStatusChange} from "../interface/basic/flying-status-change";
 
 let troll: Troll
 
@@ -138,32 +141,29 @@ export class Troll {
 
     getHit(dmg: number) {
         if (dmg > this.armor + rndBetween(1, 5)) {
-            // console.log(this.container);
-            // particleManager.createHitBurst(
-            //     this.containerId,
-            //     this.container.x,
-            //     this.container.y - this.container.height / 2
-            // )
-            //
-            // audioManager.playSound(SOUND_KEY.HIT);
-            // this.changeTrollHp(-dmg, 'battle');
-            //
-            // flyingStatusChange(
-            //     '-'+dmg,
-            //     this.container.x,
-            //     this.container.y - this.container.height,
-            //     colors.RED
-            // );
+            particleManager.burstBlood(
+                this.sprite.x,
+                this.sprite.y - this.sprite.height / 2
+            )
+
+            audioManager.playSound(SOUND_KEY.HIT);
+            this.changeTrollHp(-dmg, 'battle');
+
+            flyingStatusChange(
+                '-'+dmg,
+                this.sprite.x,
+                this.sprite.y - this.sprite.height,
+                colors.RED
+            );
         } else {
-            // audioManager.playSound(SOUND_KEY.BLOCK);
-            //
-            // particleManager.createBlockBurst(
-            //     this.containerId,
-            //     this.container.x + this.container.width / 2,
-            //     this.container.y - this.container.height / 2
-            // )
-            //
-            // flyingStatusChange('blocked', this.container.x, this.container.y - 100, colors.WHITE);
+            audioManager.playSound(SOUND_KEY.BLOCK);
+
+            particleManager.burstBlood(
+                this.sprite.x + this.sprite.width / 2,
+                this.sprite.y - this.sprite.height / 2
+            )
+
+            flyingStatusChange('blocked', this.sprite.x, this.sprite.y - 100, colors.WHITE);
         }
     }
 

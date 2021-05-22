@@ -2,9 +2,9 @@ import {rnd} from "../utils/utils-math";
 import {EncounterDanger, TrollLocation} from "../types";
 import {eventBus, Evt} from "../event-bus";
 import {characters} from "./characters";
-import {Container, render} from "./render";
+import {Container} from "./render";
 import {BasicButton} from "../interface/basic/basic-button";
-import {colors, zLayers} from "../constants";
+import {colors} from "../constants";
 import {SimpleButton} from "../interface/basic/simple-button";
 import {positioner} from "./positioner";
 import {battleManager} from "./battle";
@@ -146,8 +146,6 @@ export class Negotiations {
 
             return b;
         })
-
-        console.log(this.container, this.container.y);
     }
 
     getDialogVariants(): NegotiationsMessage[] {
@@ -176,8 +174,6 @@ export class Negotiations {
         }
     }
 }
-
-export const negotiations = new Negotiations();
 
 type NegotiationTree = {
     [encounterStateKey in NegotiationsState]: {

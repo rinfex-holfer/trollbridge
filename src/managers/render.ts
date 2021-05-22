@@ -64,6 +64,8 @@ export class Container {
     get width() {return this.obj.width }
     destroy() { this.obj.destroy() }
     addPhysics() { render.scene.physics.add.existing(this.obj) }
+    // @ts-ignore
+    stop() { this.obj.body.stop() }
 }
 
 export class GameText {
@@ -93,6 +95,8 @@ export class GameText {
     get width() { return this.obj.width }
     destroy() { this.obj.destroy() }
     addPhysics() { render.scene.physics.add.existing(this.obj) }
+    // @ts-ignore
+    stop() { this.obj.body.stop() }
 }
 
 export class Sprite {
@@ -149,6 +153,8 @@ export class Sprite {
     get width() {return this.obj.width }
     destroy() { this.obj.destroy() }
     addPhysics() { render.scene.physics.add.existing(this.obj) }
+    // @ts-ignore
+    stop() { this.obj.body.stop() }
 }
 
 export class TileSprite {
@@ -183,6 +189,8 @@ export class TileSprite {
     get width() { return this.obj.width }
     destroy() { this.obj.destroy() }
     addPhysics() { render.scene.physics.add.existing(this.obj) }
+    // @ts-ignore
+    stop() { this.obj.body.stop() }
 }
 
 export class AnimatedSprite {
@@ -210,8 +218,13 @@ export class AnimatedSprite {
         render.scene.add.existing(this.obj)
     }
 
-    play(anim: string) {
-        console.log('play', anim)
+    play(anim: string, options?: {onComplete?: () => void}) {
+        console.log('play', anim, options)
+        if (options?.onComplete) {
+            this.obj.once('animationcomplete', () => {
+                options?.onComplete && options.onComplete()
+            })
+        }
         this.obj.play(render.getAnimKey(this.atlasKey, anim));
     }
 
@@ -240,6 +253,8 @@ export class AnimatedSprite {
     get width() { return this.obj.width }
     destroy() { this.obj.destroy() }
     addPhysics() { render.scene.physics.add.existing(this.obj) }
+    // @ts-ignore
+    stop() { this.obj.body.stop() }
 }
 
 class RenderManager {
@@ -278,7 +293,7 @@ class RenderManager {
             }).length
 
             const animationKey = this.getAnimKey(options.atlasKey, animation.framesPrefix);
-            console.log('create animation', animationKey);
+            // console.log('create animation', animationKey);
             // animation
             // key: 'peasant_walk'
             // frames: 'walk_0' 'walk_1'
@@ -305,6 +320,7 @@ class RenderManager {
     }
 
     directToTarget(obj: GameObject, target: Vec) {
+        console.log('directToTarget', obj.obj.scaleX, target.x - obj.obj.x)
         obj.obj.scaleX = Math.sign(target.x - obj.obj.x);
     }
 

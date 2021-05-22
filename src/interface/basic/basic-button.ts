@@ -1,5 +1,5 @@
 import {Container, GameText} from "../../managers/render";
-import {colors} from "../../constants";
+import {colors, colorsCSS} from "../../constants";
 
 export interface ButtonOptions {
     text: string
@@ -20,8 +20,8 @@ export class BasicButton {
     constructor(options: ButtonOptions) {
         this.options = {...options};
 
-        this.container = options.parent || new Container(options.x || 0, options.y || 0)
-        this.text = new GameText(options.text, 0, 0, { fontFamily: 'serif', color: colors.BLACK }, {parent: this.container})
+        this.container = new Container(options.x || 0, options.y || 0, options && {parent: options.parent})
+        this.text = new GameText(options.text, 0, 0, { fontFamily: 'serif', color: colorsCSS.BLACK }, {parent: this.container})
         this.text.setOrigin(0, 0);
 
         const rect = this.getRect();

@@ -1,5 +1,5 @@
 import {Container, GameText, render} from "../managers/render";
-import {colors} from "../constants";
+import {colors, colorsCSS} from "../constants";
 
 export class CharSpeakText {
     text: GameText
@@ -13,7 +13,7 @@ export class CharSpeakText {
             -10,
             {
                 align: 'center',
-                color: colors.WHITE,
+                color: colorsCSS.WHITE,
                 fontStyle: 'italic',
                 fontSize: '18px',
                 wordWrap: {width: 200}
@@ -41,5 +41,9 @@ export class CharSpeakText {
 
     hideText() {
         this.text.setText('');
+    }
+
+    destroy() {
+        this.clearTimeout();
     }
 }
