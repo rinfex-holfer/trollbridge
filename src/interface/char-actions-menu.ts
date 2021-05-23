@@ -62,7 +62,7 @@ export class CharActionsMenu {
     text: O_Text
 
     constructor(private char: Char) {
-        this.container = o_.render.createContainer(0, -25, {parent: this.char.container});
+        this.container = o_.render.createContainer(50, -25, {parent: this.char.container});
         // this.container.zIndex = zLayers.GAME_OBJECTS_MIN
 
         this.text =  o_.render.createText('', 0, 0, {color: colorsCSS.WHITE}, {parent: this.container})
@@ -101,7 +101,8 @@ export class CharActionsMenu {
 
     changeActiveButtons(activeButtons: CharAction[]) {
         const fullWidth = getButtonsRowWidth(activeButtons.length);
-        let x = -fullWidth / 2
+        // let x = -fullWidth / 2
+        let x = 0
         this.buttons.forEach(b => {
             const isActive = activeButtons.includes(b.action)
             b.active = isActive;

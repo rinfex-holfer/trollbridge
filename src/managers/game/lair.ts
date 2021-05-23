@@ -34,16 +34,22 @@ export class Lair {
 
     onClick: (() => void) = stub
 
-    enableInterface() {
-        this.sprite.setInteractive(true, {cursor: 'pointer'});
-
-        this.waitButton.enable()
+    mayBeMovedInto(val: boolean) {
+        if (val) {
+            this.sprite.setInteractive(true, {cursor: 'pointer'})
+        } else {
+            this.sprite.setInteractive(false)
+        }
     }
 
-    disableInterface(withButton?: boolean) {
-        this.sprite.setInteractive(false);
-
-        if (withButton) this.waitButton.disable()
+    mayButtonsBeClicked(val: boolean) {
+        if (val) {
+            this.waitButton.enable()
+            this.foodStorage.enable()
+        } else {
+            this.waitButton.disable()
+            this.foodStorage.disable()
+        }
     }
 
     changeResource(key: ResourceKey, val: number) {

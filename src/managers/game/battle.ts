@@ -1,5 +1,6 @@
 import {eventBus, Evt} from "../../event-bus";
 import {o_} from "../locator";
+import {onEncounterEnd} from "../../helpers";
 
 export class BattleManager {
     unsub: any[] = []
@@ -26,7 +27,7 @@ export class BattleManager {
     }
 
     trollTurn() {
-        o_.characters.enableInteractivityAll();
+        o_.characters.enableInteractivityOnBridge();
     }
 
     async travellersTurn() {
@@ -61,6 +62,6 @@ export class BattleManager {
     onBattleEnd() {
         this.isBattle = false;
         this.unsub.forEach(u => u())
-        eventBus.emit(Evt.ENCOUNTER_ENDED);
+        onEncounterEnd();
     }
 }

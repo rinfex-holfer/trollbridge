@@ -79,7 +79,6 @@ export class O_AnimatedSprite {
     }
 
     play(anim: string, options?: {onComplete?: () => void}) {
-        console.log('play', anim, options)
         if (options?.onComplete) {
             this.obj.once('animationcomplete', () => {
                 options?.onComplete && options.onComplete()

@@ -64,4 +64,12 @@ export class FoodStorage {
             }
         }
     }
+
+    enable() {
+        this.foodSprites.forEach(s => s.setInteractive(true))
+    }
+
+    disable() {
+        this.foodSprites.forEach(s => s.setInteractive(false))
+    }
 }

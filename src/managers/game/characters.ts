@@ -216,4 +216,14 @@ export class CharactersManager {
     enableInteractivityAll() {
         this.chars.forEach(f => f.enableInteractivity())
     }
+
+    enableInteractivityOnBridge() {
+        this.chars.forEach(c => {
+            if (!c.isPrisoner) c.enableInteractivity()
+        })
+    }
+
+    setPrisonersInteractive(val: boolean) {
+        this.getPrisoners().forEach(p => val ? p.enableInteractivity() : p.disableInteractivity())
+    }
 }

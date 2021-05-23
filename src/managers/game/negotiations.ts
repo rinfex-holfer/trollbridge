@@ -7,6 +7,7 @@ import {SimpleButton} from "../../interface/basic/simple-button";
 import {positioner} from "./positioner";
 import {O_Container} from "../core/render/container";
 import {o_} from "../locator";
+import {onEncounterEnd, onEncounterStart} from "../../helpers";
 
 export const enum NegotiationsState {
     START = 'START',
@@ -51,7 +52,7 @@ export class Negotiations {
 
     onTravellersAppear() {
         if (o_.troll.location === TrollLocation.BRIDGE) {
-            this.startEncounter();
+            onEncounterStart()
         }
     }
 
@@ -60,13 +61,19 @@ export class Negotiations {
             location === TrollLocation.BRIDGE &&
             o_.characters.getNewTravellers().length
         ) {
-            this.startEncounter();
+            onEncounterStart()
         }
     }
 
-    startEncounter() {
-        eventBus.emit(Evt.ENCOUNTER_STARTED);
-        o_.characters.travellersGoToTalk();
+    onEncounterEnd() {
+        this.buttons.forEach(b => b.destroy());
+        this.buttons = [];
+        this.encounterState = null;
+        this.danger = EncounterDanger.NONE;
+
+        o_.characters.letAllTravellersPass();
+
+        onEncounterEnd();
     }
 
     onTravellerReadyToTalk(id: string) {
@@ -99,20 +106,11 @@ export class Negotiations {
                 o_.battle.startBattle()
                 break;
             case NegotiationsState.END:
-                eventBus.emit(Evt.ENCOUNTER_ENDED);
-                o_.characters.letAllTravellersPass();
-                this.onEnd()
+                this.onEncounterEnd()
                 break;
         }
         o_.characters.travellersSpeak(travellersReaction);
         this.updateDialogButtons();
-    }
-
-    onEnd() {
-        this.buttons.forEach(b => b.destroy());
-        this.buttons = [];
-        this.encounterState = null;
-        this.danger = EncounterDanger.NONE;
     }
 
     updateDialogButtons() {

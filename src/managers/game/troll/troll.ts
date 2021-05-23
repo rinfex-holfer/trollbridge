@@ -51,27 +51,12 @@ export class Troll {
 
         eventBus.on(Evt.TIME_PASSED, () => this.increaseHunger());
 
-        o_.bridge.enableInterface();
-
         o_.bridge.onClick = () => {
             if (this.location !== TrollLocation.BRIDGE) this.goToBridge()
         }
         o_.lair.onClick = () => {
             if (this.location !== TrollLocation.LAIR) this.goToLair()
         }
-
-        eventBus.on(Evt.TROLL_LOCATION_CHANGED, (loc) => {
-            if (loc !== TrollLocation.BRIDGE) o_.bridge.enableInterface()
-            if (loc !== TrollLocation.LAIR) o_.lair.enableInterface()
-        })
-        eventBus.on(Evt.ENCOUNTER_STARTED, () => {
-            o_.bridge.disableInterface()
-            o_.lair.disableInterface(true)
-        })
-        eventBus.on(Evt.ENCOUNTER_ENDED, () => {
-            if (this.location !== TrollLocation.BRIDGE) o_.bridge.enableInterface()
-            if (this.location !== TrollLocation.LAIR) o_.lair.enableInterface()
-        })
 
         o_.time.sub(dt => this.update(dt))
 

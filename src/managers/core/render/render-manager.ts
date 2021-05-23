@@ -43,7 +43,6 @@ export class RenderManager {
     }
 
     directToTarget(obj: O_GameObject, target: Vec) {
-        console.log('directToTarget', obj.obj.scaleX, target.x - obj.obj.x)
         obj.obj.scaleX = Math.sign(target.x - obj.obj.x);
     }
 

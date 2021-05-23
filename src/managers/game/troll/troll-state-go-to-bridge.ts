@@ -26,12 +26,14 @@ export class TrollStateGoToBridge extends TrollState {
         this.host.setAnimation(CharAnimation.WALK);
         this.host.moveTowards(this.target.x, this.target.y);
 
-        o_.lair.disableInterface(true);
+        o_.lair.mayButtonsBeClicked(false)
+        o_.lair.mayBeMovedInto(false)
         o_.bridge.disableInterface();
     }
 
     onEnd() {
-        o_.lair.enableInterface();
+        o_.lair.mayButtonsBeClicked(true)
+        o_.lair.mayBeMovedInto(true)
     }
 
     update(dt: number) {
