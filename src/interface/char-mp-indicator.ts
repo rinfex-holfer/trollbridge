@@ -1,5 +1,5 @@
 import {colors, colorsCSS} from "../constants";
-import {Char} from "../char/Char";
+import {Char} from "../entities/char/Char";
 import {O_Text} from "../managers/core/render/text";
 import {o_} from "../managers/locator";
 

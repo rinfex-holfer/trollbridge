@@ -52,8 +52,21 @@ export class O_Sprite {
     set x(x) { this.obj.x = x }
     get y() { return this.obj.y }
     set y(y) { this.obj.y = y }
-    get height() {return this.obj.height }
-    get width() {return this.obj.width }
+    get height() {return this.obj.displayHeight }
+    get width() {return this.obj.displayWidth }
+    setHeight(height: number, dontSaveProportions?: boolean) {
+        this.obj.displayHeight = height
+        if (!dontSaveProportions) {
+            this.obj.displayWidth = this.obj.displayHeight * this.obj.width / this.obj.height
+        }
+    }
+    setWidth(width: number, dontSaveProportions?: boolean) {
+        this.obj.displayWidth = width
+        if (!dontSaveProportions) {
+            this.obj.displayHeight = this.obj.displayWidth * this.obj.height / this.obj.width
+        }
+    }
+
     get alpha() { return this.obj.alpha }
     set alpha(val: number) { this.obj.alpha = val }
     destroy() { this.obj.destroy() }

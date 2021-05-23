@@ -16,7 +16,6 @@ export class WaitButton {
     }
 
     onClick() {
-        o_.characters.removeTravellers()
         o_.time.wait();
     }
 

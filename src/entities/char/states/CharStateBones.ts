@@ -1,7 +1,7 @@
 import {CharState} from "./CharState";
 import {CharStateKey} from "../char-constants";
-import {eventBus, Evt} from "../../event-bus";
-import {o_} from "../../managers/locator";
+import {eventBus, Evt} from "../../../event-bus";
+import {o_} from "../../../managers/locator";
 
 export class CharStateBones extends CharState {
     key = CharStateKey.BONES

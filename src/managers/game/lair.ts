@@ -6,9 +6,11 @@ import {positioner} from "./positioner";
 import {o_} from "../locator";
 import {Tiles} from "../core/render/tiles";
 import {FoodStorage} from "./food-storage";
+import {Bed} from "../../entities/buildings/bed";
 
 export class Lair {
     foodStorage: FoodStorage
+    bed: Bed
     waitButton: WaitButton
 
     resources: Resources = {
@@ -25,14 +27,12 @@ export class Lair {
         this.sprite = o_.render.createTiles('grass', pos.x, pos.y, pos.width, pos.height);
         this.sprite.setOrigin(0, 0);
 
-        this.sprite.onClick(() => this.onClick())
+        this.sprite.onClick(() => o_.troll.goToLair())
 
         this.foodStorage = new FoodStorage(positioner.getFoodStoragePosition())
-
+        this.bed = new Bed(positioner.getBedPosition())
         this.waitButton = new WaitButton(positioner.getLairPosition())
     }
-
-    onClick: (() => void) = stub
 
     mayBeMovedInto(val: boolean) {
         if (val) {

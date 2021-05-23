@@ -1,9 +1,9 @@
 import {CharState} from "./CharState";
 import {CharAnimation, CharStateKey} from "../char-constants";
-import {positioner} from "../../managers/game/positioner";
-import {gameConstants} from "../../constants";
-import {getDistanceBetween} from "../../utils/utils-math";
-import {o_} from "../../managers/locator";
+import {positioner} from "../../../managers/game/positioner";
+import {gameConstants} from "../../../constants";
+import {getDistanceBetween} from "../../../utils/utils-math";
+import {o_} from "../../../managers/locator";
 
 export class CharStateGoToTalk extends CharState {
     key = CharStateKey.GO_TO_TALK

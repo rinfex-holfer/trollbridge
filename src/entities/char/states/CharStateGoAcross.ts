@@ -1,7 +1,7 @@
 import {CharState} from "./CharState";
-import {eventBus, Evt} from "../../event-bus";
+import {eventBus, Evt} from "../../../event-bus";
 import {CharAnimation, CharStateKey} from "../char-constants";
-import {getDistanceBetween} from "../../utils/utils-math";
+import {getDistanceBetween} from "../../../utils/utils-math";
 
 export class CharStateGoAcross extends CharState {
     key = CharStateKey.GO_ACROSS

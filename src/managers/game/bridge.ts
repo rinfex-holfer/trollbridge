@@ -15,12 +15,10 @@ export class BridgeManager {
         this.sprite.setOrigin(0, 0);
 
         this.enableInterface();
-        this.sprite.onClick(() => this.onClick())
+        this.sprite.onClick(() => o_.troll.goToBridge())
 
         o_.register.bridge(this);
     }
-
-    onClick: (() => void) = stub
 
     enableInterface() {
         this.sprite.setInteractive(true, {cursor: 'pointer'});

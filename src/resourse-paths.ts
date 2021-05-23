@@ -14,6 +14,7 @@ export const resoursePaths = {
         grass: `${imagesUrl}/tile_grass.png`,
         meat: `${imagesUrl}/meat.png`,
         bones: `${imagesUrl}/bones.png`,
+        bed: `${imagesUrl}/bed.png`,
         button_release: `${imagesUrl}/leg.png`,
         button_rob: `${imagesUrl}/throwRock.png`,
         button_imprison: `${imagesUrl}/prisoner.png`,

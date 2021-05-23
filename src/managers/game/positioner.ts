@@ -35,6 +35,14 @@ export const positioner = {
         }
     },
 
+    getBedPosition() {
+        const pos = positioner.getLairPosition();
+        return {
+            x: pos.x + 100,
+            y: pos.y + pos.height * 2 / 4,
+        }
+    },
+
     getPrisonerPosition() {
         const pos = positioner.getLairPosition();
         const prisonersAmount = o_.characters.getPrisoners().length

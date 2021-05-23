@@ -2,7 +2,7 @@ import {colorsCSS, gameConstants} from "../../../constants";
 import {eventBus, Evt} from "../../../event-bus";
 import {TrollLocation} from "../../../types";
 import {positioner} from "../positioner";
-import {CharAnimation} from "../../../char/char-constants";
+import {CharAnimation} from "../../../entities/char/char-constants";
 import {rndBetween, Vec} from "../../../utils/utils-math";
 import {flyingStatusChange} from "../../../interface/basic/flying-status-change";
 import {O_AnimatedSprite} from "../../core/render/animated-sprite";
@@ -10,8 +10,10 @@ import {o_} from "../../locator";
 import {SOUND_KEY} from "../../core/audio";
 import {TrollState, TrollStateKey} from "./troll-state";
 import {TrollStateIdle} from "./troll-state-idle";
-import {TrollStateGoToBridge} from "./troll-state-go-to-bridge";
-import {TrollStateGoToLair} from "./troll-state-go-to-lair";
+import {TrollIntention} from "./types";
+import {TrollStateGoTo} from "./troll-state-go-to";
+import {TrollStateSleep} from "./troll-state-sleep";
+import {LayerKey} from "../../core/layers";
 
 let troll: Troll
 
@@ -47,16 +49,11 @@ export class Troll {
             y: pos.y + pos.height / 2,
         })
         this.sprite.addPhysics();
+        o_.layers.add(this.sprite, LayerKey.FIELD_OBJECTS)
+
         this.onNewLevel();
 
         eventBus.on(Evt.TIME_PASSED, () => this.increaseHunger());
-
-        o_.bridge.onClick = () => {
-            if (this.location !== TrollLocation.BRIDGE) this.goToBridge()
-        }
-        o_.lair.onClick = () => {
-            if (this.location !== TrollLocation.LAIR) this.goToLair()
-        }
 
         o_.time.sub(dt => this.update(dt))
 
@@ -105,28 +102,40 @@ export class Troll {
         this.sprite.play(key);
     }
 
-    getState(stateKey: TrollStateKey): TrollState {
+    getState(stateKey: TrollStateKey, options?: any): TrollState {
         switch (stateKey) {
             case TrollStateKey.IDLE:
                 return new TrollStateIdle(this);
-            case TrollStateKey.GO_TO_BRIDGE:
-                return new TrollStateGoToBridge(this);
-            case TrollStateKey.GO_TO_LAIR:
-                return new TrollStateGoToLair(this);
+            case TrollStateKey.GO_TO:
+                return new TrollStateGoTo(this, options);
+            case TrollStateKey.SLEEP:
+                return new TrollStateSleep(this);
             default:
                 throw Error('wrong state key ' + stateKey);
         }
     }
 
-    setState(stateKey: TrollStateKey) {
+    setState(stateKey: TrollStateKey, options?: any) {
+        console.log('new troll state:', stateKey);
         this.state.onEnd();
-        this.state = this.getState(stateKey)
+        this.state = this.getState(stateKey, options)
         this.state.onStart();
     }
 
-    goToBridge() { this.setState(TrollStateKey.GO_TO_BRIDGE) }
-    goToLair() { this.setState(TrollStateKey.GO_TO_LAIR) }
+    goToBridge() {
+        this.setState(TrollStateKey.GO_TO, { intention: TrollIntention.BRIDGE })
+    }
+    goToLair() {
+        this.setState(TrollStateKey.GO_TO, { intention: TrollIntention.LAIR })
+    }
+
+    goToBed() {
+        this.setState(TrollStateKey.GO_TO, { intention: TrollIntention.BED })
+    }
+
     goIdle() { this.setState(TrollStateKey.IDLE) }
+
+    goSleep() { this.setState(TrollStateKey.SLEEP) }
 
     devour(id: string) {
         this.eat(3);
@@ -184,5 +193,9 @@ export class Troll {
 
     update(dt: number) {
         this.state.update(dt)
+    }
+
+    goTo(intention: TrollIntention) {
+
     }
 }

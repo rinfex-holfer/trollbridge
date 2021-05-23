@@ -1,6 +1,6 @@
 import {CharKey, EncounterDanger, TrollLocation} from "../../types";
 import {getRndItem} from "../../utils/utils-math";
-import {Char} from "../../char/Char";
+import {Char} from "../../entities/char/Char";
 import {eventBus, Evt} from "../../event-bus";
 import {encounterTemplates} from "../../encounter-templates";
 import {positioner} from "./positioner";
@@ -20,7 +20,10 @@ export class CharactersManager {
                 if (t.isPrisoner) t.timeWithoutFood++
             })
         })
-        eventBus.on(Evt.TIME_PASSED, () => this.createRandomEncounter());
+        eventBus.on(Evt.TIME_PASSED, () => {
+            this.removeTravellers()
+            this.createRandomEncounter()
+        });
         eventBus.on(Evt.TROLL_LOCATION_CHANGED, l => this.onTrollLocationChanged(l));
 
         const bridgePos = positioner.bridgePosition();

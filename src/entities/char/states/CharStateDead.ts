@@ -1,7 +1,7 @@
 import {CharState} from "./CharState";
 import {CharAnimation, CharStateKey} from "../char-constants";
-import {CharAction} from "../../interface/char-actions-menu";
-import {eventBus, Evt} from "../../event-bus";
+import {CharAction} from "../../../interface/char-actions-menu";
+import {eventBus, Evt} from "../../../event-bus";
 
 export class CharStateDead extends CharState {
     key = CharStateKey.DEAD

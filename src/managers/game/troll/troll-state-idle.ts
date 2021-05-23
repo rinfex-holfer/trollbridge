@@ -1,5 +1,5 @@
 import {TrollState, TrollStateKey} from "./troll-state";
-import {CharAnimation} from "../../../char/char-constants";
+import {CharAnimation} from "../../../entities/char/char-constants";
 
 export class TrollStateIdle extends TrollState {
     key = TrollStateKey.IDLE
