@@ -1,6 +1,6 @@
 import {colorsCSS, gameConstants} from "../../../constants";
 import {eventBus, Evt} from "../../../event-bus";
-import {TrollLocation} from "../../../types";
+import {FoodType, MeatType, MiscFood, TrollLocation} from "../../../types";
 import {positioner} from "../positioner";
 import {CharAnimation} from "../../../entities/char/char-constants";
 import {rndBetween, Vec} from "../../../utils/utils-math";
@@ -88,11 +88,13 @@ export class Troll {
         eventBus.emit(Evt.TROLL_STATS_CHANGED);
     }
 
-    eat(amount = 1) {
-        this.hunger = Math.max(this.hunger - amount * 2, 0);
-        this.changeTrollHp(amount);
+    eat(food: FoodType) {
+        const minusHunger = gameConstants.HUNGER_REDUCTION_FROM[food]
+        const hpChange = gameConstants.HP_FROM[food]
+
+        this.hunger = Math.max(this.hunger - minusHunger, 0);
+        this.changeTrollHp(hpChange);
         eventBus.emit(Evt.TROLL_STATS_CHANGED);
-        eventBus.emit(Evt.RESOURSES_CHANGED);
     }
 
     changeTrollHp(val: number, cause = 'hunger') {
@@ -145,7 +147,7 @@ export class Troll {
     goSleep() { this.setState(TrollStateKey.SLEEP) }
 
     devour(id: string) {
-        this.eat(3);
+        this.eat(MeatType.RAW);
         o_.characters.charEaten(id);
     }
 

@@ -20,7 +20,7 @@ export const Resources = () => {
     return <>
         <h2>Ресурсы</h2>
         <ul>
-            <li id="food">Еда: {state.food}</li>
+            {/*<li id="food">Еда: {state.food}</li>*/}
             <li id="materials">Материалы: {state.materials}</li>
             <li id="gold">Золото: {state.gold}</li>
         </ul>

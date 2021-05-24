@@ -18,7 +18,9 @@ const load = (scene: Phaser.Scene): Promise<any> => {
 
     imgKeys.forEach(key => scene.load.image(key, resoursePaths.images[key]))
     atlasesKeys.forEach(key => {
-        scene.load.atlas(key, resoursePaths.atlases[key].replace('.json', '.png'), resoursePaths.atlases[key])
+        const jsonUrl = resoursePaths.atlases[key]
+        const pngUrl = jsonUrl.replace('.json', '.png');
+        scene.load.atlas(key, pngUrl, jsonUrl)
     })
     musicKeys.forEach(key => scene.load.audio(key, resoursePaths.music[key]))
     soundKeys.forEach(key => scene.load.audio(key, resoursePaths.sounds[key]))

@@ -54,6 +54,8 @@ type Subscribers = {
     }
 }
 
+export type GameEventCallback<E extends Evt> = (data: EvtData[E]) => void
+
 export const eventBus = {
     subs: {} as Subscribers,
 
@@ -90,6 +92,20 @@ export const eventBus = {
         if (!this.subs[eventType]) return;
 
         Object.values(this.subs[eventType]).forEach(sub => sub(data))
+    }
+}
+
+export function subscriptions() {
+    const subs = [] as [number, Evt][]
+
+    return {
+        on: <E extends Evt>(event: E, callback: GameEventCallback<E>) => {
+            const id = eventBus.on(event, callback)
+            subs.push([id, event])
+        },
+        clear: () => {
+            subs.forEach(([id, evt]) => eventBus.unsubscribe(evt, id))
+        }
     }
 }
 

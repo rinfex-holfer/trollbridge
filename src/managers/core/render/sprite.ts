@@ -28,6 +28,10 @@ export class O_Sprite {
         this.obj.setOrigin(x, y)
     }
 
+    setTexture(key: keyof typeof resoursePaths.images) {
+        this.obj.setTexture(key);
+    }
+
     move(x: number, y: number) {
         this.obj.setPosition(x, y);
     }

@@ -5,16 +5,18 @@ import {WaitButton} from "../../interface/wait-button";
 import {positioner} from "./positioner";
 import {o_} from "../locator";
 import {Tiles} from "../core/render/tiles";
-import {FoodStorage} from "./food-storage";
+import {FoodStorage} from "../../entities/buildings/food-storage";
 import {Bed} from "../../entities/buildings/bed";
+import {Pot} from "../../entities/buildings/pot";
 
 export class Lair {
-    foodStorage: FoodStorage
-    bed: Bed
     waitButton: WaitButton
 
-    resources: Resources = {
-        [ResourceKey.FOOD]: 3,
+    foodStorage: FoodStorage
+    bed: Bed
+    pot: Pot
+
+    resources = {
         [ResourceKey.GOLD]: 0,
         [ResourceKey.MATERIALS]: 0
     }
@@ -29,9 +31,10 @@ export class Lair {
 
         this.sprite.onClick(() => o_.troll.goToLair())
 
+        this.waitButton = new WaitButton(positioner.getLairPosition())
         this.foodStorage = new FoodStorage(positioner.getFoodStoragePosition())
         this.bed = new Bed(positioner.getBedPosition())
-        this.waitButton = new WaitButton(positioner.getLairPosition())
+        this.pot = new Pot(positioner.getPotPosition());
     }
 
     mayBeMovedInto(val: boolean) {
@@ -43,25 +46,21 @@ export class Lair {
     }
 
     mayButtonsBeClicked(val: boolean) {
-        if (val) {
-            this.waitButton.enable()
-            this.foodStorage.enable()
-        } else {
-            this.waitButton.disable()
-            this.foodStorage.disable()
-        }
+        this.bed.setEnabled(val)
+        this.waitButton.setEnabled(val)
+        this.foodStorage.setEnabled(val)
     }
 
     changeResource(key: ResourceKey, val: number) {
-        this.resources[key] = Math.max(this.resources[key] + val, 0)
+        // this.resources[key] = Math.max(this.resources[key] + val, 0)
         eventBus.emit(Evt.RESOURSES_CHANGED)
     }
 
     feedChar(id: string) {
-        if (this.resources.food === 0) {
-            console.error('no food to feed', id)
-            return;
-        }
+        // if (this.resources.food === 0) {
+        //     console.error('no food to feed', id)
+        //     return;
+        // }
         this.changeResource(ResourceKey.FOOD, -1);
         o_.characters.feedChar(id);
     }

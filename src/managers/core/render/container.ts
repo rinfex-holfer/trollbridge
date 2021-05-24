@@ -42,6 +42,8 @@ export class O_Container {
         return {x: this.obj.x, y: this.obj.y}
     }
 
+    remove(child: O_GameObject) { this.obj.remove(child.obj) }
+
     get x() { return this.obj.x }
     set x(x) { this.obj.x = x }
     get y() { return this.obj.y }

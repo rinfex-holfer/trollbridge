@@ -56,7 +56,7 @@
         <key>jxrCompressionLevel</key>
         <uint>0</uint>
         <key>ditherType</key>
-        <enum type="SettingsBase::DitherType">NearestNeighbour</enum>
+        <enum type="SettingsBase::DitherType">PngQuantLow</enum>
         <key>backgroundColor</key>
         <uint>0</uint>
         <key>libGdx</key>
@@ -82,7 +82,7 @@
         <key>atfFormats</key>
         <string></string>
         <key>textureFormat</key>
-        <enum type="SettingsBase::TextureFormat">png</enum>
+        <enum type="SettingsBase::TextureFormat">png8</enum>
         <key>borderPadding</key>
         <uint>0</uint>
         <key>maxTextureSize</key>
@@ -181,35 +181,34 @@
         </struct>
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
-            <key type="filename">block1.png</key>
-            <key type="filename">block2.png</key>
-            <key type="filename">damaged1.png</key>
-            <key type="filename">damaged2.png</key>
-            <key type="filename">dead1.png</key>
-            <key type="filename">dead2.png</key>
-            <key type="filename">devoure1.png</key>
-            <key type="filename">devoure2.png</key>
-            <key type="filename">fall1.png</key>
-            <key type="filename">fall2.png</key>
-            <key type="filename">grapple1.png</key>
-            <key type="filename">grapple2.png</key>
-            <key type="filename">idle1.png</key>
-            <key type="filename">idle2.png</key>
-            <key type="filename">strike1.png</key>
-            <key type="filename">strike2.png</key>
-            <key type="filename">strikeDown1.png</key>
-            <key type="filename">strikeDown2.png</key>
-            <key type="filename">throw1.png</key>
-            <key type="filename">throw2.png</key>
-            <key type="filename">throwStone1.png</key>
-            <key type="filename">throwStone2.png</key>
-            <key type="filename">unconscious1.png</key>
-            <key type="filename">unconscious2.png</key>
-            <key type="filename">walk1.png</key>
-            <key type="filename">walk2.png</key>
+            <key type="filename">troll_block_0.png</key>
+            <key type="filename">troll_block_1.png</key>
+            <key type="filename">troll_damaged_0.png</key>
+            <key type="filename">troll_damaged_1.png</key>
+            <key type="filename">troll_dead_0.png</key>
+            <key type="filename">troll_dead_1.png</key>
+            <key type="filename">troll_devoure_0.png</key>
+            <key type="filename">troll_devoure_1.png</key>
+            <key type="filename">troll_fall_0.png</key>
+            <key type="filename">troll_fall_1.png</key>
+            <key type="filename">troll_grapple_0.png</key>
+            <key type="filename">troll_grapple_1.png</key>
+            <key type="filename">troll_idle_0.png</key>
+            <key type="filename">troll_idle_1.png</key>
+            <key type="filename">troll_strike_0.png</key>
+            <key type="filename">troll_strike_1.png</key>
+            <key type="filename">troll_strike_down_0.png</key>
+            <key type="filename">troll_strike_down_1.png</key>
+            <key type="filename">troll_throw_0.png</key>
+            <key type="filename">troll_throw_1.png</key>
+            <key type="filename">troll_throw_stone_0.png</key>
+            <key type="filename">troll_throw_stone_1.png</key>
+            <key type="filename">troll_unconscious_0.png</key>
+            <key type="filename">troll_walk_0.png</key>
+            <key type="filename">troll_walk_1.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
+                <point_f>0,0</point_f>
                 <key>spriteScale</key>
                 <double>1</double>
                 <key>scale9Enabled</key>

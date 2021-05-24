@@ -39,7 +39,15 @@ export const positioner = {
         const pos = positioner.getLairPosition();
         return {
             x: pos.x + 100,
-            y: pos.y + pos.height * 2 / 4,
+            y: pos.y + pos.height * 1 / 4,
+        }
+    },
+
+    getPotPosition() {
+        const pos = positioner.getLairPosition();
+        return {
+            x: pos.x + 100,
+            y: pos.y + pos.height * 2.5 / 4,
         }
     },
 

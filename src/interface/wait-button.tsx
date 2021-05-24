@@ -19,11 +19,11 @@ export class WaitButton {
         o_.time.wait();
     }
 
-    enable() {
-        this.button.enable();
-    }
-
-    disable() {
-        this.button.disable();
+    setEnabled(val: boolean) {
+        if (val) {
+            this.button.enable()
+        } else {
+            this.button.disable();
+        }
     }
 }

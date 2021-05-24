@@ -4,13 +4,13 @@
 			"image": "peasant.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 120,
-				"h": 716
+				"w": 128,
+				"h": 692
 			},
 			"scale": 1,
 			"frames": [
 				{
-					"filename": "strike2.png",
+					"filename": "peasant_strike_1.png",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -31,49 +31,7 @@
 					}
 				},
 				{
-					"filename": "devouring1.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 36,
-						"h": 40
-					},
-					"spriteSourceSize": {
-						"x": 3,
-						"y": 3,
-						"w": 29,
-						"h": 34
-					},
-					"frame": {
-						"x": 90,
-						"y": 1,
-						"w": 29,
-						"h": 34
-					}
-				},
-				{
-					"filename": "tornHead1.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 29,
-						"h": 19
-					},
-					"spriteSourceSize": {
-						"x": 5,
-						"y": 0,
-						"w": 18,
-						"h": 17
-					},
-					"frame": {
-						"x": 90,
-						"y": 37,
-						"w": 18,
-						"h": 17
-					}
-				},
-				{
-					"filename": "block1.png",
+					"filename": "peasant_block_0.png",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -94,70 +52,7 @@
 					}
 				},
 				{
-					"filename": "dead1.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 100,
-						"h": 120
-					},
-					"spriteSourceSize": {
-						"x": 10,
-						"y": 76,
-						"w": 47,
-						"h": 36
-					},
-					"frame": {
-						"x": 71,
-						"y": 77,
-						"w": 47,
-						"h": 36
-					}
-				},
-				{
-					"filename": "dead2.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 100,
-						"h": 120
-					},
-					"spriteSourceSize": {
-						"x": 10,
-						"y": 76,
-						"w": 47,
-						"h": 36
-					},
-					"frame": {
-						"x": 71,
-						"y": 115,
-						"w": 47,
-						"h": 36
-					}
-				},
-				{
-					"filename": "idle1.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 100,
-						"h": 120
-					},
-					"spriteSourceSize": {
-						"x": 15,
-						"y": 25,
-						"w": 46,
-						"h": 80
-					},
-					"frame": {
-						"x": 71,
-						"y": 153,
-						"w": 46,
-						"h": 80
-					}
-				},
-				{
-					"filename": "block2.png",
+					"filename": "peasant_block_1.png",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -178,28 +73,7 @@
 					}
 				},
 				{
-					"filename": "idle2.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 100,
-						"h": 120
-					},
-					"spriteSourceSize": {
-						"x": 15,
-						"y": 25,
-						"w": 46,
-						"h": 80
-					},
-					"frame": {
-						"x": 71,
-						"y": 235,
-						"w": 46,
-						"h": 80
-					}
-				},
-				{
-					"filename": "strike1.png",
+					"filename": "peasant_strike_0.png",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -220,112 +94,7 @@
 					}
 				},
 				{
-					"filename": "fall2.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 100,
-						"h": 120
-					},
-					"spriteSourceSize": {
-						"x": 15,
-						"y": 47,
-						"w": 46,
-						"h": 60
-					},
-					"frame": {
-						"x": 71,
-						"y": 317,
-						"w": 46,
-						"h": 60
-					}
-				},
-				{
-					"filename": "prisoner1.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 70,
-						"h": 62
-					},
-					"spriteSourceSize": {
-						"x": 3,
-						"y": 0,
-						"w": 63,
-						"h": 62
-					},
-					"frame": {
-						"x": 1,
-						"y": 327,
-						"w": 63,
-						"h": 62
-					}
-				},
-				{
-					"filename": "devoured1.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 100,
-						"h": 120
-					},
-					"spriteSourceSize": {
-						"x": 10,
-						"y": 83,
-						"w": 53,
-						"h": 29
-					},
-					"frame": {
-						"x": 66,
-						"y": 379,
-						"w": 53,
-						"h": 29
-					}
-				},
-				{
-					"filename": "prisoner2.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 70,
-						"h": 62
-					},
-					"spriteSourceSize": {
-						"x": 3,
-						"y": 0,
-						"w": 63,
-						"h": 62
-					},
-					"frame": {
-						"x": 1,
-						"y": 391,
-						"w": 63,
-						"h": 62
-					}
-				},
-				{
-					"filename": "devoured2.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 100,
-						"h": 120
-					},
-					"spriteSourceSize": {
-						"x": 10,
-						"y": 83,
-						"w": 53,
-						"h": 29
-					},
-					"frame": {
-						"x": 66,
-						"y": 410,
-						"w": 53,
-						"h": 29
-					}
-				},
-				{
-					"filename": "walk2.png",
+					"filename": "peasant_walk_1.png",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -339,98 +108,14 @@
 						"h": 85
 					},
 					"frame": {
-						"x": 66,
-						"y": 441,
+						"x": 1,
+						"y": 327,
 						"w": 52,
 						"h": 85
 					}
 				},
 				{
-					"filename": "damaged1.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 100,
-						"h": 120
-					},
-					"spriteSourceSize": {
-						"x": 15,
-						"y": 48,
-						"w": 57,
-						"h": 57
-					},
-					"frame": {
-						"x": 1,
-						"y": 455,
-						"w": 57,
-						"h": 57
-					}
-				},
-				{
-					"filename": "damaged2.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 100,
-						"h": 120
-					},
-					"spriteSourceSize": {
-						"x": 15,
-						"y": 48,
-						"w": 57,
-						"h": 57
-					},
-					"frame": {
-						"x": 1,
-						"y": 514,
-						"w": 57,
-						"h": 57
-					}
-				},
-				{
-					"filename": "scared1.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 100,
-						"h": 120
-					},
-					"spriteSourceSize": {
-						"x": 15,
-						"y": 48,
-						"w": 57,
-						"h": 57
-					},
-					"frame": {
-						"x": 60,
-						"y": 528,
-						"w": 57,
-						"h": 57
-					}
-				},
-				{
-					"filename": "scared2.png",
-					"rotated": false,
-					"trimmed": true,
-					"sourceSize": {
-						"w": 100,
-						"h": 120
-					},
-					"spriteSourceSize": {
-						"x": 15,
-						"y": 48,
-						"w": 57,
-						"h": 57
-					},
-					"frame": {
-						"x": 1,
-						"y": 573,
-						"w": 57,
-						"h": 57
-					}
-				},
-				{
-					"filename": "walk1.png",
+					"filename": "peasant_walk_0.png",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -445,13 +130,118 @@
 					},
 					"frame": {
 						"x": 1,
-						"y": 632,
+						"y": 414,
 						"w": 54,
 						"h": 82
 					}
 				},
 				{
-					"filename": "fall1.png",
+					"filename": "peasant_idle_0.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 100,
+						"h": 120
+					},
+					"spriteSourceSize": {
+						"x": 15,
+						"y": 25,
+						"w": 46,
+						"h": 80
+					},
+					"frame": {
+						"x": 1,
+						"y": 498,
+						"w": 46,
+						"h": 80
+					}
+				},
+				{
+					"filename": "peasant_idle_1.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 100,
+						"h": 120
+					},
+					"spriteSourceSize": {
+						"x": 15,
+						"y": 25,
+						"w": 46,
+						"h": 80
+					},
+					"frame": {
+						"x": 1,
+						"y": 580,
+						"w": 46,
+						"h": 80
+					}
+				},
+				{
+					"filename": "peasant_devoured_0.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 100,
+						"h": 120
+					},
+					"spriteSourceSize": {
+						"x": 10,
+						"y": 83,
+						"w": 53,
+						"h": 29
+					},
+					"frame": {
+						"x": 1,
+						"y": 662,
+						"w": 53,
+						"h": 29
+					}
+				},
+				{
+					"filename": "peasant_unconscious_0.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 100,
+						"h": 120
+					},
+					"spriteSourceSize": {
+						"x": 15,
+						"y": 76,
+						"w": 37,
+						"h": 30
+					},
+					"frame": {
+						"x": 90,
+						"y": 1,
+						"w": 37,
+						"h": 30
+					}
+				},
+				{
+					"filename": "peasant_unconscious_1.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 100,
+						"h": 120
+					},
+					"spriteSourceSize": {
+						"x": 15,
+						"y": 76,
+						"w": 37,
+						"h": 30
+					},
+					"frame": {
+						"x": 90,
+						"y": 33,
+						"w": 37,
+						"h": 30
+					}
+				},
+				{
+					"filename": "peasant_fall_0.png",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -465,14 +255,14 @@
 						"h": 64
 					},
 					"frame": {
-						"x": 60,
-						"y": 587,
+						"x": 71,
+						"y": 77,
 						"w": 54,
 						"h": 64
 					}
 				},
 				{
-					"filename": "unconscious1.png",
+					"filename": "peasant_fall_1.png",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -481,19 +271,124 @@
 					},
 					"spriteSourceSize": {
 						"x": 15,
-						"y": 76,
-						"w": 37,
-						"h": 30
+						"y": 47,
+						"w": 46,
+						"h": 60
 					},
 					"frame": {
-						"x": 57,
-						"y": 653,
-						"w": 37,
-						"h": 30
+						"x": 71,
+						"y": 143,
+						"w": 46,
+						"h": 60
 					}
 				},
 				{
-					"filename": "unconscious2.png",
+					"filename": "peasant_dead_0.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 100,
+						"h": 120
+					},
+					"spriteSourceSize": {
+						"x": 10,
+						"y": 76,
+						"w": 47,
+						"h": 36
+					},
+					"frame": {
+						"x": 71,
+						"y": 205,
+						"w": 47,
+						"h": 36
+					}
+				},
+				{
+					"filename": "peasant_dead_1.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 100,
+						"h": 120
+					},
+					"spriteSourceSize": {
+						"x": 10,
+						"y": 76,
+						"w": 47,
+						"h": 36
+					},
+					"frame": {
+						"x": 71,
+						"y": 243,
+						"w": 47,
+						"h": 36
+					}
+				},
+				{
+					"filename": "peasant_devoured_1.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 100,
+						"h": 120
+					},
+					"spriteSourceSize": {
+						"x": 10,
+						"y": 83,
+						"w": 53,
+						"h": 29
+					},
+					"frame": {
+						"x": 71,
+						"y": 281,
+						"w": 53,
+						"h": 29
+					}
+				},
+				{
+					"filename": "peasant_prisoner_0.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 70,
+						"h": 62
+					},
+					"spriteSourceSize": {
+						"x": 3,
+						"y": 0,
+						"w": 63,
+						"h": 62
+					},
+					"frame": {
+						"x": 55,
+						"y": 327,
+						"w": 63,
+						"h": 62
+					}
+				},
+				{
+					"filename": "peasant_prisoner_1.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 70,
+						"h": 62
+					},
+					"spriteSourceSize": {
+						"x": 3,
+						"y": 0,
+						"w": 63,
+						"h": 62
+					},
+					"frame": {
+						"x": 57,
+						"y": 391,
+						"w": 63,
+						"h": 62
+					}
+				},
+				{
+					"filename": "peasant_damaged_0.png",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -502,15 +397,78 @@
 					},
 					"spriteSourceSize": {
 						"x": 15,
-						"y": 76,
-						"w": 37,
-						"h": 30
+						"y": 48,
+						"w": 57,
+						"h": 57
 					},
 					"frame": {
 						"x": 57,
-						"y": 685,
-						"w": 37,
-						"h": 30
+						"y": 455,
+						"w": 57,
+						"h": 57
+					}
+				},
+				{
+					"filename": "peasant_damaged_1.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 100,
+						"h": 120
+					},
+					"spriteSourceSize": {
+						"x": 15,
+						"y": 48,
+						"w": 57,
+						"h": 57
+					},
+					"frame": {
+						"x": 49,
+						"y": 514,
+						"w": 57,
+						"h": 57
+					}
+				},
+				{
+					"filename": "peasant_scared_0.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 100,
+						"h": 120
+					},
+					"spriteSourceSize": {
+						"x": 15,
+						"y": 48,
+						"w": 57,
+						"h": 57
+					},
+					"frame": {
+						"x": 49,
+						"y": 573,
+						"w": 57,
+						"h": 57
+					}
+				},
+				{
+					"filename": "peasant_scared_1.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 100,
+						"h": 120
+					},
+					"spriteSourceSize": {
+						"x": 15,
+						"y": 48,
+						"w": 57,
+						"h": 57
+					},
+					"frame": {
+						"x": 56,
+						"y": 632,
+						"w": 57,
+						"h": 57
 					}
 				}
 			]
@@ -519,6 +477,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:5b0a8e3213887d27d04f09887328e559:ea91332804ffc5c24d2a626304d0ea7e:df876086fb15b705b0936463a5884bbd$"
+		"smartupdate": "$TexturePacker:SmartUpdate:977f73b4085c02de3f43e103ab0531af:6f7a951b65db490cce4950e27163be9b:df876086fb15b705b0936463a5884bbd$"
 	}
 }

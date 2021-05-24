@@ -1,4 +1,4 @@
-import {Vec} from "../../../utils/utils-math";
+import {getDistanceBetween, Vec} from "../../../utils/utils-math";
 import {resoursePaths} from "../../../resourse-paths";
 import Phaser from "phaser";
 import {O_GameObject} from "./types";
@@ -9,6 +9,7 @@ import {Tiles} from "./tiles";
 import {O_Text} from "./text";
 import {o_} from "../../locator";
 import {LayerKey} from "../layers";
+import {createPromiseAndHandlers} from "../../../utils/utils-async";
 
 export class RenderManager {
     scene: Phaser.Scene
@@ -75,7 +76,26 @@ export class RenderManager {
     }
 
     createTimeline(config?: Phaser.Types.Tweens.TimelineBuilderConfig) {
-        console.log(this, this.scene);
         return this.scene.tweens.createTimeline(config)
+    }
+
+    flyTo(obj: O_GameObject, pos: Vec, speed: number, maxDuration?: number): Promise<any> {
+        const {promise, done} = createPromiseAndHandlers()
+        const timeline = this.createTimeline();
+        const distance = getDistanceBetween(obj, pos);
+        let duration = distance / (speed / 1000);
+        if (maxDuration && maxDuration < duration) duration = maxDuration;
+        timeline.add({
+            targets: obj.obj,
+            x: pos.x,
+            y: pos.y,
+            ease: 'Linear',
+            duration: duration,
+            onComplete: done
+        })
+
+        timeline.play()
+
+        return promise
     }
 }

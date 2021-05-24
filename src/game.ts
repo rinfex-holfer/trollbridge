@@ -13,6 +13,7 @@ import {AudioManager} from "./managers/core/audio";
 import {TimeManager} from "./managers/core/time";
 import {BattleManager} from "./managers/game/battle";
 import {LayersManager} from "./managers/core/layers";
+import {Meat} from "./entities/meat";
 
 const size = getGameSize()
 var config: Phaser.Types.Core.GameConfig = {
@@ -49,10 +50,23 @@ const create = (scene: Phaser.Scene) => {
     new Environment()
     new BridgeManager()
     new CharactersManager()
-    new Lair()
     new Troll()
+    new Lair()
     new Negotiations()
     new BattleManager()
+
+    new Meat({x: 100, y: 200})
+    new Meat({x: 120, y: 200})
+    new Meat({x: 140, y: 200})
+    new Meat({x: 160, y: 200})
+    new Meat({x: 170, y: 200})
+    new Meat({x: 180, y: 200})
+    new Meat({x: 190, y: 200})
+    new Meat({x: 200, y: 200})
+    new Meat({x: 210, y: 200})
+    new Meat({x: 220, y: 200})
+    new Meat({x: 230, y: 200})
+    new Meat({x: 240, y: 200})
 
     scene.update = function(time, delta) {
         timeManager.onUpdate(delta);

@@ -25,21 +25,15 @@ function createAnimations(
     const atlasTexture = scene.textures.get(options.atlasKey);
 
     options.animations.forEach(animation => {
+        const animationKey = getAnimKey(options.atlasKey, animation.framesPrefix);
+
         const framesNumber = Object.keys(atlasTexture.frames).filter(frameKey => {
-            return frameKey.startsWith(animation.framesPrefix) && !isNaN(+frameKey[animation.framesPrefix.length])
+            return frameKey.startsWith(animationKey) && !isNaN(+frameKey[animationKey.length + 1])
         }).length
 
-        const animationKey = getAnimKey(options.atlasKey, animation.framesPrefix);
-        // console.log('create animation', animationKey);
-        // animation
-        // key: 'peasant_walk'
-        // frames: 'walk_0' 'walk_1'
-
-        // animations
-        // { peasant: { walk: ...animation } }
         const animConfig = {
             key: animationKey,
-            frames: scene.anims.generateFrameNames(options.atlasKey, {prefix: animation.framesPrefix, suffix: '.png', start: 1, end: framesNumber}),
+            frames: scene.anims.generateFrameNames(options.atlasKey, {prefix: animationKey + '_', suffix: '.png', end: framesNumber-1}),
             frameRate: animation.frameRate,
             repeat: animation.repeat
         };
@@ -87,13 +81,21 @@ export class O_AnimatedSprite {
         this.obj.play(getAnimKey(this.atlasKey, anim));
     }
 
+    stopAnimation() {
+        this.obj.stop()
+    }
+
     move(x: number, y: number) {
         this.obj.setPosition(x, y);
     }
 
-    setInteractive(val: boolean) {
-        if (val) this.obj.setInteractive()
+    setInteractive(val: boolean, options?: any) {
+        if (val) this.obj.setInteractive(options)
         else this.obj.disableInteractive()
+    }
+
+    onClick(callback: () => void) {
+        this.obj.on('pointerdown', callback)
     }
 
     setOrigin(x: number, y: number) { this.obj.setOrigin(x, y)}

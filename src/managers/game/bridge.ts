@@ -7,8 +7,6 @@ import {o_} from "../locator";
 export class BridgeManager {
     sprite: Tiles
 
-    trollLocation: TrollLocation = TrollLocation.LAIR
-
     constructor() {
         const bridgePos = positioner.bridgePosition();
         this.sprite = o_.render.createTiles('floor', bridgePos.x, bridgePos.y, bridgePos.width, bridgePos.height);

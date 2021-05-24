@@ -1,3 +1,16 @@
+
+export const enum MiscFood {
+    DISH = 'DISH'
+}
+
+export const enum MeatType {
+    RAW = 'RAW',
+    STALE = 'STALE',
+    DRIED = 'DRIED',
+}
+
+export type FoodType = MeatType | MiscFood
+
 export type Experience = {
     food: number,
     gold: number,

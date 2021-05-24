@@ -1,8 +1,9 @@
-import {Time} from "./types";
+import {MeatType, MiscFood, Time} from "./types";
 
 export const TimeOrder = [Time.MORNING, Time.AFTERNOON, Time.EVENING, Time.NIGHT];
 
 export const gameConstants = {
+    //  ======================== TROLL ========================
     MAX_HUNGER: 10,
     HUNGER_PER_TIME: 1,
     HP_MINUS_WHEN_HUNGRY: 1,
@@ -28,12 +29,31 @@ export const gameConstants = {
         4: 4,
         5: 5,
     } as {[key: number]: number},
-
     TROLL_SPEED: 500,
 
+    //  ======================== CHARS ========================
     CHAR_SPEED: 100,
     CHAR_FAST: 150,
     CHAR_VERY_FAST: 250,
+
+    //  ======================== FOOD ========================
+    RAW_MEAT_TIME_LIMIT: 6,
+    STALE_MEAT_TIME_LIMIT: 6,
+
+    FOOD_FOR_DISH: 3,
+
+    HP_FROM: {
+        [MiscFood.DISH]: 6,
+        [MeatType.RAW]: 2,
+        [MeatType.DRIED]: 1,
+        [MeatType.STALE]: 0,
+    },
+    HUNGER_REDUCTION_FROM: {
+        [MiscFood.DISH]: 10,
+        [MeatType.RAW]: 3,
+        [MeatType.DRIED]: 3,
+        [MeatType.STALE]: 2,
+    },
 }
 
 export const zLayers = {

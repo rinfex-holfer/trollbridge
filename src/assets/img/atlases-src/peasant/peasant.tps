@@ -181,29 +181,29 @@
         </struct>
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
-            <key type="filename">block1.png</key>
-            <key type="filename">block2.png</key>
-            <key type="filename">damaged1.png</key>
-            <key type="filename">damaged2.png</key>
-            <key type="filename">dead1.png</key>
-            <key type="filename">dead2.png</key>
-            <key type="filename">devoured1.png</key>
-            <key type="filename">devoured2.png</key>
-            <key type="filename">fall1.png</key>
-            <key type="filename">fall2.png</key>
-            <key type="filename">idle1.png</key>
-            <key type="filename">idle2.png</key>
-            <key type="filename">scared1.png</key>
-            <key type="filename">scared2.png</key>
-            <key type="filename">strike1.png</key>
-            <key type="filename">strike2.png</key>
-            <key type="filename">unconscious1.png</key>
-            <key type="filename">unconscious2.png</key>
-            <key type="filename">walk1.png</key>
-            <key type="filename">walk2.png</key>
+            <key type="filename">peasant_block_0.png</key>
+            <key type="filename">peasant_block_1.png</key>
+            <key type="filename">peasant_damaged_0.png</key>
+            <key type="filename">peasant_damaged_1.png</key>
+            <key type="filename">peasant_dead_0.png</key>
+            <key type="filename">peasant_dead_1.png</key>
+            <key type="filename">peasant_devoured_0.png</key>
+            <key type="filename">peasant_devoured_1.png</key>
+            <key type="filename">peasant_fall_0.png</key>
+            <key type="filename">peasant_fall_1.png</key>
+            <key type="filename">peasant_idle_0.png</key>
+            <key type="filename">peasant_idle_1.png</key>
+            <key type="filename">peasant_scared_0.png</key>
+            <key type="filename">peasant_scared_1.png</key>
+            <key type="filename">peasant_strike_0.png</key>
+            <key type="filename">peasant_strike_1.png</key>
+            <key type="filename">peasant_unconscious_0.png</key>
+            <key type="filename">peasant_unconscious_1.png</key>
+            <key type="filename">peasant_walk_0.png</key>
+            <key type="filename">peasant_walk_1.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
+                <point_f>0,0</point_f>
                 <key>spriteScale</key>
                 <double>1</double>
                 <key>scale9Enabled</key>
@@ -215,26 +215,11 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
-            <key type="filename">devouring1.png</key>
+            <key type="filename">peasant_prisoner_0.png</key>
+            <key type="filename">peasant_prisoner_1.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
-                <key>spriteScale</key>
-                <double>1</double>
-                <key>scale9Enabled</key>
-                <false/>
-                <key>scale9Borders</key>
-                <rect>9,10,18,20</rect>
-                <key>scale9Paddings</key>
-                <rect>9,10,18,20</rect>
-                <key>scale9FromFile</key>
-                <false/>
-            </struct>
-            <key type="filename">prisoner1.png</key>
-            <key type="filename">prisoner2.png</key>
-            <struct type="IndividualSpriteSettings">
-                <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
+                <point_f>0,0</point_f>
                 <key>spriteScale</key>
                 <double>1</double>
                 <key>scale9Enabled</key>
@@ -243,21 +228,6 @@
                 <rect>18,16,35,31</rect>
                 <key>scale9Paddings</key>
                 <rect>18,16,35,31</rect>
-                <key>scale9FromFile</key>
-                <false/>
-            </struct>
-            <key type="filename">tornHead1.png</key>
-            <struct type="IndividualSpriteSettings">
-                <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
-                <key>spriteScale</key>
-                <double>1</double>
-                <key>scale9Enabled</key>
-                <false/>
-                <key>scale9Borders</key>
-                <rect>7,5,15,9</rect>
-                <key>scale9Paddings</key>
-                <rect>7,5,15,9</rect>
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
