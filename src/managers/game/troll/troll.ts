@@ -14,6 +14,7 @@ import {TrollIntention} from "./types";
 import {TrollStateGoTo} from "./troll-state-go-to";
 import {TrollStateSleep} from "./troll-state-sleep";
 import {LayerKey} from "../../core/layers";
+import {Zzz} from "../../../entities/zzz";
 
 let troll: Troll
 
@@ -27,6 +28,7 @@ export class Troll {
     hunger = 0
 
     sprite: O_AnimatedSprite
+    zzz: Zzz
 
     speed = gameConstants.TROLL_SPEED
 
@@ -51,6 +53,8 @@ export class Troll {
         this.sprite.addPhysics();
         o_.layers.add(this.sprite, LayerKey.FIELD_OBJECTS)
 
+        this.zzz = new Zzz(0, 0);
+
         this.onNewLevel();
 
         eventBus.on(Evt.TIME_PASSED, () => this.increaseHunger());
@@ -60,6 +64,9 @@ export class Troll {
         this.state = this.getState(TrollStateKey.IDLE)
         this.state.onStart();
     }
+
+    get x() { return this.sprite.x }
+    get y() { return this.sprite.y }
 
     onNewLevel() {
         this.hp = gameConstants.MAX_TROLL_HP[this.level]

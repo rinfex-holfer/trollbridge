@@ -96,14 +96,7 @@ export class O_AnimatedSprite {
         else this.obj.disableInteractive()
     }
 
-    setOrigin(x: number, y: number) {
-        this.obj.setOrigin(x, y)
-    }
-
-    setVisibility(val: boolean) {
-        this.obj.visible = val;
-    }
-
+    setOrigin(x: number, y: number) { this.obj.setOrigin(x, y)}
     get x() { return this.obj.x }
     set x(x) { this.obj.x = x }
     get y() { return this.obj.y }
@@ -112,6 +105,7 @@ export class O_AnimatedSprite {
     get width() { return this.obj.width }
     get alpha() { return this.obj.alpha }
     set alpha(val: number) { this.obj.alpha = val }
+    setVisibility(val: boolean) { this.obj.visible = val }
     destroy() { this.obj.destroy() }
     addPhysics() { this.scene.physics.add.existing(this.obj) }
     // @ts-ignore

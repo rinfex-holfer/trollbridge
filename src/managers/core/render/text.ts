@@ -33,6 +33,7 @@ export class O_Text {
     get width() { return this.obj.width }
     get alpha() { return this.obj.alpha }
     set alpha(val: number) { this.obj.alpha = val }
+    setVisibility(val: boolean) { this.obj.visible = val }
     destroy() { this.obj.destroy() }
     addPhysics() { this.scene.physics.add.existing(this.obj) }
     // @ts-ignore

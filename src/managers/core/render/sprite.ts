@@ -44,10 +44,6 @@ export class O_Sprite {
         this.obj.on('pointerout', callback)
     }
 
-    setVisibility(val: boolean) {
-        this.obj.visible = val;
-    }
-
     get x() { return this.obj.x }
     set x(x) { this.obj.x = x }
     get y() { return this.obj.y }
@@ -69,6 +65,7 @@ export class O_Sprite {
 
     get alpha() { return this.obj.alpha }
     set alpha(val: number) { this.obj.alpha = val }
+    setVisibility(val: boolean) { this.obj.visible = val }
     destroy() { this.obj.destroy() }
     addPhysics() { this.scene.physics.add.existing(this.obj) }
     // @ts-ignore

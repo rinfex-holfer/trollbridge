@@ -42,10 +42,6 @@ export class O_Container {
         return {x: this.obj.x, y: this.obj.y}
     }
 
-    setVisibility(val: boolean) {
-        this.obj.visible = val;
-    }
-
     get x() { return this.obj.x }
     set x(x) { this.obj.x = x }
     get y() { return this.obj.y }
@@ -54,6 +50,7 @@ export class O_Container {
     get width() {return this.obj.width }
     get alpha() { return this.obj.alpha }
     set alpha(val: number) { this.obj.alpha = val }
+    setVisibility(val: boolean) { this.obj.visible = val; }
     destroy() { this.obj.destroy() }
     addPhysics() { this.scene.physics.add.existing(this.obj) }
     // @ts-ignore

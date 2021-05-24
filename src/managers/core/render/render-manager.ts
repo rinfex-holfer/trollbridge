@@ -74,5 +74,8 @@ export class RenderManager {
         return new O_Text(this.scene, text, x, y, style, options);
     }
 
-
+    createTimeline(config?: Phaser.Types.Tweens.TimelineBuilderConfig) {
+        console.log(this, this.scene);
+        return this.scene.tweens.createTimeline(config)
+    }
 }
