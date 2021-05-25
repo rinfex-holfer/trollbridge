@@ -5,6 +5,7 @@ import {gameConstants} from "../constants";
 import {Evt, subscriptions} from "../event-bus";
 import {MeatType} from "../types";
 import {positioner} from "../managers/game/positioner";
+import {GameEntity, EntityType} from "../managers/core/objects";
 
 export const enum MeatLocation {
     GROUND = 'GROUND',
@@ -12,7 +13,9 @@ export const enum MeatLocation {
     LAIR = 'LAIR',
 }
 
-export class Meat {
+export class Meat implements GameEntity<EntityType.MEAT> {
+    entityType: EntityType.MEAT = EntityType.MEAT
+
     sprite: O_Sprite
     type: MeatType
     location: MeatLocation

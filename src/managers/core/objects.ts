@@ -1,29 +1,28 @@
 import {Meat} from "../../entities/meat";
 import {o_} from "../locator";
 
-export const enum ObjectType {
+export interface GameEntity<T extends EntityType> {
+    entityType: T
+}
+
+export const enum EntityType {
     MEAT = 'MEAT',
 }
 
-interface ObjectsMap {
-    [ObjectType.MEAT]: Meat[]
+type ObjectsMap = {
+    [T in EntityType]: GameEntity<T>[]
 }
 
-// TODO make it typed
 export class ObjectsManager {
     private objects: ObjectsMap = {
-        [ObjectType.MEAT]: []
+        [EntityType.MEAT]: []
     }
 
     constructor() {
         o_.register.objects(this)
     }
 
-    addMeat(meat: Meat) {
-        this.objects[ObjectType.MEAT].push(meat);
-    }
-
-    getMeat() {
-        return this.objects[ObjectType.MEAT]
+    add<T extends EntityType>(entity: GameEntity<T>) {
+        this.objects[entity.entityType].push(entity)
     }
 }
