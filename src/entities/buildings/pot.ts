@@ -82,7 +82,7 @@ export class Pot {
         freshMeet.slice(0, 3).forEach(m => {
 
             o_.lair.foodStorage.container.remove(m.sprite)
-            m.sprite.move(o_.lair.foodStorage.container.x, o_.lair.foodStorage.container.y)
+            m.sprite.move(o_.lair.foodStorage.container.x + m.sprite.x, o_.lair.foodStorage.container.y + m.sprite.y)
             m.setInteractive(false)
             promises.push(m.flyTo(this.sprite).then(() => {
                 m.destroy()

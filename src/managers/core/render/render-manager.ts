@@ -44,7 +44,7 @@ export class RenderManager {
     }
 
     directToTarget(obj: O_GameObject, target: Vec) {
-        obj.obj.scaleX = Math.sign(target.x - obj.obj.x);
+        obj.obj.scaleX = Math.sign(target.x - obj.obj.x) || 1
     }
 
     createContainer(x: number, y: number, options?: {parent?: O_Container}) {

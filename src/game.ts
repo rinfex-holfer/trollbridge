@@ -14,10 +14,11 @@ import {TimeManager} from "./managers/core/time";
 import {BattleManager} from "./managers/game/battle";
 import {LayersManager} from "./managers/core/layers";
 import {Meat} from "./entities/meat";
+import {GrayScalePipeline} from "./shaders";
 
 const size = getGameSize()
 var config: Phaser.Types.Core.GameConfig = {
-    type: Phaser.AUTO,
+    type: Phaser.WEBGL,
     width: size.width,
     height: size.height,
     physics: {
@@ -34,7 +35,9 @@ var config: Phaser.Types.Core.GameConfig = {
         create: function() {
             create(this);
         }
-    }
+    },
+    // @ts-ignore
+    pipeline: { 'Gray': GrayScalePipeline }
 };
 
 const preload = (scene: Phaser.Scene) => {
@@ -73,5 +76,6 @@ const create = (scene: Phaser.Scene) => {
     }
 }
 
-export const newGame = () => new Phaser.Game(config);
+export const newGame = () => new Phaser.Game(config)
+
 

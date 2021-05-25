@@ -186,10 +186,11 @@ export class Troll {
             y,
             this.speed,
         )
+        this.directToTarget({x, y})
     }
 
     directToTarget(target: Vec) {
-        o_.render.directToTarget(this.sprite, {x: target.x - this.sprite.x, y: target.y - this.sprite.y});
+        o_.render.directToTarget(this.sprite, target);
     }
 
     rollDmg() {

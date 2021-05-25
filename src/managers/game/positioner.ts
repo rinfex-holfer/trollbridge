@@ -1,5 +1,6 @@
 import {getGameSize} from "../../utils/utils-misc";
 import {o_} from "../locator";
+import {rndBetween} from "../../utils/utils-math";
 
 export const positioner = {
     negotiationX() {
@@ -30,8 +31,8 @@ export const positioner = {
     getFoodStoragePosition() {
         const pos = positioner.getLairPosition();
         return {
-            x: pos.x + 50,
-            y: pos.y + pos.height * 3 / 4
+            x: pos.x + 150,
+            y: pos.y + pos.height * 4 / 4
         }
     },
 
@@ -49,6 +50,13 @@ export const positioner = {
             x: pos.x + 100,
             y: pos.y + pos.height * 2.5 / 4,
         }
+    },
+
+    getRandomPlaceForMeat() {
+        const foodStoragePos = this.getFoodStoragePosition()
+        const xRand = rndBetween(-20, 20)
+        const yRand = rndBetween(-20, 20)
+        return {x: foodStoragePos.x - 100 + xRand, y: foodStoragePos.y - 50 + yRand}
     },
 
     getPrisonerPosition() {

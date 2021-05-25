@@ -49,6 +49,7 @@ export class Lair {
         this.bed.setEnabled(val)
         this.waitButton.setEnabled(val)
         this.foodStorage.setEnabled(val)
+        this.pot.setInteractive(val)
     }
 
     changeResource(key: ResourceKey, val: number) {

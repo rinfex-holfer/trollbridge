@@ -1,14 +1,15 @@
-import {Vec} from "../utils/utils-math";
+import {rnd, Vec} from "../utils/utils-math";
 import {O_Sprite} from "../managers/core/render/sprite";
 import {o_} from "../managers/locator";
 import {gameConstants} from "../constants";
 import {Evt, subscriptions} from "../event-bus";
 import {MeatType} from "../types";
+import {positioner} from "../managers/game/positioner";
 
 export const enum MeatLocation {
     GROUND = 'GROUND',
     STORAGE = 'STORAGE',
-    DRYER = 'DRYER',
+    LAIR = 'LAIR',
 }
 
 export class Meat {
@@ -21,12 +22,17 @@ export class Meat {
 
     subs = subscriptions()
 
+    pulse: any
+
     constructor(pos: Vec, type: MeatType = MeatType.RAW, location: MeatLocation = MeatLocation.GROUND) {
         this.type = type;
         this.location = location;
         this.sprite = o_.render.createSprite(this.getSpriteKey(), pos.x, pos.y);
         this.sprite.onClick(() => this.onClick())
         this.setInteractive(true);
+
+        this.pulse = o_.render.createTimeline()
+        this.pulse.add({targets: this.sprite.obj, ease: 'Power2.easeInOut', yoyo: true, repeat: -1, duration: 300, scale: 1.4})
 
         this.subs.on(Evt.TIME_PASSED, () => this.onTimePassed());
     }
@@ -37,8 +43,8 @@ export class Meat {
                 if (o_.lair.foodStorage.hasFreeSpace()) {
                     o_.lair.foodStorage.placeFood(this)
                 } else {
-                    o_.troll.eat(this.type)
-                    this.destroy()
+                    this.flyTo(positioner.getRandomPlaceForMeat())
+                    this.setLocation(MeatLocation.LAIR)
                 }
                 break;
             case MeatLocation.STORAGE:
@@ -46,11 +52,11 @@ export class Meat {
                 o_.lair.foodStorage.updateFood();
                 this.destroy()
                 break;
-            case MeatLocation.DRYER:
-                o_.troll.eat(this.type)
-                this.destroy()
+            case MeatLocation.LAIR:
+                if (o_.lair.foodStorage.hasFreeSpace()) {
+                    o_.lair.foodStorage.placeFood(this)
+                }
                 break;
-
         }
     }
 
@@ -62,11 +68,17 @@ export class Meat {
         this.sprite.setInteractive(val, {cursor: 'pointer'})
     }
 
+    setPulse(val: boolean) {
+        if (val) this.pulse.play()
+        else if (!this.pulse.paused) this.pulse.pause()
+    }
+
     private onTimePassed() {
         this.timePassed++;
-
-        console.log(this.location);
-        if (this.location === MeatLocation.GROUND) return this.destroy()
+        if (this.location === MeatLocation.GROUND) {
+            if (rnd() > 0.5) this.destroy()
+            return
+        }
 
         if (this.type === MeatType.RAW && this.timePassed > gameConstants.RAW_MEAT_TIME_LIMIT) {
             this.type = MeatType.STALE;
