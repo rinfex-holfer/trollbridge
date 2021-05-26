@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import {resoursePaths} from "../../../resourse-paths";
 import {O_Container} from "./container";
+import Pointer = Phaser.Input.Pointer;
 
 const animations: {
     [atlas: string]: {
@@ -95,7 +96,23 @@ export class O_AnimatedSprite {
     }
 
     onClick(callback: () => void) {
-        this.obj.on('pointerdown', callback)
+        this.obj.on('pointerdown', (pointer: Pointer) => {
+            if (!pointer.rightButtonDown()) callback()
+        })
+    }
+
+    onRightClick(callback: () => void) {
+        this.obj.on('pointerdown', (pointer: Pointer) => {
+            if (pointer.rightButtonDown()) callback()
+        })
+    }
+
+    onPointerOver(callback: () => void) {
+        this.obj.on('pointerover', callback)
+    }
+
+    onPointerOut(callback: () => void) {
+        this.obj.on('pointerout', callback)
     }
 
     setOrigin(x: number, y: number) { this.obj.setOrigin(x, y)}

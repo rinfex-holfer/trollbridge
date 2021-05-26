@@ -15,6 +15,8 @@ import {BattleManager} from "./managers/game/battle";
 import {LayersManager} from "./managers/core/layers";
 import {Meat} from "./entities/meat";
 import {GrayScalePipeline} from "./shaders";
+import {EntityManager} from "./managers/core/entities";
+import {InteractionManager} from "./managers/core/interaction";
 
 const size = getGameSize()
 var config: Phaser.Types.Core.GameConfig = {
@@ -46,6 +48,8 @@ const preload = (scene: Phaser.Scene) => {
 }
 
 const create = (scene: Phaser.Scene) => {
+    new InteractionManager()
+    new EntityManager()
     const timeManager = new TimeManager()
     new LayersManager(scene)
     new RenderManager(scene)
@@ -58,18 +62,18 @@ const create = (scene: Phaser.Scene) => {
     new Negotiations()
     new BattleManager()
 
-    new Meat({x: 100, y: 200})
-    new Meat({x: 120, y: 200})
-    new Meat({x: 140, y: 200})
-    new Meat({x: 160, y: 200})
-    new Meat({x: 170, y: 200})
-    new Meat({x: 180, y: 200})
-    new Meat({x: 190, y: 200})
-    new Meat({x: 200, y: 200})
-    new Meat({x: 210, y: 200})
-    new Meat({x: 220, y: 200})
-    new Meat({x: 230, y: 200})
-    new Meat({x: 240, y: 200})
+    new Meat({x: 100, y: 300})
+    new Meat({x: 120, y: 300})
+    new Meat({x: 140, y: 300})
+    new Meat({x: 160, y: 300})
+    new Meat({x: 180, y: 300})
+    new Meat({x: 200, y: 300})
+    new Meat({x: 220, y: 300})
+    new Meat({x: 240, y: 300})
+    new Meat({x: 260, y: 300})
+    new Meat({x: 280, y: 300})
+    new Meat({x: 300, y: 300})
+    new Meat({x: 320, y: 300})
 
     scene.update = function(time, delta) {
         timeManager.onUpdate(delta);

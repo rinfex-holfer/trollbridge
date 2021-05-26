@@ -25,4 +25,9 @@ export class BridgeManager {
     disableInterface() {
         this.sprite.setInteractive(false);
     }
+
+    updateMayBeMovedInto() {
+        if (o_.troll.location === TrollLocation.BRIDGE) this.disableInterface()
+        else this.enableInterface()
+    }
 }

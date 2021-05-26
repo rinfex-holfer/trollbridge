@@ -10,6 +10,7 @@ import {O_Text} from "./text";
 import {o_} from "../../locator";
 import {LayerKey} from "../layers";
 import {createPromiseAndHandlers} from "../../../utils/utils-async";
+import GameObject = Phaser.GameObjects.GameObject;
 
 export class RenderManager {
     scene: Phaser.Scene
@@ -97,5 +98,31 @@ export class RenderManager {
         timeline.play()
 
         return promise
+    }
+
+    createPulseTimeline(targets: O_GameObject | O_GameObject[]) {
+        const timeline = this.createTimeline()
+        timeline.add({
+            targets: Array.isArray(targets) ? targets.map(t => t.obj) : targets.obj,
+            ease: 'Power2.easeInOut',
+            yoyo: true,
+            repeat: -1,
+            duration: 300,
+            scale: 1.4
+        })
+        return timeline
+    }
+
+    createJumpingTimeline(targets: O_GameObject | O_GameObject[]) {
+        const timeline = this.createTimeline()
+        timeline.add({
+            targets: Array.isArray(targets) ? targets.map(t => t.obj) : targets.obj,
+            ease: 'Power2.easeInOut',
+            yoyo: true,
+            repeat: -1,
+            duration: 200,
+            y: '-=10'
+        })
+        return timeline
     }
 }

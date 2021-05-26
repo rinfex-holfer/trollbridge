@@ -1,4 +1,4 @@
-import {MeatType, MiscFood, Time} from "./types";
+import {MeatState, MiscFood, Time} from "./types";
 
 export const TimeOrder = [Time.MORNING, Time.AFTERNOON, Time.EVENING, Time.NIGHT];
 
@@ -44,15 +44,13 @@ export const gameConstants = {
 
     HP_FROM: {
         [MiscFood.DISH]: 6,
-        [MeatType.RAW]: 2,
-        [MeatType.DRIED]: 1,
-        [MeatType.STALE]: 0,
+        [MeatState.RAW]: 2,
+        [MeatState.STALE]: 0,
     },
     HUNGER_REDUCTION_FROM: {
         [MiscFood.DISH]: 10,
-        [MeatType.RAW]: 3,
-        [MeatType.DRIED]: 3,
-        [MeatType.STALE]: 2,
+        [MeatState.RAW]: 3,
+        [MeatState.STALE]: 2,
     },
 }
 

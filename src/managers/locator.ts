@@ -8,7 +8,7 @@ import {TimeManager} from "./core/time";
 import {GameManager} from "./game/game-manager";
 import {BattleManager} from "./game/battle";
 import {LayersManager} from "./core/layers";
-import {ObjectsManager} from "./core/objects";
+import {EntityManager} from "./core/entities";
 
 class Locator {
     #_render: RenderManager | undefined
@@ -21,7 +21,7 @@ class Locator {
     #_game: GameManager | undefined
     #_battle: BattleManager | undefined
     #_layers: LayersManager | undefined
-    #_objects: ObjectsManager | undefined
+    #_entities: EntityManager | undefined
 
     static crashStr(m: string) {
         return 'trying access ' + m + ' before it was created';
@@ -38,7 +38,7 @@ class Locator {
         game: (game: GameManager) => { this.#_game = game },
         battle: (battle: BattleManager) => { this.#_battle = battle },
         layers: (layers: LayersManager) => { this.#_layers = layers },
-        objects: (objects: ObjectsManager) => { this.#_objects = objects },
+        entities: (entities: EntityManager) => { this.#_entities = entities },
     }
 
     get render() {
@@ -89,6 +89,11 @@ class Locator {
     get layers() {
         if (!this.#_layers) throw Error(Locator.crashStr('layers'))
         return this.#_layers
+    }
+
+    get entities() {
+        if (!this.#_entities) throw Error(Locator.crashStr('entities'))
+        return this.#_entities
     }
 }
 

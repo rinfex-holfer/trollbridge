@@ -3,7 +3,7 @@ import {Vec} from "../../utils/utils-math";
 import {o_} from "../../managers/locator";
 import {LayerKey} from "../../managers/core/layers";
 import {Meat, MeatLocation} from "../meat";
-import {MeatType} from "../../types";
+import {MeatState} from "../../types";
 import {O_Container} from "../../managers/core/render/container";
 import {O_Sprite} from "../../managers/core/render/sprite";
 
@@ -25,12 +25,12 @@ export class FoodStorage {
         [{x: START_X + MARGIN_X, y: START_Y}, null],
         [{x: START_X + MARGIN_X * 2, y: START_Y}, null],
         [{x: START_X + MARGIN_X * 3, y: START_Y}, null],
-        [{x: START_X + MARGIN_X * 4, y: START_Y}, null],
-        [{x: START_X + MARGIN_X * 5, y: START_Y}, null],
-        [{x: START_X + MARGIN_X * 6, y: START_Y}, null],
-        [{x: START_X + MARGIN_X * 7, y: START_Y}, null],
-        [{x: START_X + MARGIN_X * 8, y: START_Y}, null],
-        [{x: START_X + MARGIN_X * 9, y: START_Y}, null],
+        // [{x: START_X + MARGIN_X * 4, y: START_Y}, null],
+        // [{x: START_X + MARGIN_X * 5, y: START_Y}, null],
+        // [{x: START_X + MARGIN_X * 6, y: START_Y}, null],
+        // [{x: START_X + MARGIN_X * 7, y: START_Y}, null],
+        // [{x: START_X + MARGIN_X * 8, y: START_Y}, null],
+        // [{x: START_X + MARGIN_X * 9, y: START_Y}, null],
     ]
 
     constructor(pos: Vec) {
@@ -46,18 +46,8 @@ export class FoodStorage {
         sprite2.setOrigin(0, 1)
     }
 
-    getFreshRawMeet(): Meat[] {
-        // @ts-ignore
-        return this.places.filter(p => p[1]?.type === MeatType.RAW).map(p => p[1])
-    }
-
-    freshFoodAmount() {
-        return this.places.filter(p => p[1]?.type !== MeatType.STALE).length
-    }
-
     placeFood(food: Meat) {
         const place = this.getNextPlace();
-        console.log('getFood', place)
         if (!place) return;
 
         const coord = place[0];
@@ -68,6 +58,7 @@ export class FoodStorage {
                 this.container.add(food.sprite);
                 food.sprite.move(coord.x, coord.y)
                 food.setLocation(MeatLocation.STORAGE)
+                food.updateRealPosition()
             })
     }
 

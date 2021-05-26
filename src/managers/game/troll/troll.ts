@@ -1,6 +1,6 @@
 import {colorsCSS, gameConstants} from "../../../constants";
 import {eventBus, Evt} from "../../../event-bus";
-import {FoodType, MeatType, MiscFood, TrollLocation} from "../../../types";
+import {FoodType, MeatState, MiscFood, TrollLocation} from "../../../types";
 import {positioner} from "../positioner";
 import {CharAnimation} from "../../../entities/char/char-constants";
 import {rndBetween, Vec} from "../../../utils/utils-math";
@@ -147,7 +147,7 @@ export class Troll {
     goSleep() { this.setState(TrollStateKey.SLEEP) }
 
     devour(id: string) {
-        this.eat(MeatType.RAW);
+        this.eat(MeatState.RAW);
         o_.characters.charEaten(id);
     }
 

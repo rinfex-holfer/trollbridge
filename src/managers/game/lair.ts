@@ -1,5 +1,5 @@
 import {stub} from "../../utils/utils-misc";
-import {ResourceKey, Resources} from "../../types";
+import {ResourceKey, Resources, TrollLocation} from "../../types";
 import {eventBus, Evt} from "../../event-bus";
 import {WaitButton} from "../../interface/wait-button";
 import {positioner} from "./positioner";
@@ -35,6 +35,10 @@ export class Lair {
         this.foodStorage = new FoodStorage(positioner.getFoodStoragePosition())
         this.bed = new Bed(positioner.getBedPosition())
         this.pot = new Pot(positioner.getPotPosition());
+    }
+
+    updateMayBeMovedInto() {
+        if (o_.troll.location !== TrollLocation.LAIR) this.mayBeMovedInto(true)
     }
 
     mayBeMovedInto(val: boolean) {

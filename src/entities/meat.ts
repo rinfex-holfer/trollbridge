@@ -3,9 +3,11 @@ import {O_Sprite} from "../managers/core/render/sprite";
 import {o_} from "../managers/locator";
 import {gameConstants} from "../constants";
 import {Evt, subscriptions} from "../event-bus";
-import {MeatType} from "../types";
+import {MeatState} from "../types";
 import {positioner} from "../managers/game/positioner";
-import {GameEntity, EntityType} from "../managers/core/objects";
+import {EntityType, GameEntity} from "../managers/core/entities";
+import {Pot} from "./buildings/pot";
+import {LayerKey} from "../managers/core/layers";
 
 export const enum MeatLocation {
     GROUND = 'GROUND',
@@ -13,34 +15,56 @@ export const enum MeatLocation {
     LAIR = 'LAIR',
 }
 
-export class Meat implements GameEntity<EntityType.MEAT> {
-    entityType: EntityType.MEAT = EntityType.MEAT
+
+export class Meat extends GameEntity<EntityType.MEAT> {
+    type = EntityType.MEAT
+    id: string
 
     sprite: O_Sprite
-    type: MeatType
     location: MeatLocation
     destroyed = false
+    isStale = false
 
     timePassed = 0
 
     subs = subscriptions()
 
-    pulse: any
+    jumpTimeline: Phaser.Tweens.Timeline
+    jumpTimelineDirty = false
 
-    constructor(pos: Vec, type: MeatType = MeatType.RAW, location: MeatLocation = MeatLocation.GROUND) {
-        this.type = type;
+    pot: Pot | undefined
+
+    realPosition: Vec
+
+    constructor(pos: Vec, location: MeatLocation = MeatLocation.GROUND) {
+        super()
+        this.id = this.register()
+
         this.location = location;
-        this.sprite = o_.render.createSprite(this.getSpriteKey(), pos.x, pos.y);
-        this.sprite.onClick(() => this.onClick())
-        this.setInteractive(true);
+        this.sprite = o_.render.createSprite(this.getSpriteKey(), pos.x, pos.y)
+        this.sprite.setOrigin(0.5, 0.5)
+        o_.layers.add(this.sprite, LayerKey.FIELD_OBJECTS)
+        this.sprite.onClick(() => {
+            if (this.onClick) return this.onClick()
+            else this.onClickDefault()
+        })
+        this.setInteractive(true)
+        this.realPosition = this.updateRealPosition()
 
-        this.pulse = o_.render.createTimeline()
-        this.pulse.add({targets: this.sprite.obj, ease: 'Power2.easeInOut', yoyo: true, repeat: -1, duration: 300, scale: 1.4})
+        this.jumpTimeline = o_.render.createJumpingTimeline(this.sprite)
 
-        this.subs.on(Evt.TIME_PASSED, () => this.onTimePassed());
+        this.subs.on(Evt.TIME_PASSED, () => this.onTimePassed())
     }
 
-    onClick() {
+    private updateSprite() {
+        this.sprite.setTexture(this.getSpriteKey())
+    }
+
+    private getSpriteKey() {
+        return this.isStale ? 'meat_stale' : 'meat_raw'
+    }
+
+   private onClickDefault() {
         switch (this.location) {
             case MeatLocation.GROUND:
                 if (o_.lair.foodStorage.hasFreeSpace()) {
@@ -51,29 +75,36 @@ export class Meat implements GameEntity<EntityType.MEAT> {
                 }
                 break;
             case MeatLocation.STORAGE:
-                o_.troll.eat(this.type)
-                o_.lair.foodStorage.updateFood();
-                this.destroy()
+                this.eat()
                 break;
             case MeatLocation.LAIR:
                 if (o_.lair.foodStorage.hasFreeSpace()) {
                     o_.lair.foodStorage.placeFood(this)
+                } else {
+                    this.eat()
                 }
                 break;
         }
     }
 
-    private updateSprite() {
-        this.sprite.setTexture(this.getSpriteKey())
+    eat() {
+        o_.troll.eat(this.isStale ? MeatState.STALE : MeatState.RAW)
+        o_.lair.foodStorage.updateFood();
+        this.destroy()
     }
 
-    setInteractive(val: boolean) {
-        this.sprite.setInteractive(val, {cursor: 'pointer'})
-    }
+    private onClick: (() => void) | undefined
 
-    setPulse(val: boolean) {
-        if (val) this.pulse.play()
-        else if (!this.pulse.paused) this.pulse.pause()
+    private setJumping(val: boolean) {
+        if (val) {
+            this.jumpTimeline.play()
+        }
+        else {
+            this.jumpTimeline.stop()
+            this.jumpTimeline.destroy()
+            this.jumpTimeline = o_.render.createJumpingTimeline(this.sprite)
+            this.sprite.move(this.realPosition.x, this.realPosition.y)
+        }
     }
 
     private onTimePassed() {
@@ -83,37 +114,85 @@ export class Meat implements GameEntity<EntityType.MEAT> {
             return
         }
 
-        if (this.type === MeatType.RAW && this.timePassed > gameConstants.RAW_MEAT_TIME_LIMIT) {
-            this.type = MeatType.STALE;
+        if (!this.isStale && this.timePassed > gameConstants.RAW_MEAT_TIME_LIMIT) {
+            this.isStale = true
             this.updateSprite();
             this.timePassed = 0
-        } else if (this.type === MeatType.STALE && this.timePassed > gameConstants.STALE_MEAT_TIME_LIMIT) {
+        } else if (this.isStale && this.timePassed > gameConstants.STALE_MEAT_TIME_LIMIT) {
             this.destroy()
         }
     }
 
-    private getSpriteKey() {
-        switch (this.type) {
-            case MeatType.RAW:
-                return 'meat_raw'
-            case MeatType.STALE:
-                return 'meat_stale'
-            case MeatType.DRIED:
-                return 'meat_dried'
-        }
+    updateRealPosition() {
+        this.realPosition = {x: this.sprite.x, y: this.sprite.y}
+        return this.realPosition
+    }
+
+    setChoosable(pot: Pot) {
+        this.updateRealPosition()
+        this.pot = pot;
+        this.onClick = () => this.setChosen()
+        this.setJumping(true)
+        this.setInteractive(true)
+    }
+
+    setChosen() {
+        if (!this.pot) throw Error('cant choose food without pot')
+        this.setJumping(false)
+        if (this.location === MeatLocation.STORAGE) o_.lair.foodStorage.container.remove(this.sprite)
+
+        o_.layers.add(this.sprite, LayerKey.FIELD_BUTTONS)
+        const newCoord = this.pot.getFreePlaceForChosenFood();
+        this.sprite.move(newCoord.x, newCoord.y)
+        this.pot.choseThisFood(this)
+
+        this.onClick = () => this.unchoose()
+    }
+
+    unchoose() {
+        if (!this.pot) throw Error('cant un-choose food without pot')
+        this.pot.removeChosen(this)
+        if (this.location === MeatLocation.STORAGE) o_.lair.foodStorage.container.add(this.sprite)
+        this.sprite.move(this.realPosition.x, this.realPosition.y)
+        this.onClick = () => this.setChosen()
+        this.setJumping(true)
+        o_.layers.add(this.sprite, LayerKey.FIELD_OBJECTS)
+    }
+
+    setNotChoosable() {
+        this.setJumping(false)
+        this.onClick = undefined
+        o_.layers.add(this.sprite, LayerKey.FIELD_OBJECTS)
+    }
+
+    onLastAnimation() {
+        this.setJumping(false)
+        this.setInteractive(false)
+        o_.layers.add(this.sprite, LayerKey.FIELD_BUTTONS)
+    }
+
+    setInteractive(val: boolean) {
+        this.sprite.setInteractive(val, {cursor: 'pointer'})
     }
 
     public setLocation(loc: MeatLocation) {
         this.location = loc;
     }
 
-    flyTo(pos: Vec): Promise<any> {
-        return o_.render.flyTo(this.sprite, pos, 1000, 500);
+    flyTo(pos: Vec, speed = 1000, maxDuration = 500): Promise<any> {
+        if (this.location === MeatLocation.STORAGE && this.sprite.obj.parentContainer === o_.lair.foodStorage.container.obj) {
+            o_.lair.foodStorage.container.remove(this.sprite)
+            this.sprite.x += o_.lair.foodStorage.container.x
+            this.sprite.y += o_.lair.foodStorage.container.y
+        }
+        return o_.render.flyTo(this.sprite, pos, speed, maxDuration);
     }
 
     destroy() {
+        o_.entities.deregister(this)
         this.destroyed = true
         this.subs.clear()
         this.sprite.destroy()
+        o_.lair.foodStorage.updateFood()
     }
 }

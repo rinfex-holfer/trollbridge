@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import {O_GameObject} from "./types";
+import Pointer = Phaser.Input.Pointer;
 
 export class O_Container {
     obj: Phaser.GameObjects.Container
@@ -23,7 +24,15 @@ export class O_Container {
     }
 
     onClick(callback: () => void) {
-        this.obj.on('pointerdown', callback)
+        this.obj.on('pointerdown', (pointer: Pointer) => {
+            if (!pointer.rightButtonDown()) callback()
+        })
+    }
+
+    onRightClick(callback: () => void) {
+        this.obj.on('pointerdown', (pointer: Pointer) => {
+            if (pointer.rightButtonDown()) callback()
+        })
     }
 
     onPointerOver(callback: () => void) {

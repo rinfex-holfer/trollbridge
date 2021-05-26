@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import {resoursePaths} from "../../../resourse-paths";
+import Pointer = Phaser.Input.Pointer;
 
 export class Tiles {
     obj: Phaser.GameObjects.TileSprite
@@ -14,7 +15,15 @@ export class Tiles {
     }
 
     onClick(callback: () => void) {
-        this.obj.on('pointerdown', callback)
+        this.obj.on('pointerdown', (pointer: Pointer) => {
+            if (!pointer.rightButtonDown()) callback()
+        })
+    }
+
+    onRightClick(callback: () => void) {
+        this.obj.on('pointerdown', (pointer: Pointer) => {
+            if (pointer.rightButtonDown()) callback()
+        })
     }
 
     setOrigin(x: number, y: number) {

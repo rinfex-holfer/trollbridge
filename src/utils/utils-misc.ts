@@ -23,3 +23,12 @@ export function createId(key: string): string {
 export const dumbClone = (obj: any) => JSON.parse(JSON.stringify(obj));
 
 export const stub = () => void 0;
+
+export function findAndSplice<T>(arr: T[], item: T): boolean {
+    const index = arr.indexOf(item)
+
+    if (index === -1) return false
+
+    arr.splice(index, 1)
+    return true
+}

@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import {resoursePaths} from "../../../resourse-paths";
 import {O_Container} from "./container";
+import Pointer = Phaser.Input.Pointer;
 
 export class O_Sprite {
     obj: Phaser.GameObjects.Sprite
@@ -37,7 +38,15 @@ export class O_Sprite {
     }
 
     onClick(callback: () => void) {
-        this.obj.on('pointerdown', callback)
+        this.obj.on('pointerdown', (pointer: Pointer) => {
+            if (!pointer.rightButtonDown()) callback()
+        })
+    }
+
+    onRightClick(callback: () => void) {
+        this.obj.on('pointerdown', (pointer: Pointer) => {
+            if (pointer.rightButtonDown()) callback()
+        })
     }
 
     onPointerOver(callback: () => void) {

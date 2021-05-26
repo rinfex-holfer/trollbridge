@@ -42,6 +42,10 @@ export class LayersManager {
         this.addRaw(obj.obj, layerKey)
     }
 
+    remove(obj: O_GameObject, layerKey: LayerKey) {
+        this.layers[layerKey].remove(obj.obj)
+    }
+
     update() {
         this.layers.FIELD_OBJECTS.getChildren().forEach(obj => {
             // @ts-ignore
