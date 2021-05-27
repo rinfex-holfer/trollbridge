@@ -23,12 +23,12 @@ export class Treasury {
         this.sprite.setOrigin(0, 0.5)
 
         this.sprite.setInteractive(true)
-        // this.sprite.onClick(() => this.onClick())
+        // this.sprite.onClick(() => this.addGold(10))
         // this.sprite.onRightClick(() => this.removeGold(10))
         this.sprite.onPointerOver(() => this.onPointerOver())
         this.sprite.onPointerOut(() => this.onPointerOut())
 
-        this.text = o_.render.createText('0', this.sprite.x + 50, this.sprite.y - 40, {color: colorsCSS.WHITE})
+        this.text = o_.render.createText('Золото: 0', this.sprite.x + 50, this.sprite.y - 40, {color: colorsCSS.WHITE})
         this.text.setOrigin(0.5, 1)
         this.text.setVisibility(false)
         o_.layers.add(this.text, LayerKey.FIELD_BUTTONS)
@@ -84,7 +84,7 @@ export class Treasury {
 
     onGoldChanged() {
         this.amount = this.gold.reduce((acc, g) => acc + g.amount, 0)
-        this.text.setText('' + this.amount)
+        this.text.setText('Золото: ' + this.amount)
     }
 
     getNextPosition() {
@@ -98,7 +98,7 @@ export class Treasury {
     }
 
     addGold(amount: number) {
-        flyingStatusChange('+ ' + amount + ' gold', this.sprite.x, this.sprite.y - 20, colorsCSS.BLACK)
+        flyingStatusChange('+ ' + amount + ' gold', this.sprite.x, this.sprite.y - 20, colorsCSS.YELLOW)
 
         const goldEntity = this.gold[this.gold.length - 1];
         if (goldEntity && goldEntity.amount < gameConstants.MAX_GOLD_IN_SPRITE) {
@@ -117,11 +117,11 @@ export class Treasury {
     }
 
     removeGold(amount: number) {
-        console.log('removeGold', amount)
+        flyingStatusChange('- ' + amount + ' gold', this.sprite.x, this.sprite.y - 20, colorsCSS.RED)
         while (amount > 0) {
             if (this.gold.length === 0) {
                 console.error('cant spend more gold that treasure has')
-                return;
+                break;
             }
 
             const goldEntity = this.gold[this.gold.length - 1];

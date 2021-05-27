@@ -6,6 +6,7 @@ import {Meat, MeatLocation} from "../meat";
 import {MeatState} from "../../types";
 import {O_Container} from "../../managers/core/render/container";
 import {O_Sprite} from "../../managers/core/render/sprite";
+import {ImgButton} from "../../interface/basic/img-button";
 
 const START_X = 60
 const START_Y = -70
@@ -20,17 +21,13 @@ export class FoodStorage {
 
     subscriptions = subscriptions()
 
+    upgraded = false
+
     places: [Vec, Meat | null][] = [
         [{x: START_X, y: START_Y}, null],
         [{x: START_X + MARGIN_X, y: START_Y}, null],
         [{x: START_X + MARGIN_X * 2, y: START_Y}, null],
         [{x: START_X + MARGIN_X * 3, y: START_Y}, null],
-        // [{x: START_X + MARGIN_X * 4, y: START_Y}, null],
-        // [{x: START_X + MARGIN_X * 5, y: START_Y}, null],
-        // [{x: START_X + MARGIN_X * 6, y: START_Y}, null],
-        // [{x: START_X + MARGIN_X * 7, y: START_Y}, null],
-        // [{x: START_X + MARGIN_X * 8, y: START_Y}, null],
-        // [{x: START_X + MARGIN_X * 9, y: START_Y}, null],
     ]
 
     constructor(pos: Vec) {
@@ -42,8 +39,29 @@ export class FoodStorage {
         this.sprite = o_.render.createSprite('drying_rack', 0, 0, {parent: this.container})
         this.sprite.setOrigin(0, 1)
 
+        if (this.upgraded) {
+            this.upgrade()
+        } else {
+            o_.upgrade.createUpgradeButton(
+                {x: this.container.x + this.sprite.width + 30, y: this.container.y - this.sprite.height / 2},
+                'вторая сушилка для мяса',
+                50,
+                () => this.upgrade()
+            )
+        }
+    }
+
+    upgrade() {
+        if (this.upgraded) return;
         const sprite2 = o_.render.createSprite('drying_rack', this.sprite.width - 30, 0, {parent: this.container})
         sprite2.setOrigin(0, 1)
+        this.places = this.places.concat([
+            // [{x: START_X + MARGIN_X * 4, y: START_Y}, null],
+            // [{x: START_X + MARGIN_X * 5, y: START_Y}, null],
+            [{x: START_X + MARGIN_X * 6, y: START_Y}, null],
+            [{x: START_X + MARGIN_X * 7, y: START_Y}, null],
+            [{x: START_X + MARGIN_X * 8, y: START_Y}, null],
+            [{x: START_X + MARGIN_X * 9, y: START_Y}, null],])
     }
 
     placeFood(food: Meat) {

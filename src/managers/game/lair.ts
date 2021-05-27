@@ -33,10 +33,10 @@ export class Lair {
         this.sprite.onClick(() => o_.troll.goToLair())
 
         this.waitButton = new WaitButton(positioner.getLairPosition())
+        this.treasury = new Treasury(positioner.getTreasuryPosition())
         this.foodStorage = new FoodStorage(positioner.getFoodStoragePosition())
         this.bed = new Bed(positioner.getBedPosition())
         this.pot = new Pot(positioner.getPotPosition());
-        this.treasury = new Treasury(positioner.getTreasuryPosition())
     }
 
     updateMayBeMovedInto() {

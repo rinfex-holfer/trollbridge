@@ -55,7 +55,7 @@ export const positioner = {
     getTreasuryPosition() {
         const pos = positioner.getLairPosition();
         return {
-            x: pos.x + 200,
+            x: pos.x + pos.width - 300,
             y: pos.y + pos.height * 1 / 4,
         }
     },
@@ -73,6 +73,14 @@ export const positioner = {
         return {
             x: pos.x + pos.width / 2 + prisonersAmount * 50,
             y: pos.y + pos.height * 0.5
+        }
+    },
+
+    getBuildButtonPosition() {
+        const pos = positioner.getLairPosition();
+        return {
+            x: pos.x - 100,
+            y: pos.y + 100
         }
     }
 }

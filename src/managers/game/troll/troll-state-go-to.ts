@@ -53,19 +53,13 @@ export class TrollStateGoTo extends TrollState {
 
         switch (this.intention) {
             case TrollIntention.LAIR:
-                o_.lair.mayButtonsBeClicked(false)
-                o_.lair.mayBeMovedInto(false)
-                o_.bridge.disableInterface()
+                onTrollCameToLair()
                 break;
             case TrollIntention.BRIDGE:
-                o_.lair.mayButtonsBeClicked(false)
-                o_.lair.mayBeMovedInto(false)
-                o_.bridge.disableInterface()
+                onTrollCameToBridge()
                 break;
             case TrollIntention.BED:
-                o_.lair.mayButtonsBeClicked(false)
-                o_.lair.mayBeMovedInto(false)
-                o_.bridge.disableInterface()
+                onTrollSleep()
                 break;
         }
 

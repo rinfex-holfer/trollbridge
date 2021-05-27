@@ -78,9 +78,10 @@ export const colorsCSS = {
     GREEN: 'rgb(0, 256, 0)',
     RED: 'rgb(256, 0, 0)',
     BLUE: 'rgb(0, 0, 256)',
-    PURPLE: '0x080008',
+    PURPLE: 'rgb(138,43,226)',
     WHITE: 'rgb(256, 256, 256)',
-    BLACK: 'rgb(0, 0, 0)'
+    BLACK: 'rgb(0, 0, 0)',
+    YELLOW: 'rgb(255, 255, 0)'
 }
 
 export const colorsNum = {

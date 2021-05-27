@@ -41,8 +41,6 @@ export class Gold extends GameEntity<EntityType.GOLD> {
             this.sprite.onClick(() => this.onClick())
         }
         this.subs.on(Evt.TIME_PASSED, () => this.onTimePassed())
-
-        console.log('new gold', pos)
     }
 
     private onClick() {

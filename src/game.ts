@@ -18,6 +18,7 @@ import {GrayScalePipeline} from "./shaders";
 import {EntityManager} from "./managers/core/entities";
 import {InteractionManager} from "./managers/core/interaction";
 import {Gold} from "./entities/gold";
+import {UpgradeManager} from "./managers/game/upgrade";
 
 const size = getGameSize()
 var config: Phaser.Types.Core.GameConfig = {
@@ -56,6 +57,7 @@ const create = (scene: Phaser.Scene) => {
     new LayersManager(scene)
     new RenderManager(scene)
     new AudioManager(scene)
+    new UpgradeManager()
     new Environment()
     new BridgeManager()
     new CharactersManager()
