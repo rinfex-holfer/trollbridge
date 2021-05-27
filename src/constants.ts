@@ -52,6 +52,9 @@ export const gameConstants = {
         [MeatState.RAW]: 3,
         [MeatState.STALE]: 2,
     },
+
+    //  ======================== GOLD ========================
+    MAX_GOLD_IN_SPRITE: 100,
 }
 
 export const zLayers = {

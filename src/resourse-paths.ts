@@ -28,7 +28,15 @@ export const resoursePaths = {
         button_feed: `${imagesUrl}/makeFood.png`,
         empty_sprite: `${imagesUrl}/tile_empty.png`,
         particle_hit: `${imagesUrl}/particle_hit.png`,
-        particle_smoke: `${imagesUrl}/particle_smoke.png`,
+        treasury: `${imagesUrl}/treasury.png`,
+        "gold-1": `${imagesUrl}/gold-1.png`,
+        "gold-2": `${imagesUrl}/gold-2.png`,
+        "gold-3": `${imagesUrl}/gold-3.png`,
+        "gold-4-9": `${imagesUrl}/gold-4-9.png`,
+        "gold-some": `${imagesUrl}/gold-some.png`,
+        "gold-many": `${imagesUrl}/gold-many.png`,
+        "gold-almost": `${imagesUrl}/gold-almost.png`,
+        "gold-chest": `${imagesUrl}/gold-chest.png`,
     },
 
     atlases: {

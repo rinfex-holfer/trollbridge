@@ -1,16 +1,19 @@
 import {o_} from "../locator";
 import {findAndSplice} from "../../utils/utils-misc";
 import {Meat} from "../../entities/meat";
+import {Gold} from "../../entities/gold";
 
 export abstract class GameEntity<T extends EntityType> {
     abstract type: EntityType
     abstract id: string
 
     register(): string {
+        // @ts-ignore
         return o_.entities.register(this.type, this)
     }
 
     deregister() {
+        // @ts-ignore
         o_.entities.deregister(this)
     }
 }
@@ -18,11 +21,6 @@ export abstract class GameEntity<T extends EntityType> {
 export const enum EntityType {
     MEAT = 'MEAT',
     GOLD = 'GOLD',
-}
-
-class Gold extends GameEntity<EntityType.GOLD>{
-    type = EntityType.GOLD
-    id = '1234'
 }
 
 type EntityMap = {
@@ -63,7 +61,7 @@ export class EntityManager {
     }
 
     deregister<T extends EntityType>(entity: EntityMap[T]) {
-        const res = findAndSplice(this.entities[entity.type], entity)
+        const res = findAndSplice(this.entities[entity.type] as EntityMap[T][], entity)
         if (!res) console.warn('entity', entity.id, 'was not found entityManager therefore not deregistered')
     }
 }

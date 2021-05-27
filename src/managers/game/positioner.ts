@@ -52,6 +52,14 @@ export const positioner = {
         }
     },
 
+    getTreasuryPosition() {
+        const pos = positioner.getLairPosition();
+        return {
+            x: pos.x + 200,
+            y: pos.y + pos.height * 1 / 4,
+        }
+    },
+
     getRandomPlaceForMeat() {
         const foodStoragePos = this.getFoodStoragePosition()
         const xRand = rndBetween(-20, 20)

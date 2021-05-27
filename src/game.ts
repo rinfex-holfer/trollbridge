@@ -17,12 +17,14 @@ import {Meat} from "./entities/meat";
 import {GrayScalePipeline} from "./shaders";
 import {EntityManager} from "./managers/core/entities";
 import {InteractionManager} from "./managers/core/interaction";
+import {Gold} from "./entities/gold";
 
 const size = getGameSize()
 var config: Phaser.Types.Core.GameConfig = {
     type: Phaser.WEBGL,
     width: size.width,
     height: size.height,
+    pixelArt: true,
     physics: {
         default: 'arcade',
         arcade: {
@@ -48,7 +50,7 @@ const preload = (scene: Phaser.Scene) => {
 }
 
 const create = (scene: Phaser.Scene) => {
-    new InteractionManager()
+    new InteractionManager(scene)
     new EntityManager()
     const timeManager = new TimeManager()
     new LayersManager(scene)
@@ -68,12 +70,15 @@ const create = (scene: Phaser.Scene) => {
     new Meat({x: 160, y: 300})
     new Meat({x: 180, y: 300})
     new Meat({x: 200, y: 300})
-    new Meat({x: 220, y: 300})
-    new Meat({x: 240, y: 300})
-    new Meat({x: 260, y: 300})
-    new Meat({x: 280, y: 300})
-    new Meat({x: 300, y: 300})
-    new Meat({x: 320, y: 300})
+    new Gold({x: 220, y: 300}, 1)
+    new Gold({x: 240, y: 300}, 2)
+    new Gold({x: 260, y: 300}, 3)
+    new Gold({x: 280, y: 300}, 4)
+    new Gold({x: 300, y: 300}, 10)
+    new Gold({x: 320, y: 300}, 20)
+    new Gold({x: 320, y: 300}, 40)
+    new Gold({x: 320, y: 300}, 50)
+    new Gold({x: 320, y: 300}, 100)
 
     scene.update = function(time, delta) {
         timeManager.onUpdate(delta);

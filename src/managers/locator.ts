@@ -9,6 +9,7 @@ import {GameManager} from "./game/game-manager";
 import {BattleManager} from "./game/battle";
 import {LayersManager} from "./core/layers";
 import {EntityManager} from "./core/entities";
+import {InteractionManager} from "./core/interaction";
 
 class Locator {
     #_render: RenderManager | undefined
@@ -22,6 +23,7 @@ class Locator {
     #_battle: BattleManager | undefined
     #_layers: LayersManager | undefined
     #_entities: EntityManager | undefined
+    #_interaction: InteractionManager | undefined
 
     static crashStr(m: string) {
         return 'trying access ' + m + ' before it was created';
@@ -39,6 +41,7 @@ class Locator {
         battle: (battle: BattleManager) => { this.#_battle = battle },
         layers: (layers: LayersManager) => { this.#_layers = layers },
         entities: (entities: EntityManager) => { this.#_entities = entities },
+        interaction: (interaction: InteractionManager) => { this.#_interaction = interaction },
     }
 
     get render() {
@@ -94,6 +97,11 @@ class Locator {
     get entities() {
         if (!this.#_entities) throw Error(Locator.crashStr('entities'))
         return this.#_entities
+    }
+
+    get interaction() {
+        if (!this.#_interaction) throw Error(Locator.crashStr('interaction'))
+        return this.#_interaction
     }
 }
 

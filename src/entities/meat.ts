@@ -189,7 +189,7 @@ export class Meat extends GameEntity<EntityType.MEAT> {
     }
 
     destroy() {
-        o_.entities.deregister(this)
+        this.deregister()
         this.destroyed = true
         this.subs.clear()
         this.sprite.destroy()

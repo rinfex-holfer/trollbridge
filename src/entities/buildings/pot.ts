@@ -8,7 +8,7 @@ import {Evt, subscriptions} from "../../event-bus";
 import {MiscFood, TrollLocation} from "../../types";
 import {Meat} from "../meat";
 import {EntityType} from "../../managers/core/entities";
-import {findAndSplice} from "../../utils/utils-misc";
+import {findAndSplice, stub} from "../../utils/utils-misc";
 import {O_Text} from "../../managers/core/render/text";
 
 const enum PotState {
@@ -43,7 +43,7 @@ export class Pot {
         this.sprite.onPointerOver(() => this.onPointerOver())
         this.sprite.onPointerOut(() => this.onPointerOut())
 
-        this.dishSprite = o_.render.createSprite('dish', position.x, position.y - 40)
+        this.dishSprite = o_.render.createSprite('dish', position.x, position.y - 50)
         o_.layers.add(this.dishSprite, LayerKey.FIELD_BUTTONS)
 
         this.text = o_.render.createText('На блюдо нужно 3 единицы мяса', this.sprite.x, this.sprite.y - 60, {color: colorsCSS.WHITE})
@@ -110,6 +110,7 @@ export class Pot {
     }
 
     isChoosingFood = false
+    unsubFromRightClick = stub as () => void
 
     private startChoosingFood() {
         const freshMeet = o_.entities.get(EntityType.MEAT);
@@ -127,6 +128,10 @@ export class Pot {
 
         freshMeet.forEach(meat => {
             meat.setChoosable(this)
+        })
+
+        this.unsubFromRightClick = o_.interaction.onRightClick(() => {
+            this.stopChoosingFood()
         })
     }
 
@@ -155,6 +160,7 @@ export class Pot {
     }
 
     private stopChoosingFood() {
+        this.unsubFromRightClick()
         o_.lair.updateMayBeMovedInto()
         o_.lair.mayButtonsBeClicked(true)
         o_.bridge.updateMayBeMovedInto()

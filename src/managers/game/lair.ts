@@ -1,4 +1,3 @@
-import {stub} from "../../utils/utils-misc";
 import {ResourceKey, Resources, TrollLocation} from "../../types";
 import {eventBus, Evt} from "../../event-bus";
 import {WaitButton} from "../../interface/wait-button";
@@ -8,6 +7,7 @@ import {Tiles} from "../core/render/tiles";
 import {FoodStorage} from "../../entities/buildings/food-storage";
 import {Bed} from "../../entities/buildings/bed";
 import {Pot} from "../../entities/buildings/pot";
+import {Treasury} from "../../entities/buildings/treasury";
 
 export class Lair {
     waitButton: WaitButton
@@ -15,6 +15,7 @@ export class Lair {
     foodStorage: FoodStorage
     bed: Bed
     pot: Pot
+    treasury: Treasury
 
     resources = {
         [ResourceKey.GOLD]: 0,
@@ -35,6 +36,7 @@ export class Lair {
         this.foodStorage = new FoodStorage(positioner.getFoodStoragePosition())
         this.bed = new Bed(positioner.getBedPosition())
         this.pot = new Pot(positioner.getPotPosition());
+        this.treasury = new Treasury(positioner.getTreasuryPosition())
     }
 
     updateMayBeMovedInto() {
