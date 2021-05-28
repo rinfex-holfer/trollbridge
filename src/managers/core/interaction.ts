@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import {createMessageEmitter} from "../../utils/utils-misc";
 import {o_} from "../locator";
+import {TrollLocation} from "../../types";
 
 export type ClickHandler = (pointer: Phaser.Input.Pointer) => void
 
@@ -30,5 +31,27 @@ export class InteractionManager {
     onLeftClick(handler: ClickHandler) {
         const id = this.leftClickEmitter.sub(handler)
         return (() => this.rightClickEmitter.unsub(id)) as () => void
+    }
+
+    disableEverything() {
+        o_.lair.mayButtonsBeClicked(false)
+        o_.lair.mayBeMovedInto(false)
+        o_.bridge.disableInterface()
+        o_.upgrade.setEnabled(false)
+
+        o_.entities.getAll().forEach(o => o.setInteractive(false))
+    }
+
+    enableEverything() {
+        o_.lair.mayButtonsBeClicked(o_.troll.location === TrollLocation.LAIR)
+        o_.lair.mayBeMovedInto(o_.troll.location !== TrollLocation.LAIR)
+        if (o_.troll.location === TrollLocation.BRIDGE) {
+            o_.bridge.disableInterface()
+        } else {
+            o_.bridge.enableInterface()
+        }
+
+        o_.upgrade.setEnabled(o_.troll.location === TrollLocation.LAIR)
+        o_.entities.getAll().forEach(o => o.updateInteractive())
     }
 }

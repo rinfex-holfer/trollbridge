@@ -16,28 +16,44 @@ export class RenderManager {
     scene: Phaser.Scene
 
     bloodEmitter: Phaser.GameObjects.Particles.ParticleEmitter
+    yellowEmitter: Phaser.GameObjects.Particles.ParticleEmitter
 
     constructor(scene: Phaser.Scene) {
         this.scene = scene
 
         o_.register.render(this);
 
-        const bloodParticles = this.scene.add.particles('particle_hit');
+        const bloodParticles = this.scene.add.particles('particle_blood');
         this.bloodEmitter = bloodParticles.createEmitter({
-            // **basic properties of particles**
-            // **initial position**
-            x: {min: -5, max: 5},             // { min, max }, or { min, max, steps }
-            y: {min: -5, max: 5},             // { min, max }, or { min, max, steps }
-            angle: { min: 0, max: 360 },  // { start, end, steps }
-            speed: {min: 10, max: 100},                // { min, max }, or { min, max, steps }
-            frequency: -1,      // -1 for exploding emitter
-            quantity: 50,       // { min, max }
+            x: {min: -5, max: 5},
+            y: {min: -5, max: 5},
+            angle: { min: 0, max: 360 },
+            speed: {min: 10, max: 100},
+            frequency: -1,
+            quantity: 50,
         });
         o_.layers.addRaw(bloodParticles, LayerKey.PARTICLES)
+
+        const yellowParticles = this.scene.add.particles('particle_hit');
+        this.yellowEmitter = yellowParticles.createEmitter({
+            x: {min: -15, max: 15},
+            y: {min: -15, max: 15},
+            angle: { min: 250, max: 290 },
+            speed: {min: 600, max: 800},
+            gravityY: 2400,
+            frequency: -1,
+            quantity: 50,
+            lifespan: 500,
+        })
+        o_.layers.addRaw(yellowParticles, LayerKey.PARTICLES)
     }
 
     burstBlood(x: number, y: number) {
         this.bloodEmitter.explode(50, x, y);
+    }
+
+    burstYellow(x: number, y: number) {
+        this.yellowEmitter.explode(50, x, y);
     }
 
     moveTowards(obj: O_GameObject, x: number, y: number, speed: number, maxTime?: number) {

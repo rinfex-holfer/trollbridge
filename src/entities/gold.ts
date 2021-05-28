@@ -1,12 +1,12 @@
 import {EntityType, GameEntity} from "../managers/core/entities";
 import {O_Sprite} from "../managers/core/render/sprite";
-import {rnd, Vec} from "../utils/utils-math";
+import {Vec} from "../utils/utils-math";
 import {o_} from "../managers/locator";
 import {LayerKey} from "../managers/core/layers";
-import {MeatLocation} from "./meat";
 import {Evt, subscriptions} from "../event-bus";
 import {gameConstants} from "../constants";
 import {resoursePaths} from "../resourse-paths";
+import {SOUND_KEY} from "../managers/core/audio";
 
 export const enum GoldLocation {
     GROUND = 'GROUND',
@@ -46,6 +46,7 @@ export class Gold extends GameEntity<EntityType.GOLD> {
     private onClick() {
         switch (this.location) {
             case GoldLocation.GROUND:
+                o_.audio.playSound(SOUND_KEY.PICK_THIN)
                 this.sprite.setInteractive(false)
                 const lastGoldItem = o_.lair.treasury.gold[o_.lair.treasury.gold.length - 1]
                 const coord = (lastGoldItem && lastGoldItem.amount < gameConstants.MAX_GOLD_IN_SPRITE)
@@ -110,5 +111,13 @@ export class Gold extends GameEntity<EntityType.GOLD> {
         this.amount = amount
         this.updateSprite()
         this.updateLayer()
+    }
+
+    public setInteractive(val: boolean) {
+        this.sprite.setInteractive(val)
+    }
+
+    public updateInteractive() {
+        this.setInteractive(this.location === GoldLocation.GROUND)
     }
 }

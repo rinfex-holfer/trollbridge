@@ -47,7 +47,7 @@ export class EntityManager {
         o_.register.entities(this)
     }
 
-    register<T extends EntityType>(entityType: T, entity: EntityMap[T]) {
+    public register<T extends EntityType>(entityType: T, entity: EntityMap[T]) {
         (this.entities[entityType] as EntityMap[T][]).push(entity)
         const e = this.entities[entityType]
 
@@ -56,12 +56,16 @@ export class EntityManager {
         return entityType + '_' + id;
     }
 
-    get<T extends EntityType>(type: T): EntityStorage[T] {
+    public get<T extends EntityType>(type: T): EntityStorage[T] {
         return this.entities[type]
     }
 
-    deregister<T extends EntityType>(entity: EntityMap[T]) {
+    public deregister<T extends EntityType>(entity: EntityMap[T]) {
         const res = findAndSplice(this.entities[entity.type] as EntityMap[T][], entity)
         if (!res) console.warn('entity', entity.id, 'was not found entityManager therefore not deregistered')
+    }
+
+    public getAll() {
+        return Object.values(this.entities).flat()
     }
 }

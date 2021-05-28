@@ -4,8 +4,10 @@ import {o_} from "../managers/locator";
 
 export class UpgradeButton {
     button: ImgButton
+    cost: number
+    constructor(pos: Vec, cost: number, text: string, private onClickCb: (btn: UpgradeButton) => void) {
+        this.cost = cost
 
-    constructor(pos: Vec, private cost: number, text: string, private onClickCb: (btn: UpgradeButton) => void) {
         this.button = new ImgButton({
             img: 'button_upgrade',
             x: pos.x,

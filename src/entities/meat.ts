@@ -8,6 +8,7 @@ import {positioner} from "../managers/game/positioner";
 import {EntityType, GameEntity} from "../managers/core/entities";
 import {Pot} from "./buildings/pot";
 import {LayerKey} from "../managers/core/layers";
+import {SOUND_KEY} from "../managers/core/audio";
 
 export const enum MeatLocation {
     GROUND = 'GROUND',
@@ -70,7 +71,7 @@ export class Meat extends GameEntity<EntityType.MEAT> {
                 if (o_.lair.foodStorage.hasFreeSpace()) {
                     o_.lair.foodStorage.placeFood(this)
                 } else {
-                    this.flyTo(positioner.getRandomPlaceForMeat())
+                    this.flyTo(positioner.getRandomPlaceForMeat()).then(() => o_.audio.playSound(SOUND_KEY.BONK))
                     this.setLocation(MeatLocation.LAIR)
                 }
                 break;
@@ -171,15 +172,19 @@ export class Meat extends GameEntity<EntityType.MEAT> {
         o_.layers.add(this.sprite, LayerKey.FIELD_BUTTONS)
     }
 
-    setInteractive(val: boolean) {
+    public setInteractive(val: boolean) {
         this.sprite.setInteractive(val, {cursor: 'pointer'})
+    }
+
+    public updateInteractive() {
+        this.setInteractive(true)
     }
 
     public setLocation(loc: MeatLocation) {
         this.location = loc;
     }
 
-    flyTo(pos: Vec, speed = 1000, maxDuration = 500): Promise<any> {
+    public flyTo(pos: Vec, speed = 1000, maxDuration = 500): Promise<any> {
         if (this.location === MeatLocation.STORAGE && this.sprite.obj.parentContainer === o_.lair.foodStorage.container.obj) {
             o_.lair.foodStorage.container.remove(this.sprite)
             this.sprite.x += o_.lair.foodStorage.container.x

@@ -30,6 +30,7 @@ export const resoursePaths = {
         button_upgrade: `${imagesUrl}/upgrade.png`,
         empty_sprite: `${imagesUrl}/tile_empty.png`,
         particle_hit: `${imagesUrl}/particle_hit.png`,
+        particle_blood: `${imagesUrl}/particle_blood.jpg`,
         treasury: `${imagesUrl}/treasury.png`,
         "gold-1": `${imagesUrl}/gold-1.png`,
         "gold-2": `${imagesUrl}/gold-2.png`,
@@ -54,6 +55,13 @@ export const resoursePaths = {
         hitByTroll: `${audioUrl}/hit.wav`,
         block: `${audioUrl}/block.wav`,
         torn: `${audioUrl}/torn.wav`,
+        pick: `${audioUrl}/pick_0.mp3`,
+        pick_big: `${audioUrl}/pick_1.mp3`,
+        pick_thin: `${audioUrl}/pick_2.mp3`,
+        cancel: `${audioUrl}/cancel.mp3`,
+        collect: `${audioUrl}/collect.mp3`,
+        bonk: `${audioUrl}/toock.mp3`,
+        bubble: `${audioUrl}/bubble.mp3`,
     },
 
     music: {

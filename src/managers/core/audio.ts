@@ -11,6 +11,13 @@ export const enum SOUND_KEY {
     HIT = 'HIT',
     BLOCK = 'BLOCK',
     TORN = 'TORN',
+    PICK = 'PICK',
+    PICK_BIG = 'PICK_BIG',
+    PICK_THIN = 'PICK_THIN',
+    CANCEL = 'CANCEL',
+    COLLECT = 'COLLECT',
+    BONK = 'BONK',
+    BUBBLE = 'BUBBLE',
 }
 
 interface AudioOptions {
@@ -24,6 +31,13 @@ const sounds: AudioOptions[] = [
     {key: SOUND_KEY.HIT, src: 'hitByTroll', volume: 0.1, loop: false},
     {key: SOUND_KEY.BLOCK, src: 'block', volume: 0.2, loop: false},
     {key: SOUND_KEY.TORN, src: 'torn', volume: 0.02, loop: false},
+    {key: SOUND_KEY.PICK, src: 'pick', volume: 0.2, loop: false},
+    {key: SOUND_KEY.PICK_BIG, src: 'pick_big', volume: 0.2, loop: false},
+    {key: SOUND_KEY.PICK_THIN, src: 'pick_thin', volume: 0.2, loop: false},
+    {key: SOUND_KEY.CANCEL, src: 'cancel', volume: 0.2, loop: false},
+    {key: SOUND_KEY.COLLECT, src: 'collect', volume: 0.2, loop: false},
+    {key: SOUND_KEY.BONK, src: 'bonk', volume: 0.2, loop: false},
+    {key: SOUND_KEY.BUBBLE, src: 'bubble', volume: 0.2, loop: false},
 ];
 
 const music: AudioOptions[] = [

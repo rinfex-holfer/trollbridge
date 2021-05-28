@@ -23,13 +23,6 @@ export function onEncounterEnd() {
     eventBus.emit(Evt.ENCOUNTER_ENDED);
 }
 
-export function disableEverything() {
-    o_.lair.mayButtonsBeClicked(false)
-    o_.lair.mayBeMovedInto(false)
-    o_.bridge.disableInterface()
-    o_.upgrade.setEnabled(false)
-}
-
 export function onTrollCameToBridge() {
     o_.troll.location = TrollLocation.BRIDGE;
     o_.lair.mayButtonsBeClicked(false)

@@ -7,6 +7,7 @@ import {colorsCSS, gameConstants} from "../../constants";
 import {O_Sprite} from "../../managers/core/render/sprite";
 import {Gold, GoldLocation} from "../gold";
 import {flyingStatusChange} from "../../interface/basic/flying-status-change";
+import {SOUND_KEY} from "../../managers/core/audio";
 
 export class Treasury {
     text: O_Text
@@ -98,6 +99,7 @@ export class Treasury {
     }
 
     addGold(amount: number) {
+        o_.audio.playSound(SOUND_KEY.PICK_BIG)
         flyingStatusChange('+ ' + amount + ' gold', this.sprite.x, this.sprite.y - 20, colorsCSS.YELLOW)
 
         const goldEntity = this.gold[this.gold.length - 1];

@@ -10,6 +10,7 @@ import {Meat} from "../meat";
 import {EntityType} from "../../managers/core/entities";
 import {findAndSplice, stub} from "../../utils/utils-misc";
 import {O_Text} from "../../managers/core/render/text";
+import {SOUND_KEY} from "../../managers/core/audio";
 
 const enum PotState {
     EMPTY = 'EMPTY',
@@ -90,6 +91,7 @@ export class Pot {
                 this.setInteractive(false)
                 break;
             case PotState.READY:
+                o_.render.burstYellow(this.sprite.x, this.sprite.y)
                 this.sprite.play('empty')
                 this.dishSprite.setVisibility(true)
                 this.setInteractive(true);
@@ -115,9 +117,12 @@ export class Pot {
     private startChoosingFood() {
         const freshMeet = o_.entities.get(EntityType.MEAT);
         if (freshMeet.length < gameConstants.FOOD_FOR_DISH) {
+            o_.audio.playSound(SOUND_KEY.CANCEL)
             this.showText();
             return
         }
+
+        o_.audio.playSound(SOUND_KEY.BONK)
 
         this.isChoosingFood = true
 
@@ -136,6 +141,7 @@ export class Pot {
     }
 
     public choseThisFood(food: Meat) {
+        o_.audio.playSound(SOUND_KEY.PICK)
         this.chosenFood.push(food)
         if (this.chosenFood.length === gameConstants.FOOD_FOR_DISH) {
             const chosenFood = [...this.chosenFood];
@@ -149,17 +155,21 @@ export class Pot {
         this.setInteractive(false)
         const promises = [] as Promise<any>[];
 
+        o_.audio.playSound(SOUND_KEY.COLLECT)
+
         meat.forEach(m => {
             m.onLastAnimation()
             const flyTarget = {x: this.sprite.x, y: this.sprite.y - 30}
             promises.push(m.flyTo(flyTarget, 50, 500).then(() => m.destroy()))
         })
         Promise.all(promises).then(() => {
+            o_.audio.playSound(SOUND_KEY.BUBBLE)
             this.setState(PotState.PREPARING);
         })
     }
 
     private stopChoosingFood() {
+        o_.audio.playSound(SOUND_KEY.CANCEL)
         this.unsubFromRightClick()
         o_.lair.updateMayBeMovedInto()
         o_.lair.mayButtonsBeClicked(true)
@@ -176,6 +186,7 @@ export class Pot {
     chosenFood: Meat[] = []
 
     removeChosen(food: Meat) {
+        o_.audio.playSound(SOUND_KEY.CANCEL)
         findAndSplice(this.chosenFood, food)
     }
 

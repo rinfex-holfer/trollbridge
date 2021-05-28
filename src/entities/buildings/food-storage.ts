@@ -7,6 +7,7 @@ import {MeatState} from "../../types";
 import {O_Container} from "../../managers/core/render/container";
 import {O_Sprite} from "../../managers/core/render/sprite";
 import {ImgButton} from "../../interface/basic/img-button";
+import {SOUND_KEY} from "../../managers/core/audio";
 
 const START_X = 60
 const START_Y = -70
@@ -70,6 +71,7 @@ export class FoodStorage {
 
         const coord = place[0];
 
+        o_.audio.playSound(SOUND_KEY.PICK)
         place[1] = food
         food.flyTo({x: this.container.x + coord.x, y: this.container.y + coord.y})
             .then(() => {
@@ -77,6 +79,7 @@ export class FoodStorage {
                 food.sprite.move(coord.x, coord.y)
                 food.setLocation(MeatLocation.STORAGE)
                 food.updateRealPosition()
+                o_.audio.playSound(SOUND_KEY.PICK_BIG)
             })
     }
 

@@ -5,10 +5,8 @@ import {findAndSplice, stub} from "../../utils/utils-misc";
 import {ImgButton} from "../../interface/basic/img-button";
 import {positioner} from "./positioner";
 import {LayerKey} from "../core/layers";
-import {eventBus, Evt} from "../../event-bus";
-import {TrollLocation} from "../../types";
-import {colors, colorsCSS} from "../../constants";
-import {disableEverything} from "../../helpers";
+import {colorsCSS} from "../../constants";
+import {SOUND_KEY} from "../core/audio";
 
 export class UpgradeManager {
     buttons: UpgradeButton[] = []
@@ -39,21 +37,34 @@ export class UpgradeManager {
 
     private onBuildButtonClick() {
         if (this.upgradeButtonsShown) {
+            o_.audio.playSound(SOUND_KEY.BONK)
             this.setButtonsShown(false)
         } else {
+            o_.audio.playSound(SOUND_KEY.BONK)
             this.setButtonsShown(true)
-            this.unsubFromRClick = o_.interaction.onRightClick(() => this.setButtonsShown(false))
         }
     }
 
     private setButtonsShown(val: boolean) {
-        this.unsubFromRClick()
+        if (val) {
+            this.unsubFromRClick = o_.interaction.onRightClick(() => {
+                o_.audio.playSound(SOUND_KEY.BONK)
+                this.setButtonsShown(false)
+            })
+            o_.interaction.disableEverything()
+            this.setEnabled(true)
+        } else {
+            o_.interaction.enableEverything()
+            this.unsubFromRClick?.()
+            this.unsubFromRClick = stub
+        }
         this.upgradeButtonsShown = val
         this.buttons.forEach(b => b.setVisible(val))
     }
 
     private onUpgraded(btn: UpgradeButton) {
-        this.unsubFromRClick()
+        o_.audio.playSound(SOUND_KEY.COLLECT)
+        o_.lair.treasury.removeGold(btn.cost)
         btn.destroy()
         findAndSplice(this.buttons, btn)
         this.setButtonsShown(false)
