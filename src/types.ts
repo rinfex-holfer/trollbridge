@@ -3,21 +3,15 @@ export const enum MiscFood {
     DISH = 'DISH'
 }
 
-export const enum MeatState {
-    RAW = 'RAW',
-    STALE = 'STALE',
+export const enum FoodType {
+    NORMAL = 'NORMAL',
+    DISH = 'DISH',
 }
-
-export type FoodType = MeatState | MiscFood
 
 export type Experience = {
     food: number,
     gold: number,
     enemies: number
-}
-
-export const enum EntityKey {
-    FOOD =  'FOOD'
 }
 
 export const enum TrollLocation {
@@ -74,13 +68,11 @@ export type Encounter = {
 export const enum ResourceKey {
     GOLD = 'gold',
     FOOD = 'food',
-    MATERIALS = 'materials',
 }
 
 export type Resources = {
     [ResourceKey.FOOD]: number,
     [ResourceKey.GOLD]: number,
-    [ResourceKey.MATERIALS]: number,
 }
 
 export type Enemy = {

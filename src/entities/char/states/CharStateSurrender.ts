@@ -15,10 +15,10 @@ export class CharStateSurrender extends CharState {
             CharAction.RELEASE,
             CharAction.ROB,
             CharAction.TAKE_ALL,
-            CharAction.IMPRISON,
+            // CharAction.IMPRISON,
             CharAction.KILL,
-            CharAction.DEVOUR,
-            CharAction.MAKE_FOOD,
+            // CharAction.DEVOUR,
+            // CharAction.MAKE_FOOD,
         ])
     }
 }

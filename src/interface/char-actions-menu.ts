@@ -6,14 +6,15 @@ import {o_} from "../managers/locator";
 import {O_Sprite} from "../managers/core/render/sprite";
 import {O_Container} from "../managers/core/render/container";
 import {O_Text} from "../managers/core/render/text";
+import {ResourceKey} from "../types";
 
 export const enum CharAction {
     RELEASE = 'RELEASE',
     ROB = 'ROB',
     TAKE_ALL = 'TAKE_ALL',
-    IMPRISON = 'IMPRISON',
+    // IMPRISON = 'IMPRISON',
     KILL = 'KILL',
-    DEVOUR = 'DEVOUR',
+    // DEVOUR = 'DEVOUR',
 
     MAKE_FOOD = 'MAKE_FOOD',
     FEED = 'FEED',
@@ -26,18 +27,23 @@ type CharActionButtonTemplate = {
     resource: keyof typeof resoursePaths.images,
     text: string,
     onClick: (id: string) => void
+    checkActive?: (char: Char) => boolean
     key: CharAction,
 }
 
 const buttonsTemplate: CharActionButtonTemplate[] = [
     {key: CharAction.RELEASE, text: 'Отпустить', resource: 'button_release', onClick: (id: string) => o_.characters.releaseChar(id)},
-    {key: CharAction.ROB, text: 'Отобрать плату', resource: 'button_rob', onClick: (id: string) => o_.characters.makeCharPay(id)},
-    {key: CharAction.TAKE_ALL, text: 'Отобрать все', resource: 'button_rob', onClick: (id: string) => o_.characters.makeCharGiveAll(id)},
-    {key: CharAction.IMPRISON, text: 'Сделать пленником', resource: 'button_imprison', onClick: (id: string) => o_.characters.makeImprisoned(id)},
+    {key: CharAction.ROB, text: 'Отобрать плату', resource: 'button_rob', onClick: (id: string) => o_.characters.makeCharPay(id),
+        checkActive: char => char.gold > Math.ceil(char.goldInitial * 0.67)
+    },
+    {key: CharAction.TAKE_ALL, text: 'Отобрать все', resource: 'button_rob', onClick: (id: string) => o_.characters.makeCharGiveAll(id),
+        checkActive: char => char.gold > 0 || char.food > 0
+    },
+    // {key: CharAction.IMPRISON, text: 'Сделать пленником', resource: 'button_imprison', onClick: (id: string) => o_.characters.makeImprisoned(id)},
     {key: CharAction.KILL, text: 'Убить', resource: 'button_kill', onClick: (id: string) => o_.characters.killChar(id)},
-    {key: CharAction.DEVOUR, text: 'Сожрать', resource: 'button_devour', onClick: (id: string) => o_.troll.devour(id)},
+    // {key: CharAction.DEVOUR, text: 'Сожрать', resource: 'button_devour', onClick: (id: string) => o_.troll.devour(id)},
     {key: CharAction.FEED, text: 'Накормить', resource: 'button_feed', onClick: (id: string) => o_.lair.feedChar(id)},
-    {key: CharAction.MAKE_FOOD, text: 'Сварить', resource: 'button_make_food', onClick: (id: string) => o_.lair.makeFoodFrom(id)},
+    {key: CharAction.MAKE_FOOD, text: 'Разорвать', resource: 'button_make_food', onClick: (id: string) => o_.characters.transformToFood(id)},
 
     {key: CharAction.BATTLE_DEVOUR, text: 'Сожрать', resource: 'button_devour', onClick: (id: string) => {
         o_.troll.devour(id);
@@ -55,7 +61,8 @@ const BUTTON_MARGIN = 10;
 const getButtonsRowWidth = (amount: number) => amount * BUTTON_WIDTH + (amount - 1) * BUTTON_MARGIN;
 
 export class CharActionsMenu {
-    buttons: {action: CharAction, sprite: O_Sprite, active: boolean}[] = []
+    buttons: {action: CharAction, sprite: O_Sprite, active: boolean, checkActive?: (char: Char) => boolean}[] = []
+    activeButtons: CharAction[] = []
     container: O_Container
     isShown = true;
 
@@ -77,11 +84,11 @@ export class CharActionsMenu {
             sprite.onPointerOut(() => this.hideText())
             sprite.onClick(() => {
                 template.onClick(this.char.id)
-                this.hideText();
+                this.hideText()
             });
             sprite.setOrigin(0, 1);
 
-            this.buttons.push({active: false, action: template.key, sprite: sprite});
+            this.buttons.push({active: false, action: template.key, sprite: sprite, checkActive: template.checkActive});
         })
 
         this.char.container.onPointerOver(() => this.show())
@@ -100,11 +107,15 @@ export class CharActionsMenu {
     }
 
     changeActiveButtons(activeButtons: CharAction[]) {
-        const fullWidth = getButtonsRowWidth(activeButtons.length);
-        // let x = -fullWidth / 2
+        this.activeButtons = activeButtons
+        this.updateButtons()
+    }
+
+    updateButtons() {
+        const fullWidth = getButtonsRowWidth(this.activeButtons.length);
         let x = 0
         this.buttons.forEach(b => {
-            const isActive = activeButtons.includes(b.action)
+            const isActive = this.activeButtons.includes(b.action) && (!b.checkActive || b.checkActive(this.char))
             b.active = isActive;
             b.sprite.setVisibility(isActive)
             b.sprite.setInteractive(isActive)
@@ -114,12 +125,6 @@ export class CharActionsMenu {
                 x += BUTTON_WIDTH + BUTTON_MARGIN
             }
         })
-
-        // const cont = render.getContainer(this.containerId);
-        // const width = getButtonsRowWidth(activeButtons.length) + BUTTON_WIDTH * 2
-        // cont.hitArea = new PIXI.Rectangle(-width/2, -BUTTON_WIDTH, width, BUTTON_WIDTH * 3);
-
-        // this.checkIsHovered();
     }
 
     show() {

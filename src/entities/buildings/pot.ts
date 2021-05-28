@@ -5,7 +5,7 @@ import {Vec} from "../../utils/utils-math";
 import {O_AnimatedSprite} from "../../managers/core/render/animated-sprite";
 import {colorsCSS, gameConstants} from "../../constants";
 import {Evt, subscriptions} from "../../event-bus";
-import {MiscFood, TrollLocation} from "../../types";
+import {FoodType} from "../../types";
 import {Meat} from "../meat";
 import {EntityType} from "../../managers/core/entities";
 import {findAndSplice, stub} from "../../utils/utils-misc";
@@ -101,7 +101,7 @@ export class Pot {
 
     private eat() {
         this.setState(PotState.EMPTY)
-        o_.troll.eat(MiscFood.DISH)
+        o_.troll.eat(FoodType.DISH)
     }
 
     public getFreePlaceForChosenFood(): Vec {

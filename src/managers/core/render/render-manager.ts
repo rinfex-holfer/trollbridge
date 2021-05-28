@@ -17,6 +17,7 @@ export class RenderManager {
 
     bloodEmitter: Phaser.GameObjects.Particles.ParticleEmitter
     yellowEmitter: Phaser.GameObjects.Particles.ParticleEmitter
+    greenSmokeParticles: Phaser.GameObjects.Particles.ParticleEmitterManager
 
     constructor(scene: Phaser.Scene) {
         this.scene = scene
@@ -46,6 +47,21 @@ export class RenderManager {
             lifespan: 500,
         })
         o_.layers.addRaw(yellowParticles, LayerKey.PARTICLES)
+
+        this.greenSmokeParticles = this.scene.add.particles('particle_smoke_green');
+        o_.layers.addRaw(this.greenSmokeParticles, LayerKey.PARTICLES)
+    }
+
+    createGreenSmokeEmitter() {
+        return this.greenSmokeParticles.createEmitter({
+            scale: {min: 1, max: 5},
+            angle: 270,
+            speed: {min: 10, max: 50},
+            frequency: 300,
+            quantity: 5,
+            lifespan: 500,
+            active: false
+        })
     }
 
     burstBlood(x: number, y: number) {
@@ -109,6 +125,42 @@ export class RenderManager {
             ease: 'Linear',
             duration: duration,
             onComplete: done
+        })
+
+        timeline.play()
+
+        return promise
+    }
+
+    thrownTo(obj: O_GameObject, pos: Vec, duration: number): Promise<any> {
+        const {promise, done} = createPromiseAndHandlers()
+        const timeline = this.createTimeline();
+        const distance = getDistanceBetween(obj, pos);
+
+        timeline.add({
+            targets: obj.obj,
+            x: pos.x,
+            // y: pos.y,
+            ease: 'Linear',
+            duration: duration,
+            onComplete: done
+        })
+
+        timeline.add({
+            targets: obj.obj,
+            y: Math.min(obj.y, pos.y) - distance / 2,
+            // yoyo: true,
+            ease: 'Quad.easeOut',
+            duration: duration / 3,
+            offset: 0,
+        })
+
+        timeline.add({
+            targets: obj.obj,
+            y: pos.y,
+            ease: 'Bounce.easeOut',
+            duration: duration * 2 / 3,
+            offset: duration / 3,
         })
 
         timeline.play()

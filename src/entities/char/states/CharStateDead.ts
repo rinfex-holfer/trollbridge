@@ -26,7 +26,7 @@ export class CharStateDead extends CharState {
         this.char.isAlive = false;
         this.char.setAnimation(CharAnimation.DEAD);
         this.char.actionsMenu.changeActiveButtons([
-            CharAction.DEVOUR,
+            // CharAction.DEVOUR,
             CharAction.MAKE_FOOD,
         ])
     }

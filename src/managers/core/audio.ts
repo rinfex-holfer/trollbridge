@@ -18,6 +18,7 @@ export const enum SOUND_KEY {
     COLLECT = 'COLLECT',
     BONK = 'BONK',
     BUBBLE = 'BUBBLE',
+    CHEW = 'CHEW',
 }
 
 interface AudioOptions {
@@ -38,6 +39,7 @@ const sounds: AudioOptions[] = [
     {key: SOUND_KEY.COLLECT, src: 'collect', volume: 0.2, loop: false},
     {key: SOUND_KEY.BONK, src: 'bonk', volume: 0.2, loop: false},
     {key: SOUND_KEY.BUBBLE, src: 'bubble', volume: 0.2, loop: false},
+    {key: SOUND_KEY.CHEW, src: 'chew', volume: 1, loop: false},
 ];
 
 const music: AudioOptions[] = [

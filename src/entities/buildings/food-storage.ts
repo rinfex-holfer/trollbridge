@@ -1,12 +1,10 @@
-import {Evt, subscriptions} from "../../event-bus";
+import {subscriptions} from "../../event-bus";
 import {Vec} from "../../utils/utils-math";
 import {o_} from "../../managers/locator";
 import {LayerKey} from "../../managers/core/layers";
 import {Meat, MeatLocation} from "../meat";
-import {MeatState} from "../../types";
 import {O_Container} from "../../managers/core/render/container";
 import {O_Sprite} from "../../managers/core/render/sprite";
-import {ImgButton} from "../../interface/basic/img-button";
 import {SOUND_KEY} from "../../managers/core/audio";
 
 const START_X = 60

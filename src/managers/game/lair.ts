@@ -1,6 +1,5 @@
-import {ResourceKey, Resources, TrollLocation} from "../../types";
+import {ResourceKey, TrollLocation} from "../../types";
 import {eventBus, Evt} from "../../event-bus";
-import {WaitButton} from "../../interface/wait-button";
 import {positioner} from "./positioner";
 import {o_} from "../locator";
 import {Tiles} from "../core/render/tiles";
@@ -10,17 +9,10 @@ import {Pot} from "../../entities/buildings/pot";
 import {Treasury} from "../../entities/buildings/treasury";
 
 export class Lair {
-    waitButton: WaitButton
-
     foodStorage: FoodStorage
     bed: Bed
     pot: Pot
     treasury: Treasury
-
-    resources = {
-        [ResourceKey.GOLD]: 0,
-        [ResourceKey.MATERIALS]: 0
-    }
 
     sprite: Tiles
 
@@ -32,7 +24,6 @@ export class Lair {
 
         this.sprite.onClick(() => o_.troll.goToLair())
 
-        this.waitButton = new WaitButton()
         this.treasury = new Treasury(positioner.getTreasuryPosition())
         this.foodStorage = new FoodStorage(positioner.getFoodStoragePosition())
         this.bed = new Bed(positioner.getBedPosition())
@@ -53,7 +44,6 @@ export class Lair {
 
     mayButtonsBeClicked(val: boolean) {
         this.bed.setEnabled(val)
-        this.waitButton.setEnabled(val)
         this.foodStorage.setEnabled(val)
         this.pot.setInteractive(val)
     }
@@ -70,11 +60,5 @@ export class Lair {
         // }
         this.changeResource(ResourceKey.FOOD, -1);
         o_.characters.feedChar(id);
-    }
-
-    makeFoodFrom(id: string) {
-        this.changeResource(ResourceKey.FOOD, 3);
-        o_.characters.makeCharGiveAll(id);
-        o_.characters.removeChar(id);
     }
 }

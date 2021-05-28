@@ -7,8 +7,8 @@ export function pause(time: number) {
 }
 
 export function createPromiseAndHandlers() {
-    let done: (a: any) => void = stub
-    let fail: (a: any) => void = stub
+    let done: (a?: any) => void = stub
+    let fail: (a?: any) => void = stub
     const promise = new Promise((res, rej) => {
         done = res
         fail = rej

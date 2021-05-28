@@ -41,6 +41,10 @@ export class Gold extends GameEntity<EntityType.GOLD> {
             this.sprite.onClick(() => this.onClick())
         }
         this.subs.on(Evt.TIME_PASSED, () => this.onTimePassed())
+        this.subs.on(Evt.ENCOUNTER_STARTED, () => this.updateInteractive())
+        this.subs.on(Evt.ENCOUNTER_ENDED, () => this.updateInteractive())
+
+        this.updateInteractive()
     }
 
     private onClick() {
@@ -98,7 +102,7 @@ export class Gold extends GameEntity<EntityType.GOLD> {
     }
 
     private onTimePassed() {
-        if (this.location === GoldLocation.GROUND) this.destroy()
+        // if (this.location === GoldLocation.GROUND) this.destroy()
     }
 
     destroy() {
@@ -118,6 +122,15 @@ export class Gold extends GameEntity<EntityType.GOLD> {
     }
 
     public updateInteractive() {
-        this.setInteractive(this.location === GoldLocation.GROUND)
+        this.setInteractive(
+            this.location === GoldLocation.GROUND &&
+            !o_.battle.isBattle &&
+            !o_.negotiations.getIsNegotiationsInProgress()
+        )
+    }
+
+    public throwTo(pos: Vec) {
+        this.setInteractive(false)
+        o_.render.thrownTo(this.sprite, pos, 700).then(() => this.setInteractive(true))
     }
 }

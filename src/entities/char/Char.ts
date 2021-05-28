@@ -1,4 +1,4 @@
-import {CharKey, ResourceKey, Resources} from "../../types";
+import {CharKey, ResourceKey} from "../../types";
 import {charTemplates} from "../../char-templates";
 import {createId} from "../../utils/utils-misc";
 import {CharState} from "./states/CharState";
@@ -9,7 +9,7 @@ import {CharActionsMenu} from "../../interface/char-actions-menu";
 import {CharStateSurrender} from "./states/CharStateSurrender";
 import {CharStateDead} from "./states/CharStateDead";
 import {CharStateBones} from "./states/CharStateBones";
-import {CharStatePrisoner} from "./states/CharStatePrisoner";
+// import {CharStatePrisoner} from "./states/CharStatePrisoner";
 import {CharSpeakText} from "../../interface/char-speak-text";
 import {eventBus, Evt} from "../../event-bus";
 import {CharStateGoToTalk} from "./states/CharStateGoToTalk";
@@ -28,6 +28,8 @@ import {O_Sprite} from "../../managers/core/render/sprite";
 import {O_Container} from "../../managers/core/render/container";
 import {o_} from "../../managers/locator";
 import {LayerKey} from "../../managers/core/layers";
+import {Gold} from "../gold";
+import {Meat, MeatLocation, meatSprite} from "../meat";
 
 export class Char {
     key: CharKey
@@ -42,7 +44,11 @@ export class Char {
     dmg = 0
 
     speed = gameConstants.CHAR_SPEED * 3
-    resources: Resources
+
+    food: number
+    gold: number
+    goldInitial: number
+
     isUnconscious = false
     isAlive = true
     isPrisoner = false
@@ -78,9 +84,13 @@ export class Char {
         this.moralePrice = charTemplate.moralePrice
 
         this.name = charTemplate.name
-        this.resources = charTemplate.createResources()
         this.isCombatant = charTemplate.isCombatant
         this.dmg = charTemplate.dmg;
+
+        const {gold, food} = charTemplate.createResources()
+        this.gold = gold
+        this.goldInitial = gold
+        this.food = food
 
         this.container = o_.render.createContainer(x, y)
         this.container.addPhysics()
@@ -150,8 +160,8 @@ export class Char {
                 return new CharStateDead(this);
             case CharStateKey.BONES:
                 return new CharStateBones(this);
-            case CharStateKey.PRISONER:
-                return new CharStatePrisoner(this);
+            // case CharStateKey.PRISONER:
+            //     return new CharStatePrisoner(this);
             case CharStateKey.GO_TO_TALK:
                 return new CharStateGoToTalk(this);
             case CharStateKey.BATTLE_IDLE:
@@ -193,14 +203,14 @@ export class Char {
     }
 
     disableInteractivity() {
-        this.container.setInteractive(false);
+        this.container.setInteractive(false)
         this.actionsMenu.hide()
     }
 
     enableInteractivity() {
         if (this.isBones) return;
-        this.container.setInteractive(true);
-        this.actionsMenu.checkIsHovered();
+        this.container.setInteractive(true)
+        this.actionsMenu.checkIsHovered()
         this.actionsMenu.show()
     }
 
@@ -215,7 +225,16 @@ export class Char {
     }
 
     changeResources(key: ResourceKey, val: number) {
-        this.resources[key] = Math.max(this.resources[key] + val, 0)
+        switch (key) {
+            case ResourceKey.GOLD:
+                this.gold = Math.max(this.gold + val, 0)
+                break;
+            case ResourceKey.FOOD:
+                this.food = Math.max(this.food + val, 0)
+                break;
+        }
+
+        this.actionsMenu.updateButtons()
     }
 
     moveTowards(x: number, y: number) {
@@ -232,9 +251,8 @@ export class Char {
     }
 
     pay() {
-        const amount = Math.ceil(this.resources.gold * 0.33);
-        this.changeResources(ResourceKey.GOLD, -amount);
-        o_.lair.changeResource(ResourceKey.GOLD, amount)
+        const amount = Math.ceil(this.gold * 0.33);
+        this.dropGold(amount)
     }
 
     eat() {
@@ -242,13 +260,47 @@ export class Char {
     }
 
     giveAll() {
-        o_.lair.changeResource(ResourceKey.GOLD, this.resources[ResourceKey.GOLD])
-        o_.lair.changeResource(ResourceKey.MATERIALS, this.resources[ResourceKey.MATERIALS])
-        o_.lair.changeResource(ResourceKey.FOOD, this.resources[ResourceKey.FOOD])
+        this.dropGold(this.gold)
+        this.dropFood(this.food)
+    }
 
-        this.changeResources(ResourceKey.GOLD, -this.resources[ResourceKey.GOLD]);
-        this.changeResources(ResourceKey.MATERIALS, -this.resources[ResourceKey.MATERIALS]);
-        this.changeResources(ResourceKey.FOOD, -this.resources[ResourceKey.FOOD]);
+    dropGold(amount: number) {
+        this.changeResources(ResourceKey.GOLD, -amount);
+
+        while (amount) {
+            const goldInSprite = Math.min(amount, gameConstants.MAX_GOLD_IN_SPRITE)
+            amount -= goldInSprite
+            let coord = this.getCoords();
+            coord.x += rndBetween(-40, 40)
+            coord.y += rndBetween(-40, 40)
+            const gold = new Gold(this.getCoords(), goldInSprite)
+            gold.throwTo(coord)
+        }
+    }
+
+    dropFood(amount: number) {
+        this.changeResources(ResourceKey.FOOD, -amount);
+
+        while (amount) {
+            amount--
+            const coord = this.getCoords()
+            coord.x += rndBetween(-80, 80)
+            coord.y += (-this.sprite.height / 2) + rndBetween(-80, 80)
+
+            const meat = new Meat(this.getCoords(), MeatLocation.GROUND)
+            meat.throwTo(coord)
+        }
+    }
+
+    dropSelfMeat(howMuch: number) {
+        for (let i = 0; i < howMuch; i++) {
+            const coord = this.getCoords()
+            coord.x += rndBetween(-80, 80)
+            coord.y += (-this.sprite.height / 2) + rndBetween(-80, 80)
+
+            const meat = new Meat(this.getCoords(), MeatLocation.GROUND, true, i < 2 ? meatSprite.HUMAN_LEG : meatSprite.HUMAN_HAND)
+            meat.throwTo(coord)
+        }
     }
 
     surrender() {
@@ -267,7 +319,9 @@ export class Char {
             eventBus.emit(Evt.CHAR_DEVOURED_IN_BATTLE, this.key)
         }
         o_.audio.playSound(SOUND_KEY.TORN);
-        this.toBones();
+        this.giveAll()
+        this.dropSelfMeat(gameConstants.FOOD_FROM_DEVOURED_CHARACTER)
+        this.toBones()
     }
 
     toBones() {
@@ -289,7 +343,7 @@ export class Char {
     }
 
     makeImprisoned() {
-        this.setState(CharStateKey.PRISONER);
+        // this.setState(CharStateKey.PRISONER);
     }
 
     getKilled() {
@@ -379,6 +433,12 @@ export class Char {
     endAttack() {
         this.onAttackEnd();
         this.setState(CharStateKey.BATTLE_IDLE);
+    }
+
+    transformToFood() {
+        this.giveAll()
+        this.dropSelfMeat(gameConstants.FOOD_FROM_CHARACTER)
+        o_.characters.removeChar(this.id)
     }
 
     attackPromise = new Promise(() => {})

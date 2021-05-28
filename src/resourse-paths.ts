@@ -15,6 +15,8 @@ export const resoursePaths = {
         meat_raw: `${imagesUrl}/meat_raw.png`,
         meat_stale: `${imagesUrl}/meat_stale.png`,
         meat_dried: `${imagesUrl}/meat_dried.png`,
+        meat_human_leg: `${imagesUrl}/meat_human_leg.png`,
+        meat_human_hand: `${imagesUrl}/meat_human_hand.png`,
         dish: `${imagesUrl}/dish.png`,
         bones: `${imagesUrl}/bones.png`,
         bed: `${imagesUrl}/bed.png`,
@@ -31,6 +33,7 @@ export const resoursePaths = {
         empty_sprite: `${imagesUrl}/tile_empty.png`,
         particle_hit: `${imagesUrl}/particle_hit.png`,
         particle_blood: `${imagesUrl}/particle_blood.jpg`,
+        particle_smoke_green: `${imagesUrl}/particle_smoke_green.png`,
         treasury: `${imagesUrl}/treasury.png`,
         "gold-1": `${imagesUrl}/gold-1.png`,
         "gold-2": `${imagesUrl}/gold-2.png`,
@@ -62,6 +65,7 @@ export const resoursePaths = {
         collect: `${audioUrl}/collect.mp3`,
         bonk: `${audioUrl}/toock.mp3`,
         bubble: `${audioUrl}/bubble.mp3`,
+        chew: `${audioUrl}/chew.mp3`,
     },
 
     music: {

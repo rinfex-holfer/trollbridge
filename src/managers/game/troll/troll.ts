@@ -1,6 +1,6 @@
 import {colorsCSS, gameConstants} from "../../../constants";
 import {eventBus, Evt} from "../../../event-bus";
-import {FoodType, MeatState, MiscFood, TrollLocation} from "../../../types";
+import {FoodType, TrollLocation} from "../../../types";
 import {positioner} from "../positioner";
 import {CharAnimation} from "../../../entities/char/char-constants";
 import {rndBetween, Vec} from "../../../utils/utils-math";
@@ -88,16 +88,30 @@ export class Troll {
         eventBus.emit(Evt.TROLL_STATS_CHANGED);
     }
 
-    eat(food: FoodType) {
-        const minusHunger = gameConstants.HUNGER_REDUCTION_FROM[food]
-        const hpChange = gameConstants.HP_FROM[food]
+    eat(food: FoodType, isStale: boolean = false, isHuman: boolean = false) {
+        const minusHunger = isStale
+            ? gameConstants.HUNGER_REDUCTION_FROM_STALE_FOOD[food]
+            : gameConstants.HUNGER_REDUCTION_FROM_FOOD[food]
+        const hpChange = isStale
+            ? gameConstants.HP_FROM_STALE_FOOD[food]
+            : gameConstants.HP_FROM_FOOD[food]
 
         this.hunger = Math.max(this.hunger - minusHunger, 0);
-        this.changeTrollHp(hpChange);
-        eventBus.emit(Evt.TROLL_STATS_CHANGED);
+        this.changeTrollHp(hpChange)
+        o_.audio.playSound(SOUND_KEY.CHEW)
+        eventBus.emit(Evt.TROLL_STATS_CHANGED)
     }
 
     changeTrollHp(val: number, cause = 'hunger') {
+        const sign = val < 0 ? '-' : '+'
+        const color = val < 0 ? colorsCSS.RED : colorsCSS.GREEN
+        flyingStatusChange(
+            sign+val + ' hp',
+            this.sprite.x,
+            this.sprite.y - this.sprite.height,
+            color
+        );
+
         const newVal = this.hp + val;
         this.hp = Math.max(Math.min(newVal, gameConstants.MAX_TROLL_HP[this.level]), 0);
         eventBus.emit(Evt.TROLL_STATS_CHANGED);
@@ -147,7 +161,7 @@ export class Troll {
     goSleep() { this.setState(TrollStateKey.SLEEP) }
 
     devour(id: string) {
-        this.eat(MeatState.RAW);
+        this.eat(FoodType.NORMAL, false, true);
         o_.characters.charEaten(id);
     }
 
@@ -160,13 +174,6 @@ export class Troll {
 
             o_.audio.playSound(SOUND_KEY.HIT);
             this.changeTrollHp(-dmg, 'battle');
-
-            flyingStatusChange(
-                '-'+dmg,
-                this.sprite.x,
-                this.sprite.y - this.sprite.height,
-                colorsCSS.RED
-            );
         } else {
             o_.audio.playSound(SOUND_KEY.BLOCK);
 

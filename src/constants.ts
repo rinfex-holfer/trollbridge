@@ -1,4 +1,4 @@
-import {MeatState, MiscFood, Time} from "./types";
+import {FoodType, Time} from "./types";
 
 export const TimeOrder = [Time.MORNING, Time.AFTERNOON, Time.EVENING, Time.NIGHT];
 
@@ -42,19 +42,27 @@ export const gameConstants = {
 
     FOOD_FOR_DISH: 3,
 
-    HP_FROM: {
-        [MiscFood.DISH]: 6,
-        [MeatState.RAW]: 2,
-        [MeatState.STALE]: 0,
+    HP_FROM_FOOD: {
+        [FoodType.DISH]: 6,
+        [FoodType.NORMAL]: 2,
     },
-    HUNGER_REDUCTION_FROM: {
-        [MiscFood.DISH]: 10,
-        [MeatState.RAW]: 3,
-        [MeatState.STALE]: 2,
+    HP_FROM_STALE_FOOD: {
+        [FoodType.DISH]: 3,
+        [FoodType.NORMAL]: 1,
+    },
+    HUNGER_REDUCTION_FROM_FOOD: {
+        [FoodType.DISH]: 10,
+        [FoodType.NORMAL]: 3,
+    },
+    HUNGER_REDUCTION_FROM_STALE_FOOD: {
+        [FoodType.DISH]: 6,
+        [FoodType.NORMAL]: 2,
     },
 
     //  ======================== GOLD ========================
     MAX_GOLD_IN_SPRITE: 100,
+    FOOD_FROM_CHARACTER: 4,
+    FOOD_FROM_DEVOURED_CHARACTER: 3,
 }
 
 export const zLayers = {
@@ -86,6 +94,7 @@ export const colorsCSS = {
 
 export const colorsNum = {
     GREEN: 0x00AA00,
+    ROTTEN: 0xAAFFAA,
     RED: 0xFF0000,
     BLUE: 0x0000FF,
     PURPLE: 0x080008,

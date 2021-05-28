@@ -11,6 +11,7 @@ import {LayersManager} from "./core/layers";
 import {EntityManager} from "./core/entities";
 import {InteractionManager} from "./core/interaction";
 import {UpgradeManager} from "./game/upgrade";
+import {Negotiations} from "./game/negotiations";
 
 class Locator {
     #_render: RenderManager | undefined
@@ -22,6 +23,7 @@ class Locator {
     #_time: TimeManager | undefined
     #_game: GameManager | undefined
     #_battle: BattleManager | undefined
+    #_negotiations: Negotiations | undefined
     #_layers: LayersManager | undefined
     #_entities: EntityManager | undefined
     #_interaction: InteractionManager | undefined
@@ -45,6 +47,7 @@ class Locator {
         entities: (entities: EntityManager) => { this.#_entities = entities },
         interaction: (interaction: InteractionManager) => { this.#_interaction = interaction },
         upgrade: (upgrade: UpgradeManager) => { this.#_upgrade = upgrade },
+        negotiations: (negotiations: Negotiations) => { this.#_negotiations = negotiations },
     }
 
     get render() {
@@ -110,6 +113,11 @@ class Locator {
     get upgrade() {
         if (!this.#_upgrade) throw Error(Locator.crashStr('upgrade'))
         return this.#_upgrade
+    }
+
+    get negotiations() {
+        if (!this.#_negotiations) throw Error(Locator.crashStr('negotiations'))
+        return this.#_negotiations
     }
 }
 

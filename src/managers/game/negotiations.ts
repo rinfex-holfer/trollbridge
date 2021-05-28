@@ -8,6 +8,7 @@ import {positioner} from "./positioner";
 import {O_Container} from "../core/render/container";
 import {o_} from "../locator";
 import {onEncounterEnd, onEncounterStart} from "../../helpers";
+import {LayerKey} from "../core/layers";
 
 export const enum NegotiationsState {
     START = 'START',
@@ -32,7 +33,7 @@ const BUTTON_MARGIN = 30;
 const getButtonsRowWidth = (amount: number) => amount * BUTTON_WIDTH + (amount - 1) * BUTTON_MARGIN;
 
 export class Negotiations {
-    currentStateKey = NegotiationsState.START;
+    currentStateKey = NegotiationsState.END;
     encounterState: any
     danger: EncounterDanger = EncounterDanger.NONE;
 
@@ -46,8 +47,13 @@ export class Negotiations {
         eventBus.on(Evt.TRAVELLERS_APPEAR, () => this.onTravellersAppear());
 
         const bridgePos = positioner.bridgePosition()
-        this.container = o_.render.createContainer(bridgePos.x + bridgePos.width / 2, bridgePos.y  + bridgePos.height + 64)
+        this.container = o_.render.createContainer(bridgePos.x + bridgePos.width / 2, bridgePos.y  + bridgePos.height - 64)
+        o_.register.negotiations(this)
         // this.container.zIndex = zLayers.CHAR_MENU;
+    }
+
+    public getIsNegotiationsInProgress() {
+        return this.currentStateKey !== NegotiationsState.END
     }
 
     onTravellersAppear() {

@@ -1,14 +1,17 @@
 import {rnd, Vec} from "../utils/utils-math";
 import {O_Sprite} from "../managers/core/render/sprite";
 import {o_} from "../managers/locator";
-import {gameConstants} from "../constants";
+import {colorsNum, gameConstants} from "../constants";
 import {Evt, subscriptions} from "../event-bus";
-import {MeatState} from "../types";
 import {positioner} from "../managers/game/positioner";
 import {EntityType, GameEntity} from "../managers/core/entities";
 import {Pot} from "./buildings/pot";
 import {LayerKey} from "../managers/core/layers";
 import {SOUND_KEY} from "../managers/core/audio";
+import {ImageKey} from "../utils/utils-types";
+import {FoodType} from "../types";
+import ParticleEmitter = Phaser.GameObjects.Particles.ParticleEmitter;
+import {GoldLocation} from "./gold";
 
 export const enum MeatLocation {
     GROUND = 'GROUND',
@@ -16,6 +19,11 @@ export const enum MeatLocation {
     LAIR = 'LAIR',
 }
 
+export const meatSprite = {
+    ANIMAL: 'meat_raw' as ImageKey,
+    HUMAN_HAND: 'meat_human_hand' as ImageKey,
+    HUMAN_LEG: 'meat_human_leg' as ImageKey,
+}
 
 export class Meat extends GameEntity<EntityType.MEAT> {
     type = EntityType.MEAT
@@ -25,6 +33,7 @@ export class Meat extends GameEntity<EntityType.MEAT> {
     location: MeatLocation
     destroyed = false
     isStale = false
+    isHuman = false
 
     timePassed = 0
 
@@ -37,32 +46,33 @@ export class Meat extends GameEntity<EntityType.MEAT> {
 
     realPosition: Vec
 
-    constructor(pos: Vec, location: MeatLocation = MeatLocation.GROUND) {
+    rottenGas: ParticleEmitter
+
+    constructor(pos: Vec, location: MeatLocation = MeatLocation.GROUND, isHuman = false, key: ImageKey = meatSprite.ANIMAL) {
         super()
         this.id = this.register()
 
         this.location = location;
-        this.sprite = o_.render.createSprite(this.getSpriteKey(), pos.x, pos.y)
+        this.isHuman = isHuman
+
+        this.sprite = o_.render.createSprite(key, pos.x, pos.y)
         this.sprite.setOrigin(0.5, 0.5)
         o_.layers.add(this.sprite, LayerKey.FIELD_OBJECTS)
         this.sprite.onClick(() => {
             if (this.onClick) return this.onClick()
             else this.onClickDefault()
         })
-        this.setInteractive(true)
         this.realPosition = this.updateRealPosition()
 
         this.jumpTimeline = o_.render.createJumpingTimeline(this.sprite)
 
+        this.rottenGas = o_.render.createGreenSmokeEmitter()
         this.subs.on(Evt.TIME_PASSED, () => this.onTimePassed())
-    }
 
-    private updateSprite() {
-        this.sprite.setTexture(this.getSpriteKey())
-    }
+        this.subs.on(Evt.ENCOUNTER_STARTED, () => this.updateInteractive())
+        this.subs.on(Evt.ENCOUNTER_ENDED, () => this.updateInteractive())
 
-    private getSpriteKey() {
-        return this.isStale ? 'meat_stale' : 'meat_raw'
+        this.updateInteractive()
     }
 
    private onClickDefault() {
@@ -89,7 +99,7 @@ export class Meat extends GameEntity<EntityType.MEAT> {
     }
 
     eat() {
-        o_.troll.eat(this.isStale ? MeatState.STALE : MeatState.RAW)
+        o_.troll.eat(FoodType.NORMAL, this.isStale, this.isHuman)
         o_.lair.foodStorage.updateFood();
         this.destroy()
     }
@@ -108,17 +118,33 @@ export class Meat extends GameEntity<EntityType.MEAT> {
         }
     }
 
+    private becomeRotten() {
+        this.isStale = true
+        this.timePassed = 0
+        this.updateEmitters()
+        this.rottenGas.active = true
+        this.sprite.obj.setTint(colorsNum.ROTTEN)
+        // this.rottenGas.start()
+    }
+
+    private updateEmitters() {
+        const parentX = this.sprite.obj.parentContainer?.x || 0
+        const parentY = this.sprite.obj.parentContainer?.y || 0
+        this.rottenGas.setPosition(
+            {min: this.sprite.obj.x - 10 + parentX, max: this.sprite.x + 10 + parentX},
+            {min: this.sprite.y - 10 + parentY, max: this.sprite.y + 10 + parentY},
+        )
+    }
+
     private onTimePassed() {
         this.timePassed++;
-        if (this.location === MeatLocation.GROUND) {
-            if (rnd() > 0.5) this.destroy()
-            return
+        if (this.location !== MeatLocation.STORAGE) {
+            this.timePassed += 2;
+            if (rnd() > 0.9) return this.destroy()
         }
 
         if (!this.isStale && this.timePassed > gameConstants.RAW_MEAT_TIME_LIMIT) {
-            this.isStale = true
-            this.updateSprite();
-            this.timePassed = 0
+            this.becomeRotten()
         } else if (this.isStale && this.timePassed > gameConstants.STALE_MEAT_TIME_LIMIT) {
             this.destroy()
         }
@@ -148,6 +174,7 @@ export class Meat extends GameEntity<EntityType.MEAT> {
         this.pot.choseThisFood(this)
 
         this.onClick = () => this.unchoose()
+        this.updateEmitters()
     }
 
     unchoose() {
@@ -158,6 +185,7 @@ export class Meat extends GameEntity<EntityType.MEAT> {
         this.onClick = () => this.setChosen()
         this.setJumping(true)
         o_.layers.add(this.sprite, LayerKey.FIELD_OBJECTS)
+        this.updateEmitters()
     }
 
     setNotChoosable() {
@@ -177,7 +205,10 @@ export class Meat extends GameEntity<EntityType.MEAT> {
     }
 
     public updateInteractive() {
-        this.setInteractive(true)
+        this.setInteractive(
+            !o_.battle.isBattle &&
+            !o_.negotiations.getIsNegotiationsInProgress()
+        )
     }
 
     public setLocation(loc: MeatLocation) {
@@ -185,17 +216,27 @@ export class Meat extends GameEntity<EntityType.MEAT> {
     }
 
     public flyTo(pos: Vec, speed = 1000, maxDuration = 500): Promise<any> {
+        if (this.rottenGas.active) this.rottenGas.pause()
         if (this.location === MeatLocation.STORAGE && this.sprite.obj.parentContainer === o_.lair.foodStorage.container.obj) {
             o_.lair.foodStorage.container.remove(this.sprite)
             this.sprite.x += o_.lair.foodStorage.container.x
             this.sprite.y += o_.lair.foodStorage.container.y
         }
-        return o_.render.flyTo(this.sprite, pos, speed, maxDuration);
+        return o_.render.flyTo(this.sprite, pos, speed, maxDuration).then(() => {
+            this.updateEmitters()
+            if (this.rottenGas.active) this.rottenGas.resume()
+        });
+    }
+
+    public throwTo(pos: Vec) {
+        this.setInteractive(false)
+        o_.render.thrownTo(this.sprite, pos, 700).then(() => this.setInteractive(true))
     }
 
     destroy() {
         this.deregister()
         this.destroyed = true
+        this.rottenGas.remove()
         this.subs.clear()
         this.sprite.destroy()
         o_.lair.foodStorage.updateFood()

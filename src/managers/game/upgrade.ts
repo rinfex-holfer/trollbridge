@@ -28,6 +28,16 @@ export class UpgradeManager {
             y: pos.y,
             onClick: () => this.onBuildButtonClick(), style: {fill: colorsCSS.WHITE}
         })
+
+        this.buildBtn.sprite.onPointerOver(() => {
+            this.buildBtn.text.setVisibility(true)
+        })
+        this.buildBtn.sprite.onPointerOut(() => {
+            this.buildBtn.text.setVisibility(false)
+        })
+
+        this.buildBtn.text.setVisibility(false)
+
         o_.layers.add(this.buildBtn.container, LayerKey.FIELD_BUTTONS)
     }
 

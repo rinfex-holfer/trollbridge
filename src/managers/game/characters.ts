@@ -212,6 +212,11 @@ export class CharactersManager {
         char.getHit(dmg);
     }
 
+    transformToFood(id: string) {
+        let char = this.chars.find(t => t.id === id)
+        char?.transformToFood()
+    }
+
     disableInteractivityAll() {
         this.chars.forEach(f => f.disableInteractivity())
     }
