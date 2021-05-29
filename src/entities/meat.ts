@@ -26,7 +26,7 @@ export const meatSprite = {
 }
 
 export class Meat extends GameEntity<EntityType.MEAT> {
-    type = EntityType.MEAT
+    type: EntityType.MEAT = EntityType.MEAT
     id: string
 
     sprite: O_Sprite

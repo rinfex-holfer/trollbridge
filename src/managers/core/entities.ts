@@ -4,7 +4,7 @@ import {Meat} from "../../entities/meat";
 import {Gold} from "../../entities/gold";
 
 export abstract class GameEntity<T extends EntityType> {
-    abstract type: EntityType
+    abstract type: T
     abstract id: string
 
     register(): string {

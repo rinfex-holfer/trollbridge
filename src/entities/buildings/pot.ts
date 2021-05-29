@@ -1,16 +1,17 @@
 import {o_} from "../../managers/locator";
 import {O_Sprite} from "../../managers/core/render/sprite";
 import {LayerKey} from "../../managers/core/layers";
-import {Vec} from "../../utils/utils-math";
+import {rnd, Vec} from "../../utils/utils-math";
 import {O_AnimatedSprite} from "../../managers/core/render/animated-sprite";
-import {colorsCSS, gameConstants} from "../../constants";
+import {colorsCSS, colorsNum, gameConstants} from "../../constants";
 import {Evt, subscriptions} from "../../event-bus";
 import {FoodType} from "../../types";
-import {Meat} from "../meat";
+import {Meat, MeatLocation} from "../meat";
 import {EntityType} from "../../managers/core/entities";
 import {findAndSplice, stub} from "../../utils/utils-misc";
 import {O_Text} from "../../managers/core/render/text";
 import {SOUND_KEY} from "../../managers/core/audio";
+import ParticleEmitter = Phaser.GameObjects.Particles.ParticleEmitter;
 
 const enum PotState {
     EMPTY = 'EMPTY',
@@ -26,6 +27,11 @@ export class Pot {
     state: PotState = PotState.EMPTY
 
     subs = subscriptions()
+
+    isDishStale = false
+    isDishHuman = false
+    timePassed = 0
+    rottenGas: ParticleEmitter
 
     constructor(position: Vec) {
         this.sprite = o_.render.createAnimatedSprite({
@@ -52,12 +58,38 @@ export class Pot {
         this.text.setVisibility(false)
         o_.layers.add(this.text, LayerKey.FIELD_OBJECTS)
 
+        this.rottenGas = o_.render.createGreenSmokeEmitter()
+        this.updateEmitters()
+
         this.setState(PotState.EMPTY);
 
         this.subs.on(Evt.TIME_PASSED, () => this.onTimePassed())
     }
 
+    private updateEmitters() {
+        // const parentX = this.sprite.obj.parentContainer?.x || 0
+        // const parentY = this.sprite.obj.parentContainer?.y || 0
+        this.rottenGas.setPosition(
+            {min: this.sprite.obj.x - 10, max: this.sprite.x + 10},
+            {min: this.sprite.y - 60, max: this.sprite.y - 40},
+        )
+    }
+
     private onTimePassed() {
+        if (this.state === PotState.READY) {
+            this.timePassed++
+
+            if (!this.isDishStale && this.timePassed > gameConstants.RAW_MEAT_TIME_LIMIT) {
+                this.becomeRotten()
+            } else if (this.isDishStale && this.timePassed > gameConstants.STALE_MEAT_TIME_LIMIT) {
+                this.timePassed = 0
+                this.setState(PotState.EMPTY)
+                return
+            }
+        } else {
+            this.timePassed = 0
+        }
+
         if (this.state === PotState.PREPARING) {
             this.setState(PotState.READY);
         }
@@ -78,12 +110,31 @@ export class Pot {
 
     }
 
+    private becomeRotten() {
+        this.isDishStale = true
+        this.timePassed = 0
+        this.rottenGas.active = true
+        this.rottenGas.setVisible(true)
+        this.dishSprite.obj.setTint(colorsNum.ROTTEN)
+        // this.rottenGas.start()
+    }
+
+    private becomeFresh() {
+        this.isDishStale = false
+        this.timePassed = 0
+        this.rottenGas.active = false
+        this.rottenGas.setVisible(false)
+        this.dishSprite.obj.clearTint()
+    }
+
     private setState(state: PotState) {
         this.state = state;
         switch (this.state) {
             case PotState.EMPTY:
                 this.sprite.play('empty')
                 this.dishSprite.setVisibility(false)
+                this.becomeFresh()
+                this.isDishHuman = false
                 break;
             case PotState.PREPARING:
                 this.sprite.play('full')
@@ -158,6 +209,8 @@ export class Pot {
         o_.audio.playSound(SOUND_KEY.COLLECT)
 
         meat.forEach(m => {
+            if (m.isStale) this.becomeRotten()
+            if (m.isHuman) this.isDishHuman = true
             m.onLastAnimation()
             const flyTarget = {x: this.sprite.x, y: this.sprite.y - 30}
             promises.push(m.flyTo(flyTarget, 50, 500).then(() => m.destroy()))

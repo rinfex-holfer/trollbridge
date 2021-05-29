@@ -14,7 +14,7 @@ export const enum GoldLocation {
 }
 
 export class Gold extends GameEntity<EntityType.GOLD> {
-    type = EntityType.GOLD
+    type: EntityType.GOLD = EntityType.GOLD
     id: string
 
     location: GoldLocation
