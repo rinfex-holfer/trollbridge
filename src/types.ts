@@ -85,3 +85,10 @@ export type Enemy = {
     isAlive: boolean,
     isPrisoner: boolean,
 }
+
+export type LevelReqs = {
+    maxHp: number,
+    armor: number,
+    dmg: number,
+    xp: number,
+}

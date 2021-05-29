@@ -11,6 +11,7 @@ import {o_} from "../../locator";
 import {LayerKey} from "../layers";
 import {createPromiseAndHandlers} from "../../../utils/utils-async";
 import GameObject = Phaser.GameObjects.GameObject;
+import {stub} from "../../../utils/utils-misc";
 
 export class RenderManager {
     scene: Phaser.Scene
@@ -192,5 +193,32 @@ export class RenderManager {
             y: '-=10'
         })
         return timeline
+    }
+
+    fadeIn(targets: O_GameObject | O_GameObject[], duration = 500) {
+        const {promise, done} = createPromiseAndHandlers()
+        const timeline = this.createTimeline()
+        timeline.add({
+            targets: Array.isArray(targets) ? targets.map(t => t.obj) : targets.obj,
+            ease: 'Power2.easeOut',
+            duration,
+            alpha: 1,
+            onComplete: done
+        })
+        timeline.play()
+        return promise
+    }
+    fadeOut(targets: O_GameObject | O_GameObject[], duration = 500) {
+        const {promise, done} = createPromiseAndHandlers()
+        const timeline = this.createTimeline()
+        timeline.add({
+            targets: Array.isArray(targets) ? targets.map(t => t.obj) : targets.obj,
+            ease: 'Power2.easeOut',
+            duration,
+            alpha: 0,
+            onComplete: done
+        })
+        timeline.play()
+        return promise
     }
 }

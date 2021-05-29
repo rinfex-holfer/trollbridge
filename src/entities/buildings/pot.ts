@@ -14,6 +14,7 @@ import {SOUND_KEY} from "../../managers/core/audio";
 import ParticleEmitter = Phaser.GameObjects.Particles.ParticleEmitter;
 
 const enum PotState {
+    NOT_EXIST = 'NOT_EXIST',
     EMPTY = 'EMPTY',
     PREPARING = 'PREPARING',
     READY = 'READY',
@@ -61,9 +62,15 @@ export class Pot {
         this.rottenGas = o_.render.createGreenSmokeEmitter()
         this.updateEmitters()
 
-        this.setState(PotState.EMPTY);
+        this.setState(PotState.NOT_EXIST);
+
+        o_.upgrade.createUpgradeButton({x: this.sprite.x, y: this.sprite.y}, 'Котел', 50, () => this.upgrade())
 
         this.subs.on(Evt.TIME_PASSED, () => this.onTimePassed())
+    }
+
+    private upgrade() {
+        this.setState(PotState.EMPTY)
     }
 
     private updateEmitters() {
@@ -129,8 +136,13 @@ export class Pot {
 
     private setState(state: PotState) {
         this.state = state;
-        switch (this.state) {
+        switch (state) {
+            case PotState.NOT_EXIST:
+                this.sprite.setVisibility(false)
+                this.dishSprite.setVisibility(false)
+                break;
             case PotState.EMPTY:
+                this.sprite.setVisibility(true)
                 this.sprite.play('empty')
                 this.dishSprite.setVisibility(false)
                 this.becomeFresh()
@@ -145,8 +157,10 @@ export class Pot {
                 o_.render.burstYellow(this.sprite.x, this.sprite.y)
                 this.sprite.play('empty')
                 this.dishSprite.setVisibility(true)
-                this.setInteractive(true);
+                this.setInteractive(true)
                 break;
+            default:
+                throw Error('wrong pot state ' + state)
         }
     }
 

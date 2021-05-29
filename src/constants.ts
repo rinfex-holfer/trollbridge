@@ -1,34 +1,37 @@
-import {FoodType, Time} from "./types";
+import {FoodType, LevelReqs, Time} from "./types";
 
 export const TimeOrder = [Time.MORNING, Time.AFTERNOON, Time.EVENING, Time.NIGHT];
 
 export const gameConstants = {
     //  ======================== TROLL ========================
-    MAX_HUNGER: 10,
+    TROLL_MAX_HUNGER: 10,
+    TROLL_MAX_SELF_CONTROL: 100,
+
     HUNGER_PER_TIME: 1,
     HP_MINUS_WHEN_HUNGRY: 1,
     HP_FROM_SLEEP: 2,
-    MAX_TROLL_HP: {
-        1: 100,
-        2: 13,
-        3: 16,
-        4: 20,
-        5: 25,
-    } as {[key: number]: number},
-    TROLL_ARMOR: {
-        1: 1,
-        2: 2,
-        3: 3,
-        4: 4,
-        5: 5,
-    } as {[key: number]: number},
-    TROLL_DMG: {
-        1: 10,
-        2: 2,
-        3: 3,
-        4: 4,
-        5: 5,
-    } as {[key: number]: number},
+
+    TROLL_LEVELING: {
+        1: {
+            maxHp: 7,
+            armor: 0,
+            dmg: 1,
+            xp: 10,
+        },
+        2: {
+            maxHp: 10,
+            armor: 1,
+            dmg: 1,
+            xp: 10,
+        },
+        3: {
+            maxHp: 12,
+            armor: 2,
+            dmg: 2,
+            xp: 20,
+        },
+    } as {[key: number]: LevelReqs},
+
     TROLL_SPEED: 500,
 
     //  ======================== CHARS ========================
@@ -80,6 +83,7 @@ export const colors = {
     PURPLE: '0x080008',
     WHITE: '0xFFFFFF',
     BLACK: '0x000000',
+    ORANGE: '0xFFA500',
 }
 
 export const colorsCSS = {
@@ -89,7 +93,8 @@ export const colorsCSS = {
     PURPLE: 'rgb(138,43,226)',
     WHITE: 'rgb(256, 256, 256)',
     BLACK: 'rgb(0, 0, 0)',
-    YELLOW: 'rgb(255, 255, 0)'
+    YELLOW: 'rgb(255, 255, 0)',
+    ORANGE: 'rgb(255, 165, 0)',
 }
 
 export const colorsNum = {
@@ -100,4 +105,6 @@ export const colorsNum = {
     PURPLE: 0x080008,
     WHITE: 0xFFFFFF,
     BLACK: 0x000000,
+    YELLOW: 0xFFFF00,
+    ORANGE: 0xFFA500,
 }

@@ -3,7 +3,7 @@ import {eventBus, Evt} from "../../../event-bus";
 import {FoodType, TrollLocation} from "../../../types";
 import {positioner} from "../positioner";
 import {CharAnimation} from "../../../entities/char/char-constants";
-import {rndBetween, Vec} from "../../../utils/utils-math";
+import {clamp, rndBetween, Vec} from "../../../utils/utils-math";
 import {flyingStatusChange} from "../../../interface/basic/flying-status-change";
 import {O_AnimatedSprite} from "../../core/render/animated-sprite";
 import {o_} from "../../locator";
@@ -15,6 +15,8 @@ import {TrollStateGoTo} from "./troll-state-go-to";
 import {TrollStateSleep} from "./troll-state-sleep";
 import {LayerKey} from "../../core/layers";
 import {Zzz} from "../../../entities/zzz";
+import {O_Text} from "../../core/render/text";
+import {TrollStats} from "../../../interface/troll-stats";
 
 let troll: Troll
 
@@ -22,10 +24,22 @@ export class Troll {
 
     location: TrollLocation = TrollLocation.LAIR
 
-    hp = 1
     armor = 0
     level = 1
+
+    dmg = 1
+    hp = 1
+    maxHp = 1
+
     hunger = 0
+    maxHunger = gameConstants.TROLL_MAX_HUNGER
+
+    selfControl = gameConstants.TROLL_MAX_SELF_CONTROL
+    maxSelfControl = gameConstants.TROLL_MAX_SELF_CONTROL
+
+    xp = 0
+    // might = 0
+    // wealth = 0
 
     sprite: O_AnimatedSprite
     zzz: Zzz
@@ -33,6 +47,8 @@ export class Troll {
     speed = gameConstants.TROLL_SPEED
 
     state: TrollState
+
+    stats: TrollStats
 
     constructor() {
         o_.register.troll(this)
@@ -55,22 +71,32 @@ export class Troll {
 
         this.zzz = new Zzz(0, 0);
 
-        this.onNewLevel();
-
         eventBus.on(Evt.TIME_PASSED, () => this.increaseHunger());
 
         o_.time.sub(dt => this.update(dt))
 
         this.state = this.getState(TrollStateKey.IDLE)
         this.state.onStart();
+
+        this.stats = new TrollStats(this)
+        this.hp = gameConstants.TROLL_LEVELING[this.level].maxHp
+        this.onNewLevel(false);
     }
 
     get x() { return this.sprite.x }
     get y() { return this.sprite.y }
 
-    onNewLevel() {
-        this.hp = gameConstants.MAX_TROLL_HP[this.level]
-        this.armor = gameConstants.TROLL_ARMOR[this.level]
+    onNewLevel(animated = true) {
+        this.xp = 0
+        this.maxHp = gameConstants.TROLL_LEVELING[this.level].maxHp
+        this.armor = gameConstants.TROLL_LEVELING[this.level].armor
+        this.dmg = gameConstants.TROLL_LEVELING[this.level].dmg
+
+        this.stats.update(animated)
+    }
+
+    getNextLvlReqs() {
+        return gameConstants.TROLL_LEVELING[this.level+1].xp
     }
 
     getIsAlive() {
@@ -78,14 +104,11 @@ export class Troll {
     }
 
     increaseHunger(val: number = gameConstants.HUNGER_PER_TIME) {
-        const newHunger = this.hunger + val;
-        if (newHunger > gameConstants.MAX_HUNGER) {
-            // this.changeTrollHp(-gameConstants.HP_MINUS_WHEN_HUNGRY, 'hunger')
+        if (this.hunger === gameConstants.TROLL_MAX_HUNGER) {
+            this.changeTrollHp(-gameConstants.HP_MINUS_WHEN_HUNGRY, 'hunger')
         }
 
-        this.hunger = Math.min(newHunger, gameConstants.MAX_HUNGER);
-
-        eventBus.emit(Evt.TROLL_STATS_CHANGED);
+        this.changeHunger(val)
     }
 
     eat(food: FoodType, isStale: boolean = false, isHuman: boolean = false) {
@@ -96,10 +119,15 @@ export class Troll {
             ? gameConstants.HP_FROM_STALE_FOOD[food]
             : gameConstants.HP_FROM_FOOD[food]
 
-        this.hunger = Math.max(this.hunger - minusHunger, 0);
+        this.changeHunger(-minusHunger)
         this.changeTrollHp(hpChange)
         o_.audio.playSound(SOUND_KEY.CHEW)
         eventBus.emit(Evt.TROLL_STATS_CHANGED)
+    }
+
+    changeHunger(val: number) {
+        this.hunger = clamp(this.hunger + val, 0, 10)
+        this.stats.update()
     }
 
     changeTrollHp(val: number, cause = 'hunger') {
@@ -113,12 +141,14 @@ export class Troll {
         );
 
         const newVal = this.hp + val;
-        this.hp = Math.max(Math.min(newVal, gameConstants.MAX_TROLL_HP[this.level]), 0);
+        this.hp = Math.max(Math.min(newVal, this.maxHp), 0);
         eventBus.emit(Evt.TROLL_STATS_CHANGED);
         if (this.hp === 0) {
             o_.game.gameOver(cause);
             this.setAnimation(CharAnimation.DEAD)
         }
+
+        this.stats.update()
     }
 
     setAnimation(key: CharAnimation, onComplete?: () => void) {
@@ -166,7 +196,7 @@ export class Troll {
     }
 
     getHit(dmg: number) {
-        if (dmg > this.armor + rndBetween(1, 5)) {
+        if (dmg > this.armor + rndBetween(1, 2)) {
             o_.render.burstBlood(
                 this.sprite.x,
                 this.sprite.y - this.sprite.height / 2
@@ -201,7 +231,7 @@ export class Troll {
     }
 
     rollDmg() {
-        return gameConstants.TROLL_DMG[this.level] + rndBetween(1, 5)
+        return this.dmg + rndBetween(1, 5)
     }
 
     stop() {
@@ -212,7 +242,15 @@ export class Troll {
         this.state.update(dt)
     }
 
-    goTo(intention: TrollIntention) {
+    addXp(val: number) {
+        this.xp = Math.min(this.getNextLvlReqs(), this.xp + val)
 
+        const isNewLevel = this.xp === this.getNextLvlReqs();
+        this.stats.updateXp(true, isNewLevel).then(() => {
+            if (isNewLevel) {
+                this.level++
+                this.onNewLevel()
+            }
+        })
     }
 }
