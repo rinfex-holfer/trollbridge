@@ -17,6 +17,7 @@ import {LayerKey} from "../../core/layers";
 import {Zzz} from "../../../entities/zzz";
 import {O_Text} from "../../core/render/text";
 import {TrollStats} from "../../../interface/troll-stats";
+import {pause} from "../../../utils/utils-async";
 
 let troll: Troll
 
@@ -112,37 +113,59 @@ export class Troll {
     }
 
     eat(food: FoodType, isStale: boolean = false, isHuman: boolean = false) {
-        const minusHunger = isStale
-            ? gameConstants.HUNGER_REDUCTION_FROM_STALE_FOOD[food]
-            : gameConstants.HUNGER_REDUCTION_FROM_FOOD[food]
-        const hpChange = isStale
-            ? gameConstants.HP_FROM_STALE_FOOD[food]
-            : gameConstants.HP_FROM_FOOD[food]
+        let foodKey = isHuman ? 'HUMAN' : 'ANIMAL';
+        if (isStale) foodKey += '_STALE'
 
-        this.changeHunger(-minusHunger)
+        // @ts-ignore
+        const hpChange = gameConstants.FOOD[food][foodKey].hp
+        // @ts-ignore
+        const hungerChange = gameConstants.FOOD[food][foodKey].hunger
+        // @ts-ignore
+        const selfControlChange = gameConstants.FOOD[food][foodKey].selfControl
+
         this.changeTrollHp(hpChange)
+        pause(1000)
+            .then(() => this.changeHunger(hungerChange))
+            .then(() => pause(1000))
+            .then(() => this.changeSelfControl(selfControlChange))
+
         o_.audio.playSound(SOUND_KEY.CHEW)
         eventBus.emit(Evt.TROLL_STATS_CHANGED)
     }
 
     changeHunger(val: number) {
-        this.hunger = clamp(this.hunger + val, 0, 10)
+        this.statChangeNotification('Голод', val, true)
+
+        this.hunger = clamp(this.hunger + val, 0, this.maxHunger)
         this.stats.update()
     }
 
-    changeTrollHp(val: number, cause = 'hunger') {
-        const sign = val < 0 ? '-' : '+'
-        const color = val < 0 ? colorsCSS.RED : colorsCSS.GREEN
+    statChangeNotification(statStr: string, val: number, inverted?: boolean) {
+        if (val === 0) return
+
+        const sign = val < 0 ? '' : '+'
+        const color = ((val < 0 && !inverted) || (val > 0 && inverted)) ? colorsCSS.RED : colorsCSS.GREEN
         flyingStatusChange(
-            sign+val + ' hp',
+            sign + val + ' ' + statStr,
             this.sprite.x,
             this.sprite.y - this.sprite.height,
             color
         );
+    }
+
+    changeSelfControl(val: number) {
+        this.statChangeNotification('самоконтроль', val)
+
+        this.selfControl = clamp(this.selfControl + val, 0, this.maxSelfControl)
+        this.stats.update()
+    }
+
+    changeTrollHp(val: number, cause = 'hunger') {
+        this.statChangeNotification('HP', val)
 
         const newVal = this.hp + val;
         this.hp = Math.max(Math.min(newVal, this.maxHp), 0);
-        eventBus.emit(Evt.TROLL_STATS_CHANGED);
+
         if (this.hp === 0) {
             o_.game.gameOver(cause);
             this.setAnimation(CharAnimation.DEAD)
@@ -191,7 +214,7 @@ export class Troll {
     goSleep() { this.setState(TrollStateKey.SLEEP) }
 
     devour(id: string) {
-        this.eat(FoodType.NORMAL, false, true);
+        this.eat(FoodType.MEAT, false, true);
         o_.characters.charEaten(id);
     }
 

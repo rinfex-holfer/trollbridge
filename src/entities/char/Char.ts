@@ -371,7 +371,7 @@ export class Char {
     }
 
     rollDmg() {
-        return this.dmg + rndBetween(1, 5);
+        return this.dmg + rndBetween(0, Math.ceil(this.dmg * 0.33));
     }
 
     changeMp(val: number) {

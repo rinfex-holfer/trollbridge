@@ -1,10 +1,6 @@
 
-export const enum MiscFood {
-    DISH = 'DISH'
-}
-
 export const enum FoodType {
-    NORMAL = 'NORMAL',
+    MEAT = 'MEAT',
     DISH = 'DISH',
 }
 

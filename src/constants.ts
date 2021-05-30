@@ -57,21 +57,51 @@ export const gameConstants = {
 
     FOOD_FOR_DISH: 3,
 
-    HP_FROM_FOOD: {
-        [FoodType.DISH]: 6,
-        [FoodType.NORMAL]: 2,
-    },
-    HP_FROM_STALE_FOOD: {
-        [FoodType.DISH]: 3,
-        [FoodType.NORMAL]: 1,
-    },
-    HUNGER_REDUCTION_FROM_FOOD: {
-        [FoodType.DISH]: 10,
-        [FoodType.NORMAL]: 3,
-    },
-    HUNGER_REDUCTION_FROM_STALE_FOOD: {
-        [FoodType.DISH]: 6,
-        [FoodType.NORMAL]: 2,
+    FOOD: {
+        [FoodType.MEAT]: {
+            ANIMAL: {
+                hp: 2,
+                hunger: -3,
+                selfControl: -1
+            },
+            ANIMAL_STALE: {
+                hp: 1,
+                hunger: -3,
+                selfControl: -2
+            },
+            HUMAN: {
+                hp: 4,
+                hunger: -4,
+                selfControl: -5
+            },
+            HUMAN_STALE: {
+                hp: 3,
+                hunger: -4,
+                selfControl: -10
+            }
+        },
+        [FoodType.DISH]: {
+            ANIMAL: {
+                hp: 6,
+                hunger: -10,
+                selfControl: 0
+            },
+            ANIMAL_STALE: {
+                hp: 3,
+                hunger: -8,
+                selfControl: -1
+            },
+            HUMAN: {
+                hp: 10,
+                hunger: -10,
+                selfControl: -10
+            },
+            HUMAN_STALE: {
+                hp: 2,
+                hunger: -2,
+                selfControl: -15
+            }
+        },
     },
 
     //  ======================== GOLD ========================

@@ -99,7 +99,7 @@ export class Meat extends GameEntity<EntityType.MEAT> {
     }
 
     eat() {
-        o_.troll.eat(FoodType.NORMAL, this.isStale, this.isHuman)
+        o_.troll.eat(FoodType.MEAT, this.isStale, this.isHuman)
         o_.lair.foodStorage.updateFood();
         this.destroy()
     }
