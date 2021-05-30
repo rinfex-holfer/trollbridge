@@ -3,9 +3,9 @@ import {o_} from "./managers/locator";
 import {TrollLocation} from "./types";
 
 export function onEncounterStart() {
-    o_.bridge.disableInterface()
-    o_.lair.mayButtonsBeClicked(false)
-    o_.lair.mayBeMovedInto(false)
+    console.log('onEncounterStart')
+    o_.interaction.disableEverything()
+
     o_.characters.setPrisonersInteractive(false)
     o_.characters.travellersGoToTalk();
 
@@ -13,10 +13,8 @@ export function onEncounterStart() {
 }
 
 export function onEncounterEnd() {
-    if (o_.troll.location !== TrollLocation.BRIDGE) o_.bridge.enableInterface()
-
-    o_.lair.mayButtonsBeClicked(true)
-    if (o_.troll.location !== TrollLocation.LAIR) o_.lair.mayBeMovedInto(true)
+    console.log('onEncounterEnd')
+    o_.interaction.enableEverything()
 
     o_.characters.setPrisonersInteractive(true)
 

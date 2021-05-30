@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import {DateTime} from "./interface/date-time";
 import {GameOver} from "./interface/game-over";
 import {newGame} from "./game";
 import translations from "./translations";

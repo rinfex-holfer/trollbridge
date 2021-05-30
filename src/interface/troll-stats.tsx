@@ -96,7 +96,7 @@ export class TrollStats {
         this.selfControl.setValue(this.troll.selfControl, animated)
     }
 
-    public updateXp(animated = true, announceNewLevel: boolean = false): Promise<any> {
+    public updateXp(animated = true, newLevel?: number): Promise<any> {
         const nextLevelXp = this.troll.getNextLvlReqs()
         if (this.xpBar.maxValue === nextLevelXp && this.xpBar.value === this.troll.xp) {
             console.log('old values', this.xpBar.value, this.troll.xp, this.troll.level)
@@ -111,23 +111,30 @@ export class TrollStats {
 
         const {promise, done} = createPromiseAndHandlers()
 
-        if (announceNewLevel) this.xpBar.setLabel('Переход на уровень ' + this.troll.level + '!')
-
         o_.render.fadeIn(this.xpContainer)
             .then(() => {
                 console.log('fadeIn after')
                 this.xpBar.setMaxValue(nextLevelXp)
                 this.xpBar.setValue(this.troll.xp, animated)
+                if (newLevel) {
+                    this.xpBar.setLabel('Уровень ' + newLevel)
+                    o_.render.burstYellow(this.xpContainer.x - WIDTH / 2, this.xpContainer.y)
+                    o_.render.burstYellow(this.xpContainer.x + WIDTH / 2, this.xpContainer.y)
+                    pause(300).then(() => {
+                        o_.render.burstYellow(this.xpContainer.x - WIDTH / 2, this.xpContainer.y)
+                        o_.render.burstYellow(this.xpContainer.x + WIDTH / 2, this.xpContainer.y)
+                    })
+                    pause(600).then(() => {
+                        o_.render.burstYellow(this.xpContainer.x - WIDTH / 2, this.xpContainer.y)
+                        o_.render.burstYellow(this.xpContainer.x + WIDTH / 2, this.xpContainer.y)
+                    })
+                }
                 return pause(2000)
             }).then(() => {
                 console.log('fadeOut')
                 return o_.render.fadeOut(this.xpContainer)
         })
-            .then(() => {
-                console.log('fadeOut after')
-                this.xpBar.setLabel('Уровень ' + this.troll.level)
-                done()
-            })
+            .then(done)
 
         return promise
     }

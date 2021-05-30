@@ -93,12 +93,12 @@ const create = (scene: Phaser.Scene) => {
         timeManager.onUpdate(delta);
     }
 
-    o_.interaction.onLeftClick((pointer) => {
-        o_.troll.addXp(5)
+    // o_.interaction.onLeftClick((pointer) => {
+    //     o_.troll.addXp(5)
         // const coord = {x: pointer.x, y: pointer.y}
         // const gold = new Gold(coord, rndBetween(1, 100))
         // gold.throwTo({x: coord.x + rndBetween(-80, 80), y: coord.y + rndBetween(-80, 80)})
-    })
+    // })
 }
 
 export const newGame = () => new Phaser.Game(config)

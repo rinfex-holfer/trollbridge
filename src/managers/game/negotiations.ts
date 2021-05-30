@@ -33,6 +33,7 @@ const BUTTON_MARGIN = 30;
 const getButtonsRowWidth = (amount: number) => amount * BUTTON_WIDTH + (amount - 1) * BUTTON_MARGIN;
 
 export class Negotiations {
+    isNegotiationInProgress = false
     currentStateKey = NegotiationsState.END;
     encounterState: any
     danger: EncounterDanger = EncounterDanger.NONE;
@@ -48,17 +49,22 @@ export class Negotiations {
 
         const bridgePos = positioner.bridgePosition()
         this.container = o_.render.createContainer(bridgePos.x + bridgePos.width / 2, bridgePos.y  + bridgePos.height - 64)
+        o_.layers.add(this.container, LayerKey.FIELD_BUTTONS)
         o_.register.negotiations(this)
-        // this.container.zIndex = zLayers.CHAR_MENU;
     }
 
     public getIsNegotiationsInProgress() {
-        return this.currentStateKey !== NegotiationsState.END
+        return this.isNegotiationInProgress
+    }
+
+    onEncounterStart() {
+        this.isNegotiationInProgress = true
+        onEncounterStart()
     }
 
     onTravellersAppear() {
         if (o_.troll.location === TrollLocation.BRIDGE) {
-            onEncounterStart()
+            this.onEncounterStart()
         }
     }
 
@@ -67,19 +73,20 @@ export class Negotiations {
             location === TrollLocation.BRIDGE &&
             o_.characters.getNewTravellers().length
         ) {
-            onEncounterStart()
+            this.onEncounterStart()
         }
     }
 
     onEncounterEnd() {
-        this.buttons.forEach(b => b.destroy());
-        this.buttons = [];
-        this.encounterState = null;
-        this.danger = EncounterDanger.NONE;
+        this.isNegotiationInProgress = false
+        this.buttons.forEach(b => b.destroy())
+        this.buttons = []
+        this.encounterState = null
+        this.danger = EncounterDanger.NONE
 
-        o_.characters.letAllTravellersPass();
+        o_.characters.letAllTravellersPass()
 
-        onEncounterEnd();
+        onEncounterEnd()
     }
 
     onTravellerReadyToTalk(id: string) {
@@ -109,6 +116,7 @@ export class Negotiations {
                 o_.characters.makeAllTravellersPay();
                 break;
             case NegotiationsState.BATTLE:
+                this.isNegotiationInProgress = false
                 o_.battle.startBattle()
                 break;
             case NegotiationsState.END:
@@ -147,6 +155,7 @@ export class Negotiations {
 
             return b;
         })
+        console.log(this.buttons)
     }
 
     getDialogVariants(): NegotiationsMessage[] {

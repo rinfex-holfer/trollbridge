@@ -246,10 +246,11 @@ export class Troll {
         this.xp = Math.min(this.getNextLvlReqs(), this.xp + val)
 
         const isNewLevel = this.xp === this.getNextLvlReqs();
-        this.stats.updateXp(true, isNewLevel).then(() => {
+        this.stats.updateXp(true, isNewLevel ? this.level+1 : undefined).then(() => {
             if (isNewLevel) {
                 this.level++
                 this.onNewLevel()
+                this.stats.updateXp(false)
             }
         })
     }

@@ -22,13 +22,25 @@ export const gameConstants = {
             maxHp: 10,
             armor: 1,
             dmg: 1,
-            xp: 10,
+            xp: 20,
         },
         3: {
             maxHp: 12,
             armor: 2,
             dmg: 2,
-            xp: 20,
+            xp: 30,
+        },
+        4: {
+            maxHp: 15,
+            armor: 2,
+            dmg: 2,
+            xp: 40,
+        },
+        5: {
+            maxHp: 20,
+            armor: 3,
+            dmg: 3,
+            xp: 50,
         },
     } as {[key: number]: LevelReqs},
 

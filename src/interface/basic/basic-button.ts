@@ -38,7 +38,6 @@ export class BasicButton {
                 hitAreaCallback: Phaser.Geom.Rectangle.Contains
             }
         )
-        o_.layers.add(this.container, LayerKey.FIELD_BUTTONS)
 
         this.container.onClick(() => this.onClick())
     }

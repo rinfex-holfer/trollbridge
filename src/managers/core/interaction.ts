@@ -40,9 +40,11 @@ export class InteractionManager {
         o_.upgrade.setEnabled(false)
 
         o_.entities.getAll().forEach(o => o.setInteractive(false))
+        console.log('disableEverything')
     }
 
     enableEverything() {
+        console.log('enableEverything')
         o_.lair.mayButtonsBeClicked(o_.troll.location === TrollLocation.LAIR)
         o_.lair.mayBeMovedInto(o_.troll.location !== TrollLocation.LAIR)
         if (o_.troll.location === TrollLocation.BRIDGE) {
