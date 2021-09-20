@@ -84,7 +84,7 @@ export class Treasury {
     }
 
     onGoldChanged() {
-        this.amount = this.gold.reduce((acc, g) => acc + g.amount, 0)
+        this.amount = this.gold.reduce((acc, g) => acc + g.props.amount, 0)
         this.text.setText('Золото: ' + this.amount)
     }
 
@@ -103,9 +103,9 @@ export class Treasury {
         flyingStatusChange('+ ' + amount + ' gold', this.sprite.x, this.sprite.y - 20, colorsCSS.YELLOW)
 
         const goldEntity = this.gold[this.gold.length - 1];
-        if (goldEntity && goldEntity.amount < gameConstants.MAX_GOLD_IN_SPRITE) {
-            const addAmount = Math.min(amount, gameConstants.MAX_GOLD_IN_SPRITE - goldEntity.amount)
-            goldEntity.setAmount(goldEntity.amount + addAmount)
+        if (goldEntity && goldEntity.props.amount < gameConstants.MAX_GOLD_IN_SPRITE) {
+            const addAmount = Math.min(amount, gameConstants.MAX_GOLD_IN_SPRITE - goldEntity.props.amount)
+            goldEntity.setAmount(goldEntity.props.amount + addAmount)
             amount -= addAmount;
         }
 
@@ -127,12 +127,12 @@ export class Treasury {
             }
 
             const goldEntity = this.gold[this.gold.length - 1];
-            const removeAmount = Math.min(amount, goldEntity.amount)
-            if (removeAmount === goldEntity.amount) {
+            const removeAmount = Math.min(amount, goldEntity.props.amount)
+            if (removeAmount === goldEntity.props.amount) {
                 goldEntity.destroy()
                 this.gold.pop()
             } else {
-                goldEntity.setAmount(goldEntity.amount - removeAmount)
+                goldEntity.setAmount(goldEntity.props.amount - removeAmount)
             }
             amount -= removeAmount
         }

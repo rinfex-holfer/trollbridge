@@ -4,7 +4,7 @@ import {o_} from "../managers/locator";
 import {colorsNum, gameConstants} from "../constants";
 import {Evt, subscriptions} from "../event-bus";
 import {positioner} from "../managers/game/positioner";
-import {EntityType, GameEntity} from "../managers/core/entities";
+import {EntityType, GameEntityBase} from "../managers/core/entities";
 import {Pot} from "./buildings/pot";
 import {LayerKey} from "../managers/core/layers";
 import {SOUND_KEY} from "../managers/core/audio";
@@ -25,15 +25,13 @@ export const meatSprite = {
     HUMAN_LEG: 'meat_human_leg' as ImageKey,
 }
 
-export class Meat extends GameEntity<EntityType.MEAT> {
+export class Meat extends GameEntityBase<EntityType.MEAT> {
     type: EntityType.MEAT = EntityType.MEAT
     id: string
 
     sprite: O_Sprite
     location: MeatLocation
     destroyed = false
-    isStale = false
-    isHuman = false
 
     timePassed = 0
 
@@ -48,12 +46,17 @@ export class Meat extends GameEntity<EntityType.MEAT> {
 
     rottenGas: ParticleEmitter
 
+    props = {
+        isHuman: false,
+        isStale: false,
+    }
+
     constructor(pos: Vec, location: MeatLocation = MeatLocation.GROUND, isHuman = false, key: ImageKey = meatSprite.ANIMAL) {
         super()
         this.id = this.register()
 
         this.location = location;
-        this.isHuman = isHuman
+        this.props.isHuman = isHuman
 
         this.sprite = o_.render.createSprite(key, pos.x, pos.y)
         this.sprite.setOrigin(0.5, 0.5)
@@ -99,7 +102,7 @@ export class Meat extends GameEntity<EntityType.MEAT> {
     }
 
     eat() {
-        o_.troll.eat(FoodType.MEAT, this.isStale, this.isHuman)
+        o_.troll.eat(FoodType.MEAT, this.props.isStale, this.props.isHuman)
         o_.lair.foodStorage.updateFood();
         this.destroy()
     }
@@ -119,7 +122,7 @@ export class Meat extends GameEntity<EntityType.MEAT> {
     }
 
     private becomeRotten() {
-        this.isStale = true
+        this.props.isStale = true
         this.timePassed = 0
         this.updateEmitters()
         this.rottenGas.active = true
@@ -143,9 +146,9 @@ export class Meat extends GameEntity<EntityType.MEAT> {
             if (rnd() > 0.9) return this.destroy()
         }
 
-        if (!this.isStale && this.timePassed > gameConstants.RAW_MEAT_TIME_LIMIT) {
+        if (!this.props.isStale && this.timePassed > gameConstants.RAW_MEAT_TIME_LIMIT) {
             this.becomeRotten()
-        } else if (this.isStale && this.timePassed > gameConstants.STALE_MEAT_TIME_LIMIT) {
+        } else if (this.props.isStale && this.timePassed > gameConstants.STALE_MEAT_TIME_LIMIT) {
             this.destroy()
         }
     }

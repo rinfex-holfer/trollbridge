@@ -88,3 +88,28 @@ export type LevelReqs = {
     dmg: number,
     xp: number,
 }
+
+type Entity1Props = {
+    entity1prop1: boolean
+}
+
+interface InterfaceMap {
+    entity1: Entity1Props
+}
+
+interface AbstractInterface<T extends keyof InterfaceMap> {
+    type: T,
+    props: InterfaceMap[T]
+}
+
+class Entity1Class implements AbstractInterface<'entity1'> {
+    type: 'entity1' = "entity1"
+
+    props: Entity1Props = {
+        entity1prop1: false
+    }
+
+    myFn() {
+        // ..
+    }
+}

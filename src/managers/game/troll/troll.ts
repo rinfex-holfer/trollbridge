@@ -26,21 +26,15 @@ export class Troll {
     location: TrollLocation = TrollLocation.LAIR
 
     armor = 0
-    level = 1
-
+    level = 0
     dmg = 1
     hp = 1
     maxHp = 1
-
     hunger = 0
     maxHunger = gameConstants.TROLL_MAX_HUNGER
-
     selfControl = gameConstants.TROLL_MAX_SELF_CONTROL
     maxSelfControl = gameConstants.TROLL_MAX_SELF_CONTROL
-
     xp = 0
-    // might = 0
-    // wealth = 0
 
     sprite: O_AnimatedSprite
     zzz: Zzz
@@ -50,6 +44,8 @@ export class Troll {
     state: TrollState
 
     stats: TrollStats
+
+    notificationTimer: null | number = null
 
     constructor() {
         o_.register.troll(this)
@@ -122,12 +118,13 @@ export class Troll {
         const hungerChange = gameConstants.FOOD[food][foodKey].hunger
         // @ts-ignore
         const selfControlChange = gameConstants.FOOD[food][foodKey].selfControl
+        // @ts-ignore
+        const xpChange = gameConstants.FOOD[food][foodKey].xp
 
         this.changeTrollHp(hpChange)
-        pause(1000)
-            .then(() => this.changeHunger(hungerChange))
-            .then(() => pause(1000))
-            .then(() => this.changeSelfControl(selfControlChange))
+        this.changeHunger(hungerChange)
+        this.changeSelfControl(selfControlChange)
+        this.addXp(xpChange)
 
         o_.audio.playSound(SOUND_KEY.CHEW)
         eventBus.emit(Evt.TROLL_STATS_CHANGED)
@@ -145,12 +142,32 @@ export class Troll {
 
         const sign = val < 0 ? '' : '+'
         const color = ((val < 0 && !inverted) || (val > 0 && inverted)) ? colorsCSS.RED : colorsCSS.GREEN
-        flyingStatusChange(
-            sign + val + ' ' + statStr,
-            this.sprite.x,
-            this.sprite.y - this.sprite.height,
-            color
-        );
+
+        const text = sign + val + ' ' + statStr;
+
+        const x = this.sprite.x
+        const y = this.sprite.y - this.sprite.height
+        this.notificationsQueue.push([text, x, y, color])
+
+        if (this.notificationTimer === null) {
+            this.showNextNotification()
+        }
+    }
+
+    notificationsQueue: [text: string, x: number, y: number, color: string][] = []
+
+    showNextNotification() {
+        const nextNotification = this.notificationsQueue.shift()
+        if (nextNotification) {
+            flyingStatusChange(nextNotification[0], nextNotification[1], nextNotification[2], nextNotification[3])
+
+            this.notificationTimer = window.setTimeout(() => {
+                this.showNextNotification()
+            }, 700)
+        }
+        else {
+            this.notificationTimer = null
+        }
     }
 
     changeSelfControl(val: number) {
@@ -268,13 +285,14 @@ export class Troll {
     addXp(val: number) {
         this.xp = Math.min(this.getNextLvlReqs(), this.xp + val)
 
-        const isNewLevel = this.xp === this.getNextLvlReqs();
-        this.stats.updateXp(true, isNewLevel ? this.level+1 : undefined).then(() => {
-            if (isNewLevel) {
-                this.level++
-                this.onNewLevel()
-                this.stats.updateXp(false)
-            }
-        })
+        const nextLevelXp = this.getNextLvlReqs()
+        const isNewLevel = this.xp === nextLevelXp
+
+        this.stats.updateXp(true, this.xp, nextLevelXp, this.level)
+
+        if (isNewLevel) {
+            this.level++
+            this.onNewLevel()
+        }
     }
 }

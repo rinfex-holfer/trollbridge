@@ -1,4 +1,4 @@
-import {EntityType, GameEntity} from "../managers/core/entities";
+import {EntityType, GameEntityBase} from "../managers/core/entities";
 import {O_Sprite} from "../managers/core/render/sprite";
 import {Vec} from "../utils/utils-math";
 import {o_} from "../managers/locator";
@@ -13,7 +13,7 @@ export const enum GoldLocation {
     TREASURY = 'TREASURY',
 }
 
-export class Gold extends GameEntity<EntityType.GOLD> {
+export class Gold extends GameEntityBase<EntityType.GOLD> {
     type: EntityType.GOLD = EntityType.GOLD
     id: string
 
@@ -22,13 +22,15 @@ export class Gold extends GameEntity<EntityType.GOLD> {
 
     subs = subscriptions()
 
-    amount: number
+    props = {
+        amount: 0
+    }
 
     constructor(pos: Vec, amount: number, location: GoldLocation = GoldLocation.GROUND) {
         super()
         this.id = this.register()
 
-        this.amount = amount
+        this.props.amount = amount
         this.location = location
 
         this.sprite = o_.render.createSprite(this.getSpriteKey(), pos.x, pos.y)
@@ -53,11 +55,11 @@ export class Gold extends GameEntity<EntityType.GOLD> {
                 o_.audio.playSound(SOUND_KEY.PICK_THIN)
                 this.sprite.setInteractive(false)
                 const lastGoldItem = o_.lair.treasury.gold[o_.lair.treasury.gold.length - 1]
-                const coord = (lastGoldItem && lastGoldItem.amount < gameConstants.MAX_GOLD_IN_SPRITE)
+                const coord = (lastGoldItem && lastGoldItem.props.amount < gameConstants.MAX_GOLD_IN_SPRITE)
                     ? lastGoldItem.sprite
                     : o_.lair.treasury.getNextPosition()
                 o_.render.flyTo(this.sprite, coord, 500, 300).then(() => {
-                    o_.lair.treasury.addGold(this.amount)
+                    o_.lair.treasury.addGold(this.props.amount)
                     this.destroy()
                 })
                 break;
@@ -71,7 +73,7 @@ export class Gold extends GameEntity<EntityType.GOLD> {
     }
 
     private updateLayer() {
-        if (this.amount < 20) {
+        if (this.props.amount < 20) {
             // o_.layers.add(this.sprite, LayerKey.BACKGROUND)
             o_.layers.add(this.sprite, LayerKey.FIELD_OBJECTS)
         } else {
@@ -80,24 +82,24 @@ export class Gold extends GameEntity<EntityType.GOLD> {
     }
 
     private getSpriteKey(): keyof typeof resoursePaths.images {
-        if (this.amount === 1) {
+        if (this.props.amount === 1) {
             return 'gold-1'
-        } else if (this.amount === 2) {
+        } else if (this.props.amount === 2) {
             return 'gold-2'
-        } else if (this.amount === 3) {
+        } else if (this.props.amount === 3) {
             return 'gold-3'
-        } else if (this.amount < 10) {
+        } else if (this.props.amount < 10) {
             return 'gold-4-9'
-        } else if (this.amount < 20) {
+        } else if (this.props.amount < 20) {
             return 'gold-some'
-        } else if (this.amount < 50) {
+        } else if (this.props.amount < 50) {
             return 'gold-many'
-        } else  if (this.amount < gameConstants.MAX_GOLD_IN_SPRITE) {
+        } else  if (this.props.amount < gameConstants.MAX_GOLD_IN_SPRITE) {
             return 'gold-almost'
-        } else if (this.amount === gameConstants.MAX_GOLD_IN_SPRITE) {
+        } else if (this.props.amount === gameConstants.MAX_GOLD_IN_SPRITE) {
             return 'gold-chest'
         } else {
-            throw Error('wrong amount of gold ' + this.amount)
+            throw Error('wrong amount of gold ' + this.props.amount)
         }
     }
 
@@ -112,7 +114,7 @@ export class Gold extends GameEntity<EntityType.GOLD> {
     }
 
     public setAmount(amount: number) {
-        this.amount = amount
+        this.props.amount = amount
         this.updateSprite()
         this.updateLayer()
     }

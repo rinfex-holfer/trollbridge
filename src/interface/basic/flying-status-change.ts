@@ -17,8 +17,8 @@ export function flyingStatusChange(text: string, x: number, y: number, color?: s
     o_.layers.add(status, LayerKey.FIELD_BUTTONS);
 
     const timeline = o_.render.scene.tweens.createTimeline();
-    timeline.add({targets: status.obj, ease: 'Power2', y: y - 150, duration: 4000})
-    timeline.add({targets: status.obj, ease: 'Power2', alpha: 0, duration: 1000, offset: 3000})
+    timeline.add({targets: status.obj, ease: 'Linear', y: y - 150, duration: 3000})
+    timeline.add({targets: status.obj, ease: 'Linear', alpha: 0, duration: 1000, offset: 2000})
 
     timeline.play();
 }

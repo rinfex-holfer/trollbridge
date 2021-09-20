@@ -1,11 +1,9 @@
-import {O_Text} from "../managers/core/render/text";
 import {O_Container} from "../managers/core/render/container";
 import {o_} from "../managers/locator";
 import {Troll} from "../managers/game/troll/troll";
 import {ProgressBar} from "./basic/progress-bar";
 import {colorsNum} from "../constants";
-import {getGameSize} from "../utils/utils-misc";
-import {createPromiseAndHandlers, pause} from "../utils/utils-async";
+import {XpMeter} from "./xp-meter";
 
 const X = 50
 const Y = 30
@@ -20,9 +18,7 @@ export class TrollStats {
     private hpBar: ProgressBar
     private selfControl: ProgressBar
 
-    private xpContainer: O_Container
-
-    private xpBar: ProgressBar
+    private xpMeter: XpMeter
     // private mightBar: ProgressBar
     // private wealthBar: ProgressBar
 
@@ -67,23 +63,9 @@ export class TrollStats {
             parent: this.container
         })
 
-        const gameSize = getGameSize()
-        this.xpContainer = o_.render.createContainer(gameSize.width / 2, Y + MARGIN * 4)
-        this.xpBar = new ProgressBar({
-            x: -WIDTH * 0.75,
-            y: 0,
-            maxValue: troll.xp,
-            value: troll.xp,
-            width: WIDTH * 1.5,
-            height: HEIGHT * 2,
-            colorOptions: [[0, colorsNum.WHITE], [0.75, colorsNum.GREEN]],
-            text: 'Уровень: ' + troll.level,
-            parent: this.xpContainer,
-            withoutNumbers: true
-        })
-        this.xpContainer.alpha = 0
+        this.xpMeter = new XpMeter()
 
-        this.updateXp(false)
+        this.xpMeter.updateVal(troll.xp, troll.getNextLvlReqs(), troll.level)
     }
 
     public update(animated = true) {
@@ -96,46 +78,12 @@ export class TrollStats {
         this.selfControl.setValue(this.troll.selfControl, animated)
     }
 
-    public updateXp(animated = true, newLevel?: number): Promise<any> {
-        const nextLevelXp = this.troll.getNextLvlReqs()
-        if (this.xpBar.maxValue === nextLevelXp && this.xpBar.value === this.troll.xp) {
-            console.log('old values', this.xpBar.value, this.troll.xp, this.troll.level)
-            return Promise.resolve()
-        }
-
+    public updateXp(animated: boolean, xp: number, nextLevelXp: number, level: number) {
         if (!animated) {
-            this.xpBar.setMaxValue(nextLevelXp)
-            this.xpBar.setValue(this.troll.xp, false)
+            this.xpMeter.updateVal(xp, nextLevelXp, level)
             return Promise.resolve()
         }
 
-        const {promise, done} = createPromiseAndHandlers()
-
-        o_.render.fadeIn(this.xpContainer)
-            .then(() => {
-                console.log('fadeIn after')
-                this.xpBar.setMaxValue(nextLevelXp)
-                this.xpBar.setValue(this.troll.xp, animated)
-                if (newLevel) {
-                    this.xpBar.setLabel('Уровень ' + newLevel)
-                    o_.render.burstYellow(this.xpContainer.x - WIDTH / 2, this.xpContainer.y)
-                    o_.render.burstYellow(this.xpContainer.x + WIDTH / 2, this.xpContainer.y)
-                    pause(300).then(() => {
-                        o_.render.burstYellow(this.xpContainer.x - WIDTH / 2, this.xpContainer.y)
-                        o_.render.burstYellow(this.xpContainer.x + WIDTH / 2, this.xpContainer.y)
-                    })
-                    pause(600).then(() => {
-                        o_.render.burstYellow(this.xpContainer.x - WIDTH / 2, this.xpContainer.y)
-                        o_.render.burstYellow(this.xpContainer.x + WIDTH / 2, this.xpContainer.y)
-                    })
-                }
-                return pause(2000)
-            }).then(() => {
-                console.log('fadeOut')
-                return o_.render.fadeOut(this.xpContainer)
-        })
-            .then(done)
-
-        return promise
+        return this.xpMeter.addTransition([xp, nextLevelXp, level])
     }
 }

@@ -3,9 +3,28 @@ import {findAndSplice} from "../../utils/utils-misc";
 import {Meat} from "../../entities/meat";
 import {Gold} from "../../entities/gold";
 
-export abstract class GameEntity<T extends EntityType> {
+interface GameEntity<T extends EntityType> {
+    type: T,
+    id: string
+    register: () => string,
+    deregister: () => void,
+}
+
+interface GameEntityPropsMap {
+    [EntityType.MEAT]: {
+        isHuman: boolean,
+        isStale: boolean,
+    },
+    [EntityType.GOLD]: {
+        amount: number
+    }
+}
+
+export abstract class GameEntityBase<T extends EntityType> implements GameEntity<T> {
     abstract type: T
     abstract id: string
+
+    abstract props: GameEntityPropsMap[T]
 
     register(): string {
         // @ts-ignore

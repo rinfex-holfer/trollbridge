@@ -12,35 +12,35 @@ export const gameConstants = {
     HP_FROM_SLEEP: 2,
 
     TROLL_LEVELING: {
-        1: {
+        0: {
             maxHp: 7,
             armor: 0,
+            dmg: 1,
+            xp: 0,
+        },
+        1: {
+            maxHp: 10,
+            armor: 1,
             dmg: 1,
             xp: 10,
         },
         2: {
-            maxHp: 10,
-            armor: 1,
-            dmg: 1,
+            maxHp: 12,
+            armor: 2,
+            dmg: 2,
             xp: 20,
         },
         3: {
-            maxHp: 12,
+            maxHp: 15,
             armor: 2,
             dmg: 2,
             xp: 30,
         },
         4: {
-            maxHp: 15,
-            armor: 2,
-            dmg: 2,
-            xp: 40,
-        },
-        5: {
             maxHp: 20,
             armor: 3,
             dmg: 3,
-            xp: 50,
+            xp: 40,
         },
     } as {[key: number]: LevelReqs},
 
@@ -61,44 +61,52 @@ export const gameConstants = {
         [FoodType.MEAT]: {
             ANIMAL: {
                 hp: 2,
+                xp: 6,
                 hunger: -3,
-                selfControl: -1
+                selfControl: -1,
             },
             ANIMAL_STALE: {
                 hp: 1,
+                xp: 1,
                 hunger: -3,
-                selfControl: -2
+                selfControl: -2,
             },
             HUMAN: {
                 hp: 4,
+                xp: 4,
                 hunger: -4,
-                selfControl: -5
+                selfControl: -5,
             },
             HUMAN_STALE: {
-                hp: 3,
+                hp: 2,
+                xp: 1,
                 hunger: -4,
-                selfControl: -10
+                selfControl: -10,
             }
         },
         [FoodType.DISH]: {
             ANIMAL: {
                 hp: 6,
+                xp: 1,
                 hunger: -10,
                 selfControl: 0
             },
             ANIMAL_STALE: {
                 hp: 3,
+                xp: 1,
                 hunger: -8,
                 selfControl: -1
             },
             HUMAN: {
                 hp: 10,
-                hunger: -10,
+                xp: 1,
+                hunger: -12,
                 selfControl: -10
             },
             HUMAN_STALE: {
                 hp: 2,
-                hunger: -2,
+                xp: 1,
+                hunger: -10,
                 selfControl: -15
             }
         },

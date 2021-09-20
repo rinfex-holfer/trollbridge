@@ -223,8 +223,8 @@ export class Pot {
         o_.audio.playSound(SOUND_KEY.COLLECT)
 
         meat.forEach(m => {
-            if (m.isStale) this.becomeRotten()
-            if (m.isHuman) this.isDishHuman = true
+            if (m.props.isStale) this.becomeRotten()
+            if (m.props.isHuman) this.isDishHuman = true
             m.onLastAnimation()
             const flyTarget = {x: this.sprite.x, y: this.sprite.y - 30}
             promises.push(m.flyTo(flyTarget, 50, 500).then(() => m.destroy()))
