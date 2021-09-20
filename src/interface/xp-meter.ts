@@ -63,7 +63,6 @@ export class XpMeter {
     async setState(state: MeterState): Promise<any> {
         this.state = state
 
-        console.log('state', this.state)
         switch (state) {
             case MeterState.FADE_IN:
                 return this.fadeIn()
@@ -96,8 +95,6 @@ export class XpMeter {
 
 
         const [xp, nextLevelXp, level] = nextTransition;
-
-        console.log('change', xp, nextLevelXp, level)
 
         this.xpBar.setLabel('Следующий уровень: ' + +(level + 1))
         this.xpBar.setMaxValue(nextLevelXp)

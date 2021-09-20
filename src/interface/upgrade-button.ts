@@ -28,7 +28,7 @@ export class UpgradeButton {
 
     setVisible(val: boolean) {
         this.button.setVisible(val)
-        if (o_.lair.treasury.amount <= this.cost) {
+        if (o_.lair.treasury.amount < this.cost) {
             this.button.disable()
         } else {
             this.button.enable()
