@@ -7,21 +7,21 @@ export const encounterTemplates: {[dangerLevel: number]: EncounterTemplate[]} = 
             level: 0,
             enemies: [CharKey.FARMER],
         },
-        // {
-        //     text: 'Группа фермеров',
-        //     level: 1,
-        //     enemies: [CharKey.FARMER, CharKey.FARMER, CharKey.FARMER],
-        // },
-        // {
-        //     text: 'Толпа крестьян',
-        //     level: 1,
-        //     enemies: [CharKey.FARMER, CharKey.FARMER, CharKey.FARMER, CharKey.FARMER, CharKey.FARMER],
-        // },
-        // {
-        //     text: 'Патрульные ополченцы',
-        //     level: 1,
-        //     enemies: [CharKey.MILITIA, CharKey.MILITIA],
-        // },
+        {
+            text: 'Группа фермеров',
+            level: 1,
+            enemies: [CharKey.FARMER, CharKey.FARMER, CharKey.FARMER],
+        },
+        {
+            text: 'Толпа крестьян',
+            level: 1,
+            enemies: [CharKey.FARMER, CharKey.FARMER, CharKey.FARMER, CharKey.FARMER, CharKey.FARMER],
+        },
+        {
+            text: 'Патрульные ополченцы',
+            level: 1,
+            enemies: [CharKey.MILITIA, CharKey.MILITIA],
+        },
         // {
         //     text: 'Отряд ополчения',
         //     level: 2,

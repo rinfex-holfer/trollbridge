@@ -48,7 +48,7 @@ export const charTemplates = {
         dmg: 2,
         createResources: (): Resources => ({gold: 1, food: 1}),
         isCombatant: true,
-        atlasKey: 'militia',
+        atlasKey: 'pikeman',
     },
 
     [CharKey.SOLDIER]: {

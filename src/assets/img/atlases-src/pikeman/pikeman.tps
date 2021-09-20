@@ -26,13 +26,13 @@
             </struct>
         </array>
         <key>allowRotation</key>
-        <true/>
+        <false/>
         <key>shapeDebug</key>
         <false/>
         <key>dpi</key>
         <uint>72</uint>
         <key>dataFormat</key>
-        <string>pixijs4</string>
+        <string>phaser</string>
         <key>textureFileName</key>
         <filename></filename>
         <key>flipPVR</key>
@@ -102,7 +102,7 @@
         <key>algorithmSettings</key>
         <struct type="AlgorithmSettings">
             <key>algorithm</key>
-            <enum type="AlgorithmSettings::AlgorithmId">Basic</enum>
+            <enum type="AlgorithmSettings::AlgorithmId">MaxRects</enum>
             <key>freeSizeMode</key>
             <enum type="AlgorithmSettings::AlgorithmFreeSizeMode">Best</enum>
             <key>sizeConstraints</key>
@@ -129,10 +129,10 @@
         </struct>
         <key>dataFileNames</key>
         <map type="GFileNameMap">
-            <key>data</key>
+            <key>json</key>
             <struct type="DataFile">
                 <key>name</key>
-                <filename>../../atlases/pikeman.json</filename>
+                <filename></filename>
             </struct>
         </map>
         <key>multiPack</key>
@@ -163,13 +163,13 @@
             <key>scaleMode</key>
             <enum type="ScaleMode">Smooth</enum>
             <key>extrude</key>
-            <uint>0</uint>
+            <uint>1</uint>
             <key>trimThreshold</key>
             <uint>1</uint>
             <key>trimMargin</key>
             <uint>1</uint>
             <key>trimMode</key>
-            <enum type="SpriteSettings::TrimMode">CropKeepPos</enum>
+            <enum type="SpriteSettings::TrimMode">Trim</enum>
             <key>tracerTolerance</key>
             <int>200</int>
             <key>heuristicMask</key>
@@ -181,28 +181,28 @@
         </struct>
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
-            <key type="filename">block1.png</key>
-            <key type="filename">block2.png</key>
-            <key type="filename">damaged1.png</key>
-            <key type="filename">damaged2.png</key>
-            <key type="filename">dead1.png</key>
-            <key type="filename">dead2.png</key>
-            <key type="filename">devoured1.png</key>
-            <key type="filename">devoured2.png</key>
-            <key type="filename">fall1.png</key>
-            <key type="filename">fall2.png</key>
-            <key type="filename">idle1.png</key>
-            <key type="filename">idle2.png</key>
-            <key type="filename">scared1.png</key>
-            <key type="filename">scared2.png</key>
-            <key type="filename">strike1.png</key>
-            <key type="filename">strike2.png</key>
-            <key type="filename">unconscious1.png</key>
-            <key type="filename">walk1.png</key>
-            <key type="filename">walk2.png</key>
+            <key type="filename">pikeman_block_0.png</key>
+            <key type="filename">pikeman_block_1.png</key>
+            <key type="filename">pikeman_damaged_0.png</key>
+            <key type="filename">pikeman_damaged_1.png</key>
+            <key type="filename">pikeman_dead_0.png</key>
+            <key type="filename">pikeman_dead_1.png</key>
+            <key type="filename">pikeman_devoured_0.png</key>
+            <key type="filename">pikeman_devoured_1.png</key>
+            <key type="filename">pikeman_fall_0.png</key>
+            <key type="filename">pikeman_fall_1.png</key>
+            <key type="filename">pikeman_idle_0.png</key>
+            <key type="filename">pikeman_idle_1.png</key>
+            <key type="filename">pikeman_scared_0.png</key>
+            <key type="filename">pikeman_scared_1.png</key>
+            <key type="filename">pikeman_strike_0.png</key>
+            <key type="filename">pikeman_strike_1.png</key>
+            <key type="filename">pikeman_unconscious_0.png</key>
+            <key type="filename">pikeman_walk_0.png</key>
+            <key type="filename">pikeman_walk_1.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
+                <point_f>0,0</point_f>
                 <key>spriteScale</key>
                 <double>1</double>
                 <key>scale9Enabled</key>
@@ -214,10 +214,10 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
-            <key type="filename">devouring1.png</key>
+            <key type="filename">pikeman_devouring_0.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
+                <point_f>0,0</point_f>
                 <key>spriteScale</key>
                 <double>1</double>
                 <key>scale9Enabled</key>
@@ -229,11 +229,11 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
-            <key type="filename">prisoner1.png</key>
-            <key type="filename">prisoner2.png</key>
+            <key type="filename">pikeman_prisoner_0.png</key>
+            <key type="filename">pikeman_prisoner_1.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
-                <point_f>0.5,0.5</point_f>
+                <point_f>0,0</point_f>
                 <key>spriteScale</key>
                 <double>1</double>
                 <key>scale9Enabled</key>
