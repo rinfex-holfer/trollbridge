@@ -84,7 +84,7 @@ export class XpMeter {
     async fadeOut() {
         await o_.render.fadeOut(this.xpContainer)
 
-        if (this.transitionsQueue.length) return this.setState(MeterState.CHANGE)
+        if (this.transitionsQueue.length) return this.setState(MeterState.FADE_IN)
 
         return this.setState(MeterState.HIDDEN)
     }
@@ -112,14 +112,15 @@ export class XpMeter {
             this.xpBar.setLabel(`Уровень ${level + 1}!`)
             o_.render.burstYellow(this.xpContainer.x - WIDTH / 2, this.xpContainer.y)
             o_.render.burstYellow(this.xpContainer.x + WIDTH / 2, this.xpContainer.y)
-            await pause(600)
+            await pause(500)
             o_.render.burstYellow(this.xpContainer.x - WIDTH / 2, this.xpContainer.y)
             o_.render.burstYellow(this.xpContainer.x + WIDTH / 2, this.xpContainer.y)
-            await pause(600)
+            await pause(500)
             o_.render.burstYellow(this.xpContainer.x - WIDTH / 2, this.xpContainer.y)
             o_.render.burstYellow(this.xpContainer.x + WIDTH / 2, this.xpContainer.y)
-            await pause(600)
+            await pause(500)
             this.xpBar.setLabel('Следующий уровень: ' + +(level + 2))
+            await pause(500)
         }
 
         return this.setState(MeterState.CHANGE)
