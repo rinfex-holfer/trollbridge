@@ -132,7 +132,7 @@
             <key>json</key>
             <struct type="DataFile">
                 <key>name</key>
-                <filename></filename>
+                <filename>../../atlases/pikeman.json</filename>
             </struct>
         </map>
         <key>multiPack</key>

@@ -15,9 +15,8 @@ import {TrollStateGoTo} from "./troll-state-go-to";
 import {TrollStateSleep} from "./troll-state-sleep";
 import {LayerKey} from "../../core/layers";
 import {Zzz} from "../../../entities/zzz";
-import {O_Text} from "../../core/render/text";
 import {TrollStats} from "../../../interface/troll-stats";
-import {pause} from "../../../utils/utils-async";
+import {stub} from "../../../utils/utils-misc";
 
 let troll: Troll
 
@@ -51,7 +50,7 @@ export class Troll {
         o_.register.troll(this)
 
         troll = this;
-        const pos = positioner.getLairPosition();
+        const lairPos = positioner.getLairPosition();
         this.sprite = o_.render.createAnimatedSprite({
             atlasKey: 'troll',
             animations:  [
@@ -60,9 +59,10 @@ export class Troll {
                 {framesPrefix: CharAnimation.DEAD, repeat: -1, frameRate: 4},
                 {framesPrefix: CharAnimation.STRIKE, repeat: -1, frameRate: 4},
             ],
-            x: pos.x + pos.width / 2,
-            y: pos.y + pos.height / 2,
+            x: lairPos.x + lairPos.width / 2,
+            y: lairPos.y + lairPos.height / 2,
         })
+        this.sprite.setOrigin(0.5, 1);
         this.sprite.addPhysics();
         o_.layers.add(this.sprite, LayerKey.FIELD_OBJECTS)
 
@@ -184,7 +184,7 @@ export class Troll {
         this.hp = Math.max(Math.min(newVal, this.maxHp), 0);
 
         if (this.hp === 0) {
-            o_.game.gameOver(cause);
+            o_.game.gameOver(cause)
             this.setAnimation(CharAnimation.DEAD)
         }
 
@@ -294,5 +294,28 @@ export class Troll {
             this.level++
             this.onNewLevel()
         }
+    }
+
+    charToApproach: string = ''
+
+    movePromise: Promise<any> = new Promise(() => {})
+    onMoveFinished: (() => void) = stub
+
+    goToChar(charId: string) {
+        this.charToApproach = charId
+        this.setState(TrollStateKey.GO_TO, {intention: TrollIntention.CHAR})
+
+        return this.movePromise
+    }
+
+    attack(charId: string) {
+        o_.characters.hitChar(charId, this.rollDmg())
+
+        return Promise.resolve()
+    }
+
+    goToBattlePosition() {
+        this.setState(TrollStateKey.GO_TO, {intention: TrollIntention.BRIDGE})
+        return this.movePromise
     }
 }

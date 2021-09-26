@@ -234,4 +234,30 @@ export class CharactersManager {
     setPrisonersInteractive(val: boolean) {
         this.getPrisoners().forEach(p => val ? p.enableInteractivity() : p.disableInteractivity())
     }
+
+    counterAttack(charId: string) {
+        const fighters = this.getFighters()
+        let char = fighters.find(t => t.id === charId);
+        if (!char) throw Error('wtf');
+
+        return char.performCounterAttack()
+    }
+
+    canCounterAttack(charId: string) {
+        const fighters = this.getFighters()
+        let char = fighters.find(t => t.id === charId);
+        if (!char) throw Error('wtf');
+
+        return char.canCounterAttack
+    }
+
+    findDefenders(charId: string): Char[] {
+        const fighters = this.getFighters()
+        let char = fighters.find(t => t.id === charId);
+        if (!char) throw Error('wtf');
+
+        const defenders = fighters.filter(f => f.id !== charId && f.canProtect(charId))
+
+        return defenders || []
+    }
 }

@@ -74,7 +74,7 @@ export class RenderManager {
     }
 
     moveTowards(obj: O_GameObject, x: number, y: number, speed: number, maxTime?: number) {
-        this.scene.physics.moveTo(obj.obj, x, y, speed, maxTime);
+        this.scene.physics.moveTo(obj.obj, x, y, speed, maxTime)
     }
 
     directToTarget(obj: O_GameObject, target: Vec) {

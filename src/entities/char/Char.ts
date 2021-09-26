@@ -86,6 +86,7 @@ export class Char {
         this.name = charTemplate.name
         this.isCombatant = charTemplate.isCombatant
         this.dmg = charTemplate.dmg;
+        this.canCounterAttack = charTemplate.canCounterAttack
 
         const {gold, food} = charTemplate.createResources()
         this.gold = gold
@@ -444,13 +445,23 @@ export class Char {
     attackPromise = new Promise(() => {})
     onAttackEnd: any = () => {}
 
-    async performBattleAction() {
-        await pause(300)
+    async performCounterAttack() {
+        return this.performBattleAction(0)
+    }
+
+    async performBattleAction(pauseTime = 600) {
+        await pause(pauseTime)
 
         this.attackPromise = new Promise(res => this.onAttackEnd = res)
 
         this.startAttack();
 
         return this.attackPromise;
+    }
+
+    canCounterAttack: boolean = false
+
+    canProtect(charId: string) {
+        return false
     }
 }

@@ -3,26 +3,27 @@ import {CharAnimation, CharStateKey} from "../char-constants";
 import {positioner} from "../../../managers/game/positioner";
 import {getDistanceBetween} from "../../../utils/utils-math";
 import {o_} from "../../../managers/locator";
+import {Char} from "../Char";
 
 export class CharStateBattleAttack extends CharState {
     key = CharStateKey.BATTLE_ATTACK
 
     phase: 'forward' | 'backward' | 'attacking' = 'forward'
 
-    beforeAttack = 300
+    beforeAttack = 0
+
+    constructor(host: Char, options?: {beforeAttack: number}) {
+        super(host);
+
+        this.beforeAttack = options ? options.beforeAttack : 0
+    }
 
     onStart() {
         this.char.moveTowards(o_.troll.sprite.x, this.char.getCoords().y)
+        this.char.setAnimation(CharAnimation.WALK);
     }
 
     update(dt: number) {
-        if (this.beforeAttack > 0) {
-            this.beforeAttack -= dt;
-            if (this.beforeAttack <= 0) {
-                this.char.setAnimation(CharAnimation.WALK);
-            }
-            return;
-        }
         const startX = positioner.negotiationX()
         const trollX = o_.troll.sprite.x;
         const y = this.char.getCoords().y;

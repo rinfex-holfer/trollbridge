@@ -38,6 +38,7 @@ export const charTemplates = {
         createResources: (): Resources => ({gold: rndBetween(1, 400), food: rndBetween(1, 4)}),
         isCombatant: true,
         atlasKey: 'peasant',
+        canCounterAttack: false,
     },
 
     [CharKey.MILITIA]: {
@@ -49,6 +50,7 @@ export const charTemplates = {
         createResources: (): Resources => ({gold: 1, food: 1}),
         isCombatant: true,
         atlasKey: 'pikeman',
+        canCounterAttack: true,
     },
 
     [CharKey.SOLDIER]: {
@@ -60,6 +62,7 @@ export const charTemplates = {
         createResources: (): Resources => ({gold: 1, food: 1}),
         isCombatant: true,
         atlasKey: 'soldier',
+        canCounterAttack: false,
     },
     [CharKey.KNIGHT]: {
         name: 'chars.knight',
@@ -70,6 +73,7 @@ export const charTemplates = {
         createResources: (): Resources => ({gold: 1, food: 1}),
         isCombatant: true,
         atlasKey: 'knight',
+        canCounterAttack: false,
     },
 
 

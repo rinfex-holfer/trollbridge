@@ -33,26 +33,29 @@ type CharActionButtonTemplate = {
 
 const buttonsTemplate: CharActionButtonTemplate[] = [
     {key: CharAction.RELEASE, text: 'Отпустить', resource: 'button_release', onClick: (id: string) => o_.characters.releaseChar(id)},
+
     {key: CharAction.ROB, text: 'Отобрать плату', resource: 'button_rob', onClick: (id: string) => o_.characters.makeCharPay(id),
         checkActive: char => char.gold > Math.ceil(char.goldInitial * 0.67)
     },
+
     {key: CharAction.TAKE_ALL, text: 'Отобрать все', resource: 'button_rob', onClick: (id: string) => o_.characters.makeCharGiveAll(id),
         checkActive: char => char.gold > 0 || char.food > 0
     },
+
     // {key: CharAction.IMPRISON, text: 'Сделать пленником', resource: 'button_imprison', onClick: (id: string) => o_.characters.makeImprisoned(id)},
     {key: CharAction.KILL, text: 'Убить', resource: 'button_kill', onClick: (id: string) => o_.characters.killChar(id)},
+
     // {key: CharAction.DEVOUR, text: 'Сожрать', resource: 'button_devour', onClick: (id: string) => o_.troll.devour(id)},
     {key: CharAction.FEED, text: 'Накормить', resource: 'button_feed', onClick: (id: string) => o_.lair.feedChar(id)},
+
     {key: CharAction.MAKE_FOOD, text: 'Разорвать', resource: 'button_make_food', onClick: (id: string) => o_.characters.transformToFood(id)},
 
     {key: CharAction.BATTLE_DEVOUR, text: 'Сожрать', resource: 'button_devour', onClick: (id: string) => {
-        o_.troll.devour(id);
-        eventBus.emit(Evt.TROLL_TURN_END);
+        o_.troll.devour(id)
+        eventBus.emit(Evt.TROLL_TURN_END)
     }},
-    {key: CharAction.BATTLE_HIT, text: 'Ударить', resource: 'button_kill', onClick: (id: string) => {
-        o_.characters.hitChar(id, o_.troll.rollDmg());
-        eventBus.emit(Evt.TROLL_TURN_END);
-    }},
+
+    {key: CharAction.BATTLE_HIT, text: 'Ударить', resource: 'button_kill', onClick: (id: string) => o_.battle.trollGoAttack(id)},
 ]
 
 const BUTTON_WIDTH = 32;
@@ -107,6 +110,7 @@ export class CharActionsMenu {
     }
 
     changeActiveButtons(activeButtons: CharAction[]) {
+        console.log('changeActiveButtons', activeButtons)
         this.activeButtons = activeButtons
         this.updateButtons()
     }

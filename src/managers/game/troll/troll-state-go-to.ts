@@ -1,24 +1,30 @@
 import {TrollState, TrollStateKey} from "./troll-state";
 import {Troll} from "./troll";
 import {getDistanceBetween, Vec} from "../../../utils/utils-math";
-import {TrollLocation} from "../../../types";
 import {CharAnimation} from "../../../entities/char/char-constants";
-import {eventBus, Evt} from "../../../event-bus";
-import {o_} from "../../locator";
 import {TrollIntention} from "./types";
 import {onTrollCameToBridge, onTrollCameToLair, onTrollSleep} from "../../../helpers";
 import {positioner} from "../positioner";
+import {o_} from "../../locator";
+import {createPromiseAndHandlers} from "../../../utils/utils-async";
 
 export class TrollStateGoTo extends TrollState {
     key = TrollStateKey.GO_TO
 
     target: Vec
     intention: TrollIntention
+    minDistance: number = 10
 
     constructor(host: Troll, options: {intention: TrollIntention}) {
         super(host);
         this.intention = options.intention
         this.target = this.getTarget()
+        this.minDistance = options.intention === TrollIntention.CHAR ? 50 : 10
+
+        const {promise, done} = createPromiseAndHandlers()
+
+        this.host.onMoveFinished = done
+        this.host.movePromise = promise
     }
 
     getTarget() {
@@ -42,7 +48,12 @@ export class TrollStateGoTo extends TrollState {
                 target.x = bedPos.x
                 target.y = bedPos.y
                 break;
-
+            case TrollIntention.CHAR:
+                const char = o_.characters.getTravellers().find(t => t.id === o_.troll.charToApproach)
+                if (!char) throw Error('WTF')
+                target.x = char.container.x
+                target.y = char.container.y
+                break;
         }
         return target;
     }
@@ -61,6 +72,8 @@ export class TrollStateGoTo extends TrollState {
             case TrollIntention.BED:
                 onTrollSleep()
                 break;
+            case TrollIntention.CHAR:
+                break;
         }
 
         this.checkDistance()
@@ -78,12 +91,13 @@ export class TrollStateGoTo extends TrollState {
                 onTrollSleep()
                 break;
         }
+        this.host.onMoveFinished()
     }
 
     checkDistance() {
         const distanceLeft = getDistanceBetween(this.host.sprite, this.target);
 
-        if (distanceLeft < 10) {
+        if (distanceLeft <= this.minDistance) {
             switch (this.intention) {
                 case TrollIntention.LAIR:
                     this.host.goIdle()
@@ -93,6 +107,9 @@ export class TrollStateGoTo extends TrollState {
                     break;
                 case TrollIntention.BED:
                     this.host.goSleep()
+                    break;
+                case TrollIntention.CHAR:
+                    this.host.goIdle()
                     break;
             }
         }
