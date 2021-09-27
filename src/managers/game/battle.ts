@@ -71,6 +71,16 @@ export class BattleManager {
         onEncounterEnd();
     }
 
+    async trollThrowRock(charId: string) {
+        o_.characters.disableInteractivityAll();
+        const char = o_.characters.getTraveller(charId)
+        await o_.troll.attackWithRock(char)
+        if (this.getIsWin()) return this.win()
+        await o_.troll.goToBattlePosition()
+
+        return this.travellersTurn()
+    }
+
     async trollGoAttack(charId: string) {
         o_.characters.disableInteractivityAll();
 

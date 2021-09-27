@@ -409,7 +409,7 @@ export class Char {
 
     getHit(dmg: number) {
         o_.audio.playSound(SOUND_KEY.HIT);
-        o_.render.burstBlood(this.container.x, this.container.y);
+        o_.render.burstBlood(this.container.x, this.container.y - 70);
 
         this.changeHp(-dmg);
 
@@ -487,6 +487,10 @@ export class Char {
 
     getDefenderPosition(): Vec {
         return {x: this.container.x - 100, y: this.container.y}
+    }
+
+    getCoordsToThrowInto(): Vec {
+        return {x: this.container.x, y: this.container.y - 80}
     }
 
     movePromise = new Promise(stub)

@@ -10,15 +10,16 @@ import {o_} from "../../locator";
 import {SOUND_KEY} from "../../core/audio";
 import {TrollState, TrollStateKey} from "./troll-state";
 import {TrollStateIdle} from "./troll-state-idle";
-import {TrollIntention} from "./types";
 import {TrollStateGoTo} from "./troll-state-go-to";
 import {TrollStateSleep} from "./troll-state-sleep";
 import {LayerKey} from "../../core/layers";
 import {Zzz} from "../../../entities/zzz";
 import {TrollStats} from "../../../interface/troll-stats";
-import {stub} from "../../../utils/utils-misc";
 import {TrollStateBattleAttack} from "./troll-state-battle-attack";
 import {onTrollCameToBridge, onTrollCameToLair, onTrollSleep} from "../../../helpers";
+import {EntityType} from "../../core/entities";
+import {Char} from "../../../entities/char/Char";
+import {createPromiseAndHandlers} from "../../../utils/utils-async";
 
 let troll: Troll
 
@@ -272,7 +273,12 @@ export class Troll {
     }
 
     goToBattlePosition() {
-        return this.goToBridge()
+        const target = {x: 0, y: 0}
+        const bridgePos = positioner.bridgePosition();
+        target.x = bridgePos.x + bridgePos.width / 2
+        target.y = bridgePos.y + bridgePos.height / 2
+
+        return this.setState(TrollStateKey.GO_TO, { target })
     }
 
     goIdle() { this.setState(TrollStateKey.IDLE) }
@@ -347,5 +353,23 @@ export class Troll {
 
     attack(charId: string) {
         return this.setState(TrollStateKey.BATTLE_ATTACK, {targetId: charId})
+    }
+
+    async attackWithRock(char: Char) {
+        const rock = o_.entities.get(EntityType.ROCK)[0]
+
+        await this.setState(TrollStateKey.GO_TO, {target: rock.sprite})
+        this.directToTarget(char.container)
+
+        const p = createPromiseAndHandlers()
+        this.setAnimation(CharAnimation.STRIKE, p.done)
+
+        await p.promise
+        this.setAnimation(CharAnimation.IDLE)
+
+        rock.sprite.y = this.sprite.y - this.sprite.height + 10
+        await o_.render.flyTo(rock.sprite, char.getCoordsToThrowInto(), 1000)
+        rock.destroy()
+        o_.characters.hitChar(char.id, this.rollDmg())
     }
 }

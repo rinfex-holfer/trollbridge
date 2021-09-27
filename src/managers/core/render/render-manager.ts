@@ -30,7 +30,8 @@ export class RenderManager {
             x: {min: -5, max: 5},
             y: {min: -5, max: 5},
             angle: { min: 0, max: 360 },
-            speed: {min: 10, max: 100},
+            speed: {min: 100, max: 300},
+            lifespan: 300,
             frequency: -1,
             quantity: 50,
         });

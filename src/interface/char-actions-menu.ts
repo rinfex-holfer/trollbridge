@@ -21,6 +21,7 @@ export const enum CharAction {
 
     BATTLE_HIT = 'BATTLE_HIT',
     BATTLE_DEVOUR = 'BATTLE_DEVOUR',
+    BATTLE_THROW_ROCK = 'BATTLE_THROW_ROCK',
 }
 
 type CharActionButtonTemplate = {
@@ -55,7 +56,8 @@ const buttonsTemplate: CharActionButtonTemplate[] = [
         eventBus.emit(Evt.TROLL_TURN_END)
     }},
 
-    {key: CharAction.BATTLE_HIT, text: 'Ударить', resource: 'button_kill', onClick: (id: string) => o_.battle.trollGoAttack(id)},
+    {key: CharAction.BATTLE_HIT, text: 'Ударить', resource: 'button_strike', onClick: (id: string) => o_.battle.trollGoAttack(id)},
+    {key: CharAction.BATTLE_THROW_ROCK, text: 'Бросить камень', resource: 'button_throw_rock', onClick: (id: string) => o_.battle.trollThrowRock(id)},
 ]
 
 const BUTTON_WIDTH = 32;
