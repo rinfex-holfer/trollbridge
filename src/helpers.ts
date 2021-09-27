@@ -25,6 +25,7 @@ export function onTrollCameToBridge() {
     o_.troll.location = TrollLocation.BRIDGE;
     o_.lair.mayButtonsBeClicked(false)
     o_.lair.mayBeMovedInto(true)
+    o_.bridge.disableInterface()
     o_.upgrade.setEnabled(false)
     eventBus.emit(Evt.TROLL_LOCATION_CHANGED, TrollLocation.BRIDGE);
 }

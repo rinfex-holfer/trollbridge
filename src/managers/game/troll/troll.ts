@@ -18,6 +18,7 @@ import {Zzz} from "../../../entities/zzz";
 import {TrollStats} from "../../../interface/troll-stats";
 import {stub} from "../../../utils/utils-misc";
 import {TrollStateBattleAttack} from "./troll-state-battle-attack";
+import {onTrollCameToBridge, onTrollCameToLair, onTrollSleep} from "../../../helpers";
 
 let troll: Troll
 
@@ -211,22 +212,67 @@ export class Troll {
         }
     }
 
-    setState(stateKey: TrollStateKey, options?: any) {
+    setState(stateKey: TrollStateKey, options?: any): Promise<any> {
         console.log('new troll state:', stateKey);
-        this.state.onEnd();
+        this.state.end();
         this.state = this.getState(stateKey, options)
-        this.state.onStart();
+        return this.state.start();
     }
 
     goToBridge() {
-        this.setState(TrollStateKey.GO_TO, { intention: TrollIntention.BRIDGE })
+        const target = {x: 0, y: 0}
+        const bridgePos = positioner.bridgePosition();
+        target.x = bridgePos.x + bridgePos.width / 2
+        target.y = bridgePos.y + bridgePos.height / 2
+
+        return this.setState(TrollStateKey.GO_TO, { target, onStart: onTrollCameToBridge, onEnd: onTrollCameToBridge })
     }
+
     goToLair() {
-        this.setState(TrollStateKey.GO_TO, { intention: TrollIntention.LAIR })
+        const target = {x: 0, y: 0}
+        const lairPos = positioner.getLairPosition();
+        target.x = lairPos.x + lairPos.width / 2
+        target.y = lairPos.y + lairPos.height / 2
+
+        this.setState(TrollStateKey.GO_TO, { target, onStart: onTrollCameToLair, onEnd: onTrollCameToLair })
     }
 
     goToBed() {
-        this.setState(TrollStateKey.GO_TO, { intention: TrollIntention.BED })
+        const target = {x: 0, y: 0}
+        const bedPos = positioner.getBedPosition();
+        target.x = bedPos.x + 50
+        target.y = bedPos.y
+
+        onTrollSleep()
+        return this.setState(TrollStateKey.GO_TO, { target, onEnd: () => {
+            this.goSleep()
+        }})
+    }
+
+    goToChar(charId: string) {
+        const target = {x: 0, y: 0}
+        var char = o_.characters.getTraveller(charId)
+        if (!char) throw Error('WTF')
+        target.x = char.container.x
+        target.y = char.container.y
+
+        return  this.setState(TrollStateKey.GO_TO, { target })
+    }
+
+    goToDefenderOfChar(charId: string) {
+        const target = {x: 0, y: 0}
+        var char = o_.characters.getTraveller(charId)
+        if (!char) throw Error('WTF')
+
+        const defenderPos = char.getDefenderPosition()
+        target.x = defenderPos.x
+        target.y = defenderPos.y
+
+        return this.setState(TrollStateKey.GO_TO, { target })
+    }
+
+    goToBattlePosition() {
+        return this.goToBridge()
     }
 
     goIdle() { this.setState(TrollStateKey.IDLE) }
@@ -299,36 +345,7 @@ export class Troll {
         }
     }
 
-    charToApproach: string = ''
-
-    movePromise: Promise<any> = new Promise(() => {})
-    onMoveFinished: (() => void) = stub
-
-    attackPromise: Promise<any> = new Promise(() => {})
-    onAttackFinished: (() => void) = stub
-
-    goToChar(charId: string) {
-        this.charToApproach = charId
-        this.setState(TrollStateKey.GO_TO, {intention: TrollIntention.CHAR})
-
-        return this.movePromise
-    }
-
-    goToDefenderOfChar(charId: string) {
-        this.charToApproach = charId
-        this.setState(TrollStateKey.GO_TO, {intention: TrollIntention.DEFENDER_OF_CHAR})
-
-        return this.movePromise
-    }
-
     attack(charId: string) {
-        this.setState(TrollStateKey.BATTLE_ATTACK, {targetId: charId})
-
-        return this.attackPromise
-    }
-
-    goToBattlePosition() {
-        this.setState(TrollStateKey.GO_TO, {intention: TrollIntention.BRIDGE})
-        return this.movePromise
+        return this.setState(TrollStateKey.BATTLE_ATTACK, {targetId: charId})
     }
 }

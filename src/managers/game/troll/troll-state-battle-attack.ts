@@ -13,18 +13,13 @@ export class TrollStateBattleAttack extends TrollState {
     constructor(host: Troll, options: {targetId: string}) {
         super(host);
         this.targetId = options.targetId
-
-        const {promise, done} = createPromiseAndHandlers()
-
-        this.host.onAttackFinished = done
-        this.host.attackPromise = promise
     }
 
     onStart() {
         this.host.setAnimation(CharAnimation.STRIKE, () => {
             o_.characters.hitChar(this.targetId, this.host.rollDmg())
             this.host.setAnimation(CharAnimation.IDLE)
-            this.host.onAttackFinished()
+            this.host.goIdle()
         })
     }
 }

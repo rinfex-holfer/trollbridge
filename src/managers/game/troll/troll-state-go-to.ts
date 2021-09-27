@@ -2,126 +2,44 @@ import {TrollState, TrollStateKey} from "./troll-state";
 import {Troll} from "./troll";
 import {getDistanceBetween, Vec} from "../../../utils/utils-math";
 import {CharAnimation} from "../../../entities/char/char-constants";
-import {TrollIntention} from "./types";
-import {onTrollCameToBridge, onTrollCameToLair, onTrollSleep} from "../../../helpers";
-import {positioner} from "../positioner";
-import {o_} from "../../locator";
-import {createPromiseAndHandlers} from "../../../utils/utils-async";
+
+type GoToOptions = {
+    target: Vec
+    minDistance?: number
+    speed?: number
+    turnToTarget?: boolean
+    onStart?: () => void
+    onEnd?: () => void
+}
 
 export class TrollStateGoTo extends TrollState {
     key = TrollStateKey.GO_TO
 
-    target: Vec
-    intention: TrollIntention
+    options: GoToOptions
+
     minDistance: number = 10
 
-    constructor(host: Troll, options: {intention: TrollIntention}) {
+    constructor(host: Troll, options: GoToOptions) {
         super(host);
-        this.intention = options.intention
-        this.target = this.getTarget()
-        this.minDistance = options.intention === TrollIntention.CHAR ? 50 : 10
+        this.options = options
 
-        const {promise, done} = createPromiseAndHandlers()
-
-        this.host.onMoveFinished = done
-        this.host.movePromise = promise
-    }
-
-    getTarget() {
-        const target = {
-            x: 0,
-            y: 0,
-        }
-        switch (this.intention) {
-            case TrollIntention.LAIR:
-                const lairPos = positioner.getLairPosition();
-                target.x = lairPos.x + lairPos.width / 2
-                target.y = lairPos.y + lairPos.height / 2
-                break;
-            case TrollIntention.BRIDGE:
-                const bridgePos = positioner.bridgePosition();
-                target.x = bridgePos.x + bridgePos.width / 2
-                target.y = bridgePos.y + bridgePos.height / 2
-                break;
-            case TrollIntention.BED:
-                const bedPos = positioner.getBedPosition();
-                target.x = bedPos.x + 50
-                target.y = bedPos.y
-                break;
-            case TrollIntention.CHAR:
-                var char = o_.characters.getTraveller(o_.troll.charToApproach)
-                if (!char) throw Error('WTF')
-                target.x = char.container.x
-                target.y = char.container.y
-                break;
-            case TrollIntention.DEFENDER_OF_CHAR:
-                var char = o_.characters.getTraveller(o_.troll.charToApproach)
-                if (!char) throw Error('WTF')
-
-                const defenderPos = char.getDefenderPosition()
-                target.x = defenderPos.x
-                target.y = defenderPos.y
-                break;
-        }
-        return target;
+        this.minDistance = options.minDistance ?? 10
     }
 
     onStart() {
         this.host.setAnimation(CharAnimation.WALK)
-        this.host.moveTowards(this.target.x, this.target.y)
+        this.host.moveTowards(this.options.target.x, this.options.target.y)
 
-        switch (this.intention) {
-            case TrollIntention.LAIR:
-                onTrollCameToLair()
-                break;
-            case TrollIntention.BRIDGE:
-                onTrollCameToBridge()
-                break;
-            case TrollIntention.BED:
-                onTrollSleep()
-                break;
-            case TrollIntention.CHAR:
-            case TrollIntention.DEFENDER_OF_CHAR:
-                break;
-        }
+        this.options.onStart?.()
 
         this.checkDistance()
     }
 
-    onEnd() {
-        switch (this.intention) {
-            case TrollIntention.LAIR:
-                onTrollCameToLair()
-                break;
-            case TrollIntention.BRIDGE:
-                onTrollCameToBridge()
-                break;
-            case TrollIntention.BED:
-                onTrollSleep()
-                break;
-        }
-        this.host.onMoveFinished()
-    }
-
     checkDistance() {
-        const distanceLeft = getDistanceBetween(this.host.sprite, this.target);
+        const distanceLeft = getDistanceBetween(this.host.sprite, this.options.target);
 
         if (distanceLeft <= this.minDistance) {
-            switch (this.intention) {
-                case TrollIntention.LAIR:
-                    this.host.goIdle()
-                    break;
-                case TrollIntention.BRIDGE:
-                    this.host.goIdle()
-                    break;
-                case TrollIntention.BED:
-                    this.host.goSleep()
-                    break;
-                case TrollIntention.CHAR:
-                case TrollIntention.DEFENDER_OF_CHAR:
-                    this.host.goIdle()
-                    break;
-            }
+            this.host.goIdle()
         }
     }
 

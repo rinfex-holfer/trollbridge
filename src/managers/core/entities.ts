@@ -1,7 +1,8 @@
 import {o_} from "../locator";
 import {findAndSplice} from "../../utils/utils-misc";
 import {Meat} from "../../entities/meat";
-import {Gold} from "../../entities/gold";
+import {Gold, GoldLocation} from "../../entities/gold";
+import {Rock} from "../../entities/rock";
 
 interface GameEntity<T extends EntityType> {
     type: T,
@@ -17,6 +18,9 @@ interface GameEntityPropsMap {
     },
     [EntityType.GOLD]: {
         amount: number
+    },
+    [EntityType.ROCK]: {
+
     }
 }
 
@@ -35,16 +39,21 @@ export abstract class GameEntityBase<T extends EntityType> implements GameEntity
         // @ts-ignore
         o_.entities.deregister(this)
     }
+
+    public updateInteractive() {}
+    public setInteractive(val: boolean) {}
 }
 
 export const enum EntityType {
     MEAT = 'MEAT',
     GOLD = 'GOLD',
+    ROCK = 'ROCK',
 }
 
 type EntityMap = {
     [EntityType.MEAT]: Meat,
     [EntityType.GOLD]: Gold,
+    [EntityType.ROCK]: Rock,
 }
 
 type EntityStorage = {
@@ -55,11 +64,13 @@ export class EntityManager {
     private entities: EntityStorage = {
         [EntityType.MEAT]: [],
         [EntityType.GOLD]: [],
+        [EntityType.ROCK]: [],
     }
 
     private entityNextId = {
         [EntityType.MEAT]: 0,
         [EntityType.GOLD]: 0,
+        [EntityType.ROCK]: 0,
     } as { [T in EntityType]: number }
 
     constructor() {
