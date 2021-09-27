@@ -45,14 +45,22 @@ export class TrollStateGoTo extends TrollState {
                 break;
             case TrollIntention.BED:
                 const bedPos = positioner.getBedPosition();
-                target.x = bedPos.x
+                target.x = bedPos.x + 50
                 target.y = bedPos.y
                 break;
             case TrollIntention.CHAR:
-                const char = o_.characters.getTravellers().find(t => t.id === o_.troll.charToApproach)
+                var char = o_.characters.getTraveller(o_.troll.charToApproach)
                 if (!char) throw Error('WTF')
                 target.x = char.container.x
                 target.y = char.container.y
+                break;
+            case TrollIntention.DEFENDER_OF_CHAR:
+                var char = o_.characters.getTraveller(o_.troll.charToApproach)
+                if (!char) throw Error('WTF')
+
+                const defenderPos = char.getDefenderPosition()
+                target.x = defenderPos.x
+                target.y = defenderPos.y
                 break;
         }
         return target;
@@ -73,6 +81,7 @@ export class TrollStateGoTo extends TrollState {
                 onTrollSleep()
                 break;
             case TrollIntention.CHAR:
+            case TrollIntention.DEFENDER_OF_CHAR:
                 break;
         }
 
@@ -109,6 +118,7 @@ export class TrollStateGoTo extends TrollState {
                     this.host.goSleep()
                     break;
                 case TrollIntention.CHAR:
+                case TrollIntention.DEFENDER_OF_CHAR:
                     this.host.goIdle()
                     break;
             }

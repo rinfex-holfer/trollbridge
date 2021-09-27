@@ -71,28 +71,37 @@ export class BattleManager {
         onEncounterEnd();
     }
 
-    onTrollWantsHit(charId: string) {
-        o_.characters.hitChar(charId, o_.troll.rollDmg())
-        eventBus.emit(Evt.TROLL_TURN_END)
-    }
-
     async trollGoAttack(charId: string) {
         o_.characters.disableInteractivityAll();
 
+        const char = o_.characters.getTraveller(charId)
         const counterAttack = o_.characters.canCounterAttack(charId)
         const defenders = o_.characters.findDefenders(charId)
 
-        await o_.troll.goToChar(charId)
+        if (defenders.length) {
+            const defender = defenders[0]
 
-        if (counterAttack) await o_.characters.counterAttack(charId)
+            const goToClash = [defender.goDefend(char), o_.troll.goToDefenderOfChar(charId)]
+            await Promise.all(goToClash)
 
-        if (!o_.troll.getIsAlive()) return o_.game.gameOver('battle')
+            await o_.troll.attack(defender.id)
+            if (this.getIsWin()) return this.win()
 
-        await o_.troll.attack(charId)
+            const allGoBack = [] as Promise<any>[]
+            if (defender.isAlive) allGoBack.push(defender.goToBattlePosition())
+            allGoBack.push(o_.troll.goToBattlePosition())
+            await Promise.all(allGoBack)
+        } else {
+            await o_.troll.goToChar(charId)
 
-        if (this.getIsWin()) return this.win()
+            if (counterAttack) await o_.characters.counterAttack(charId)
+            if (!o_.troll.getIsAlive()) return this.fail()
 
-        await o_.troll.goToBattlePosition()
+            await o_.troll.attack(charId)
+            if (this.getIsWin()) return this.win()
+
+            await o_.troll.goToBattlePosition()
+        }
 
         const fighters = o_.characters.getFighters()
         o_.troll.directToTarget(fighters[0].container)

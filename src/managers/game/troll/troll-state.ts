@@ -4,7 +4,7 @@ export const enum TrollStateKey {
     IDLE = 'IDLE',
     GO_TO = 'GO_TO',
     SLEEP = 'SLEEP',
-    // BATTLE_ATTACK = 'BATTLE_ATTACK',
+    BATTLE_ATTACK = 'BATTLE_ATTACK',
 }
 
 export abstract class TrollState {

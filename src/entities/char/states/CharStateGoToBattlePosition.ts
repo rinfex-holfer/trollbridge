@@ -1,18 +1,23 @@
 import {CharState} from "./CharState";
 import {CharAnimation, CharStateKey} from "../char-constants";
-import {positioner} from "../../../managers/game/positioner";
 import {gameConstants} from "../../../constants";
-import {getDistanceBetween} from "../../../utils/utils-math";
+import {getDistanceBetween, Vec} from "../../../utils/utils-math";
 import {o_} from "../../../managers/locator";
 import {createPromiseAndHandlers} from "../../../utils/utils-async";
+import {Char} from "../Char";
 
-export class CharStateGoToTalk extends CharState {
-    key = CharStateKey.GO_TO_TALK
+export class CharStateGoToBattlePosition extends CharState {
+    key = CharStateKey.GO_TO_BATTLE_POSITION
 
-    target = {x: positioner.negotiationX(), y: this.char.getCoords().y}
+    target: Vec
+
+    constructor(host: Char) {
+        super(host);
+
+        this.target = host.positionBeforeBattle
+    }
 
     onEnd() {
-        this.char.positionBeforeBattle = this.char.getCoords()
         this.char.onMoveEnd()
     }
 
@@ -36,7 +41,7 @@ export class CharStateGoToTalk extends CharState {
             this.char.container.x = this.target.x
             this.char.container.y = this.target.y
             this.char.directToTarget(o_.troll.sprite)
-            this.char.readyToTalk()
+            this.char.setState(CharStateKey.IDLE)
         }
     }
 }

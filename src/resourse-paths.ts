@@ -49,7 +49,7 @@ export const resoursePaths = {
         troll: `${atlasesUrl}/troll.json`,
         peasant: `${atlasesUrl}/peasant.json`,
         pikeman: `${atlasesUrl}/pikeman.json`,
-        soldier: `${atlasesUrl}/shieldman.json`,
+        shieldman: `${atlasesUrl}/shieldman.json`,
         knight: `${atlasesUrl}/knight.json`,
         pot: `${atlasesUrl}/pot.json`,
     },

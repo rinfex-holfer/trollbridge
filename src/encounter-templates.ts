@@ -2,36 +2,41 @@ import {CharKey, EncounterTemplate} from "./types";
 
 export const encounterTemplates: {[dangerLevel: number]: EncounterTemplate[]} = {
     0: [
-        {
-            text: 'Одинокий путник',
-            level: 0,
-            enemies: [CharKey.FARMER],
-        },
-        {
-            text: 'Группа фермеров',
-            level: 1,
-            enemies: [CharKey.FARMER, CharKey.FARMER, CharKey.FARMER],
-        },
-        {
-            text: 'Толпа крестьян',
-            level: 1,
-            enemies: [CharKey.FARMER, CharKey.FARMER, CharKey.FARMER, CharKey.FARMER, CharKey.FARMER],
-        },
-        {
-            text: 'Патрульные ополченцы',
-            level: 1,
-            enemies: [CharKey.MILITIA, CharKey.MILITIA],
-        },
+        // {
+        //     text: 'Одинокий путник',
+        //     level: 0,
+        //     enemies: [CharKey.FARMER],
+        // },
+        // {
+        //     text: 'Группа фермеров',
+        //     level: 1,
+        //     enemies: [CharKey.FARMER, CharKey.FARMER, CharKey.FARMER],
+        // },
+        // {
+        //     text: 'Толпа крестьян',
+        //     level: 1,
+        //     enemies: [CharKey.FARMER, CharKey.FARMER, CharKey.FARMER, CharKey.FARMER, CharKey.FARMER],
+        // },
+        // {
+        //     text: 'Патрульные ополченцы',
+        //     level: 1,
+        //     enemies: [CharKey.MILITIA, CharKey.MILITIA],
+        // },
         // {
         //     text: 'Отряд ополчения',
         //     level: 2,
         //     enemies: [CharKey.MILITIA, CharKey.MILITIA, CharKey.MILITIA, CharKey.MILITIA, CharKey.MILITIA],
         // },
-        // {
-        //     text: 'Отряд солдат',
-        //     level: 2,
-        //     enemies: [CharKey.SOLDIER, CharKey.SOLDIER, CharKey.SOLDIER],
-        // },
+        {
+            text: 'Cолдат',
+            level: 0,
+            enemies: [CharKey.SHIELDMAN, CharKey.FARMER],
+        },
+        {
+            text: 'Отряд солдат',
+            level: 1,
+            enemies: [CharKey.SHIELDMAN, CharKey.FARMER],
+        },
         // {
         //     text: 'Рыцарь с оруженосцем',
         //     level: 3,

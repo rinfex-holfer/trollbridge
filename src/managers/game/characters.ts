@@ -145,6 +145,13 @@ export class CharactersManager {
     getFighters() { return this.chars.filter(c => c.getIsFighter())}
     getPrisoners() { return this.chars.filter(c => c.getIsPrisoner())}
 
+    getTraveller(id: string) {
+        const char = this.chars.find(t => t.id === id)
+        if (!char) throw Error('WTF')
+
+        return char
+    }
+
     travellersGoToTalk() {
         this.getNewTravellers().forEach(t => t.goToTalk());
     }
@@ -256,7 +263,8 @@ export class CharactersManager {
         let char = fighters.find(t => t.id === charId);
         if (!char) throw Error('wtf');
 
-        const defenders = fighters.filter(f => f.id !== charId && f.canProtect(charId))
+        // @ts-ignore
+        const defenders = fighters.filter(f => f.id !== charId && f.canProtect(char))
 
         return defenders || []
     }

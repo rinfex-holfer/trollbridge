@@ -44,8 +44,11 @@ export class CharStateBattleAttack extends CharState {
                 })
             }
         } else if (this.phase === 'backward') {
-            const distanceLeft = getDistanceBetween(this.char.container, {x: startX, y})
-            if (distanceLeft <= 0) {
+            const step = (this.char.speed / 1000) * dt
+            const distanceLeft = getDistanceBetween(this.char.container, this.char.positionBeforeBattle)
+            if (distanceLeft <= step) {
+                this.char.container.x = this.char.positionBeforeBattle.x
+                this.char.container.y = this.char.positionBeforeBattle.y
                 this.char.stop();
                 this.char.endAttack();
             }

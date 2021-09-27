@@ -17,6 +17,7 @@ import {LayerKey} from "../../core/layers";
 import {Zzz} from "../../../entities/zzz";
 import {TrollStats} from "../../../interface/troll-stats";
 import {stub} from "../../../utils/utils-misc";
+import {TrollStateBattleAttack} from "./troll-state-battle-attack";
 
 let troll: Troll
 
@@ -25,7 +26,7 @@ export class Troll {
     location: TrollLocation = TrollLocation.LAIR
 
     armor = 0
-    level = 0
+    level = 3
     dmg = 1
     hp = 1
     maxHp = 1
@@ -54,10 +55,10 @@ export class Troll {
         this.sprite = o_.render.createAnimatedSprite({
             atlasKey: 'troll',
             animations:  [
-                {framesPrefix: CharAnimation.WALK, repeat: -1, frameRate: 4},
-                {framesPrefix: CharAnimation.IDLE, repeat: -1, frameRate: 4},
-                {framesPrefix: CharAnimation.DEAD, repeat: -1, frameRate: 4},
-                {framesPrefix: CharAnimation.STRIKE, repeat: -1, frameRate: 4},
+                {framesPrefix: CharAnimation.WALK, repeat: -1, frameRate: 8},
+                {framesPrefix: CharAnimation.IDLE, repeat: -1, frameRate: 8},
+                {framesPrefix: CharAnimation.DEAD, repeat: -1, frameRate: 8},
+                {framesPrefix: CharAnimation.STRIKE, frameRate: 8},
             ],
             x: lairPos.x + lairPos.width / 2,
             y: lairPos.y + lairPos.height / 2,
@@ -192,7 +193,7 @@ export class Troll {
     }
 
     setAnimation(key: CharAnimation, onComplete?: () => void) {
-        this.sprite.play(key);
+        this.sprite.play(key, {onComplete});
     }
 
     getState(stateKey: TrollStateKey, options?: any): TrollState {
@@ -203,6 +204,8 @@ export class Troll {
                 return new TrollStateGoTo(this, options);
             case TrollStateKey.SLEEP:
                 return new TrollStateSleep(this);
+            case TrollStateKey.BATTLE_ATTACK:
+                return new TrollStateBattleAttack(this, options);
             default:
                 throw Error('wrong state key ' + stateKey);
         }
@@ -301,6 +304,9 @@ export class Troll {
     movePromise: Promise<any> = new Promise(() => {})
     onMoveFinished: (() => void) = stub
 
+    attackPromise: Promise<any> = new Promise(() => {})
+    onAttackFinished: (() => void) = stub
+
     goToChar(charId: string) {
         this.charToApproach = charId
         this.setState(TrollStateKey.GO_TO, {intention: TrollIntention.CHAR})
@@ -308,10 +314,17 @@ export class Troll {
         return this.movePromise
     }
 
-    attack(charId: string) {
-        o_.characters.hitChar(charId, this.rollDmg())
+    goToDefenderOfChar(charId: string) {
+        this.charToApproach = charId
+        this.setState(TrollStateKey.GO_TO, {intention: TrollIntention.DEFENDER_OF_CHAR})
 
-        return Promise.resolve()
+        return this.movePromise
+    }
+
+    attack(charId: string) {
+        this.setState(TrollStateKey.BATTLE_ATTACK, {targetId: charId})
+
+        return this.attackPromise
     }
 
     goToBattlePosition() {

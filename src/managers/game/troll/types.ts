@@ -3,4 +3,5 @@ export const enum TrollIntention {
     BRIDGE = 'BRIDGE',
     BED = 'BED',
     CHAR = 'CHAR',
+    DEFENDER_OF_CHAR = 'DEFENDER_OF_CHAR',
 }

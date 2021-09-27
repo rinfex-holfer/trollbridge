@@ -21,6 +21,7 @@ export const enum NegotiationsState {
 }
 
 const enum NegotiationsMessage {
+    ON_START = 'ON_START',
     DEMAND_ALL = 'DEMAND_ALL',
     DEMAND_PAY = 'DEMAND_PAY',
     GO_IN_PEACE = 'GO_IN_PEACE',
@@ -102,6 +103,7 @@ export class Negotiations {
         this.currentStateKey = NegotiationsState.START
         this.encounterState = negotiationTree[this.currentStateKey]
         this.onStateChange()
+        o_.characters.travellersSpeak(wordsOnStart[danger][100])
     }
 
     onStateChange(travellersReaction: string = '') {
@@ -195,6 +197,26 @@ type NegotiationTree = {
     };
 };
 
+const wordsOnStart = {
+        [EncounterDanger.IMPOSSIBLE]:   {
+            100: 'Что за наглое отродье вылезло на дорогу?'
+        },
+        [EncounterDanger.VERY_HIGH]: {
+            100: 'Мерзкое создание. Убирайся с пути.'
+        },
+        [EncounterDanger.HIGH]:         {
+            100: 'Зеленая тварь. Что ты хочешь?'
+        },
+        [EncounterDanger.MEDIUM]:       {
+            100: 'Что тебе надобно, тролль?'
+        },
+        [EncounterDanger.LOW]:          {
+            100: 'Опасное создание! Что же делать?..'
+        },
+        [EncounterDanger.NONE]:         {
+            100: 'Кошмар... Это конец...'
+        },
+}
 
 const negotiationTree: NegotiationTree = {
     [NegotiationsState.START]: {

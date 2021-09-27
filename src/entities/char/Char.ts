@@ -1,6 +1,6 @@
 import {CharKey, ResourceKey} from "../../types";
 import {charTemplates} from "../../char-templates";
-import {createId} from "../../utils/utils-misc";
+import {createId, stub} from "../../utils/utils-misc";
 import {CharState} from "./states/CharState";
 import {CharStateIdle} from "./states/CharStateIdle";
 import {CharStateGoAcross} from "./states/CharStateGoAcross";
@@ -30,6 +30,8 @@ import {o_} from "../../managers/locator";
 import {LayerKey} from "../../managers/core/layers";
 import {Gold} from "../gold";
 import {Meat, MeatLocation, meatSprite} from "../meat";
+import {CharStateBattleGoDefend} from "./states/CharStateBattleGoDefend";
+import {CharStateGoToBattlePosition} from "./states/CharStateGoToBattlePosition";
 
 export class Char {
     key: CharKey
@@ -71,6 +73,8 @@ export class Char {
 
     unsub: (() => void)[] = []
 
+    positionBeforeBattle: Vec = {x: 0, y: 0}
+
     constructor(key: CharKey, x: number, y: number) {
         const charTemplate = charTemplates[key]
 
@@ -86,7 +90,9 @@ export class Char {
         this.name = charTemplate.name
         this.isCombatant = charTemplate.isCombatant
         this.dmg = charTemplate.dmg;
+
         this.canCounterAttack = charTemplate.canCounterAttack
+        this.isDefender = charTemplate.isDefender
 
         const {gold, food} = charTemplate.createResources()
         this.gold = gold
@@ -149,7 +155,7 @@ export class Char {
         this.state.update(dt);
     }
 
-    getState(stateKey: CharStateKey): CharState {
+    getState(stateKey: CharStateKey, options?: any): CharState {
         switch (stateKey) {
             case CharStateKey.IDLE:
                 return new CharStateIdle(this);
@@ -171,14 +177,18 @@ export class Char {
                 return new CharStateBattleAttack(this);
             case CharStateKey.BATTLE_SURRENDER:
                 return new CharStateBattleSurrender(this);
+            case CharStateKey.BATTLE_GO_DEFEND:
+                return new CharStateBattleGoDefend(this, options)
+            case CharStateKey.GO_TO_BATTLE_POSITION:
+                return new CharStateGoToBattlePosition(this)
             default:
                 throw Error('wrong state key ' + stateKey);
         }
     }
 
-    setState(stateKey: CharStateKey) {
+    setState(stateKey: CharStateKey, options?: any) {
         this.state.onEnd();
-        this.state = this.getState(stateKey)
+        this.state = this.getState(stateKey, options)
         this.state.onStart();
     }
 
@@ -188,12 +198,12 @@ export class Char {
             // @ts-ignore
             atlasKey,
             animations:  [
-                {framesPrefix: CharAnimation.WALK, repeat: -1, frameRate: 4},
-                {framesPrefix: CharAnimation.IDLE, repeat: -1, frameRate: 4},
-                {framesPrefix: CharAnimation.DEAD, repeat: -1, frameRate: 4},
-                {framesPrefix: CharAnimation.STRIKE, frameRate: 4},
-                {framesPrefix: CharAnimation.PRISONER, repeat: -1, frameRate: 4},
-                {framesPrefix: CharAnimation.SURRENDER, repeat: -1, frameRate: 4},
+                {framesPrefix: CharAnimation.WALK, repeat: -1, frameRate: 8},
+                {framesPrefix: CharAnimation.IDLE, repeat: -1, frameRate: 8},
+                {framesPrefix: CharAnimation.DEAD, repeat: -1, frameRate: 8},
+                {framesPrefix: CharAnimation.STRIKE, frameRate: 8},
+                {framesPrefix: CharAnimation.PRISONER, repeat: -1, frameRate: 8},
+                {framesPrefix: CharAnimation.SURRENDER, repeat: -1, frameRate: 8},
             ],
             x,
             y,
@@ -335,6 +345,7 @@ export class Char {
 
     goToTalk() {
         this.setState(CharStateKey.GO_TO_TALK);
+        return this.movePromise
     }
 
     readyToTalk() {
@@ -446,6 +457,12 @@ export class Char {
     onAttackEnd: any = () => {}
 
     async performCounterAttack() {
+        flyingStatusChange(
+            'Counter-attack!',
+            this.container.x,
+            this.container.y - this.sprite.height,
+            colorsCSS.WHITE
+        );
         return this.performBattleAction(0)
     }
 
@@ -460,8 +477,28 @@ export class Char {
     }
 
     canCounterAttack: boolean = false
+    isDefender: boolean = false
 
-    canProtect(charId: string) {
-        return false
+    canProtect(char: Char) {
+        return this.isDefender
+            && char.id !== this.id
+            && char.key !== this.key
+    }
+
+    getDefenderPosition(): Vec {
+        return {x: this.container.x - 100, y: this.container.y}
+    }
+
+    movePromise = new Promise(stub)
+    onMoveEnd: any = stub
+
+    goDefend(target: Char) {
+        this.setState(CharStateKey.BATTLE_GO_DEFEND, {target})
+        return this.movePromise
+    }
+
+    goToBattlePosition() {
+        this.setState(CharStateKey.GO_TO_BATTLE_POSITION)
+        return this.movePromise
     }
 }
