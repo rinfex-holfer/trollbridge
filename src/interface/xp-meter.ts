@@ -5,6 +5,7 @@ import {ProgressBar} from "./basic/progress-bar";
 import {colorsNum} from "../constants";
 import {getGameSize} from "../utils/utils-misc";
 import {pause} from "../utils/utils-async";
+import {LayerKey} from "../managers/core/layers";
 
 enum MeterState {
     FADE_IN = 'FADE_IN',
@@ -26,6 +27,8 @@ export class XpMeter {
     constructor() {
         const gameSize = getGameSize()
         this.xpContainer = o_.render.createContainer(gameSize.width / 2, Y)
+        o_.layers.add(this.xpContainer, LayerKey.FIELD_BUTTONS)
+
         this.xpBar = new ProgressBar({
             x: -WIDTH * 0.5,
             y: 0,

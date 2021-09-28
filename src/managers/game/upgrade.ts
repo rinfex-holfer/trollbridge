@@ -22,7 +22,7 @@ export class UpgradeManager {
 
         const pos = positioner.getBuildButtonPosition()
         this.buildBtn = new ImgButton({
-            text: 'улучшить логово',
+            text: 'постройки',
             img: 'button_upgrade',
             x: pos.x,
             y: pos.y,
@@ -86,6 +86,7 @@ export class UpgradeManager {
             this.onUpgraded(b)
         })
         btn.setVisible(false)
+        o_.layers.add(btn.button.container, LayerKey.FIELD_BUTTONS)
         this.buttons.push(btn)
         return btn
     }

@@ -21,6 +21,7 @@ export const resoursePaths = {
         bones: `${imagesUrl}/bones.png`,
         bed: `${imagesUrl}/bed.png`,
         rock: `${imagesUrl}/rock.png`,
+        bridge_crack: `${imagesUrl}/bridge_crack.png`,
         bed_upgraded: `${imagesUrl}/bed-upgraded.png`,
         drying_rack: `${imagesUrl}/drying_rack.png`,
         button_release: `${imagesUrl}/leg.png`,

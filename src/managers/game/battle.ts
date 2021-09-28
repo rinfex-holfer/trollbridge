@@ -74,9 +74,28 @@ export class BattleManager {
     async trollThrowRock(charId: string) {
         o_.characters.disableInteractivityAll();
         const char = o_.characters.getTraveller(charId)
-        await o_.troll.attackWithRock(char)
-        if (this.getIsWin()) return this.win()
-        await o_.troll.goToBattlePosition()
+
+        const defenders = o_.characters.findDefenders(charId)
+
+        if (defenders.length) {
+            const defender = defenders[0]
+
+            const throwing = [defender.goDefend(char), o_.troll.throwRockAt(defender)]
+            await Promise.all(throwing)
+
+            if (this.getIsWin()) return this.win()
+
+            const allGoBack = [] as Promise<any>[]
+            if (defender.isAlive) allGoBack.push(defender.goToBattlePosition())
+            allGoBack.push(o_.troll.goToBattlePosition())
+            await Promise.all(allGoBack)
+        } else {
+            await o_.troll.throwRockAt(char)
+            if (this.getIsWin()) return this.win()
+            await o_.troll.goToBattlePosition()
+        }
+
+        o_.troll.directToTarget(char.container)
 
         return this.travellersTurn()
     }

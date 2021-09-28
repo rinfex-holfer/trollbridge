@@ -20,6 +20,7 @@ import {onTrollCameToBridge, onTrollCameToLair, onTrollSleep} from "../../../hel
 import {EntityType} from "../../core/entities";
 import {Char} from "../../../entities/char/Char";
 import {createPromiseAndHandlers} from "../../../utils/utils-async";
+import {Rock} from "../../../entities/rock";
 
 let troll: Troll
 
@@ -61,6 +62,7 @@ export class Troll {
                 {framesPrefix: CharAnimation.IDLE, repeat: -1, frameRate: 8},
                 {framesPrefix: CharAnimation.DEAD, repeat: -1, frameRate: 8},
                 {framesPrefix: CharAnimation.STRIKE, frameRate: 8},
+                {framesPrefix: CharAnimation.THROW_STONE, frameRate: 8},
             ],
             x: lairPos.x + lairPos.width / 2,
             y: lairPos.y + lairPos.height / 2,
@@ -257,7 +259,7 @@ export class Troll {
         target.x = char.container.x
         target.y = char.container.y
 
-        return  this.setState(TrollStateKey.GO_TO, { target })
+        return  this.setState(TrollStateKey.GO_TO, { target, minDistance: 50 })
     }
 
     goToDefenderOfChar(charId: string) {
@@ -355,20 +357,23 @@ export class Troll {
         return this.setState(TrollStateKey.BATTLE_ATTACK, {targetId: charId})
     }
 
-    async attackWithRock(char: Char) {
-        const rock = o_.entities.get(EntityType.ROCK)[0]
+    async throwRockAt(char: Char) {
+        const rockPlace = o_.bridge.getClosestRockPlace(this)
 
-        await this.setState(TrollStateKey.GO_TO, {target: rock.sprite})
+        await this.setState(TrollStateKey.GO_TO, {target: rockPlace})
         this.directToTarget(char.container)
 
         const p = createPromiseAndHandlers()
-        this.setAnimation(CharAnimation.STRIKE, p.done)
-
+        this.setAnimation(CharAnimation.THROW_STONE, p.done)
         await p.promise
+
+        const rock = new Rock({x: this.x, y: this.sprite.y - this.sprite.height + 10})
+        rockPlace.ruin(true)
+
         this.setAnimation(CharAnimation.IDLE)
 
-        rock.sprite.y = this.sprite.y - this.sprite.height + 10
         await o_.render.flyTo(rock.sprite, char.getCoordsToThrowInto(), 1000)
+
         rock.destroy()
         o_.characters.hitChar(char.id, this.rollDmg())
     }

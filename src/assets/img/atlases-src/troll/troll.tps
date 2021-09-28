@@ -203,6 +203,8 @@
             <key type="filename">troll_throw_1.png</key>
             <key type="filename">troll_throw_stone_0.png</key>
             <key type="filename">troll_throw_stone_1.png</key>
+            <key type="filename">troll_throw_stone_2.png</key>
+            <key type="filename">troll_throw_stone_3.png</key>
             <key type="filename">troll_unconscious_0.png</key>
             <key type="filename">troll_walk_0.png</key>
             <key type="filename">troll_walk_1.png</key>

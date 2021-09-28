@@ -20,4 +20,5 @@ export const enum CharAnimation {
     PRISONER = 'prisoner',
     DEAD = 'dead',
     STRIKE = 'strike',
+    THROW_STONE = 'throw_stone'
 }

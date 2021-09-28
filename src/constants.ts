@@ -116,6 +116,10 @@ export const gameConstants = {
     MAX_GOLD_IN_SPRITE: 100,
     FOOD_FROM_CHARACTER: 4,
     FOOD_FROM_DEVOURED_CHARACTER: 3,
+
+    costs: {
+        fix_bridge: 10
+    }
 }
 
 export const zLayers = {

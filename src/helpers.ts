@@ -6,6 +6,7 @@ export function onEncounterStart() {
     console.log('onEncounterStart')
     o_.interaction.disableEverything()
 
+    o_.troll.goToBattlePosition()
     o_.characters.setPrisonersInteractive(false)
     o_.characters.travellersGoToTalk();
 

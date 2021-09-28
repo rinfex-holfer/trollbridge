@@ -57,23 +57,21 @@ const preload = (scene: Phaser.Scene) => {
 }
 
 const create = (scene: Phaser.Scene) => {
-    new GameManager()
-    new InteractionManager(scene)
-    new EntityManager()
+    new GameManager(scene)
     const timeManager = new TimeManager()
     new LayersManager(scene)
     new RenderManager(scene)
+    new InteractionManager(scene)
+    new EntityManager()
     new AudioManager(scene)
     new UpgradeManager()
     new Environment()
-    new BridgeManager()
     new CharactersManager()
     new Troll()
     new Lair()
+    new BridgeManager()
     new Negotiations()
     new BattleManager()
-
-    new WaitButton()
 
     new Meat({x: 100, y: 300})
     new Meat({x: 120, y: 300})

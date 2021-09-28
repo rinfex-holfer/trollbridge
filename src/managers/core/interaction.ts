@@ -2,10 +2,13 @@ import Phaser from "phaser";
 import {createMessageEmitter} from "../../utils/utils-misc";
 import {o_} from "../locator";
 import {TrollLocation} from "../../types";
+import {WaitButton} from "../../interface/wait-button";
 
 export type ClickHandler = (pointer: Phaser.Input.Pointer) => void
 
 export class InteractionManager {
+    waitBtn = new WaitButton()
+
     constructor(private scene: Phaser.Scene) {
         o_.register.interaction(this)
         window.addEventListener('contextmenu', e => e. preventDefault())
@@ -41,6 +44,8 @@ export class InteractionManager {
 
         o_.entities.getAll().forEach(o => o.setInteractive(false))
         console.log('disableEverything')
+
+        this.waitBtn.setEnabled(false)
     }
 
     enableEverything() {
@@ -55,5 +60,7 @@ export class InteractionManager {
 
         o_.upgrade.setEnabled(o_.troll.location === TrollLocation.LAIR)
         o_.entities.getAll().forEach(o => o.updateInteractive())
+
+        this.waitBtn.setEnabled(true)
     }
 }

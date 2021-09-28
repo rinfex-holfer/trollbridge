@@ -1,8 +1,8 @@
 import {SimpleButton} from "./basic/simple-button";
 import i18next from "i18next";
-import {Vec} from "../utils/utils-math";
 import {o_} from "../managers/locator";
 import {positioner} from "../managers/game/positioner";
+import {LayerKey} from "../managers/core/layers";
 
 export class WaitButton {
     button: SimpleButton
@@ -15,6 +15,8 @@ export class WaitButton {
             y: lairPos.y + 100,
             onClick: () => this.onClick()
         })
+
+        o_.layers.add(this.button.container, LayerKey.FIELD_BUTTONS)
     }
 
     onClick() {
