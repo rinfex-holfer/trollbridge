@@ -40,6 +40,7 @@ export const charTemplates = {
         atlasKey: 'peasant',
         canCounterAttack: false,
         isDefender: false,
+        isRanged: false,
     },
 
     [CharKey.MILITIA]: {
@@ -53,6 +54,21 @@ export const charTemplates = {
         atlasKey: 'pikeman',
         canCounterAttack: true,
         isDefender: false,
+        isRanged: false,
+    },
+
+    [CharKey.ARCHER]: {
+        name: 'chars.archer',
+        hp: 30,
+        morale: 30,
+        moralePrice: 15,
+        dmg: 2,
+        createResources: (): Resources => ({gold: 1, food: 1}),
+        isCombatant: true,
+        atlasKey: 'archer',
+        canCounterAttack: false,
+        isDefender: false,
+        isRanged: true,
     },
 
     [CharKey.SHIELDMAN]: {
@@ -66,6 +82,7 @@ export const charTemplates = {
         atlasKey: 'shieldman',
         canCounterAttack: false,
         isDefender: true,
+        isRanged: false,
     },
     [CharKey.KNIGHT]: {
         name: 'chars.knight',
@@ -78,6 +95,7 @@ export const charTemplates = {
         atlasKey: 'knight',
         canCounterAttack: false,
         isDefender: false,
+        isRanged: false,
     },
 
 

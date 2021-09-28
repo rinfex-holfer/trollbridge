@@ -11,7 +11,7 @@ export class CharMpIndicator {
     constructor(private char: Char) {
         this.text = o_.render.createText(
             '',
-            100,
+            130,
             -50,
             {
                 // align: 'center',

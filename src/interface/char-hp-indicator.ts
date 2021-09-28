@@ -11,7 +11,7 @@ export class CharHpIndicator {
     constructor(private char: Char) {
         this.text = o_.render.createText(
             '',
-            100,
+            130,
             -70,
             {
                 // align: 'center',

@@ -17,7 +17,7 @@ import {colorsCSS, gameConstants} from "../../constants";
 import {SOUND_KEY} from "../../managers/core/audio";
 import {CharStateBattleIdle} from "./states/CharStateBattleIdle";
 import {clamp, rndBetween, Vec} from "../../utils/utils-math";
-import {pause} from "../../utils/utils-async";
+import {createPromiseAndHandlers, pause} from "../../utils/utils-async";
 import {CharStateBattleAttack} from "./states/CharStateBattleAttack";
 import {flyingStatusChange} from "../../interface/basic/flying-status-change";
 import {CharStateBattleSurrender} from "./states/CharStateBattleSurrender";
@@ -93,6 +93,7 @@ export class Char {
 
         this.canCounterAttack = charTemplate.canCounterAttack
         this.isDefender = charTemplate.isDefender
+        this.isRanged = charTemplate.isRanged
 
         const {gold, food} = charTemplate.createResources()
         this.gold = gold
@@ -466,14 +467,27 @@ export class Char {
         return this.performBattleAction(0)
     }
 
+    isRanged: boolean
     async performBattleAction(pauseTime = 600) {
         await pause(pauseTime)
 
-        this.attackPromise = new Promise(res => this.onAttackEnd = res)
+        if (this.isRanged) {
+            const p = createPromiseAndHandlers()
+            this.setAnimation(CharAnimation.STRIKE, false, p.done)
+            await p.promise
 
-        this.startAttack();
+            this.setAnimation(CharAnimation.IDLE, false, p.done)
 
-        return this.attackPromise;
+            const arrow = o_.render.createSprite('arrow', this.container.x, this.container.y - 70)
+            o_.render.directToTarget(arrow, o_.troll)
+            await o_.render.flyTo(arrow, {x: o_.troll.x, y: o_.troll.y - 50}, 750)
+            o_.troll.getHit(this.rollDmg())
+            arrow.destroy()
+        } else {
+            this.attackPromise = new Promise(res => this.onAttackEnd = res)
+            this.startAttack();
+            await this.attackPromise;
+        }
     }
 
     canCounterAttack: boolean = false
