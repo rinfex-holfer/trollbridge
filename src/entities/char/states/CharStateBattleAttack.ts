@@ -39,7 +39,7 @@ export class CharStateBattleAttack extends CharState {
                 this.char.setAnimation(CharAnimation.STRIKE, false, () => {
                     this.attack();
                     this.phase = 'backward'
-                    this.char.moveTowards(startX, y)
+                    this.char.moveTowards(this.char.positionBeforeBattle.x, this.char.positionBeforeBattle.y)
                     this.char.setAnimation(CharAnimation.WALK)
                 })
             }

@@ -1,6 +1,7 @@
 import {CharKey, Resources} from "./types";
 import {resoursePaths} from "./resourse-paths";
 import {rndBetween} from "./utils/utils-math";
+import {AtlasKey} from "./utils/utils-types";
 
 // PEASANT_HP = 10,
 // PEASANT_WILL = 20,
@@ -28,7 +29,22 @@ import {rndBetween} from "./utils/utils-math";
 // KNIGHT_DEX = 8,
 // KNIGHT_DEX_LOW = 6,
 
-export const charTemplates = {
+type CharTemplate = {
+    name: string,
+    hp: number,
+    morale: number,
+    moralePrice: number,
+    dmg: number,
+    createResources: () => Resources
+    isCombatant: boolean,
+    atlasKey: AtlasKey,
+    canCounterAttack?: boolean,
+    isDefender?: boolean,
+    isRanged?: boolean,
+    isMounted?: boolean
+}
+
+export const charTemplates: {[key: string]: CharTemplate} = {
     [CharKey.FARMER]: {
         name: 'chars.peasant',
         hp: 10,
@@ -93,9 +109,7 @@ export const charTemplates = {
         createResources: (): Resources => ({gold: 1, food: 1}),
         isCombatant: true,
         atlasKey: 'knight',
-        canCounterAttack: false,
-        isDefender: false,
-        isRanged: false,
+        isMounted: true,
     },
 
 

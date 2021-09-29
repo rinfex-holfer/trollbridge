@@ -120,6 +120,12 @@ export class BattleManager {
             if (defender.isAlive) allGoBack.push(defender.goToBattlePosition())
             allGoBack.push(o_.troll.goToBattlePosition())
             await Promise.all(allGoBack)
+        } else if (char.isMounted) {
+            o_.troll.goToChar(charId)
+            await char.runAround()
+
+            char.directToTarget(o_.troll)
+            await o_.troll.goToBattlePosition()
         } else {
             await o_.troll.goToChar(charId)
 

@@ -44,6 +44,7 @@ export class TrollStateGoTo extends TrollState {
     }
 
     update(dt: number) {
+        this.host.moveTowards(this.options.target.x, this.options.target.y)
         this.checkDistance()
     }
 }

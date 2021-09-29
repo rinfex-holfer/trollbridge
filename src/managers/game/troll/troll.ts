@@ -61,6 +61,7 @@ export class Troll {
                 {framesPrefix: CharAnimation.WALK, repeat: -1, frameRate: 8},
                 {framesPrefix: CharAnimation.IDLE, repeat: -1, frameRate: 8},
                 {framesPrefix: CharAnimation.DEAD, repeat: -1, frameRate: 8},
+                {framesPrefix: CharAnimation.DAMAGED, frameRate: 8},
                 {framesPrefix: CharAnimation.STRIKE, frameRate: 8},
                 {framesPrefix: CharAnimation.THROW_STONE, frameRate: 8},
             ],
@@ -253,13 +254,10 @@ export class Troll {
     }
 
     goToChar(charId: string) {
-        const target = {x: 0, y: 0}
         var char = o_.characters.getTraveller(charId)
         if (!char) throw Error('WTF')
-        target.x = char.container.x
-        target.y = char.container.y
 
-        return  this.setState(TrollStateKey.GO_TO, { target, minDistance: 50 })
+        return  this.setState(TrollStateKey.GO_TO, { target: char.container, minDistance: 50 })
     }
 
     goToDefenderOfChar(charId: string) {

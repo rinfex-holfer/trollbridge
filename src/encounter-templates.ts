@@ -30,7 +30,7 @@ export const encounterTemplates: {[dangerLevel: number]: EncounterTemplate[]} = 
         {
             text: 'Cолдат',
             level: 0,
-            enemies: [CharKey.ARCHER, CharKey.FARMER],
+            enemies: [CharKey.KNIGHT],
         },
         // {
         //     text: 'Рыцарь с оруженосцем',

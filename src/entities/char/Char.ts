@@ -32,6 +32,8 @@ import {Gold} from "../gold";
 import {Meat, MeatLocation, meatSprite} from "../meat";
 import {CharStateBattleGoDefend} from "./states/CharStateBattleGoDefend";
 import {CharStateGoToBattlePosition} from "./states/CharStateGoToBattlePosition";
+import {CharStateGoTo} from "./states/CharStateGoTo";
+import {Horse} from "../horse";
 
 export class Char {
     key: CharKey
@@ -42,7 +44,6 @@ export class Char {
     maxMorale: number
     moralePrice: number
     name: string
-    isCombatant: boolean
     dmg = 0
 
     speed = gameConstants.CHAR_SPEED * 3
@@ -58,6 +59,12 @@ export class Char {
     isSurrender = false
     isBones = false
     isMetTroll = false
+
+    isCombatant: boolean
+    canCounterAttack: boolean
+    isDefender: boolean
+    isRanged: boolean
+    isMounted: boolean
 
     state: CharState
     timeWithoutFood = 0
@@ -91,9 +98,10 @@ export class Char {
         this.isCombatant = charTemplate.isCombatant
         this.dmg = charTemplate.dmg;
 
-        this.canCounterAttack = charTemplate.canCounterAttack
-        this.isDefender = charTemplate.isDefender
-        this.isRanged = charTemplate.isRanged
+        this.canCounterAttack = !!charTemplate.canCounterAttack
+        this.isDefender = !!charTemplate.isDefender
+        this.isRanged = !!charTemplate.isRanged
+        this.isMounted = !!charTemplate.isMounted
 
         const {gold, food} = charTemplate.createResources()
         this.gold = gold
@@ -117,7 +125,10 @@ export class Char {
         this.state = this.getState(CharStateKey.GO_ACROSS)
         this.state.onStart();
 
-        const subId = eventBus.on(Evt.ENCOUNTER_ENDED, () => this.hpIndicator.hide())
+        const subId = eventBus.on(Evt.ENCOUNTER_ENDED, () => {
+            this.hpIndicator.hide()
+            this.mpIndicator.hide()
+        })
         this.unsub.push(() => eventBus.unsubscribe(Evt.ENCOUNTER_ENDED, subId))
 
         const subId2 = eventBus.on(Evt.CHAR_DEFEATED, (key) => this.onCharDefeated(key))
@@ -180,6 +191,8 @@ export class Char {
                 return new CharStateBattleSurrender(this);
             case CharStateKey.BATTLE_GO_DEFEND:
                 return new CharStateBattleGoDefend(this, options)
+            case CharStateKey.GO_TO:
+                return new CharStateGoTo(this, options)
             case CharStateKey.GO_TO_BATTLE_POSITION:
                 return new CharStateGoToBattlePosition(this)
             default:
@@ -188,13 +201,13 @@ export class Char {
     }
 
     setState(stateKey: CharStateKey, options?: any) {
-        this.state.onEnd();
+        console.log(stateKey)
+        this.state.end();
         this.state = this.getState(stateKey, options)
-        this.state.onStart();
+        return this.state.start();
     }
 
-    createSprite(x: number, y: number) {
-        const atlasKey = charTemplates[this.key].atlasKey;
+    createSprite(x: number, y: number, atlasKey = charTemplates[this.key].atlasKey) {
         const sprite = o_.render.createAnimatedSprite({
             // @ts-ignore
             atlasKey,
@@ -202,7 +215,9 @@ export class Char {
                 {framesPrefix: CharAnimation.WALK, repeat: -1, frameRate: 8},
                 {framesPrefix: CharAnimation.IDLE, repeat: -1, frameRate: 8},
                 {framesPrefix: CharAnimation.DEAD, repeat: -1, frameRate: 8},
+                {framesPrefix: CharAnimation.FALL, frameRate: 8},
                 {framesPrefix: CharAnimation.STRIKE, frameRate: 8},
+                {framesPrefix: CharAnimation.DAMAGED, frameRate: 8},
                 {framesPrefix: CharAnimation.PRISONER, repeat: -1, frameRate: 8},
                 {framesPrefix: CharAnimation.SURRENDER, repeat: -1, frameRate: 8},
             ],
@@ -211,6 +226,9 @@ export class Char {
             parent: this.container
         })
         sprite.setOrigin(0.5, 1);
+
+        this.sprite = sprite
+
         return sprite;
     }
 
@@ -320,9 +338,9 @@ export class Char {
         this.mpIndicator.hide();
 
         if (o_.battle.isBattle) {
-            this.setState(CharStateKey.BATTLE_SURRENDER);
+            return this.setState(CharStateKey.BATTLE_SURRENDER);
         } else {
-            this.setState(CharStateKey.SURRENDER);
+            return this.setState(CharStateKey.SURRENDER);
         }
     }
 
@@ -360,11 +378,11 @@ export class Char {
     }
 
     getKilled() {
-        this.setState(CharStateKey.DEAD);
+        return this.setState(CharStateKey.DEAD);
     }
 
     goAcrossBridge() {
-        this.setState(CharStateKey.GO_ACROSS);
+        return this.setState(CharStateKey.GO_ACROSS);
     }
 
     startFighting() {
@@ -408,7 +426,7 @@ export class Char {
         this.hpIndicator.update();
     }
 
-    getHit(dmg: number) {
+    async getHit(dmg: number) {
         o_.audio.playSound(SOUND_KEY.HIT);
         o_.render.burstBlood(this.container.x, this.container.y - 70);
 
@@ -421,7 +439,22 @@ export class Char {
             colorsCSS.RED
         );
 
-        if (this.hp <= 0) {
+        if (this.hp > 0) {
+            if (this.isMounted && this.checkLooseHorse()) {
+                this.isMounted = false
+                await this.runAnimationOnce(CharAnimation.FALL)
+                this.sprite.destroy()
+                this.createSprite(0, 0, 'shieldman')
+                this.setAnimation(CharAnimation.IDLE)
+
+                this.directToTarget(o_.troll)
+
+                new Horse(this.container.x, this.container.y)
+            } else {
+                await this.runAnimationOnce(CharAnimation.DAMAGED)
+                this.setAnimation(CharAnimation.IDLE)
+            }
+        } else {
             if (!this.isSurrender) {
                 this.surrender();
                 eventBus.emit(Evt.CHAR_DEFEATED, this.key)
@@ -429,6 +462,16 @@ export class Char {
                 this.getKilled()
             }
         }
+    }
+
+    checkLooseHorse() {
+        return true
+    }
+
+    async runAnimationOnce(anim: CharAnimation) {
+        const p = createPromiseAndHandlers()
+        this.setAnimation(anim, false, p.done)
+        return p.promise
     }
 
     directToTarget(target: Vec) {
@@ -457,17 +500,6 @@ export class Char {
     attackPromise = new Promise(() => {})
     onAttackEnd: any = () => {}
 
-    async performCounterAttack() {
-        flyingStatusChange(
-            'Counter-attack!',
-            this.container.x,
-            this.container.y - this.sprite.height,
-            colorsCSS.WHITE
-        );
-        return this.performBattleAction(0)
-    }
-
-    isRanged: boolean
     async performBattleAction(pauseTime = 600) {
         await pause(pauseTime)
 
@@ -490,8 +522,30 @@ export class Char {
         }
     }
 
-    canCounterAttack: boolean = false
-    isDefender: boolean = false
+    async performCounterAttack() {
+        flyingStatusChange(
+            'Counter-attack!',
+            this.container.x,
+            this.container.y - this.sprite.height,
+            colorsCSS.WHITE
+        );
+        return this.performBattleAction(0)
+    }
+
+    async runAround() {
+        const oldSpeed = this.speed
+        this.speed = this.speed * 3
+        const points = [
+            {x: this.container.x - 300, y: this.container.y - 200},
+            {x: this.container.x - 600, y: this.container.y},
+            {x: this.container.x - 300, y: this.container.y + 200},
+            {x: this.container.x, y: this.container.y},
+        ]
+        for (let i = 0; i < points.length; i++) {
+            await this.setState(CharStateKey.GO_TO, {target: points[i], speed: this.speed})
+        }
+        this.speed = oldSpeed
+    }
 
     canProtect(char: Char) {
         return this.isDefender

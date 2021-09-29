@@ -119,6 +119,10 @@ export const gameConstants = {
 
     costs: {
         fix_bridge: 10
+    },
+
+    horse: {
+        speed: 500,
     }
 }
 
