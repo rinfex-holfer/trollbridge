@@ -5,6 +5,7 @@ export const enum CharStateKey {
     GO_TO_TALK = 'GO_TO_TALK',
     SURRENDER = 'SURRENDER',
     // PRISONER = 'PRISONER',
+    UNCONSCIOUS = 'UNCONSCIOUS',
     DEAD = 'DEAD',
     BONES = 'BONES',
     GO_TO_BATTLE_POSITION = 'GO_TO_BATTLE_POSITION',
@@ -18,10 +19,12 @@ export const enum CharAnimation {
     WALK = 'walk',
     IDLE = 'idle',
     FALL = 'fall',
+    UNCONSCIOUS = 'unconscious',
     DAMAGED = 'damaged',
     SURRENDER = 'scared',
     PRISONER = 'prisoner',
     DEAD = 'dead',
     STRIKE = 'strike',
+    STRIKE_DOWN = 'strike_down',
     THROW_STONE = 'throw_stone'
 }

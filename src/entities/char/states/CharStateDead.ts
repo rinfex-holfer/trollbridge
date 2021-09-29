@@ -8,8 +8,6 @@ export class CharStateDead extends CharState {
 
     rotTime = 0;
 
-    unsub: number = -1
-
     rot() {
         this.rotTime++
         if (this.rotTime >= 3) {
@@ -17,16 +15,13 @@ export class CharStateDead extends CharState {
         }
     }
 
-    onEnd() {
-        eventBus.unsubscribe(Evt.TIME_PASSED, this.unsub);
-    }
-
     onStart() {
-        this.unsub = eventBus.on(Evt.TIME_PASSED, () => this.rot())
+        this.subs.on(Evt.TIME_PASSED, () => this.rot())
+
         this.char.isAlive = false;
         this.char.setAnimation(CharAnimation.DEAD);
         this.char.actionsMenu.changeActiveButtons([
-            // CharAction.DEVOUR,
+            CharAction.BATTLE_DEVOUR,
             CharAction.MAKE_FOOD,
         ])
     }

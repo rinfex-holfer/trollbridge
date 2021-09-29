@@ -255,12 +255,13 @@ export class CharactersManager {
         let char = fighters.find(t => t.id === charId);
         if (!char) throw Error('wtf');
 
-        return char.canCounterAttack
+        return char.canCounterAttack()
     }
 
     findDefenders(charId: string): Char[] {
+        const travellers = this.getTravellers()
         const fighters = this.getFighters()
-        let char = fighters.find(t => t.id === charId);
+        let char = travellers.find(t => t.id === charId);
         if (!char) throw Error('wtf');
 
         // @ts-ignore

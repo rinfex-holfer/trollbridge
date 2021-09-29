@@ -17,7 +17,6 @@ import {Zzz} from "../../../entities/zzz";
 import {TrollStats} from "../../../interface/troll-stats";
 import {TrollStateBattleAttack} from "./troll-state-battle-attack";
 import {onTrollCameToBridge, onTrollCameToLair, onTrollSleep} from "../../../helpers";
-import {EntityType} from "../../core/entities";
 import {Char} from "../../../entities/char/Char";
 import {createPromiseAndHandlers} from "../../../utils/utils-async";
 import {Rock} from "../../../entities/rock";
@@ -29,7 +28,7 @@ export class Troll {
     location: TrollLocation = TrollLocation.LAIR
 
     armor = 0
-    level = 3
+    level = 1
     dmg = 1
     hp = 1
     maxHp = 1
@@ -59,11 +58,14 @@ export class Troll {
             atlasKey: 'troll',
             animations:  [
                 {framesPrefix: CharAnimation.WALK, repeat: -1, frameRate: 8},
+                {framesPrefix: CharAnimation.FALL, repeat: -1, frameRate: 4},
                 {framesPrefix: CharAnimation.IDLE, repeat: -1, frameRate: 8},
                 {framesPrefix: CharAnimation.DEAD, repeat: -1, frameRate: 8},
                 {framesPrefix: CharAnimation.DAMAGED, frameRate: 8},
                 {framesPrefix: CharAnimation.STRIKE, frameRate: 8},
+                {framesPrefix: CharAnimation.STRIKE_DOWN, frameRate: 4},
                 {framesPrefix: CharAnimation.THROW_STONE, frameRate: 8},
+                {framesPrefix: CharAnimation.UNCONSCIOUS, frameRate: 1},
             ],
             x: lairPos.x + lairPos.width / 2,
             y: lairPos.y + lairPos.height / 2,
@@ -353,6 +355,20 @@ export class Troll {
 
     attack(charId: string) {
         return this.setState(TrollStateKey.BATTLE_ATTACK, {targetId: charId})
+    }
+
+    async strike(char: Char) {
+        const anim = char.isUnconscious ? CharAnimation.STRIKE_DOWN : CharAnimation.STRIKE
+        await this.runAnimationOnce(anim)
+
+        o_.characters.hitChar(char.id, this.rollDmg())
+        this.setAnimation(CharAnimation.IDLE)
+    }
+
+    async runAnimationOnce(anim: CharAnimation) {
+        const p = createPromiseAndHandlers()
+        this.setAnimation(anim, p.done)
+        return p.promise
     }
 
     async throwRockAt(char: Char) {

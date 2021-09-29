@@ -14,6 +14,7 @@ export function flyingStatusChange(text: string, x: number, y: number, color?: s
             fontSize: '22px',
         }
     )
+    status.setOrigin(0.5, 0.5)
     o_.layers.add(status, LayerKey.FIELD_BUTTONS);
 
     const timeline = o_.render.scene.tweens.createTimeline();

@@ -34,6 +34,7 @@ import {CharStateBattleGoDefend} from "./states/CharStateBattleGoDefend";
 import {CharStateGoToBattlePosition} from "./states/CharStateGoToBattlePosition";
 import {CharStateGoTo} from "./states/CharStateGoTo";
 import {Horse} from "../horse";
+import {CharStateUnconscious} from "./states/CharStateUnconscious";
 
 export class Char {
     key: CharKey
@@ -61,7 +62,7 @@ export class Char {
     isMetTroll = false
 
     isCombatant: boolean
-    canCounterAttack: boolean
+    isCounterAttacker: boolean
     isDefender: boolean
     isRanged: boolean
     isMounted: boolean
@@ -98,7 +99,7 @@ export class Char {
         this.isCombatant = charTemplate.isCombatant
         this.dmg = charTemplate.dmg;
 
-        this.canCounterAttack = !!charTemplate.canCounterAttack
+        this.isCounterAttacker = !!charTemplate.canCounterAttack
         this.isDefender = !!charTemplate.isDefender
         this.isRanged = !!charTemplate.isRanged
         this.isMounted = !!charTemplate.isMounted
@@ -126,8 +127,7 @@ export class Char {
         this.state.onStart();
 
         const subId = eventBus.on(Evt.ENCOUNTER_ENDED, () => {
-            this.hpIndicator.hide()
-            this.mpIndicator.hide()
+            this.setIndicatorsVisible(false)
         })
         this.unsub.push(() => eventBus.unsubscribe(Evt.ENCOUNTER_ENDED, subId))
 
@@ -136,11 +136,14 @@ export class Char {
 
         const subId3 = eventBus.on(Evt.CHAR_DEVOURED_IN_BATTLE, (key) => this.onCharDevoured(key))
         this.unsub.push(() => eventBus.unsubscribe(Evt.CHAR_DEVOURED_IN_BATTLE, subId3))
+
+        // @ts-ignore
+        // window.changeMp = (a) => this.changeMp(a)
     }
 
     getIsNewTraveller() { return !this.isMetTroll }
     getIsTraveller() { return this.isAlive && !this.isPrisoner }
-    getIsFighter() { return this.getIsTraveller() && !this.isSurrender }
+    getIsFighter() { return this.getIsTraveller() && !this.isSurrender && !this.isUnconscious }
     getIsPrisoner() { return this.isAlive && this.isPrisoner; }
 
     onCharDefeated(key: CharKey) {
@@ -151,7 +154,7 @@ export class Char {
 
     onCharDevoured(key: CharKey) {
         if (this.getIsFighter()) {
-            this.changeMp(-charTemplates[key].moralePrice * 2)
+            this.changeMp(-charTemplates[key].moralePrice)
         }
     }
 
@@ -195,6 +198,8 @@ export class Char {
                 return new CharStateGoTo(this, options)
             case CharStateKey.GO_TO_BATTLE_POSITION:
                 return new CharStateGoToBattlePosition(this)
+            case CharStateKey.UNCONSCIOUS:
+                return new CharStateUnconscious(this)
             default:
                 throw Error('wrong state key ' + stateKey);
         }
@@ -215,11 +220,12 @@ export class Char {
                 {framesPrefix: CharAnimation.WALK, repeat: -1, frameRate: 8},
                 {framesPrefix: CharAnimation.IDLE, repeat: -1, frameRate: 8},
                 {framesPrefix: CharAnimation.DEAD, repeat: -1, frameRate: 8},
-                {framesPrefix: CharAnimation.FALL, frameRate: 8},
+                {framesPrefix: CharAnimation.FALL, frameRate: 4},
                 {framesPrefix: CharAnimation.STRIKE, frameRate: 8},
                 {framesPrefix: CharAnimation.DAMAGED, frameRate: 8},
                 {framesPrefix: CharAnimation.PRISONER, repeat: -1, frameRate: 8},
                 {framesPrefix: CharAnimation.SURRENDER, repeat: -1, frameRate: 8},
+                {framesPrefix: CharAnimation.UNCONSCIOUS, frameRate: 1},
             ],
             x,
             y,
@@ -333,9 +339,20 @@ export class Char {
         }
     }
 
+    setIndicatorsVisible(val: boolean) {
+        if (val) {
+            this.hpIndicator.show();
+            this.mpIndicator.show();
+        } else {
+            this.hpIndicator.hide();
+            this.mpIndicator.hide();
+        }
+    }
+
     surrender() {
-        this.hpIndicator.hide();
-        this.mpIndicator.hide();
+        this.setIndicatorsVisible(false)
+
+        flyingStatusChange('Сдаюсь, пощади!', this.container.x, this.container.y - 100)
 
         if (o_.battle.isBattle) {
             return this.setState(CharStateKey.BATTLE_SURRENDER);
@@ -410,9 +427,9 @@ export class Char {
         this.mpIndicator.update();
 
         flyingStatusChange(
-            ''+val,
-            this.sprite.x,
-            this.sprite.y - this.sprite.height,
+            ''+val + ' morale',
+            this.container.x,
+            this.container.y - 70,
             colorsCSS.BLUE
         );
 
@@ -435,7 +452,7 @@ export class Char {
         flyingStatusChange(
             '-'+dmg,
             this.container.x,
-            this.container.y - this.container.height,
+            this.container.y - 100,
             colorsCSS.RED
         );
 
@@ -455,11 +472,10 @@ export class Char {
                 this.setAnimation(CharAnimation.IDLE)
             }
         } else {
-            if (!this.isSurrender) {
-                this.surrender();
-                eventBus.emit(Evt.CHAR_DEFEATED, this.key)
-            } else {
+            if (this.isUnconscious) {
                 this.getKilled()
+            } else {
+                this.setUnconscious()
             }
         }
     }
@@ -553,6 +569,10 @@ export class Char {
             && char.key !== this.key
     }
 
+    canCounterAttack() {
+        return this.isCounterAttacker && !this.isUnconscious && !this.isSurrender && this.isAlive
+    }
+
     getDefenderPosition(): Vec {
         return {x: this.container.x - 100, y: this.container.y}
     }
@@ -572,5 +592,9 @@ export class Char {
     goToBattlePosition() {
         this.setState(CharStateKey.GO_TO_BATTLE_POSITION)
         return this.movePromise
+    }
+
+    setUnconscious() {
+        return this.setState(CharStateKey.UNCONSCIOUS)
     }
 }

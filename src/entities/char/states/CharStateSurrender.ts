@@ -2,6 +2,7 @@ import {CharState} from "./CharState";
 import {CharAnimation, CharStateKey} from "../char-constants";
 import {CharAction} from "../../../interface/char-actions-menu";
 import {gameConstants} from "../../../constants";
+import {flyingStatusChange} from "../../../interface/basic/flying-status-change";
 
 export class CharStateSurrender extends CharState {
     key = CharStateKey.SURRENDER
@@ -15,10 +16,8 @@ export class CharStateSurrender extends CharState {
             CharAction.RELEASE,
             CharAction.ROB,
             CharAction.TAKE_ALL,
-            // CharAction.IMPRISON,
-            CharAction.KILL,
-            // CharAction.DEVOUR,
-            // CharAction.MAKE_FOOD,
+            CharAction.BATTLE_HIT,
         ])
+        this.char.setIndicatorsVisible(false)
     }
 }

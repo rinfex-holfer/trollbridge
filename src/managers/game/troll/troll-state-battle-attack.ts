@@ -8,7 +8,6 @@ export class TrollStateBattleAttack extends TrollState {
     key = TrollStateKey.BATTLE_ATTACK
 
     targetId: string
-    minDistance: number = 10
 
     constructor(host: Troll, options: {targetId: string}) {
         super(host);
@@ -16,10 +15,6 @@ export class TrollStateBattleAttack extends TrollState {
     }
 
     onStart() {
-        this.host.setAnimation(CharAnimation.STRIKE, () => {
-            o_.characters.hitChar(this.targetId, this.host.rollDmg())
-            this.host.setAnimation(CharAnimation.IDLE)
-            this.host.goIdle()
-        })
+        this.host.strike(o_.characters.getTraveller(this.targetId)).then(() => this.host.goIdle())
     }
 }

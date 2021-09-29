@@ -1,6 +1,7 @@
 import {eventBus, Evt} from "../../event-bus";
 import {o_} from "../locator";
 import {onEncounterEnd} from "../../helpers";
+import {pause} from "../../utils/utils-async";
 
 export class BattleManager {
     unsub: any[] = []
@@ -104,7 +105,7 @@ export class BattleManager {
         o_.characters.disableInteractivityAll();
 
         const char = o_.characters.getTraveller(charId)
-        const counterAttack = o_.characters.canCounterAttack(charId)
+        const counterAttack = char.canCounterAttack()
         const defenders = o_.characters.findDefenders(charId)
 
         if (defenders.length) {
@@ -129,8 +130,11 @@ export class BattleManager {
         } else {
             await o_.troll.goToChar(charId)
 
-            if (counterAttack) await o_.characters.counterAttack(charId)
-            if (!o_.troll.getIsAlive()) return this.fail()
+            if (counterAttack) {
+                await o_.characters.counterAttack(charId)
+                await pause(500)
+                if (!o_.troll.getIsAlive()) return this.fail()
+            }
 
             await o_.troll.attack(charId)
             if (this.getIsWin()) return this.win()

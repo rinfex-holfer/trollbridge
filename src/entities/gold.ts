@@ -133,6 +133,6 @@ export class Gold extends GameEntityBase<EntityType.GOLD> {
 
     public throwTo(pos: Vec) {
         this.setInteractive(false)
-        o_.render.thrownTo(this.sprite, pos, 700).then(() => this.setInteractive(true))
+        o_.render.thrownTo(this.sprite, pos, 700).then(() => this.updateInteractive())
     }
 }

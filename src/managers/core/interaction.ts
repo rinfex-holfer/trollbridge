@@ -42,10 +42,14 @@ export class InteractionManager {
         o_.bridge.disableInterface()
         o_.upgrade.setEnabled(false)
 
-        o_.entities.getAll().forEach(o => o.setInteractive(false))
+        this.disableEntities()
         console.log('disableEverything')
 
         this.waitBtn.setEnabled(false)
+    }
+
+    disableEntities() {
+        o_.entities.getAll().forEach(o => o.setInteractive(false))
     }
 
     enableEverything() {
