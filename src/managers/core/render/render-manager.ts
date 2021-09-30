@@ -151,7 +151,6 @@ export class RenderManager {
         timeline.add({
             targets: obj.obj,
             y: Math.min(obj.y, pos.y) - distance / 2,
-            // yoyo: true,
             ease: 'Quad.easeOut',
             duration: duration / 3,
             offset: 0,
@@ -183,15 +182,41 @@ export class RenderManager {
         return timeline
     }
 
-    createJumpingTimeline(targets: O_GameObject | O_GameObject[]) {
+    bounceOfGround(obj: O_GameObject, height: number, duration: number) {
+        const {promise, done} = createPromiseAndHandlers()
+        const timeline = this.createTimeline();
+
+        timeline.add({
+            targets: obj.obj,
+            y: obj.y - height,
+            ease: 'Quad.easeOut',
+            duration: duration / 3,
+            offset: 0,
+        })
+
+        timeline.add({
+            targets: obj.obj,
+            y: obj.y,
+            ease: 'Bounce.easeOut',
+            duration: duration * 2 / 3,
+            offset: duration / 3,
+            onComplete: done
+        })
+
+        timeline.play()
+
+        return promise
+    }
+
+    createJumpingTimeline(targets: O_GameObject | O_GameObject[], height = 10, repeat = -1) {
         const timeline = this.createTimeline()
         timeline.add({
             targets: Array.isArray(targets) ? targets.map(t => t.obj) : targets.obj,
             ease: 'Power2.easeInOut',
             yoyo: true,
-            repeat: -1,
+            repeat,
             duration: 200,
-            y: '-=10'
+            y: '-=' + height
         })
         return timeline
     }

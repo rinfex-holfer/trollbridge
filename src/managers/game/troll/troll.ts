@@ -28,7 +28,7 @@ export class Troll {
     location: TrollLocation = TrollLocation.LAIR
 
     armor = 0
-    level = 1
+    level = 0
     dmg = 1
     hp = 1
     maxHp = 1
@@ -353,8 +353,8 @@ export class Troll {
         }
     }
 
-    attack(charId: string) {
-        return this.setState(TrollStateKey.BATTLE_ATTACK, {targetId: charId})
+    attack(char: Char) {
+        return this.setState(TrollStateKey.BATTLE_ATTACK, {targetId: char.id})
     }
 
     async strike(char: Char) {
@@ -390,5 +390,28 @@ export class Troll {
 
         rock.destroy()
         o_.characters.hitChar(char.id, this.rollDmg())
+    }
+
+    async throwChar(char: Char) {
+
+        await this.runAnimationOnce(CharAnimation.STRIKE)
+
+        char.setAnimation(CharAnimation.UNCONSCIOUS)
+
+        const p0 = createPromiseAndHandlers()
+        const jumpTimeline = o_.render.createJumpingTimeline([this.sprite, char.container], 100, 0)
+        jumpTimeline.once('complete', p0.done)
+        jumpTimeline.play()
+        await p0.promise
+
+        this.setAnimation(CharAnimation.IDLE)
+
+        o_.characters.hitChar(char.id, this.rollDmg(), {grabbed: true, stun: this.rollStun()})
+
+        await o_.render.bounceOfGround(char.container, 50, 1000)
+    }
+
+    rollStun() {
+        return 2
     }
 }

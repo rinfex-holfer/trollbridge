@@ -35,6 +35,8 @@ import {CharStateGoToBattlePosition} from "./states/CharStateGoToBattlePosition"
 import {CharStateGoTo} from "./states/CharStateGoTo";
 import {Horse} from "../horse";
 import {CharStateUnconscious} from "./states/CharStateUnconscious";
+import {DmgOptions} from "../../utils/utils-types";
+import {charTexts} from "../../char-texts";
 
 export class Char {
     key: CharKey
@@ -124,7 +126,7 @@ export class Char {
         this.mpIndicator = new CharMpIndicator(this);
 
         this.state = this.getState(CharStateKey.GO_ACROSS)
-        this.state.onStart();
+        this.state.start();
 
         const subId = eventBus.on(Evt.ENCOUNTER_ENDED, () => {
             this.setIndicatorsVisible(false)
@@ -161,7 +163,7 @@ export class Char {
     destroy() {
         // this.actionsMenu.destroy();
         this.unsub.forEach(f => f());
-        this.state.onEnd();
+        this.state.end();
         this.speakText.destroy();
         this.container.destroy();
     }
@@ -199,7 +201,7 @@ export class Char {
             case CharStateKey.GO_TO_BATTLE_POSITION:
                 return new CharStateGoToBattlePosition(this)
             case CharStateKey.UNCONSCIOUS:
-                return new CharStateUnconscious(this)
+                return new CharStateUnconscious(this, options)
             default:
                 throw Error('wrong state key ' + stateKey);
         }
@@ -443,7 +445,7 @@ export class Char {
         this.hpIndicator.update();
     }
 
-    async getHit(dmg: number) {
+    async getHit(dmg: number, options?: DmgOptions) {
         o_.audio.playSound(SOUND_KEY.HIT);
         o_.render.burstBlood(this.container.x, this.container.y - 70);
 
@@ -468,8 +470,12 @@ export class Char {
 
                 new Horse(this.container.x, this.container.y)
             } else {
-                await this.runAnimationOnce(CharAnimation.DAMAGED)
-                this.setAnimation(CharAnimation.IDLE)
+                if (options?.stun) {
+                    this.setState(CharStateKey.UNCONSCIOUS, {duration: options.stun, withAnimation: false})
+                } else {
+                    await this.runAnimationOnce(CharAnimation.DAMAGED)
+                    this.setAnimation(CharAnimation.IDLE)
+                }
             }
         } else {
             if (this.isUnconscious) {
@@ -595,6 +601,10 @@ export class Char {
     }
 
     setUnconscious() {
-        return this.setState(CharStateKey.UNCONSCIOUS)
+        return this.setState(CharStateKey.UNCONSCIOUS, {duration: 999, withAnimation: true})
+    }
+
+    say(text: string) {
+        flyingStatusChange(text, this.container.x, this.container.y - 100)
     }
 }

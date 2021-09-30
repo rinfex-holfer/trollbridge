@@ -9,7 +9,7 @@ export class CharStateBattleIdle extends CharState {
     onStart() {
         this.char.setAnimation(CharAnimation.IDLE);
 
-        const btns = [CharAction.BATTLE_HIT]
+        const btns = [CharAction.BATTLE_HIT, CharAction.BATTLE_THROW_CHAR]
         if (o_.bridge.getRockPlaces().some(p => !p.isRuined)) btns.push(CharAction.BATTLE_THROW_ROCK)
 
         this.char.actionsMenu.changeActiveButtons(btns)

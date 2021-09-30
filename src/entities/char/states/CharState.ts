@@ -24,14 +24,14 @@ export abstract class CharState {
         this.onStart()
         return this.onEndPromise
     }
-    onStart() {}
+    protected onStart() {}
 
     end() {
         this.subs.clear()
         this.onEnd()
         this.onEndCallback()
     }
-    onEnd() {}
+    protected onEnd() {}
 
     update(dt: number) {
 

@@ -6,7 +6,10 @@ export const enum Evt {
     TIME_PASSED = 'TIME_PASSED',
     ALL_GIVEN = 'ALL_GIVEN',
     PAYMENT_GIVEN = 'PAYMENT_GIVEN',
+
     BATTLE_STARTED = 'BATTLE_STARTED',
+    BATTLE_TRAVELLERS_TURN_END = 'BATTLE_TRAVELLERS_TURN_END',
+
     BYPASSED = 'BYPASSED',
     GAME_OVER = 'GAME_OVER',
 
@@ -29,7 +32,10 @@ export const enum Evt {
 export type EvtData = {
     [Evt.ALL_GIVEN]: undefined,
     [Evt.PAYMENT_GIVEN]: undefined,
+
     [Evt.BATTLE_STARTED]: undefined,
+    [Evt.BATTLE_TRAVELLERS_TURN_END]: undefined,
+
     [Evt.BYPASSED]: undefined,
     [Evt.TIME_PASSED]: undefined,
     [Evt.GAME_OVER]: undefined,

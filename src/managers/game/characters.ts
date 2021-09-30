@@ -5,6 +5,7 @@ import {eventBus, Evt} from "../../event-bus";
 import {encounterTemplates} from "../../encounter-templates";
 import {positioner} from "./positioner";
 import {o_} from "../locator";
+import {DmgOptions} from "../../utils/utils-types";
 
 export class CharactersManager {
     chars: Char[] = []
@@ -212,11 +213,11 @@ export class CharactersManager {
         char.eat();
     }
 
-    hitChar(id: string, dmg: number) {
+    hitChar(id: string, dmg: number, options?: DmgOptions) {
         let char = this.getTravellers().find(t => t.id === id);
         if (!char) throw Error('wtf');
 
-        char.getHit(dmg);
+        char.getHit(dmg, options);
     }
 
     transformToFood(id: string) {
