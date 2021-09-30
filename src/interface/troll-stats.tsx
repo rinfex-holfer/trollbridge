@@ -2,7 +2,7 @@ import {O_Container} from "../managers/core/render/container";
 import {o_} from "../managers/locator";
 import {Troll} from "../managers/game/troll/troll";
 import {ProgressBar} from "./basic/progress-bar";
-import {colorsNum} from "../constants";
+import {colorsNum} from "../configs/constants";
 import {XpMeter} from "./xp-meter";
 
 const X = 50

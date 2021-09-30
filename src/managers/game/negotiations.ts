@@ -2,7 +2,7 @@ import {rnd} from "../../utils/utils-math";
 import {EncounterDanger, TrollLocation} from "../../types";
 import {eventBus, Evt} from "../../event-bus";
 import {BasicButton} from "../../interface/basic/basic-button";
-import {colors} from "../../constants";
+import {colors} from "../../configs/constants";
 import {SimpleButton} from "../../interface/basic/simple-button";
 import {positioner} from "./positioner";
 import {O_Container} from "../core/render/container";

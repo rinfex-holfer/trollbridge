@@ -1,4 +1,4 @@
-import {colorsCSS, gameConstants} from "../../../constants";
+import {colorsCSS, gameConstants} from "../../../configs/constants";
 import {eventBus, Evt} from "../../../event-bus";
 import {FoodType, TrollLocation} from "../../../types";
 import {positioner} from "../positioner";
@@ -18,8 +18,10 @@ import {TrollStats} from "../../../interface/troll-stats";
 import {TrollStateBattleAttack} from "./troll-state-battle-attack";
 import {onTrollCameToBridge, onTrollCameToLair, onTrollSleep} from "../../../helpers";
 import {Char} from "../../../entities/char/Char";
-import {createPromiseAndHandlers} from "../../../utils/utils-async";
+import {createPromiseAndHandlers, pause} from "../../../utils/utils-async";
 import {Rock} from "../../../entities/rock";
+import {trollConfig} from "../../../configs/troll-config";
+import {foodConfig} from "../../../configs/food-config";
 
 let troll: Troll
 
@@ -33,15 +35,15 @@ export class Troll {
     hp = 1
     maxHp = 1
     hunger = 0
-    maxHunger = gameConstants.TROLL_MAX_HUNGER
-    selfControl = gameConstants.TROLL_MAX_SELF_CONTROL
-    maxSelfControl = gameConstants.TROLL_MAX_SELF_CONTROL
+    maxHunger = trollConfig.TROLL_MAX_HUNGER
+    selfControl = trollConfig.TROLL_MAX_SELF_CONTROL
+    maxSelfControl = trollConfig.TROLL_MAX_SELF_CONTROL
     xp = 0
 
     sprite: O_AnimatedSprite
     zzz: Zzz
 
-    speed = gameConstants.TROLL_SPEED
+    speed = trollConfig.TROLL_SPEED
 
     state: TrollState
 
@@ -62,6 +64,8 @@ export class Troll {
                 {framesPrefix: CharAnimation.IDLE, repeat: -1, frameRate: 8},
                 {framesPrefix: CharAnimation.DEAD, repeat: -1, frameRate: 8},
                 {framesPrefix: CharAnimation.DAMAGED, frameRate: 8},
+                {framesPrefix: CharAnimation.DEVOUR, frameRate: 8},
+                {framesPrefix: CharAnimation.GRAPPLE, frameRate: 8},
                 {framesPrefix: CharAnimation.STRIKE, frameRate: 8},
                 {framesPrefix: CharAnimation.STRIKE_DOWN, frameRate: 4},
                 {framesPrefix: CharAnimation.THROW_STONE, frameRate: 8},
@@ -84,7 +88,7 @@ export class Troll {
         this.state.onStart();
 
         this.stats = new TrollStats(this)
-        this.hp = gameConstants.TROLL_LEVELING[this.level].maxHp
+        this.hp = trollConfig.TROLL_LEVELING[this.level].maxHp
         this.onNewLevel(false);
     }
 
@@ -93,24 +97,24 @@ export class Troll {
 
     onNewLevel(animated = true) {
         this.xp = 0
-        this.maxHp = gameConstants.TROLL_LEVELING[this.level].maxHp
-        this.armor = gameConstants.TROLL_LEVELING[this.level].armor
-        this.dmg = gameConstants.TROLL_LEVELING[this.level].dmg
+        this.maxHp = trollConfig.TROLL_LEVELING[this.level].maxHp
+        this.armor = trollConfig.TROLL_LEVELING[this.level].armor
+        this.dmg = trollConfig.TROLL_LEVELING[this.level].dmg
 
         this.stats.update(animated)
     }
 
     getNextLvlReqs() {
-        return gameConstants.TROLL_LEVELING[this.level+1].xp
+        return trollConfig.TROLL_LEVELING[this.level+1].xp
     }
 
     getIsAlive() {
         return this.hp > 0;
     }
 
-    increaseHunger(val: number = gameConstants.HUNGER_PER_TIME) {
-        if (this.hunger === gameConstants.TROLL_MAX_HUNGER) {
-            this.changeTrollHp(-gameConstants.HP_MINUS_WHEN_HUNGRY, 'hunger')
+    increaseHunger(val: number = trollConfig.HUNGER_PER_TIME) {
+        if (this.hunger === trollConfig.TROLL_MAX_HUNGER) {
+            this.changeTrollHp(-trollConfig.HP_MINUS_WHEN_HUNGRY, 'hunger')
         }
 
         this.changeHunger(val)
@@ -121,13 +125,13 @@ export class Troll {
         if (isStale) foodKey += '_STALE'
 
         // @ts-ignore
-        const hpChange = gameConstants.FOOD[food][foodKey].hp
+        const hpChange = foodConfig.FOOD[food][foodKey].hp
         // @ts-ignore
-        const hungerChange = gameConstants.FOOD[food][foodKey].hunger
+        const hungerChange = foodConfig.FOOD[food][foodKey].hunger
         // @ts-ignore
-        const selfControlChange = gameConstants.FOOD[food][foodKey].selfControl
+        const selfControlChange = foodConfig.FOOD[food][foodKey].selfControl
         // @ts-ignore
-        const xpChange = gameConstants.FOOD[food][foodKey].xp
+        const xpChange = foodConfig.FOOD[food][foodKey].xp
 
         this.changeTrollHp(hpChange)
         this.changeHunger(hungerChange)
@@ -287,9 +291,34 @@ export class Troll {
 
     goSleep() { this.setState(TrollStateKey.SLEEP) }
 
-    devour(id: string) {
+    goTo(target: Vec, minDistance?: number) {
+        return this.setState(TrollStateKey.GO_TO, { target, minDistance })
+    }
+
+    async devour(id: string) {
+        await this.runAnimationOnce(CharAnimation.STRIKE_DOWN)
+
         this.eat(FoodType.MEAT, false, true);
         o_.characters.charEaten(id);
+
+        await pause(1000)
+
+        this.setAnimation(CharAnimation.IDLE)
+    }
+
+    async devourAttack(id: string) {
+        const char = o_.characters.getTraveller(id)
+
+        await this.goTo(char.container, 30)
+        await this.runAnimationOnce(CharAnimation.GRAPPLE)
+
+        const dist = 100
+        await Promise.all([
+            o_.render.flyTo(this.sprite, {x: this.sprite.x - dist, y: this.sprite.y}, 500),
+            o_.render.flyTo(char.container, {x: char.container.x - dist, y: char.container.y}, 500)
+        ])
+
+        await this.devour(id)
     }
 
     getHit(dmg: number) {
@@ -394,7 +423,7 @@ export class Troll {
 
     async throwChar(char: Char) {
 
-        await this.runAnimationOnce(CharAnimation.STRIKE)
+        await this.runAnimationOnce(CharAnimation.GRAPPLE)
 
         char.setAnimation(CharAnimation.UNCONSCIOUS)
 

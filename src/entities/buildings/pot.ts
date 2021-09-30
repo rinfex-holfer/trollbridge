@@ -3,7 +3,7 @@ import {O_Sprite} from "../../managers/core/render/sprite";
 import {LayerKey} from "../../managers/core/layers";
 import {rnd, Vec} from "../../utils/utils-math";
 import {O_AnimatedSprite} from "../../managers/core/render/animated-sprite";
-import {colorsCSS, colorsNum, gameConstants} from "../../constants";
+import {colorsCSS, colorsNum, gameConstants} from "../../configs/constants";
 import {Evt, subscriptions} from "../../event-bus";
 import {FoodType} from "../../types";
 import {Meat, MeatLocation} from "../meat";
@@ -12,6 +12,7 @@ import {findAndSplice, stub} from "../../utils/utils-misc";
 import {O_Text} from "../../managers/core/render/text";
 import {SOUND_KEY} from "../../managers/core/audio";
 import ParticleEmitter = Phaser.GameObjects.Particles.ParticleEmitter;
+import {foodConfig} from "../../configs/food-config";
 
 const enum PotState {
     NOT_EXIST = 'NOT_EXIST',
@@ -86,9 +87,9 @@ export class Pot {
         if (this.state === PotState.READY) {
             this.timePassed++
 
-            if (!this.isDishStale && this.timePassed > gameConstants.RAW_MEAT_TIME_LIMIT) {
+            if (!this.isDishStale && this.timePassed > foodConfig.RAW_MEAT_TIME_LIMIT) {
                 this.becomeRotten()
-            } else if (this.isDishStale && this.timePassed > gameConstants.STALE_MEAT_TIME_LIMIT) {
+            } else if (this.isDishStale && this.timePassed > foodConfig.STALE_MEAT_TIME_LIMIT) {
                 this.timePassed = 0
                 this.setState(PotState.EMPTY)
                 return
@@ -181,7 +182,7 @@ export class Pot {
 
     private startChoosingFood() {
         const freshMeet = o_.entities.get(EntityType.MEAT);
-        if (freshMeet.length < gameConstants.FOOD_FOR_DISH) {
+        if (freshMeet.length < foodConfig.FOOD_FOR_DISH) {
             o_.audio.playSound(SOUND_KEY.CANCEL)
             this.showText();
             return
@@ -208,7 +209,7 @@ export class Pot {
     public choseThisFood(food: Meat) {
         o_.audio.playSound(SOUND_KEY.PICK)
         this.chosenFood.push(food)
-        if (this.chosenFood.length === gameConstants.FOOD_FOR_DISH) {
+        if (this.chosenFood.length === foodConfig.FOOD_FOR_DISH) {
             const chosenFood = [...this.chosenFood];
             chosenFood.forEach(f => f.updateRealPosition())
             this.stopChoosingFood()

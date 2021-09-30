@@ -4,7 +4,7 @@ import {Vec} from "../utils/utils-math";
 import {o_} from "../managers/locator";
 import {LayerKey} from "../managers/core/layers";
 import {Evt, subscriptions} from "../event-bus";
-import {gameConstants} from "../constants";
+import {gameConstants} from "../configs/constants";
 import {resoursePaths} from "../resourse-paths";
 import {SOUND_KEY} from "../managers/core/audio";
 

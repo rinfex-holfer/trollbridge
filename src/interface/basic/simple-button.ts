@@ -1,5 +1,5 @@
 import {BasicButton, ButtonOptions} from "./basic-button";
-import {colors, colorsNum} from "../../constants";
+import {colors, colorsNum} from "../../configs/constants";
 import {o_} from "../../managers/locator";
 
 export class SimpleButton extends BasicButton {

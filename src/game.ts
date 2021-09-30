@@ -23,7 +23,7 @@ import {o_} from "./managers/locator";
 import {rndBetween} from "./utils/utils-math";
 import {WaitButton} from "./interface/wait-button";
 import {ProgressBar} from "./interface/basic/progress-bar";
-import {colorsNum} from "./constants";
+import {colorsNum} from "./configs/constants";
 import {GameManager} from "./managers/game/game-manager";
 
 const size = getGameSize()

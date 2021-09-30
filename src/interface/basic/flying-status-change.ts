@@ -1,4 +1,4 @@
-import {colors, colorsCSS} from "../../constants";
+import {colors, colorsCSS} from "../../configs/constants";
 import {o_} from "../../managers/locator";
 import {LayerKey} from "../../managers/core/layers";
 

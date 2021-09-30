@@ -5,7 +5,7 @@ import {findAndSplice, stub} from "../../utils/utils-misc";
 import {ImgButton} from "../../interface/basic/img-button";
 import {positioner} from "./positioner";
 import {LayerKey} from "../core/layers";
-import {colorsCSS} from "../../constants";
+import {colorsCSS} from "../../configs/constants";
 import {SOUND_KEY} from "../core/audio";
 
 export class UpgradeManager {

@@ -4,9 +4,10 @@ import {Vec} from "../utils/utils-math";
 import {o_} from "../managers/locator";
 import {LayerKey} from "../managers/core/layers";
 import {Evt, subscriptions} from "../event-bus";
-import {gameConstants} from "../constants";
+import {gameConstants} from "../configs/constants";
 import {resoursePaths} from "../resourse-paths";
 import {SOUND_KEY} from "../managers/core/audio";
+import {goldConfig} from "../configs/gold-config";
 
 export const enum GoldLocation {
     GROUND = 'GROUND',
@@ -55,7 +56,7 @@ export class Gold extends GameEntityBase<EntityType.GOLD> {
                 o_.audio.playSound(SOUND_KEY.PICK_THIN)
                 this.sprite.setInteractive(false)
                 const lastGoldItem = o_.lair.treasury.gold[o_.lair.treasury.gold.length - 1]
-                const coord = (lastGoldItem && lastGoldItem.props.amount < gameConstants.MAX_GOLD_IN_SPRITE)
+                const coord = (lastGoldItem && lastGoldItem.props.amount < goldConfig.MAX_GOLD_IN_SPRITE)
                     ? lastGoldItem.sprite
                     : o_.lair.treasury.getNextPosition()
                 o_.render.flyTo(this.sprite, coord, 500, 300).then(() => {
@@ -94,9 +95,9 @@ export class Gold extends GameEntityBase<EntityType.GOLD> {
             return 'gold-some'
         } else if (this.props.amount < 50) {
             return 'gold-many'
-        } else  if (this.props.amount < gameConstants.MAX_GOLD_IN_SPRITE) {
+        } else  if (this.props.amount < goldConfig.MAX_GOLD_IN_SPRITE) {
             return 'gold-almost'
-        } else if (this.props.amount === gameConstants.MAX_GOLD_IN_SPRITE) {
+        } else if (this.props.amount === goldConfig.MAX_GOLD_IN_SPRITE) {
             return 'gold-chest'
         } else {
             throw Error('wrong amount of gold ' + this.props.amount)

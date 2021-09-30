@@ -1,6 +1,6 @@
 import {O_Text} from "../managers/core/render/text";
 import {o_} from "../managers/locator";
-import {colorsCSS} from "../constants";
+import {colorsCSS} from "../configs/constants";
 import {O_Container} from "../managers/core/render/container";
 import {LayerKey} from "../managers/core/layers";
 import Timeline = Phaser.Tweens.Timeline;

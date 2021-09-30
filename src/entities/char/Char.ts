@@ -1,5 +1,5 @@
 import {CharKey, ResourceKey} from "../../types";
-import {charTemplates} from "../../char-templates";
+import {charConfig} from "../../configs/char-config";
 import {createId, stub} from "../../utils/utils-misc";
 import {CharState} from "./states/CharState";
 import {CharStateIdle} from "./states/CharStateIdle";
@@ -13,7 +13,7 @@ import {CharStateBones} from "./states/CharStateBones";
 import {CharSpeakText} from "../../interface/char-speak-text";
 import {eventBus, Evt} from "../../event-bus";
 import {CharStateGoToTalk} from "./states/CharStateGoToTalk";
-import {colorsCSS, gameConstants} from "../../constants";
+import {colorsCSS, gameConstants} from "../../configs/constants";
 import {SOUND_KEY} from "../../managers/core/audio";
 import {CharStateBattleIdle} from "./states/CharStateBattleIdle";
 import {clamp, rndBetween, Vec} from "../../utils/utils-math";
@@ -37,6 +37,8 @@ import {Horse} from "../horse";
 import {CharStateUnconscious} from "./states/CharStateUnconscious";
 import {DmgOptions} from "../../utils/utils-types";
 import {charTexts} from "../../char-texts";
+import {goldConfig} from "../../configs/gold-config";
+import {foodConfig} from "../../configs/food-config";
 
 export class Char {
     key: CharKey
@@ -86,7 +88,7 @@ export class Char {
     positionBeforeBattle: Vec = {x: 0, y: 0}
 
     constructor(key: CharKey, x: number, y: number) {
-        const charTemplate = charTemplates[key]
+        const charTemplate = charConfig[key]
 
         this.id = createId(key)
         this.key = key
@@ -150,13 +152,13 @@ export class Char {
 
     onCharDefeated(key: CharKey) {
         if (this.getIsFighter()) {
-            this.changeMp(-charTemplates[key].moralePrice)
+            this.changeMp(-charConfig[key].moralePrice)
         }
     }
 
     onCharDevoured(key: CharKey) {
         if (this.getIsFighter()) {
-            this.changeMp(-charTemplates[key].moralePrice)
+            this.changeMp(-charConfig[key].moralePrice)
         }
     }
 
@@ -214,7 +216,7 @@ export class Char {
         return this.state.start();
     }
 
-    createSprite(x: number, y: number, atlasKey = charTemplates[this.key].atlasKey) {
+    createSprite(x: number, y: number, atlasKey = charConfig[this.key].atlasKey) {
         const sprite = o_.render.createAnimatedSprite({
             // @ts-ignore
             atlasKey,
@@ -306,7 +308,7 @@ export class Char {
         this.changeResources(ResourceKey.GOLD, -amount);
 
         while (amount) {
-            const goldInSprite = Math.min(amount, gameConstants.MAX_GOLD_IN_SPRITE)
+            const goldInSprite = Math.min(amount, goldConfig.MAX_GOLD_IN_SPRITE)
             amount -= goldInSprite
             let coord = this.getCoords();
             coord.x += rndBetween(-40, 40)
@@ -368,8 +370,11 @@ export class Char {
             eventBus.emit(Evt.CHAR_DEVOURED_IN_BATTLE, this.key)
         }
         o_.audio.playSound(SOUND_KEY.TORN);
+        o_.render.burstBlood(this.container.x, this.container.y);
+        o_.render.burstBlood(this.container.x, this.container.y - 10);
+        o_.render.burstBlood(this.container.x, this.container.y - 20);
         this.giveAll()
-        this.dropSelfMeat(gameConstants.FOOD_FROM_DEVOURED_CHARACTER)
+        this.dropSelfMeat(foodConfig.FOOD_FROM_DEVOURED_CHARACTER)
         this.toBones()
     }
 
@@ -515,7 +520,7 @@ export class Char {
 
     transformToFood() {
         this.giveAll()
-        this.dropSelfMeat(gameConstants.FOOD_FROM_CHARACTER)
+        this.dropSelfMeat(foodConfig.FOOD_FROM_CHARACTER)
         o_.characters.removeChar(this.id)
     }
 

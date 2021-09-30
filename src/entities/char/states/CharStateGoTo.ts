@@ -1,6 +1,6 @@
 import {CharState} from "./CharState";
 import {CharAnimation, CharStateKey} from "../char-constants";
-import {gameConstants} from "../../../constants";
+import {gameConstants} from "../../../configs/constants";
 import {getDistanceBetween, Vec} from "../../../utils/utils-math";
 import {Char} from "../Char";
 

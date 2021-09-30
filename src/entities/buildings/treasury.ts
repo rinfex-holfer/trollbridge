@@ -3,11 +3,12 @@ import {Evt, subscriptions} from "../../event-bus";
 import {Vec} from "../../utils/utils-math";
 import {o_} from "../../managers/locator";
 import {LayerKey} from "../../managers/core/layers";
-import {colorsCSS, gameConstants} from "../../constants";
+import {colorsCSS, gameConstants} from "../../configs/constants";
 import {O_Sprite} from "../../managers/core/render/sprite";
 import {Gold, GoldLocation} from "../gold";
 import {flyingStatusChange} from "../../interface/basic/flying-status-change";
 import {SOUND_KEY} from "../../managers/core/audio";
+import {goldConfig} from "../../configs/gold-config";
 
 export class Treasury {
     text: O_Text
@@ -103,14 +104,14 @@ export class Treasury {
         flyingStatusChange('+ ' + amount + ' gold', this.sprite.x, this.sprite.y - 20, colorsCSS.YELLOW)
 
         const goldEntity = this.gold[this.gold.length - 1];
-        if (goldEntity && goldEntity.props.amount < gameConstants.MAX_GOLD_IN_SPRITE) {
-            const addAmount = Math.min(amount, gameConstants.MAX_GOLD_IN_SPRITE - goldEntity.props.amount)
+        if (goldEntity && goldEntity.props.amount < goldConfig.MAX_GOLD_IN_SPRITE) {
+            const addAmount = Math.min(amount, goldConfig.MAX_GOLD_IN_SPRITE - goldEntity.props.amount)
             goldEntity.setAmount(goldEntity.props.amount + addAmount)
             amount -= addAmount;
         }
 
         while (amount > 0) {
-            const addAmount = Math.min(amount, gameConstants.MAX_GOLD_IN_SPRITE)
+            const addAmount = Math.min(amount, goldConfig.MAX_GOLD_IN_SPRITE)
             this.gold.push(new Gold(this.getNextPosition(), addAmount, GoldLocation.TREASURY))
             amount -= addAmount
         }

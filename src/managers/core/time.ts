@@ -1,4 +1,4 @@
-import {TimeOrder} from "../../constants";
+import {TimeOrder} from "../../configs/constants";
 import {eventBus, Evt} from "../../event-bus";
 import {Time} from "../../types";
 import {o_} from "../locator";

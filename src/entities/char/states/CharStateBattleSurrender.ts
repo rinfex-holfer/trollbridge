@@ -1,7 +1,7 @@
 import {CharState} from "./CharState";
 import {CharAnimation, CharStateKey} from "../char-constants";
 import {CharAction} from "../../../interface/char-actions-menu";
-import {gameConstants} from "../../../constants";
+import {gameConstants} from "../../../configs/constants";
 import {Evt} from "../../../event-bus";
 import {flyingStatusChange} from "../../../interface/basic/flying-status-change";
 

@@ -1,5 +1,5 @@
 import {BasicButton, ButtonOptions} from "./basic-button";
-import {colors, colorsNum} from "../../constants";
+import {colors, colorsNum} from "../../configs/constants";
 import {o_} from "../../managers/locator";
 import {O_Sprite} from "../../managers/core/render/sprite";
 import {resoursePaths} from "../../resourse-paths";

@@ -6,8 +6,9 @@ import {Rock} from "../../entities/rock";
 import {Rect, sortByDistance, Vec} from "../../utils/utils-math";
 import {EntityType} from "../core/entities";
 import {O_Sprite} from "../core/render/sprite";
-import {gameConstants} from "../../constants";
+import {gameConstants} from "../../configs/constants";
 import {UpgradeButton} from "../../interface/upgrade-button";
+import {goldConfig} from "../../configs/gold-config";
 
 export class BridgeManager {
     sprite: Tiles
@@ -80,7 +81,7 @@ class RockPlace {
     }
 
     createUpgradeButton(pos: Vec) {
-        this.btn = o_.upgrade.createUpgradeButton(pos, 'Починить мостовую', gameConstants.costs.fix_bridge, () => {
+        this.btn = o_.upgrade.createUpgradeButton(pos, 'Починить мостовую', goldConfig.costs.fix_bridge, () => {
             this.repair()
         })
     }

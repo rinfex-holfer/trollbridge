@@ -1,7 +1,7 @@
 import {rnd, Vec} from "../utils/utils-math";
 import {O_Sprite} from "../managers/core/render/sprite";
 import {o_} from "../managers/locator";
-import {colorsNum, gameConstants} from "../constants";
+import {colorsNum, gameConstants} from "../configs/constants";
 import {Evt, subscriptions} from "../event-bus";
 import {positioner} from "../managers/game/positioner";
 import {EntityType, GameEntityBase} from "../managers/core/entities";
@@ -12,6 +12,7 @@ import {ImageKey} from "../utils/utils-types";
 import {FoodType} from "../types";
 import ParticleEmitter = Phaser.GameObjects.Particles.ParticleEmitter;
 import {GoldLocation} from "./gold";
+import {foodConfig} from "../configs/food-config";
 
 export const enum MeatLocation {
     GROUND = 'GROUND',
@@ -146,9 +147,9 @@ export class Meat extends GameEntityBase<EntityType.MEAT> {
             if (rnd() > 0.9) return this.destroy()
         }
 
-        if (!this.props.isStale && this.timePassed > gameConstants.RAW_MEAT_TIME_LIMIT) {
+        if (!this.props.isStale && this.timePassed > foodConfig.RAW_MEAT_TIME_LIMIT) {
             this.becomeRotten()
-        } else if (this.props.isStale && this.timePassed > gameConstants.STALE_MEAT_TIME_LIMIT) {
+        } else if (this.props.isStale && this.timePassed > foodConfig.STALE_MEAT_TIME_LIMIT) {
             this.destroy()
         }
     }

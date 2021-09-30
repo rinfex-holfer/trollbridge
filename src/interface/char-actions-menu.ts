@@ -1,5 +1,5 @@
 import {resoursePaths} from "../resourse-paths";
-import {colors, colorsCSS} from "../constants";
+import {colors, colorsCSS} from "../configs/constants";
 import {eventBus, Evt} from "../event-bus";
 import {Char} from "../entities/char/Char";
 import {o_} from "../managers/locator";
@@ -52,10 +52,7 @@ const buttonsTemplate: CharActionButtonTemplate[] = [
 
     {key: CharAction.MAKE_FOOD, text: 'Разорвать', resource: 'button_make_food', onClick: (id: string) => o_.characters.transformToFood(id)},
 
-    {key: CharAction.BATTLE_DEVOUR, text: 'Сожрать', resource: 'button_devour', onClick: (id: string) => {
-        o_.troll.devour(id)
-        eventBus.emit(Evt.TROLL_TURN_END)
-    }},
+    {key: CharAction.BATTLE_DEVOUR, text: 'Сожрать', resource: 'button_devour', onClick: (id: string) => o_.battle.trollGoDevour(id)},
 
     {key: CharAction.BATTLE_HIT, text: 'Ударить', resource: 'button_strike', onClick: (id: string) => o_.battle.trollGoAttack(id)},
 

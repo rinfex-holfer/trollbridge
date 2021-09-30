@@ -1,7 +1,7 @@
 import {CharState} from "./CharState";
 import {CharAnimation, CharStateKey} from "../char-constants";
 import {positioner} from "../../../managers/game/positioner";
-import {gameConstants} from "../../../constants";
+import {gameConstants} from "../../../configs/constants";
 import {getDistanceBetween} from "../../../utils/utils-math";
 import {o_} from "../../../managers/locator";
 import {createPromiseAndHandlers} from "../../../utils/utils-async";

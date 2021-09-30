@@ -2,7 +2,7 @@ import {Troll} from "../managers/game/troll/troll";
 import {O_Container} from "../managers/core/render/container";
 import {o_} from "../managers/locator";
 import {ProgressBar} from "./basic/progress-bar";
-import {colorsNum} from "../constants";
+import {colorsNum} from "../configs/constants";
 import {getGameSize} from "../utils/utils-misc";
 import {pause} from "../utils/utils-async";
 import {LayerKey} from "../managers/core/layers";

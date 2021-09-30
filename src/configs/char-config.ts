@@ -1,33 +1,7 @@
-import {CharKey, Resources} from "./types";
-import {resoursePaths} from "./resourse-paths";
-import {rndBetween} from "./utils/utils-math";
-import {AtlasKey} from "./utils/utils-types";
-
-// PEASANT_HP = 10,
-// PEASANT_WILL = 20,
-// PEASANT_WILL_PRICE = 10,
-// PEASANT_DEX = 2,
-// PEASANT_STR = 1,
-//
-// PIKEMAN_HP = 15,
-// PIKEMAN_WILL = 30,
-// PIKEMAN_WILL_PRICE = 15,
-// PIKEMAN_STR = 2,
-// PIKEMAN_DEX = 4,
-//
-// SHIELDMAN_HP = 20,
-// SHIELDMAN_WILL = 100,
-// SHIELDMAN_WILL_PRICE = 25,
-// SHIELDMAN_STR = 6,
-// SHIELDMAN_DEX = 4,
-//
-// KNIGHT_HP = 30,
-// KNIGHT_WILL = 300,
-// KNIGHT_WILL_PRICE = 50,
-// KNIGHT_STR = 8,
-// KNIGHT_STR_LOW = 6,
-// KNIGHT_DEX = 8,
-// KNIGHT_DEX_LOW = 6,
+import {CharKey, Resources} from "../types";
+import {resoursePaths} from "../resourse-paths";
+import {rndBetween} from "../utils/utils-math";
+import {AtlasKey} from "../utils/utils-types";
 
 type CharTemplate = {
     name: string,
@@ -44,7 +18,7 @@ type CharTemplate = {
     isMounted?: boolean
 }
 
-export const charTemplates: {[key: string]: CharTemplate} = {
+export const charConfig: {[key: string]: CharTemplate} = {
     [CharKey.FARMER]: {
         name: 'chars.peasant',
         hp: 10,

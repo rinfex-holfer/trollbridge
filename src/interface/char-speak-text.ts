@@ -1,4 +1,4 @@
-import {colors, colorsCSS} from "../constants";
+import {colors, colorsCSS} from "../configs/constants";
 import {O_Text} from "../managers/core/render/text";
 import {O_Container} from "../managers/core/render/container";
 import {o_} from "../managers/locator";

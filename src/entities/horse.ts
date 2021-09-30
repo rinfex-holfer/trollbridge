@@ -1,7 +1,7 @@
 import {o_} from "../managers/locator";
 import {CharAnimation} from "./char/char-constants";
 import {O_AnimatedSprite} from "../managers/core/render/animated-sprite";
-import {gameConstants} from "../constants";
+import {gameConstants} from "../configs/constants";
 
 
 export class Horse {
