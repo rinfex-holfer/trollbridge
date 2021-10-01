@@ -3,6 +3,8 @@ import {o_} from "../locator";
 import {onEncounterEnd} from "../../helpers";
 import {pause} from "../../utils/utils-async";
 import {Char} from "../../entities/char/Char";
+import {actionButtonsMap, CharAction} from "../../interface/char-actions-menu";
+import {getRndItem} from "../../utils/utils-math";
 
 export class BattleManager {
     unsub: any[] = []
@@ -28,14 +30,22 @@ export class BattleManager {
         this.trollTurn();
     }
 
-    trollTurn() {
-        o_.characters.enableInteractivityOnBridge();
+    async trollTurn() {
+        o_.troll.rageStartCheck()
+
+        if (o_.troll.isEnraged) {
+            await pause(1000)
+            this.trollGoCrazy()
+        }
+        else o_.characters.enableInteractivityOnBridge();
     }
 
     async travellersTurn() {
         if (this.getIsWin()) {
             return this.win();
         }
+
+        o_.troll.rageStopCheck()
 
         o_.characters.disableInteractivityAll();
 
@@ -69,6 +79,8 @@ export class BattleManager {
     }
 
     onBattleEnd() {
+        o_.troll.setEnraged(false)
+
         o_.characters.enableInteractivityOnBridge();
         this.isBattle = false;
         this.unsub.forEach(u => u())
@@ -94,6 +106,32 @@ export class BattleManager {
         return this.travellersTurn()
     }
 
+    trollGoCrazy() {
+        o_.troll.setEnraged(true)
+
+
+        const travellers = o_.characters.getTravellers()
+        const devourable = travellers.find(t => (t.isUnconscious && !t.isPrisoner) || (t.isSurrender && !t.isPrisoner))
+        if (devourable) return this.trollGoDevour(devourable.id)
+
+        const fighters = o_.characters.getFighters()
+        const fightersWithActions: [Char, CharAction[]][] = fighters.map(f => {
+            const actions = f.state.getPossibleTrollActions()
+            return [f, actions.filter(a => {
+                // do not try to hit mounted chard
+                // if (f.isMounted &&
+                //     (a === CharAction.BATTLE_HIT || a === CharAction.BATTLE_THROW_CHAR)
+                // ) return false
+
+                return true
+            })]
+        })
+
+        const rndFighter = getRndItem(fightersWithActions)
+        const rndAction = getRndItem(rndFighter[1])
+        return actionButtonsMap[rndAction].onClick(rndFighter[0].id)
+    }
+
     async trollGoAttack(charId: string) {
         o_.characters.disableInteractivityAll();
 
@@ -104,13 +142,19 @@ export class BattleManager {
         if (defenders.length) {
             await this.defendAgainstHit(char, defenders, (char) => o_.troll.attack(char))
         } else if (char.isMounted) {
-            o_.troll.goToChar(charId)
-            await char.runAround()
-
-            char.directToTarget(o_.troll)
-            await o_.troll.goToBattlePosition()
+            if (o_.troll.isEnraged) {
+                await o_.troll.jumpToChar(char)
+                await o_.troll.attack(char)
+                if (this.getIsWin()) return this.win()
+                await o_.troll.jumpToBattlePosition()
+            } else {
+                o_.troll.goToChar(charId)
+                await char.runAround()
+                char.directToTarget(o_.troll)
+                await o_.troll.goToBattlePosition()
+            }
         } else {
-            await o_.troll.goToChar(charId)
+            await o_.troll.moveToChar(char)
 
             if (counterAttack) {
                 await o_.characters.counterAttack(charId)
@@ -140,7 +184,7 @@ export class BattleManager {
         if (defenders.length) {
             await this.defendAgainstHit(char, defenders, (char) => o_.troll.throwChar(char))
         } else {
-            await o_.troll.goToChar(charId)
+            await o_.troll.moveToChar(char)
 
             if (counterAttack) {
                 await o_.characters.counterAttack(charId)
@@ -154,9 +198,6 @@ export class BattleManager {
             await o_.troll.goToBattlePosition()
         }
 
-        const fighters = o_.characters.getFighters()
-        o_.troll.directToTarget(fighters[0].container)
-
         return this.travellersTurn()
     }
 
@@ -168,7 +209,7 @@ export class BattleManager {
         if (defenders.length) {
             await this.defendAgainstHit(char, defenders, (char) => o_.troll.attack(char))
         } else {
-            await o_.troll.goToChar(charId)
+            await o_.troll.moveToChar(char)
             await o_.troll.devourAttack(charId)
         }
 
@@ -183,7 +224,7 @@ export class BattleManager {
     async defendAgainstHit(char: Char, defenders: Char[], trollAttackAction: (char: Char) => Promise<any>) {
         const defender = defenders[0]
 
-        await Promise.all([defender.goDefend(char), o_.troll.goToDefenderOfChar(char.id)])
+        await Promise.all([defender.goDefend(char), o_.troll.moveToDefenderOfChar(char)])
 
         await trollAttackAction(defender)
         if (this.getIsWin()) return this.win()

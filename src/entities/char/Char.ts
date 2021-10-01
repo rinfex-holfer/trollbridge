@@ -5,7 +5,7 @@ import {CharState} from "./states/CharState";
 import {CharStateIdle} from "./states/CharStateIdle";
 import {CharStateGoAcross} from "./states/CharStateGoAcross";
 import {CharAnimation, CharStateKey} from "./char-constants";
-import {CharActionsMenu} from "../../interface/char-actions-menu";
+import {CharAction, CharActionsMenu} from "../../interface/char-actions-menu";
 import {CharStateSurrender} from "./states/CharStateSurrender";
 import {CharStateDead} from "./states/CharStateDead";
 import {CharStateBones} from "./states/CharStateBones";
@@ -143,6 +143,10 @@ export class Char {
 
         // @ts-ignore
         // window.changeMp = (a) => this.changeMp(a)
+    }
+
+    updateActionButtons() {
+        this.actionsMenu.changeActiveButtons(this.state.getPossibleTrollActions())
     }
 
     getIsNewTraveller() { return !this.isMetTroll }

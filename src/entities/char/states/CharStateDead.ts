@@ -2,6 +2,7 @@ import {CharState} from "./CharState";
 import {CharAnimation, CharStateKey} from "../char-constants";
 import {CharAction} from "../../../interface/char-actions-menu";
 import {eventBus, Evt} from "../../../event-bus";
+import {o_} from "../../../managers/locator";
 
 export class CharStateDead extends CharState {
     key = CharStateKey.DEAD
@@ -20,9 +21,14 @@ export class CharStateDead extends CharState {
 
         this.char.isAlive = false;
         this.char.setAnimation(CharAnimation.DEAD);
-        this.char.actionsMenu.changeActiveButtons([
-            CharAction.BATTLE_DEVOUR,
-            CharAction.MAKE_FOOD,
-        ])
+        this.char.updateActionButtons()
+    }
+
+    getPossibleTrollActions(): CharAction[] {
+        if (o_.battle.isBattle) {
+            return [CharAction.BATTLE_DEVOUR]
+        } else {
+            return [CharAction.MAKE_FOOD]
+        }
     }
 }

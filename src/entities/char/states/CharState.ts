@@ -2,6 +2,7 @@ import {Char} from "../Char";
 import {CharStateKey} from "../char-constants";
 import {createPromiseAndHandlers} from "../../../utils/utils-async";
 import {subscriptions} from "../../../event-bus";
+import {CharAction} from "../../../interface/char-actions-menu";
 
 export abstract class CharState {
     abstract key: CharStateKey
@@ -22,6 +23,7 @@ export abstract class CharState {
 
     start() {
         this.onStart()
+        this.char.updateActionButtons()
         return this.onEndPromise
     }
     protected onStart() {}
@@ -35,5 +37,9 @@ export abstract class CharState {
 
     update(dt: number) {
 
+    }
+
+    getPossibleTrollActions(): CharAction[] {
+        return []
     }
 }

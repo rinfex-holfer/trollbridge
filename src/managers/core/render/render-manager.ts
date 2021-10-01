@@ -134,6 +134,44 @@ export class RenderManager {
         return promise
     }
 
+    jumpTo(obj: O_GameObject, pos: Vec): Promise<any> {
+        const {promise, done} = createPromiseAndHandlers()
+        const timeline = this.createTimeline();
+        const distance = getDistanceBetween(obj, pos);
+
+        const duration = 400
+        const height = distance / 3
+
+        timeline.add({
+            targets: obj.obj,
+            x: pos.x,
+            // y: pos.y,
+            ease: 'Linear',
+            duration: duration,
+        })
+
+        timeline.add({
+            targets: obj.obj,
+            y: pos.y - height,
+            ease: 'Linear',
+            duration: duration / 2,
+            offset: 0,
+        })
+
+        timeline.add({
+            targets: obj.obj,
+            y: pos.y,
+            ease: 'Linear',
+            duration: duration / 2,
+            offset: duration / 2,
+            onComplete: done
+        })
+
+        timeline.play()
+
+        return promise
+    }
+
     thrownTo(obj: O_GameObject, pos: Vec, duration: number): Promise<any> {
         const {promise, done} = createPromiseAndHandlers()
         const timeline = this.createTimeline();

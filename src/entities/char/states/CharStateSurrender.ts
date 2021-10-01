@@ -12,12 +12,11 @@ export class CharStateSurrender extends CharState {
         this.char.isFleeing = true;
         this.char.speed = gameConstants.CHAR_VERY_FAST
         this.char.setAnimation(CharAnimation.SURRENDER);
-        this.char.actionsMenu.changeActiveButtons([
-            CharAction.RELEASE,
-            CharAction.ROB,
-            CharAction.TAKE_ALL,
-            CharAction.BATTLE_HIT,
-        ])
+        this.char.updateActionButtons()
         this.char.setIndicatorsVisible(false)
+    }
+
+    getPossibleTrollActions(): CharAction[] {
+        return [CharAction.RELEASE, CharAction.ROB, CharAction.TAKE_ALL, CharAction.BATTLE_HIT]
     }
 }

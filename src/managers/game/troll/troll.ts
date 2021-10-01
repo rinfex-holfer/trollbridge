@@ -3,7 +3,7 @@ import {eventBus, Evt} from "../../../event-bus";
 import {FoodType, TrollLocation} from "../../../types";
 import {positioner} from "../positioner";
 import {CharAnimation} from "../../../entities/char/char-constants";
-import {clamp, rndBetween, Vec} from "../../../utils/utils-math";
+import {clamp, getRndSign, rndBetween, Vec} from "../../../utils/utils-math";
 import {flyingStatusChange} from "../../../interface/basic/flying-status-change";
 import {O_AnimatedSprite} from "../../core/render/animated-sprite";
 import {o_} from "../../locator";
@@ -28,6 +28,8 @@ let troll: Troll
 export class Troll {
 
     location: TrollLocation = TrollLocation.LAIR
+
+    isEnraged: boolean = false
 
     armor = 0
     level = 0
@@ -263,28 +265,53 @@ export class Troll {
         var char = o_.characters.getTraveller(charId)
         if (!char) throw Error('WTF')
 
+        if (this.isEnraged) return this.jumpToChar(char)
+
         return  this.setState(TrollStateKey.GO_TO, { target: char.container, minDistance: 50 })
     }
 
-    goToDefenderOfChar(charId: string) {
+    async jumpToChar(char: Char) {
+        await this.jumpTo({x: char.container.x - 50, y: char.container.y})
+    }
+
+    async jumpTo(pos: Vec) {
+        await o_.render.jumpTo(this.sprite, pos)
+    }
+
+    moveToChar(char: Char) {
+        if (this.isEnraged) return this.jumpToChar(char)
+        else return this.goToChar(char.id)
+    }
+
+    moveToDefenderOfChar(char: Char) {
         const target = {x: 0, y: 0}
-        var char = o_.characters.getTraveller(charId)
-        if (!char) throw Error('WTF')
 
         const defenderPos = char.getDefenderPosition()
         target.x = defenderPos.x
         target.y = defenderPos.y
 
-        return this.setState(TrollStateKey.GO_TO, { target })
+        return this.isEnraged ? this.jumpTo(target) : this.setState(TrollStateKey.GO_TO, { target })
     }
 
-    goToBattlePosition() {
-        const target = {x: 0, y: 0}
+    getBattlePosition(): Vec {
         const bridgePos = positioner.bridgePosition();
-        target.x = bridgePos.x + bridgePos.width / 2
-        target.y = bridgePos.y + bridgePos.height / 2
 
-        return this.setState(TrollStateKey.GO_TO, { target })
+        return {
+            x: bridgePos.x + bridgePos.width / 2,
+            y: bridgePos.y + bridgePos.height / 2
+        }
+    }
+
+    async jumpToBattlePosition() {
+        await this.jumpTo(this.getBattlePosition())
+    }
+
+    async goToBattlePosition() {
+        if (this.isEnraged) await this.jumpToBattlePosition()
+        await this.setState(TrollStateKey.GO_TO, { target: this.getBattlePosition() })
+
+        const fighters = o_.characters.getFighters()
+        if (fighters.length) this.directToTarget(fighters[0].container)
     }
 
     goIdle() { this.setState(TrollStateKey.IDLE) }
@@ -356,8 +383,23 @@ export class Troll {
         o_.render.directToTarget(this.sprite, target);
     }
 
+    rageStopCheck() {
+        if (getRndSign() < 0) this.setEnraged(false)
+    }
+
+    rageStartCheck() {
+        let percent = Math.floor((this.selfControl / this.maxSelfControl) * 100)
+        percent = Math.min(percent, 99)
+        if (rndBetween(0, 100) > percent) this.setEnraged(true)
+    }
+
     rollDmg() {
-        return this.dmg + rndBetween(1, 5)
+        const dmg = this.dmg + rndBetween(1, 5)
+        return this.isEnraged ? dmg * 2 : dmg
+    }
+
+    rollStun() {
+        return 2
     }
 
     stop() {
@@ -403,6 +445,7 @@ export class Troll {
     async throwRockAt(char: Char) {
         const rockPlace = o_.bridge.getClosestRockPlace(this)
 
+        if (this.isEnraged) await this.jumpTo(rockPlace)
         await this.setState(TrollStateKey.GO_TO, {target: rockPlace})
         this.directToTarget(char.container)
 
@@ -440,7 +483,10 @@ export class Troll {
         await o_.render.bounceOfGround(char.container, 50, 1000)
     }
 
-    rollStun() {
-        return 2
+    setEnraged(val: boolean) {
+        if (val === this.isEnraged) return
+
+        this.isEnraged = val
+        flyingStatusChange(val ? 'Enraged!' : 'Rage stops', this.sprite.x, this.sprite.y - 100, val ? colorsCSS.RED : colorsCSS.WHITE);
     }
 }

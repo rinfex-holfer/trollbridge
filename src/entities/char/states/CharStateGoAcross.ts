@@ -10,7 +10,6 @@ export class CharStateGoAcross extends CharState {
 
     onStart() {
         this.char.setAnimation(CharAnimation.WALK);
-        this.char.actionsMenu.changeActiveButtons([]);
         this.char.moveTowards(this.target.x, this.target.y);
         this.char.directToTarget(this.target)
     }

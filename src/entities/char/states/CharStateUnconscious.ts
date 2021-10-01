@@ -27,9 +27,7 @@ export class CharStateUnconscious extends CharState {
         this.char.setIndicatorsVisible(false)
         this.char.isUnconscious = true
 
-        this.updateActions()
-
-        this.subs.on(Evt.ENCOUNTER_ENDED, () => this.updateActions())
+        this.subs.on(Evt.ENCOUNTER_ENDED, () => this.char.updateActionButtons())
         this.subs.on(Evt.BATTLE_TRAVELLERS_TURN_END, () => this.onTurn())
         this.subs.on(Evt.TROLL_LOCATION_CHANGED, (loc) => {
             if (loc !== TrollLocation.BRIDGE) this.onTrollLeft()
@@ -69,18 +67,11 @@ export class CharStateUnconscious extends CharState {
         else this.char.setState(CharStateKey.IDLE)
     }
 
-    updateActions() {
+    getPossibleTrollActions(): CharAction[] {
         if (o_.battle.isBattle) {
-            this.char.actionsMenu.changeActiveButtons([
-                CharAction.BATTLE_DEVOUR,
-            ])
+            return [CharAction.BATTLE_DEVOUR]
         } else {
-            this.char.actionsMenu.changeActiveButtons([
-                CharAction.MAKE_FOOD,
-                CharAction.TAKE_ALL,
-                CharAction.ROB,
-                CharAction.RELEASE,
-            ])
+            return [CharAction.MAKE_FOOD, CharAction.TAKE_ALL, CharAction.ROB, CharAction.RELEASE]
         }
     }
 }

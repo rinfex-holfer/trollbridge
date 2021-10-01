@@ -61,6 +61,11 @@ const buttonsTemplate: CharActionButtonTemplate[] = [
     {key: CharAction.BATTLE_THROW_ROCK, text: 'Бросить камень', resource: 'button_throw_rock', onClick: (id: string) => o_.battle.trollThrowRock(id)},
 ]
 
+export const actionButtonsMap = buttonsTemplate.reduce((acc, next) => {
+    acc[next.key] = next
+    return acc
+}, {} as {[key: string]: CharActionButtonTemplate})
+
 const BUTTON_WIDTH = 32;
 const BUTTON_MARGIN = 10;
 

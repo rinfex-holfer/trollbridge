@@ -13,14 +13,10 @@ export class CharStateBattleSurrender extends CharState {
         this.char.isFleeing = true;
         this.char.speed = gameConstants.CHAR_VERY_FAST
         this.char.setAnimation(CharAnimation.SURRENDER);
-        this.updateActions()
         this.subs.on(Evt.ENCOUNTER_ENDED, () => this.char.surrender())
     }
 
-    updateActions() {
-        this.char.actionsMenu.changeActiveButtons([
-            CharAction.BATTLE_HIT,
-            CharAction.BATTLE_DEVOUR,
-        ])
+    getPossibleTrollActions(): CharAction[] {
+        return [CharAction.BATTLE_HIT, CharAction.BATTLE_DEVOUR]
     }
 }

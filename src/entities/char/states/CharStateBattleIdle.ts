@@ -9,10 +9,8 @@ export class CharStateBattleIdle extends CharState {
     onStart() {
         this.char.setAnimation(CharAnimation.IDLE);
 
-        const btns = [CharAction.BATTLE_HIT, CharAction.BATTLE_THROW_CHAR]
-        if (o_.bridge.getRockPlaces().some(p => !p.isRuined)) btns.push(CharAction.BATTLE_THROW_ROCK)
+        this.char.updateActionButtons()
 
-        this.char.actionsMenu.changeActiveButtons(btns)
         this.char.hpIndicator.show()
         this.char.mpIndicator.show()
     }
@@ -21,5 +19,11 @@ export class CharStateBattleIdle extends CharState {
         if (this.char.hp <= 0 || this.char.morale <= 0) {
             this.char.surrender();
         }
+    }
+
+    getPossibleTrollActions(): CharAction[] {
+        const btns = [CharAction.BATTLE_HIT, CharAction.BATTLE_THROW_CHAR]
+        if (o_.bridge.getRockPlaces().some(p => !p.isRuined)) btns.push(CharAction.BATTLE_THROW_ROCK)
+        return btns
     }
 }
