@@ -2,6 +2,7 @@ import {TrollState, TrollStateKey} from "./troll-state";
 import {CharAnimation} from "../../../entities/char/char-constants";
 import {o_} from "../../locator";
 import {trollConfig} from "../../../configs/troll-config";
+import {SOUND_KEY} from "../../core/audio";
 
 export class TrollStateSleep extends TrollState {
     key = TrollStateKey.SLEEP
@@ -14,6 +15,8 @@ export class TrollStateSleep extends TrollState {
         this.host.changeTrollHp(trollConfig.HP_FROM_SLEEP)
         this.host.zzz.show(this.host.x - 30, this.host.y - 30)
         o_.time.wait();
+
+        o_.audio.playSound(SOUND_KEY.TROLL_BREATHING_SLOW)
     }
 
     onEnd() {

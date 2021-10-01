@@ -82,6 +82,7 @@ export class UpgradeManager {
 
     public createUpgradeButton(pos: Vec, text: string, cost: number, upgradeFn: () => void) {
         const btn = new UpgradeButton(pos, cost, text, (b: UpgradeButton) => {
+            o_.audio.playSound(SOUND_KEY.UPGRADE)
             upgradeFn()
             this.onUpgraded(b)
         })

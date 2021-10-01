@@ -12,6 +12,7 @@ import {EntityManager} from "./core/entities";
 import {InteractionManager} from "./core/interaction";
 import {UpgradeManager} from "./game/upgrade";
 import {Negotiations} from "./game/negotiations";
+import {MusicManager} from "./core/music";
 
 class Locator {
     #_render: RenderManager | undefined
@@ -20,6 +21,7 @@ class Locator {
     #_lair: Lair | undefined
     #_troll: Troll | undefined
     #_audio: AudioManager | undefined
+    #_music: MusicManager | undefined
     #_time: TimeManager | undefined
     #_game: GameManager | undefined
     #_battle: BattleManager | undefined
@@ -40,6 +42,7 @@ class Locator {
         lair: (lair: Lair) => { this.#_lair = lair },
         troll: (troll: Troll) => { this.#_troll = troll },
         audio: (audio: AudioManager) => { this.#_audio = audio },
+        music: (music: MusicManager) => { this.#_music = music },
         time: (time: TimeManager) => { this.#_time = time },
         game: (game: GameManager) => { this.#_game = game },
         battle: (battle: BattleManager) => { this.#_battle = battle },
@@ -78,6 +81,11 @@ class Locator {
     get audio() {
         if (!this.#_audio) throw Error(Locator.crashStr('audio'))
         return this.#_audio
+    }
+
+    get music() {
+        if (!this.#_music) throw Error(Locator.crashStr('music'))
+        return this.#_music
     }
 
     get time() {

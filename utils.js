@@ -14,3 +14,4 @@ export function getRndItem(arr) {
 export function rndBetween(a, b) {
     return a + Math.floor(rnd() * (b - a + 1));
 }
+

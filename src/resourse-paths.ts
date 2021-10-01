@@ -74,10 +74,42 @@ export const resoursePaths = {
         bonk: `${audioUrl}/toock.mp3`,
         bubble: `${audioUrl}/bubble.mp3`,
         chew: `${audioUrl}/chew.mp3`,
+        eating_0: `${audioUrl}/eating_0.mp3`,
+        eating_1: `${audioUrl}/eating_1.mp3`,
+        eating_2: `${audioUrl}/eating_2.mp3`,
+        eating_3: `${audioUrl}/eating_3.mp3`,
+
+        level_up: `${audioUrl}/level_up.mp3`,
+        upgrade: `${audioUrl}/upgrade.mp3`,
+
+        troll_breathing: `${audioUrl}/troll_breathing.mp3`,
+        troll_breathing_slow: `${audioUrl}/troll_breathing_slow.mp3`,
+        troll_death: `${audioUrl}/troll_death.mp3`,
+        troll_wounded_0: `${audioUrl}/troll_wounded_0.mp3`,
+        troll_wounded_1: `${audioUrl}/troll_wounded_1.mp3`,
+        troll_wounded_2: `${audioUrl}/troll_wounded_2.mp3`,
+        troll_block_0: `${audioUrl}/troll_block_0.mp3`,
+        troll_block_1: `${audioUrl}/troll_block_1.mp3`,
+        troll_block_2: `${audioUrl}/troll_block_2.mp3`,
+        troll_laugh_0: `${audioUrl}/troll_laugh_0.mp3`,
+        troll_laugh_hard: `${audioUrl}/troll_laugh_1.mp3`,
+        troll_laugh_medium: `${audioUrl}/troll_laugh_2.mp3`,
+        troll_hm: `${audioUrl}/troll_hm.mp3`,
+        troll_hey: `${audioUrl}/troll_hey.mp3`,
+        troll_oh: `${audioUrl}/troll_oh.mp3`,
+        troll_attack_voice: `${audioUrl}/troll_attack_voice.mp3`,
     },
 
     music: {
         gameplay_music: `${audioUrl}/gameplay_music.mp3`,
+        gameover: `${audioUrl}/music_game_over_0.mp3`,
+        combat_started_0: `${audioUrl}/music_combat_started_0.mp3`,
+        combat_started_1: `${audioUrl}/music_combat_started_1.mp3`,
+        combat_won_0: `${audioUrl}/music_combat_won_0.mp3`,
+        combat_won_1: `${audioUrl}/music_combat_won_1.mp3`,
+        time_passed_0: `${audioUrl}/music_time_passed_0.mp3`,
+        time_passed_1: `${audioUrl}/music_time_passed_1.mp3`,
+        time_passed_2: `${audioUrl}/music_time_passed_2.mp3`,
     }
 };
 

@@ -17,6 +17,7 @@ export function onEncounterEnd() {
     console.log('onEncounterEnd')
     o_.interaction.enableEverything()
 
+    o_.characters.enableInteractivityOnBridge();
     o_.characters.setPrisonersInteractive(true)
 
     eventBus.emit(Evt.ENCOUNTER_ENDED);

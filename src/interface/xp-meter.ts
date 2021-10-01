@@ -6,6 +6,7 @@ import {colorsNum} from "../configs/constants";
 import {getGameSize} from "../utils/utils-misc";
 import {pause} from "../utils/utils-async";
 import {LayerKey} from "../managers/core/layers";
+import {SOUND_KEY} from "../managers/core/audio";
 
 enum MeterState {
     FADE_IN = 'FADE_IN',
@@ -107,6 +108,8 @@ export class XpMeter {
 
         const isNewLevel = xp === nextLevelXp
         if (isNewLevel) {
+            o_.audio.playSound(SOUND_KEY.LEVEL_UP)
+
             this.xpBar.setValue(0, false)
 
             this.xpBar.setLabel(`Уровень ${level + 1}!`)

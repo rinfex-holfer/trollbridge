@@ -2,6 +2,11 @@ import {CharKey, EncounterTemplate} from "./types";
 
 export const encounterTemplates: {[dangerLevel: number]: EncounterTemplate[]} = {
     0: [
+        {
+            text: 'Cолдат',
+            level: 0,
+            enemies: [CharKey.FARMER, CharKey.MILITIA],
+        },
         // {
         //     text: 'Одинокий путник',
         //     level: 0,
@@ -27,11 +32,6 @@ export const encounterTemplates: {[dangerLevel: number]: EncounterTemplate[]} = 
         //     level: 2,
         //     enemies: [CharKey.MILITIA, CharKey.MILITIA, CharKey.MILITIA, CharKey.MILITIA, CharKey.MILITIA],
         // },
-        {
-            text: 'Cолдат',
-            level: 0,
-            enemies: [CharKey.FARMER, CharKey.MILITIA],
-        },
         // {
         //     text: 'Рыцарь с оруженосцем',
         //     level: 3,

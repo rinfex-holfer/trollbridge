@@ -25,6 +25,7 @@ import {WaitButton} from "./interface/wait-button";
 import {ProgressBar} from "./interface/basic/progress-bar";
 import {colorsNum} from "./configs/constants";
 import {GameManager} from "./managers/game/game-manager";
+import {MusicManager} from "./managers/core/music";
 
 const size = getGameSize()
 var config: Phaser.Types.Core.GameConfig = {
@@ -72,6 +73,7 @@ const create = (scene: Phaser.Scene) => {
     new BridgeManager()
     new Negotiations()
     new BattleManager()
+    new MusicManager()
 
     new Meat({x: 100, y: 300})
     new Meat({x: 120, y: 300})

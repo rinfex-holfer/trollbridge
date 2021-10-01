@@ -9,6 +9,7 @@ import {O_Container} from "../core/render/container";
 import {o_} from "../locator";
 import {onEncounterEnd, onEncounterStart} from "../../helpers";
 import {LayerKey} from "../core/layers";
+import {pause} from "../../utils/utils-async";
 
 export const enum NegotiationsState {
     START = 'START',
@@ -113,9 +114,11 @@ export class Negotiations {
                 break;
             case NegotiationsState.ALL_GIVEN:
                 o_.characters.makeAllTravellersGiveAll();
+                pause(700).then(() => o_.troll.laughHard())
                 break;
             case NegotiationsState.PAYMENT_GIVEN:
                 o_.characters.makeAllTravellersPay();
+                pause(700).then(() => o_.troll.laugh())
                 break;
             case NegotiationsState.BATTLE:
                 this.isNegotiationInProgress = false
@@ -123,6 +126,10 @@ export class Negotiations {
                 break;
             case NegotiationsState.END:
                 this.onEncounterEnd()
+                break;
+            case NegotiationsState.ALL_REFUSED:
+            case NegotiationsState.PAY_REFUSED:
+                o_.troll.hmm()
                 break;
         }
         o_.characters.travellersSpeak(travellersReaction);

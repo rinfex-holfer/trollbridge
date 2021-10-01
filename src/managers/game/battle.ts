@@ -26,6 +26,8 @@ export class BattleManager {
         const sub = eventBus.on(Evt.TROLL_TURN_END, () => this.travellersTurn());
         this.unsub.push(() => eventBus.unsubscribe(Evt.TROLL_TURN_END, sub));
 
+        eventBus.emit(Evt.BATTLE_STARTED)
+
         o_.characters.startFighting();
         this.trollTurn();
     }
@@ -75,15 +77,17 @@ export class BattleManager {
     }
 
     win() {
+        if (this.isBattle) eventBus.emit(Evt.BATTLE_WON)
+
         this.onBattleEnd();
     }
 
     onBattleEnd() {
         o_.troll.setEnraged(false)
 
-        o_.characters.enableInteractivityOnBridge();
         this.isBattle = false;
         this.unsub.forEach(u => u())
+
         onEncounterEnd();
     }
 

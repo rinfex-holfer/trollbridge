@@ -1,9 +1,9 @@
-import {colorsCSS, gameConstants} from "../../../configs/constants";
+import {colorsCSS} from "../../../configs/constants";
 import {eventBus, Evt} from "../../../event-bus";
 import {FoodType, TrollLocation} from "../../../types";
 import {positioner} from "../positioner";
 import {CharAnimation} from "../../../entities/char/char-constants";
-import {clamp, getRndSign, rndBetween, Vec} from "../../../utils/utils-math";
+import {clamp, getRndItem, getRndSign, rndBetween, Vec} from "../../../utils/utils-math";
 import {flyingStatusChange} from "../../../interface/basic/flying-status-change";
 import {O_AnimatedSprite} from "../../core/render/animated-sprite";
 import {o_} from "../../locator";
@@ -32,7 +32,7 @@ export class Troll {
     isEnraged: boolean = false
 
     armor = 0
-    level = 0
+    level = 1
     dmg = 1
     hp = 1
     maxHp = 1
@@ -140,7 +140,8 @@ export class Troll {
         this.changeSelfControl(selfControlChange)
         this.addXp(xpChange)
 
-        o_.audio.playSound(SOUND_KEY.CHEW)
+        // o_.audio.playSound(SOUND_KEY.CHEW)
+        o_.audio.playSound(getRndItem([SOUND_KEY.EATING_0, SOUND_KEY.EATING_1, SOUND_KEY.EATING_2, SOUND_KEY.EATING_3]))
         eventBus.emit(Evt.TROLL_STATS_CHANGED)
     }
 
@@ -200,6 +201,7 @@ export class Troll {
         if (this.hp === 0) {
             o_.game.gameOver(cause)
             this.setAnimation(CharAnimation.DEAD)
+            o_.audio.playSound(SOUND_KEY.TROLL_DEATH)
         }
 
         this.stats.update()
@@ -256,9 +258,7 @@ export class Troll {
         target.y = bedPos.y
 
         onTrollSleep()
-        return this.setState(TrollStateKey.GO_TO, { target, onEnd: () => {
-            this.goSleep()
-        }})
+        return this.setState(TrollStateKey.GO_TO, { target} ).then(() => this.goSleep())
     }
 
     goToChar(charId: string) {
@@ -356,14 +356,12 @@ export class Troll {
             )
 
             o_.audio.playSound(SOUND_KEY.HIT);
+            pause(100).then(() => {
+                o_.audio.playSound(getRndItem([SOUND_KEY.TROLL_WOUNDED_0, SOUND_KEY.TROLL_WOUNDED_1, SOUND_KEY.TROLL_WOUNDED_2]));
+            })
             this.changeTrollHp(-dmg, 'battle');
         } else {
-            o_.audio.playSound(SOUND_KEY.BLOCK);
-
-            o_.render.burstBlood(
-                this.sprite.x + this.sprite.width / 2,
-                this.sprite.y - this.sprite.height / 2
-            )
+            o_.audio.playSound(getRndItem([SOUND_KEY.TROLL_BLOCK_0, SOUND_KEY.TROLL_BLOCK_1, SOUND_KEY.TROLL_BLOCK_2]));
 
             flyingStatusChange('blocked', this.sprite.x, this.sprite.y - 100, colorsCSS.WHITE);
         }
@@ -429,6 +427,8 @@ export class Troll {
     }
 
     async strike(char: Char) {
+        o_.audio.playSound(SOUND_KEY.TROLL_ATTACK_VOICE)
+
         const anim = char.isUnconscious ? CharAnimation.STRIKE_DOWN : CharAnimation.STRIKE
         await this.runAnimationOnce(anim)
 
@@ -448,6 +448,8 @@ export class Troll {
         if (this.isEnraged) await this.jumpTo(rockPlace)
         await this.setState(TrollStateKey.GO_TO, {target: rockPlace})
         this.directToTarget(char.container)
+
+        o_.audio.playSound(SOUND_KEY.TROLL_ATTACK_VOICE)
 
         const p = createPromiseAndHandlers()
         this.setAnimation(CharAnimation.THROW_STONE, p.done)
@@ -487,6 +489,24 @@ export class Troll {
         if (val === this.isEnraged) return
 
         this.isEnraged = val
-        flyingStatusChange(val ? 'Enraged!' : 'Rage stops', this.sprite.x, this.sprite.y - 100, val ? colorsCSS.RED : colorsCSS.WHITE);
+
+        if (val) {
+            o_.audio.playSound(SOUND_KEY.TROLL_BREATHING)
+            flyingStatusChange('Enraged!', this.sprite.x, this.sprite.y - 100, colorsCSS.RED);
+        } else {
+            flyingStatusChange('Rage stops', this.sprite.x, this.sprite.y - 100, colorsCSS.WHITE);
+        }
+    }
+
+    laugh() {
+        o_.audio.playSound(getRndItem([SOUND_KEY.TROLL_LAUGH_0, SOUND_KEY.TROLL_LAUGH_MEDIUM]))
+    }
+
+    laughHard() {
+        o_.audio.playSound(getRndItem([SOUND_KEY.TROLL_LAUGH_HARD, SOUND_KEY.TROLL_LAUGH_MEDIUM]))
+    }
+
+    hmm() {
+        o_.audio.playSound(getRndItem([SOUND_KEY.TROLL_HM, SOUND_KEY.TROLL_HEY, SOUND_KEY.TROLL_OH]))
     }
 }

@@ -1,6 +1,7 @@
 import {o_} from "../locator";
 import {eventBus, Evt} from "../../event-bus";
 import Phaser from "phaser";
+import {MUSIC_KEY} from "../core/audio";
 
 export class GameManager {
     gameoverCause: string = ''
@@ -18,5 +19,7 @@ export class GameManager {
 
         this.gameoverCause = cause;
         eventBus.emit(Evt.GAME_OVER);
+
+        o_.audio.playMusic(MUSIC_KEY.GAMEOVER)
     }
 }
