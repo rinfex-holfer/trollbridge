@@ -49,9 +49,17 @@ export const enum EncounterDanger {
     IMPOSSIBLE = 'IMPOSSIBLE',
 }
 
+/**
+ *  0   3
+ *  1   4
+ *  2   5
+ */
+export type SquadPlace = 0 | 1 | 2 | 3 | 4 | 5
+
 export type EncounterTemplate = {
     level: number,
-    enemies: CharKey[],
+    enemies: [SquadPlace, CharKey][],
+    speakerIdx?: number,
     text: string
 }
 

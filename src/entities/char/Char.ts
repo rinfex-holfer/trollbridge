@@ -1,11 +1,11 @@
-import {CharKey, ResourceKey} from "../../types";
+import {CharKey, ResourceKey, SquadPlace} from "../../types";
 import {charConfig} from "../../configs/char-config";
 import {createId, stub} from "../../utils/utils-misc";
 import {CharState} from "./states/CharState";
 import {CharStateIdle} from "./states/CharStateIdle";
 import {CharStateGoAcross} from "./states/CharStateGoAcross";
 import {CharAnimation, CharStateKey} from "./char-constants";
-import {CharAction, CharActionsMenu} from "../../interface/char-actions-menu";
+import {CharActionsMenu} from "../../interface/char-actions-menu";
 import {CharStateSurrender} from "./states/CharStateSurrender";
 import {CharStateDead} from "./states/CharStateDead";
 import {CharStateBones} from "./states/CharStateBones";
@@ -16,7 +16,7 @@ import {CharStateGoToTalk} from "./states/CharStateGoToTalk";
 import {colorsCSS, gameConstants} from "../../configs/constants";
 import {SOUND_KEY} from "../../managers/core/audio";
 import {CharStateBattleIdle} from "./states/CharStateBattleIdle";
-import {clamp, rndBetween, Vec} from "../../utils/utils-math";
+import {clamp, rnd, rndBetween, Vec} from "../../utils/utils-math";
 import {createPromiseAndHandlers, pause} from "../../utils/utils-async";
 import {CharStateBattleAttack} from "./states/CharStateBattleAttack";
 import {flyingStatusChange} from "../../interface/basic/flying-status-change";
@@ -36,9 +36,9 @@ import {CharStateGoTo} from "./states/CharStateGoTo";
 import {Horse} from "../horse";
 import {CharStateUnconscious} from "./states/CharStateUnconscious";
 import {DmgOptions} from "../../utils/utils-types";
-import {charTexts} from "../../char-texts";
 import {goldConfig} from "../../configs/gold-config";
 import {foodConfig} from "../../configs/food-config";
+import {Squad} from "../../managers/game/squad";
 
 export class Char {
     key: CharKey
@@ -66,7 +66,8 @@ export class Char {
     isMetTroll = false
 
     isCombatant: boolean
-    isCounterAttacker: boolean
+    counterAttack?: number
+    block?: number
     isDefender: boolean
     isRanged: boolean
     isMounted: boolean
@@ -85,7 +86,8 @@ export class Char {
 
     unsub: (() => void)[] = []
 
-    positionBeforeBattle: Vec = {x: 0, y: 0}
+    squad: Squad | null = null
+    squadPlace: SquadPlace | null = null
 
     constructor(key: CharKey, x: number, y: number) {
         const charTemplate = charConfig[key]
@@ -103,7 +105,9 @@ export class Char {
         this.isCombatant = charTemplate.isCombatant
         this.dmg = charTemplate.dmg;
 
-        this.isCounterAttacker = !!charTemplate.canCounterAttack
+        this.counterAttack = charTemplate.counterAttack
+        this.block = charTemplate.block
+
         this.isDefender = !!charTemplate.isDefender
         this.isRanged = !!charTemplate.isRanged
         this.isMounted = !!charTemplate.isMounted
@@ -152,7 +156,7 @@ export class Char {
     getIsNewTraveller() { return !this.isMetTroll }
     getIsTraveller() { return this.isAlive && !this.isPrisoner }
     getIsFighter() { return this.getIsTraveller() && !this.isSurrender && !this.isUnconscious }
-    getIsPrisoner() { return this.isAlive && this.isPrisoner; }
+    getIsPrisoner() { return this.isAlive && this.isPrisoner }
 
     onCharDefeated(key: CharKey) {
         if (this.getIsFighter()) {
@@ -172,6 +176,8 @@ export class Char {
         this.state.end();
         this.speakText.destroy();
         this.container.destroy();
+
+        if (this.squad) this.squad.removeChar(this)
     }
 
     update(dt: number) {
@@ -231,6 +237,7 @@ export class Char {
                 {framesPrefix: CharAnimation.FALL, frameRate: 4},
                 {framesPrefix: CharAnimation.STRIKE, frameRate: 8},
                 {framesPrefix: CharAnimation.DAMAGED, frameRate: 8},
+                {framesPrefix: CharAnimation.BLOCK, frameRate: 8},
                 {framesPrefix: CharAnimation.PRISONER, repeat: -1, frameRate: 8},
                 {framesPrefix: CharAnimation.SURRENDER, repeat: -1, frameRate: 8},
                 {framesPrefix: CharAnimation.UNCONSCIOUS, frameRate: 1},
@@ -433,6 +440,14 @@ export class Char {
         return this.dmg + rndBetween(0, Math.ceil(this.dmg * 0.33));
     }
 
+    rollCounterAttack() {
+        return !!this.counterAttack && rnd() < this.counterAttack
+    }
+
+    rollBlock() {
+        return !!this.block && rnd() < this.block
+    }
+
     changeMp(val: number) {
         this.morale = clamp(this.morale+val, 0, this.maxMorale);
         this.mpIndicator.update();
@@ -452,6 +467,17 @@ export class Char {
     changeHp(val: number) {
         this.hp = clamp(this.hp+val, 0, this.maxHp);
         this.hpIndicator.update();
+    }
+
+    tryToBlock(dmg: number, options?: DmgOptions) {
+        if (!options?.grabbed && !this.isUnconscious && this.rollBlock()) {
+            this.runAnimationOnce(CharAnimation.BLOCK).then(() => this.setAnimation(CharAnimation.IDLE))
+            o_.audio.playSound(SOUND_KEY.BLOCK);
+            this.statusFly('blocked')
+            return true
+        }
+
+        return false
     }
 
     async getHit(dmg: number, options?: DmgOptions) {
@@ -579,13 +605,14 @@ export class Char {
     }
 
     canProtect(char: Char) {
-        return this.isDefender
+        return this.getIsFighter()
+            && this.isDefender
             && char.id !== this.id
             && char.key !== this.key
     }
 
     canCounterAttack() {
-        return this.isCounterAttacker && !this.isUnconscious && !this.isSurrender && this.isAlive
+        return !!this.counterAttack && !this.isUnconscious && !this.isSurrender && this.isAlive
     }
 
     getDefenderPosition(): Vec {
@@ -615,5 +642,35 @@ export class Char {
 
     say(text: string) {
         flyingStatusChange(text, this.container.x, this.container.y - 100)
+    }
+
+    statusFly(text: string, color: string = colorsCSS.WHITE) {
+        flyingStatusChange(text, this.container.x, this.container.y - 100, color);
+    }
+
+    getBattleCoords(): Vec {
+        if (this.squad === null || this.squadPlace === null) throw Error('no squad assigned, cant find battle coords')
+
+        return this.squad.getBattleCoordsForPlace(this.squadPlace)
+    }
+
+    getIsCovered(): boolean {
+        if (!this.squad) return false
+        if (this.squadPlace === null) throw Error('wtf')
+
+        switch (this.squadPlace) {
+            case 0:
+                return false
+            case 1:
+                return false
+            case 2:
+                return false
+            case 3:
+                return !!this.squad.placeToChar[0]
+            case 4:
+                return !!this.squad.placeToChar[1]
+            case 5:
+                return !!this.squad.placeToChar[2]
+        }
     }
 }

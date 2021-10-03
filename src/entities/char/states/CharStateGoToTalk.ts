@@ -9,10 +9,9 @@ import {createPromiseAndHandlers} from "../../../utils/utils-async";
 export class CharStateGoToTalk extends CharState {
     key = CharStateKey.GO_TO_TALK
 
-    target = {x: positioner.negotiationX(), y: this.char.getCoords().y}
+    target = this.char.getBattleCoords()
 
     onEnd() {
-        this.char.positionBeforeBattle = this.char.getCoords()
         this.char.onMoveEnd()
     }
 

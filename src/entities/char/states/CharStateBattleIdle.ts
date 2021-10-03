@@ -22,8 +22,6 @@ export class CharStateBattleIdle extends CharState {
     }
 
     getPossibleTrollActions(): CharAction[] {
-        const btns = [CharAction.BATTLE_HIT, CharAction.BATTLE_THROW_CHAR]
-        if (o_.bridge.getRockPlaces().some(p => !p.isRuined)) btns.push(CharAction.BATTLE_THROW_ROCK)
-        return btns
+        return [CharAction.BATTLE_HIT, CharAction.BATTLE_THROW_CHAR, CharAction.BATTLE_THROW_ROCK]
     }
 }

@@ -17,6 +17,6 @@ export class CharStateBattleSurrender extends CharState {
     }
 
     getPossibleTrollActions(): CharAction[] {
-        return [CharAction.BATTLE_HIT, CharAction.BATTLE_DEVOUR]
+        return [CharAction.BATTLE_HIT, CharAction.BATTLE_THROW_ROCK, CharAction.BATTLE_DEVOUR]
     }
 }

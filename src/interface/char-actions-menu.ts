@@ -34,7 +34,12 @@ type CharActionButtonTemplate = {
 }
 
 const buttonsTemplate: CharActionButtonTemplate[] = [
-    {key: CharAction.RELEASE, text: 'Отпустить', resource: 'button_release', onClick: (id: string) => o_.characters.releaseChar(id)},
+    {
+        key: CharAction.RELEASE,
+        text: 'Отпустить',
+        resource: 'button_release',
+        onClick: (id: string) => o_.characters.releaseChar(id)
+    },
 
     {key: CharAction.ROB, text: 'Отобрать плату', resource: 'button_rob', onClick: (id: string) => o_.characters.makeCharPay(id),
         checkActive: char => char.gold > Math.ceil(char.goldInitial * 0.67)
@@ -45,20 +50,60 @@ const buttonsTemplate: CharActionButtonTemplate[] = [
     },
 
     // {key: CharAction.IMPRISON, text: 'Сделать пленником', resource: 'button_imprison', onClick: (id: string) => o_.characters.makeImprisoned(id)},
-    {key: CharAction.KILL, text: 'Убить', resource: 'button_kill', onClick: (id: string) => o_.characters.killChar(id)},
+    {
+        key: CharAction.KILL,
+        text: 'Убить',
+        resource: 'button_kill',
+        onClick: (id: string) =>
+            o_.characters.killChar(id),
+    },
 
     // {key: CharAction.DEVOUR, text: 'Сожрать', resource: 'button_devour', onClick: (id: string) => o_.troll.devour(id)},
-    {key: CharAction.FEED, text: 'Накормить', resource: 'button_feed', onClick: (id: string) => o_.lair.feedChar(id)},
+    {
+        key: CharAction.FEED,
+        text: 'Накормить',
+        resource: 'button_feed',
+        onClick: (id: string) => o_.lair.feedChar(id)
+    },
 
-    {key: CharAction.MAKE_FOOD, text: 'Разорвать', resource: 'button_make_food', onClick: (id: string) => o_.characters.transformToFood(id)},
+    {
+        key: CharAction.MAKE_FOOD,
+        text: 'Разорвать',
+        resource: 'button_make_food',
+        onClick: (id: string) => o_.characters.transformToFood(id)
+    },
 
-    {key: CharAction.BATTLE_DEVOUR, text: 'Сожрать', resource: 'button_devour', onClick: (id: string) => o_.battle.trollGoDevour(id)},
+    {
+        key: CharAction.BATTLE_DEVOUR,
+        text: 'Сожрать',
+        resource: 'button_devour',
+        onClick: (id: string) => o_.battle.trollGoDevour(id),
+        checkActive: char => o_.battle.isBattle && char.getIsTraveller() && (char.isUnconscious || char.isSurrender) && !char.getIsCovered()
+    },
 
-    {key: CharAction.BATTLE_HIT, text: 'Ударить', resource: 'button_strike', onClick: (id: string) => o_.battle.trollGoAttack(id)},
+    {
+        key: CharAction.BATTLE_HIT,
+        text: 'Ударить',
+        resource: 'button_strike',
+        onClick: (id: string) => o_.battle.trollGoAttack(id),
+        checkActive: char => o_.battle.isBattle && char.getIsTraveller() && !char.getIsCovered()
+    },
 
-    {key: CharAction.BATTLE_THROW_CHAR, text: 'Бросить об землю', resource: 'button_throw_char', onClick: (id: string) => o_.battle.trollGoThrowChar(id)},
+    {
+        key: CharAction.BATTLE_THROW_CHAR,
+        text: 'Бросить об землю',
+        resource: 'button_throw_char',
+        onClick: (id: string) => o_.battle.trollGoThrowChar(id),
+        checkActive: char => o_.battle.isBattle && char.getIsTraveller() && !char.getIsCovered()
+    },
 
-    {key: CharAction.BATTLE_THROW_ROCK, text: 'Бросить камень', resource: 'button_throw_rock', onClick: (id: string) => o_.battle.trollThrowRock(id)},
+    {
+        key: CharAction.BATTLE_THROW_ROCK,
+        text: 'Бросить камень',
+        resource: 'button_throw_rock',
+        onClick: (id: string) => o_.battle.trollThrowRock(id),
+        checkActive: char => o_.battle.isBattle && char.getIsTraveller() && o_.bridge.getHasAvailableRocks()
+    },
 ]
 
 export const actionButtonsMap = buttonsTemplate.reduce((acc, next) => {

@@ -19,19 +19,17 @@ export class CharStateBattleAttack extends CharState {
     }
 
     onStart() {
-        this.char.moveTowards(o_.troll.sprite.x, this.char.getCoords().y)
+        this.char.moveTowards(o_.troll.sprite.x, o_.troll.sprite.y)
         this.char.setAnimation(CharAnimation.WALK);
     }
 
     update(dt: number) {
-        const startX = positioner.negotiationX()
-        const trollX = o_.troll.sprite.x;
-        const y = this.char.getCoords().y;
-
         if (this.phase === 'attacking') return;
 
+        const battlePosition = this.char.getBattleCoords()
+
         if (this.phase === 'forward') {
-            const distanceLeft = getDistanceBetween(this.char.container, {x: trollX, y})
+            const distanceLeft = getDistanceBetween(this.char.container, {x: o_.troll.sprite.x, y: o_.troll.sprite.y})
 
             if (distanceLeft <= 100) {
                 this.char.stop();
@@ -39,16 +37,16 @@ export class CharStateBattleAttack extends CharState {
                 this.char.setAnimation(CharAnimation.STRIKE, false, () => {
                     this.attack();
                     this.phase = 'backward'
-                    this.char.moveTowards(this.char.positionBeforeBattle.x, this.char.positionBeforeBattle.y)
+                    this.char.moveTowards(battlePosition.x, battlePosition.y)
                     this.char.setAnimation(CharAnimation.WALK)
                 })
             }
         } else if (this.phase === 'backward') {
             const step = (this.char.speed / 1000) * dt
-            const distanceLeft = getDistanceBetween(this.char.container, this.char.positionBeforeBattle)
+            const distanceLeft = getDistanceBetween(this.char.container, battlePosition)
             if (distanceLeft <= step) {
-                this.char.container.x = this.char.positionBeforeBattle.x
-                this.char.container.y = this.char.positionBeforeBattle.y
+                this.char.container.x = battlePosition.x
+                this.char.container.y = battlePosition.y
                 this.char.stop();
                 this.char.endAttack();
             }

@@ -1,11 +1,12 @@
-import {CharKey, EncounterDanger, TrollLocation} from "../../types";
-import {getRndItem} from "../../utils/utils-math";
+import {CharKey, EncounterDanger, EncounterTemplate, SquadPlace, TrollLocation} from "../../types";
+import {getRndItem, rndBetween} from "../../utils/utils-math";
 import {Char} from "../../entities/char/Char";
 import {eventBus, Evt} from "../../event-bus";
 import {encounterTemplates} from "../../encounter-templates";
 import {positioner} from "./positioner";
 import {o_} from "../locator";
 import {DmgOptions} from "../../utils/utils-types";
+import {Squad} from "./squad";
 
 export class CharactersManager {
     chars: Char[] = []
@@ -13,6 +14,8 @@ export class CharactersManager {
     encounterLevel: number = 0;
 
     // dangerIndicator: DangerIndicator
+
+    squad = new Squad([])
 
     constructor() {
         eventBus.on(Evt.CHAR_LEFT_BRIDGE, charId => this.onCharLeftBridge(charId))
@@ -97,27 +100,32 @@ export class CharactersManager {
             return;
         }
 
-        this.chars[idx].destroy();
-        this.chars.splice(idx, 1);
+        this.chars[idx].destroy()
+        this.chars.splice(idx, 1)[0]
     }
 
-    createTravellers(keys: CharKey[], travellersLevel: number) {
+    createTravellers(keys: [SquadPlace, CharKey][], travellersLevel: number) {
         this.encounterLevel = travellersLevel;
 
         const bridgePos = positioner.bridgePosition()
-        const margin = 75;
-        let y = bridgePos.y + bridgePos.height / 2 - ((keys.length - 1) * margin) / 2
 
-        keys.forEach((key, i) => {
-            const char = new Char(
-                key,
-                bridgePos.x + bridgePos.width - 50,
-                y
-            );
-            y += margin;
-            // char.goAcrossBridge();
+        const startY = bridgePos.height / 5 + bridgePos.y + bridgePos.height / 5
+        const marginY = bridgePos.height / 5;
+
+        const startX = bridgePos.x + bridgePos.width - 50
+        const marginX = marginY
+
+        const c = keys.map(([place, key]) => {
+            const x = place <= 2 ? startX : startX + marginX
+            const y = startY + (place % 3) * marginY
+            const char = new Char(key, x, y);
             this.chars.push(char);
-        })
+
+            return [place, char]
+        }) as [SquadPlace, Char][]
+
+        this.squad = new Squad(c)
+
         eventBus.emit(Evt.TRAVELLERS_APPEAR);
     }
 
@@ -156,7 +164,6 @@ export class CharactersManager {
     travellersGoToTalk() {
         this.getNewTravellers().forEach(t => t.goToTalk());
     }
-
 
     stopAllTravellers() {
         // this.getNewTravellers().forEach(t => t.startNegotiation());
@@ -259,15 +266,7 @@ export class CharactersManager {
         return char.canCounterAttack()
     }
 
-    findDefenders(charId: string): Char[] {
-        const travellers = this.getTravellers()
-        const fighters = this.getFighters()
-        let char = travellers.find(t => t.id === charId);
-        if (!char) throw Error('wtf');
-
-        // @ts-ignore
-        const defenders = fighters.filter(f => f.id !== charId && f.canProtect(char))
-
-        return defenders || []
+    getDefenderOf(char: Char) {
+        return this.squad.getDefenderOf(char)
     }
 }

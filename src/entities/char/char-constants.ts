@@ -21,6 +21,7 @@ export const enum CharAnimation {
     FALL = 'fall',
     UNCONSCIOUS = 'unconscious',
     DAMAGED = 'damaged',
+    BLOCK = 'block',
     SURRENDER = 'scared',
     PRISONER = 'prisoner',
     DEAD = 'dead',

@@ -14,7 +14,7 @@ export class CharStateGoToBattlePosition extends CharState {
     constructor(host: Char) {
         super(host);
 
-        this.target = host.positionBeforeBattle
+        this.target = host.getBattleCoords()
     }
 
     onEnd() {

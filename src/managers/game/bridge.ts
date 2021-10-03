@@ -62,6 +62,10 @@ export class BridgeManager {
         const sortedPlaces = sortByDistance(places, pos)
         return sortedPlaces[0]
     }
+
+    getHasAvailableRocks() {
+        return this.getRockPlaces().some(p => !p.isRuined)
+    }
 }
 
 class RockPlace {

@@ -12,14 +12,14 @@ export const trollConfig = {
 
     TROLL_LEVELING: {
         0: {
-            maxHp: 7,
-            armor: 0,
-            dmg: 10,
+            maxHp: 30,
+            armor: 5,
+            dmg: 20,
             xp: 0,
         },
         1: {
             maxHp: 10,
-            armor: 1,
+            armor: 5,
             dmg: 6,
             xp: 10,
         },
