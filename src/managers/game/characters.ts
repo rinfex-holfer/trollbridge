@@ -45,6 +45,10 @@ export class CharactersManager {
         }
     }
 
+    getSquadChars() {
+        return this.squad.chars
+    }
+
     createRandomEncounter() {
         // const rnd = rndBetween(Math.max(0, gameState.troll.level - 1), gameState.troll.level + 1);
         const rnd = 0;

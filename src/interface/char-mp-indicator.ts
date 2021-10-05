@@ -1,42 +1,36 @@
-import {colors, colorsCSS} from "../configs/constants";
+import {colorsNum} from "../configs/constants";
 import {Char} from "../entities/char/Char";
-import {O_Text} from "../managers/core/render/text";
-import {o_} from "../managers/locator";
+import {ProgressBar} from "./basic/progress-bar";
 
 export class CharMpIndicator {
-    isShown = false;
-
-    text: O_Text
+    bar: ProgressBar
 
     constructor(private char: Char) {
-        this.text = o_.render.createText(
-            '',
-            130,
-            -50,
-            {
-                // align: 'center',
-                align: 'left',
-                color: colorsCSS.WHITE,
-                fontSize: '14px',
-            },
-            {parent: char.container}
-        )
-        this.text.setOrigin(0, 0);
+        this.bar = new ProgressBar({
+            x: -15,
+            y: -110,
+            width: 50,
+            height: 5,
+            maxValue: char.maxMorale,
+            value: char.morale,
+            color: colorsNum.LIGHT_BLUE,
+            colorOptions: [[1, colorsNum.LIGHT_BLUE]],
+            parent: char.container,
+            withoutNumbers: true
+        })
+        this.hide()
     }
 
     update() {
-        this.show();
-    }
-
-    getText() {
-        return `morale: ${this.char.morale} / ${this.char.maxMorale}`
+        this.bar.setValue(this.char.morale)
     }
 
     show() {
-        this.text.setText(this.getText());
+        this.bar.setValue(this.char.morale)
+        this.bar.setVisibility(true)
     }
 
     hide() {
-        this.text.setText('');
+        this.bar.setVisibility(false)
     }
 }

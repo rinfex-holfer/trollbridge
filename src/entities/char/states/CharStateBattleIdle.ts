@@ -21,7 +21,7 @@ export class CharStateBattleIdle extends CharState {
         }
     }
 
-    getPossibleTrollActions(): CharAction[] {
-        return [CharAction.BATTLE_HIT, CharAction.BATTLE_THROW_CHAR, CharAction.BATTLE_THROW_ROCK]
-    }
+    // getPossibleTrollActions(): CharAction[] {
+    //     return [CharAction.BATTLE_HIT, CharAction.BATTLE_THROW_CHAR, CharAction.BATTLE_THROW_ROCK]
+    // }
 }

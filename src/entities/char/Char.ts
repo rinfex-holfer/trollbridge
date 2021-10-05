@@ -75,7 +75,7 @@ export class Char {
     state: CharState
     timeWithoutFood = 0
 
-    actionsMenu: CharActionsMenu
+    // actionsMenu: CharActionsMenu
     speakText: CharSpeakText
     hpIndicator: CharHpIndicator
     mpIndicator: CharMpIndicator
@@ -126,7 +126,7 @@ export class Char {
         this.bones = this.createBones()
         this.bones.setVisibility(false);
 
-        this.actionsMenu = new CharActionsMenu(this);
+        // this.actionsMenu = new CharActionsMenu(this);
         this.speakText = new CharSpeakText(this.container);
         this.hpIndicator = new CharHpIndicator(this);
         this.mpIndicator = new CharMpIndicator(this);
@@ -150,7 +150,7 @@ export class Char {
     }
 
     updateActionButtons() {
-        this.actionsMenu.changeActiveButtons(this.state.getPossibleTrollActions())
+        // this.actionsMenu.changeActiveButtons(this.state.getPossibleTrollActions())
     }
 
     getIsNewTraveller() { return !this.isMetTroll }
@@ -255,14 +255,35 @@ export class Char {
 
     disableInteractivity() {
         this.container.setInteractive(false)
-        this.actionsMenu.hide()
+        this.sprite.setInteractive(false)
+        // this.actionsMenu.hide()
     }
 
     enableInteractivity() {
         if (this.isBones) return;
         this.container.setInteractive(true)
-        this.actionsMenu.checkIsHovered()
-        this.actionsMenu.show()
+        this.sprite.setInteractive(true)
+        // this.actionsMenu.checkIsHovered()
+        // this.actionsMenu.show()
+    }
+
+    onSpriteClicked(cb: (char: Char) => void) {
+        this.sprite.onClick(() => cb(this))
+    }
+
+    setCursor(cursor: string) {
+        // this.sprite.setInteractive(false)
+        // this.sprite.setInteractive(true, {cursor})
+        if (!this.sprite.obj.input) this.sprite.setInteractive(true, {cursor})
+        else this.sprite.obj.input.cursor = cursor
+    }
+
+    onSpritePointerOver(cb: (char: Char) => void) {
+        this.sprite.onPointerOver(() => cb(this))
+    }
+
+    onSpritePointerOut(cb: (char: Char) => void) {
+        this.sprite.onPointerOut(() => cb(this))
     }
 
     createBones() {
@@ -285,7 +306,7 @@ export class Char {
                 break;
         }
 
-        this.actionsMenu.updateButtons()
+        // this.actionsMenu.updateButtons()
     }
 
     moveTowards(x: number, y: number) {

@@ -11,6 +11,7 @@ type ProgressBarOptions = {
     width: number,
     height: number,
     text?: string,
+    textStyle?: any,
     maxValue?: number,
     value?: number,
     color?: number,
@@ -65,11 +66,9 @@ export class ProgressBar {
 
         this.withoutNumbers = options.withoutNumbers || false
         this.label = options.text
-        this.text = o_.render.createText('', this.width / 2, this.height / 2, {}, {parent: this.container})
+        this.text = o_.render.createText('', this.width / 2, this.height / 2, options.textStyle || {}, {parent: this.container})
         this.text.setOrigin(0.5, 0.5)
-        if (this.label) {
-            this.updateText()
-        }
+        this.updateText()
     }
 
     private updateText(val: number = this.value) {

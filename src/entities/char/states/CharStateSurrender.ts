@@ -16,7 +16,7 @@ export class CharStateSurrender extends CharState {
         this.char.setIndicatorsVisible(false)
     }
 
-    getPossibleTrollActions(): CharAction[] {
-        return [CharAction.RELEASE, CharAction.ROB, CharAction.TAKE_ALL, CharAction.BATTLE_HIT]
-    }
+    // getPossibleTrollActions(): CharAction[] {
+    //     return [CharAction.RELEASE, CharAction.ROB, CharAction.TAKE_ALL, CharAction.BATTLE_HIT]
+    // }
 }

@@ -5,6 +5,9 @@ import {o_} from "../managers/locator";
 export class UpgradeButton {
     button: ImgButton
     cost: number
+
+    isEnabled: boolean = true
+
     constructor(pos: Vec, cost: number, text: string, private onClickCb: (btn: UpgradeButton) => void) {
         this.cost = cost
 
@@ -19,7 +22,7 @@ export class UpgradeButton {
     }
 
     onClick() {
-        this.onClickCb(this)
+        if (this.isEnabled) this.onClickCb(this)
     }
 
     destroy() {
@@ -29,9 +32,11 @@ export class UpgradeButton {
     setVisible(val: boolean) {
         this.button.setVisible(val)
         if (o_.lair.treasury.amount < this.cost) {
-            this.button.disable()
+            this.isEnabled = false
+            this.button.visiblyDisable()
         } else {
-            this.button.enable()
+            this.isEnabled = true
+            this.button.visiblyEnable()
         }
     }
 }

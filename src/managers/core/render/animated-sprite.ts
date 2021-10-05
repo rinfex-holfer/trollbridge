@@ -95,23 +95,36 @@ export class O_AnimatedSprite {
         else this.obj.disableInteractive()
     }
 
+    leftClickCb: ((pointer: Pointer) => void) | null = null
     onClick(callback: () => void) {
-        this.obj.on('pointerdown', (pointer: Pointer) => {
-            if (!pointer.rightButtonDown()) callback()
-        })
-    }
+        if (this.leftClickCb) this.obj.removeListener('pointerdown', this.leftClickCb)
 
+        this.leftClickCb = (pointer: Pointer) => {
+            if (!pointer.rightButtonDown()) callback()
+        }
+
+        this.obj.on('pointerdown', this.leftClickCb)
+    }
+    removeClickListener() { this.obj.removeListener('pointerdown') }
+
+    rightClickCb: ((pointer: Pointer) => void) | null = null
     onRightClick(callback: () => void) {
-        this.obj.on('pointerdown', (pointer: Pointer) => {
+        if (this.rightClickCb) this.obj.removeListener('pointerdown', this.rightClickCb)
+
+        this.rightClickCb = (pointer: Pointer) => {
             if (pointer.rightButtonDown()) callback()
-        })
+        }
+
+        this.obj.on('pointerdown', this.rightClickCb)
     }
 
     onPointerOver(callback: () => void) {
+        this.obj.removeListener('pointerover')
         this.obj.on('pointerover', callback)
     }
 
     onPointerOut(callback: () => void) {
+        this.obj.removeListener('pointerout')
         this.obj.on('pointerout', callback)
     }
 

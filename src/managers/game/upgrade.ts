@@ -15,6 +15,7 @@ export class UpgradeManager {
 
     upgradeButtonsShown = false
 
+    unsubFromLClick: () => void = stub
     unsubFromRClick: () => void = stub
 
     constructor() {
@@ -57,16 +58,24 @@ export class UpgradeManager {
 
     private setButtonsShown(val: boolean) {
         if (val) {
-            this.unsubFromRClick = o_.interaction.onRightClick(() => {
+            const close = () => {
+                console.log('close')
                 o_.audio.playSound(SOUND_KEY.BONK)
                 this.setButtonsShown(false)
-            })
+            }
+            o_.interaction.setLayerUnderButtonsActive(close)
+            this.unsubFromRClick = o_.interaction.onRightClick(close)
+
             o_.interaction.disableEverything()
             this.setEnabled(true)
         } else {
+            o_.interaction.setLayerUnderButtonsUnactive()
             o_.interaction.enableEverything()
             this.unsubFromRClick?.()
             this.unsubFromRClick = stub
+
+            this.unsubFromLClick?.()
+            this.unsubFromLClick = stub
         }
         this.upgradeButtonsShown = val
         this.buttons.forEach(b => b.setVisible(val))

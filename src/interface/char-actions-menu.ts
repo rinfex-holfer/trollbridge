@@ -18,7 +18,9 @@ export const enum CharAction {
 
     MAKE_FOOD = 'MAKE_FOOD',
     FEED = 'FEED',
+}
 
+export const enum BattleAction {
     BATTLE_HIT = 'BATTLE_HIT',
     BATTLE_DEVOUR = 'BATTLE_DEVOUR',
     BATTLE_THROW_ROCK = 'BATTLE_THROW_ROCK',
@@ -71,38 +73,6 @@ const buttonsTemplate: CharActionButtonTemplate[] = [
         text: 'Разорвать',
         resource: 'button_make_food',
         onClick: (id: string) => o_.characters.transformToFood(id)
-    },
-
-    {
-        key: CharAction.BATTLE_DEVOUR,
-        text: 'Сожрать',
-        resource: 'button_devour',
-        onClick: (id: string) => o_.battle.trollGoDevour(id),
-        checkActive: char => o_.battle.isBattle && char.getIsTraveller() && (char.isUnconscious || char.isSurrender) && !char.getIsCovered()
-    },
-
-    {
-        key: CharAction.BATTLE_HIT,
-        text: 'Ударить',
-        resource: 'button_strike',
-        onClick: (id: string) => o_.battle.trollGoAttack(id),
-        checkActive: char => o_.battle.isBattle && char.getIsTraveller() && !char.getIsCovered()
-    },
-
-    {
-        key: CharAction.BATTLE_THROW_CHAR,
-        text: 'Бросить об землю',
-        resource: 'button_throw_char',
-        onClick: (id: string) => o_.battle.trollGoThrowChar(id),
-        checkActive: char => o_.battle.isBattle && char.getIsTraveller() && !char.getIsCovered()
-    },
-
-    {
-        key: CharAction.BATTLE_THROW_ROCK,
-        text: 'Бросить камень',
-        resource: 'button_throw_rock',
-        onClick: (id: string) => o_.battle.trollThrowRock(id),
-        checkActive: char => o_.battle.isBattle && char.getIsTraveller() && o_.bridge.getHasAvailableRocks()
     },
 ]
 

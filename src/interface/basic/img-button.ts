@@ -9,9 +9,13 @@ type ImgButtonOptions = ButtonOptions & { img: keyof typeof resoursePaths.images
 export class ImgButton extends BasicButton {
     sprite: O_Sprite
 
+    visiblyDisabled: boolean
+
     constructor(options: ImgButtonOptions) {
         if (!options.style) options.style = {};
         super(options);
+
+        this.visiblyDisabled = false
 
         this.container.setInteractive(false)
         this.sprite = o_.render.createSprite(options.img, 0, 0, {parent: this.container})
@@ -19,10 +23,10 @@ export class ImgButton extends BasicButton {
         this.sprite.setInteractive(true, {cursor: 'pointer'})
         this.sprite.onClick(() => this.onClick())
         this.sprite.onPointerOver(() => {
-            this.sprite.alpha = 1
+            if (!this.visiblyDisabled) this.sprite.alpha = 1
         })
         this.sprite.onPointerOut(() => {
-            this.sprite.alpha = 0.75
+            if (!this.visiblyDisabled) this.sprite.alpha = 0.75
         })
 
         this.text.y = this.text.y - 30
@@ -44,5 +48,19 @@ export class ImgButton extends BasicButton {
         this.sprite.setInteractive(false);
         this.oldAlpha = this.sprite.alpha;
         this.sprite.alpha = 0.3
+    }
+
+    visiblyDisable() {
+        this.visiblyDisabled = true
+        this.oldAlpha = this.sprite.alpha;
+        this.sprite.alpha = 0.3
+        console.log('visiblyDisable, oldAlpha', this.oldAlpha, 'sprite alpha', this.sprite.alpha)
+    }
+
+    visiblyEnable() {
+        this.visiblyDisabled = false
+        this.oldAlpha = this.sprite.alpha;
+        this.sprite.alpha = this.oldAlpha
+        console.log('visiblyEnable, oldAlpha', this.oldAlpha, 'sprite alpha', this.sprite.alpha)
     }
 }

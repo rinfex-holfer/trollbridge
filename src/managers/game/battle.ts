@@ -5,14 +5,18 @@ import {pause} from "../../utils/utils-async";
 import {Char} from "../../entities/char/Char";
 import {actionButtonsMap, CharAction} from "../../interface/char-actions-menu";
 import {getRndItem} from "../../utils/utils-math";
+import {BattleActionsMenu} from "../../interface/battle-actions-menu";
 
 export class BattleManager {
     unsub: any[] = []
 
     isBattle = false
 
+    actionsMenu: BattleActionsMenu
+
     constructor() {
         o_.register.battle(this);
+        this.actionsMenu = new BattleActionsMenu()
     }
 
     startBattle() {
@@ -38,11 +42,15 @@ export class BattleManager {
         if (o_.troll.isEnraged) {
             await pause(1000)
             this.trollGoCrazy()
+        } else {
+            o_.characters.enableInteractivityAll()
+            this.actionsMenu.show()
         }
-        else o_.characters.enableInteractivityOnBridge();
     }
 
     async travellersTurn() {
+        this.actionsMenu.hide()
+
         if (this.getIsWin()) {
             return this.win();
         }
@@ -84,6 +92,7 @@ export class BattleManager {
     }
 
     onBattleEnd() {
+        this.actionsMenu.hide()
         o_.troll.setEnraged(false)
 
         this.isBattle = false;
@@ -92,9 +101,8 @@ export class BattleManager {
         onEncounterEnd();
     }
 
-    async trollThrowRock(charId: string) {
+    async trollThrowRock(char: Char) {
         o_.characters.disableInteractivityAll();
-        const char = o_.characters.getTraveller(charId)
 
         const defender = o_.characters.squad.getDefenderOf(char)
 
@@ -117,7 +125,7 @@ export class BattleManager {
 
         const travellers = o_.characters.getTravellers()
         const devourable = travellers.find(t => (t.isUnconscious && !t.isPrisoner) || (t.isSurrender && !t.isPrisoner))
-        if (devourable) return this.trollGoDevour(devourable.id)
+        if (devourable) return this.trollGoDevour(devourable)
 
         const fighters = o_.characters.getFighters()
         const fightersWithActions: [Char, CharAction[]][] = fighters.map(f => {
@@ -137,10 +145,9 @@ export class BattleManager {
         return actionButtonsMap[rndAction].onClick(rndFighter[0].id)
     }
 
-    async trollGoAttack(charId: string) {
+    async trollGoAttack(char: Char) {
         o_.characters.disableInteractivityAll();
 
-        const char = o_.characters.getTraveller(charId)
         const counterAttack = char.canCounterAttack() && char.rollCounterAttack()
         const defender = o_.characters.getDefenderOf(char)
 
@@ -153,7 +160,7 @@ export class BattleManager {
                 if (this.getIsWin()) return this.win()
                 await o_.troll.jumpToBattlePosition()
             } else {
-                o_.troll.goToChar(charId)
+                o_.troll.goToChar(char.id)
                 await char.runAround()
                 char.directToTarget(o_.troll)
                 await o_.troll.goToBattlePosition()
@@ -162,7 +169,7 @@ export class BattleManager {
             await o_.troll.moveToChar(char)
 
             if (counterAttack) {
-                await o_.characters.counterAttack(charId)
+                await o_.characters.counterAttack(char.id)
                 await pause(500)
                 if (!o_.troll.getIsAlive()) return this.fail()
             }
@@ -179,10 +186,9 @@ export class BattleManager {
         return this.travellersTurn()
     }
 
-    async trollGoThrowChar(charId: string) {
+    async trollGoThrowChar(char: Char) {
         o_.characters.disableInteractivityAll();
 
-        const char = o_.characters.getTraveller(charId)
         const counterAttack = char.canCounterAttack() && char.rollCounterAttack()
         const defender = o_.characters.getDefenderOf(char)
 
@@ -192,7 +198,7 @@ export class BattleManager {
             await o_.troll.moveToChar(char)
 
             if (counterAttack) {
-                await o_.characters.counterAttack(charId)
+                await o_.characters.counterAttack(char.id)
                 await pause(500)
                 if (!o_.troll.getIsAlive()) return this.fail()
             }
@@ -206,16 +212,15 @@ export class BattleManager {
         return this.travellersTurn()
     }
 
-    async trollGoDevour(charId: string) {
+    async trollGoDevour(char: Char) {
         o_.characters.disableInteractivityAll();
-        const char = o_.characters.getTraveller(charId)
         const defender = o_.characters.getDefenderOf(char)
 
         if (defender) {
             await this.defendAgainstHit(char, defender, (char) => o_.troll.attack(char))
         } else {
             await o_.troll.moveToChar(char)
-            await o_.troll.devourAttack(charId)
+            await o_.troll.devourAttack(char.id)
         }
 
         if (!o_.troll.getIsAlive()) return this.fail()

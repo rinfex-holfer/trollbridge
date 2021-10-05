@@ -5,7 +5,6 @@ import {eventBus, Evt} from "../../../event-bus";
 import {o_} from "../../../managers/locator";
 import {Char} from "../Char";
 import {TrollLocation} from "../../../types";
-import {flyingStatusChange} from "../../../interface/basic/flying-status-change";
 import {charTexts} from "../../../char-texts";
 
 type StateOptions = {duration: number, withAnimation?: boolean}
@@ -67,11 +66,11 @@ export class CharStateUnconscious extends CharState {
         else this.char.setState(CharStateKey.IDLE)
     }
 
-    getPossibleTrollActions(): CharAction[] {
-        if (o_.battle.isBattle) {
-            return [CharAction.BATTLE_DEVOUR]
-        } else {
-            return [CharAction.MAKE_FOOD, CharAction.TAKE_ALL, CharAction.ROB, CharAction.RELEASE]
-        }
-    }
+    // getPossibleTrollActions(): CharAction[] {
+    //     if (o_.battle.isBattle) {
+    //         return [CharAction.BATTLE_DEVOUR]
+    //     } else {
+    //         return [CharAction.MAKE_FOOD, CharAction.TAKE_ALL, CharAction.ROB, CharAction.RELEASE]
+    //     }
+    // }
 }

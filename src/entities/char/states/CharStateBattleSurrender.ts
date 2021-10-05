@@ -16,7 +16,7 @@ export class CharStateBattleSurrender extends CharState {
         this.subs.on(Evt.ENCOUNTER_ENDED, () => this.char.surrender())
     }
 
-    getPossibleTrollActions(): CharAction[] {
-        return [CharAction.BATTLE_HIT, CharAction.BATTLE_THROW_ROCK, CharAction.BATTLE_DEVOUR]
-    }
+    // getPossibleTrollActions(): CharAction[] {
+    //     return [CharAction.BATTLE_HIT, CharAction.BATTLE_THROW_ROCK, CharAction.BATTLE_DEVOUR]
+    // }
 }

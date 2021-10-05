@@ -1,42 +1,36 @@
-import {colors, colorsCSS} from "../configs/constants";
+import {colorsNum} from "../configs/constants";
 import {Char} from "../entities/char/Char";
-import {o_} from "../managers/locator";
-import {O_Text} from "../managers/core/render/text";
+import {ProgressBar} from "./basic/progress-bar";
 
 export class CharHpIndicator {
-    isShown = false;
-
-    text: O_Text
+    bar: ProgressBar
 
     constructor(private char: Char) {
-        this.text = o_.render.createText(
-            '',
-            130,
-            -70,
-            {
-                // align: 'center',
-                align: 'left',
-                color: colorsCSS.WHITE,
-                fontSize: '14px',
-            },
-            {parent: char.container}
-        )
-        this.text.setOrigin(0, 0);
+        this.bar = new ProgressBar({
+            x: -15,
+            y: -120,
+            width: 50,
+            height: 5,
+            maxValue: char.maxHp,
+            value: char.hp,
+            color: colorsNum.GREEN,
+            colorOptions: [[0, colorsNum.RED], [0.33, colorsNum.ORANGE], [0.66, colorsNum.GREEN]],
+            parent: char.container,
+            withoutNumbers: true
+        })
+        this.hide()
     }
 
     update() {
-        this.show();
-    }
-
-    getText() {
-        return `HP: ${this.char.hp} / ${this.char.maxHp}`
+        this.bar.setValue(this.char.hp)
     }
 
     show() {
-        this.text.setText(this.getText());
+        this.bar.setValue(this.char.hp)
+        this.bar.setVisibility(true)
     }
 
     hide() {
-        this.text.setText('');
+        this.bar.setVisibility(false)
     }
 }

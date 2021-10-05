@@ -24,11 +24,11 @@ export class CharStateDead extends CharState {
         this.char.updateActionButtons()
     }
 
-    getPossibleTrollActions(): CharAction[] {
-        if (o_.battle.isBattle) {
-            return [CharAction.BATTLE_DEVOUR]
-        } else {
-            return [CharAction.MAKE_FOOD]
-        }
-    }
+    // getPossibleTrollActions(): CharAction[] {
+    //     if (o_.battle.isBattle) {
+    //         return [CharAction.BATTLE_DEVOUR]
+    //     } else {
+    //         return [CharAction.MAKE_FOOD]
+    //     }
+    // }
 }
