@@ -21,11 +21,12 @@ export class CharStateBones extends CharState {
     onStart() {
         this.unsub = eventBus.on(Evt.TIME_PASSED, () => this.collapse());
 
-        this.char.isBones = true;
-        this.char.isAlive = false;
-        this.char.sprite.setVisibility(false);
-        this.char.bones.setVisibility(true);
+        this.char.isBones = true
+        this.char.isAlive = false
+        this.char.sprite.setVisibility(false)
+        this.char.bones.setVisibility(true)
         this.char.disableInteractivity()
+        this.char.setIndicatorsVisible(false)
     }
 
     onEnd() {

@@ -386,7 +386,8 @@ export class Troll {
     }
 
     rageStartCheck() {
-        let percent = Math.floor((this.selfControl / this.maxSelfControl) * 100)
+        // let percent = Math.floor((this.selfControl / this.maxSelfControl) * 100)
+        let percent = 10
         percent = Math.min(percent, 99)
         if (rndBetween(0, 100) > percent) this.setEnraged(true)
     }

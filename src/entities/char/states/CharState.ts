@@ -38,8 +38,4 @@ export abstract class CharState {
     update(dt: number) {
 
     }
-
-    getPossibleTrollActions(): CharAction[] {
-        return []
-    }
 }

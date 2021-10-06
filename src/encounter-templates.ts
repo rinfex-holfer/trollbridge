@@ -21,16 +21,16 @@ export const encounterTemplates: {[dangerLevel: number]: EncounterTemplate[]} = 
         //     level: 1,
         //     enemies: [[0, CharKey.FARMER], [1, CharKey.FARMER], [2, CharKey.FARMER]],
         // },
-        {
-            text: 'Группа фермеров',
-            level: 1,
-            enemies: [[0, CharKey.FARMER], [1, CharKey.FARMER], [2, CharKey.FARMER], [4, CharKey.FARMER]],
-        },
-        {
-            text: 'Толпа крестьян',
-            level: 1,
-            enemies: [[0, CharKey.FARMER], [1, CharKey.FARMER], [2, CharKey.FARMER], [3, CharKey.FARMER], [4, CharKey.FARMER], [5, CharKey.FARMER]],
-        },
+        // {
+        //     text: 'Группа фермеров',
+        //     level: 1,
+        //     enemies: [[0, CharKey.FARMER], [1, CharKey.FARMER], [2, CharKey.FARMER], [4, CharKey.FARMER]],
+        // },
+        // {
+        //     text: 'Толпа крестьян',
+        //     level: 1,
+        //     enemies: [[0, CharKey.FARMER], [1, CharKey.FARMER], [2, CharKey.FARMER], [3, CharKey.FARMER], [4, CharKey.FARMER], [5, CharKey.FARMER]],
+        // },
         // {
         //     text: 'Патрульные ополченцы',
         //     level: 1,
@@ -46,16 +46,16 @@ export const encounterTemplates: {[dangerLevel: number]: EncounterTemplate[]} = 
         //     level: 2,
         //     enemies: [[1, CharKey.SHIELDMAN]],
         // },
-        // {
-        //     text: 'Отряд солдат',
-        //     level: 2,
-        //     enemies: [[0, CharKey.SHIELDMAN], [1, CharKey.MILITIA], [2, CharKey.SHIELDMAN], [4, CharKey.ARCHER]],
-        // },
         {
             text: 'Отряд солдат',
             level: 2,
-            enemies: [[0, CharKey.MILITIA], [1, CharKey.SHIELDMAN], [2, CharKey.MILITIA], [4, CharKey.ARCHER]],
+            enemies: [[0, CharKey.SHIELDMAN], [1, CharKey.MILITIA], [2, CharKey.SHIELDMAN], [4, CharKey.ARCHER]],
         },
+        // {
+        //     text: 'Отряд солдат',
+        //     level: 2,
+        //     enemies: [[0, CharKey.MILITIA], [1, CharKey.SHIELDMAN], [2, CharKey.MILITIA], [4, CharKey.ARCHER]],
+        // },
         // {
         //     text: 'Рыцарь с оруженосцем',
         //     level: 3,

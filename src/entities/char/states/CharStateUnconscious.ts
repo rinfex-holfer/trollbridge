@@ -23,7 +23,7 @@ export class CharStateUnconscious extends CharState {
     }
 
     onStart() {
-        this.char.setIndicatorsVisible(false)
+        if (this.char.hp === 0) this.char.setIndicatorsVisible(false)
         this.char.isUnconscious = true
 
         this.subs.on(Evt.ENCOUNTER_ENDED, () => this.char.updateActionButtons())
@@ -40,7 +40,7 @@ export class CharStateUnconscious extends CharState {
         }
 
 
-        if (o_.battle.isBattle) eventBus.emit(Evt.CHAR_DEFEATED, this.char.key)
+        if (o_.battle.isBattle && this.char.hp === 0) eventBus.emit(Evt.CHAR_DEFEATED, this.char.key)
     }
 
     onEnd() {

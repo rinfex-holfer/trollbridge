@@ -55,7 +55,9 @@ export class Char {
 
     food: number
     gold: number
-    goldInitial: number
+
+    isRobbed = false
+    isReleased = false
 
     isUnconscious = false
     isAlive = true
@@ -114,7 +116,6 @@ export class Char {
 
         const {gold, food} = charTemplate.createResources()
         this.gold = gold
-        this.goldInitial = gold
         this.food = food
 
         this.container = o_.render.createContainer(x, y)
@@ -220,8 +221,8 @@ export class Char {
     }
 
     setState(stateKey: CharStateKey, options?: any) {
-        console.log(stateKey)
         this.state.end();
+        console.log(this.key, this.state.key, 'to', stateKey)
         this.state = this.getState(stateKey, options)
         return this.state.start();
     }
@@ -234,7 +235,7 @@ export class Char {
                 {framesPrefix: CharAnimation.WALK, repeat: -1, frameRate: 8},
                 {framesPrefix: CharAnimation.IDLE, repeat: -1, frameRate: 8},
                 {framesPrefix: CharAnimation.DEAD, repeat: -1, frameRate: 8},
-                {framesPrefix: CharAnimation.FALL, frameRate: 4},
+                {framesPrefix: CharAnimation.FALL, frameRate: 3},
                 {framesPrefix: CharAnimation.STRIKE, frameRate: 8},
                 {framesPrefix: CharAnimation.DAMAGED, frameRate: 8},
                 {framesPrefix: CharAnimation.BLOCK, frameRate: 8},
@@ -391,6 +392,7 @@ export class Char {
         flyingStatusChange('Сдаюсь, пощади!', this.container.x, this.container.y - 100)
 
         if (o_.battle.isBattle) {
+            console.trace('surrender')
             return this.setState(CharStateKey.BATTLE_SURRENDER);
         } else {
             return this.setState(CharStateKey.SURRENDER);
@@ -439,6 +441,11 @@ export class Char {
 
     goAcrossBridge() {
         return this.setState(CharStateKey.GO_ACROSS);
+    }
+
+    release() {
+        this.isReleased = true
+        this.goAcrossBridge()
     }
 
     startFighting() {
@@ -527,17 +534,20 @@ export class Char {
                 new Horse(this.container.x, this.container.y)
             } else {
                 if (options?.stun) {
-                    this.setState(CharStateKey.UNCONSCIOUS, {duration: options.stun, withAnimation: false})
+                    this.setUnconscious(options.stun, false)
                 } else {
-                    await this.runAnimationOnce(CharAnimation.DAMAGED)
-                    this.setAnimation(CharAnimation.IDLE)
+                    if (!this.isUnconscious) {
+                        await this.runAnimationOnce(CharAnimation.DAMAGED)
+                        this.setAnimation(CharAnimation.IDLE)
+                    }
                 }
             }
         } else {
             if (this.isUnconscious) {
-                this.getKilled()
+                this.setUnconscious(999, false)
+                // throw Error('cant damage already defeated character')
             } else {
-                this.setUnconscious()
+                this.setUnconscious(9999)
             }
         }
     }
@@ -657,8 +667,8 @@ export class Char {
         return this.movePromise
     }
 
-    setUnconscious() {
-        return this.setState(CharStateKey.UNCONSCIOUS, {duration: 999, withAnimation: true})
+    setUnconscious(duration: number, withAnimation = true) {
+        return this.setState(CharStateKey.UNCONSCIOUS, {duration, withAnimation})
     }
 
     say(text: string) {
@@ -687,11 +697,11 @@ export class Char {
             case 2:
                 return false
             case 3:
-                return !!this.squad.placeToChar[0]
+                return this.squad.placeToChar[0]?.getIsFighter()
             case 4:
-                return !!this.squad.placeToChar[1]
+                return this.squad.placeToChar[1]?.getIsFighter()
             case 5:
-                return !!this.squad.placeToChar[2]
+                return this.squad.placeToChar[2]?.getIsFighter()
         }
     }
 }

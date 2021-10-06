@@ -54,13 +54,11 @@ export class ImgButton extends BasicButton {
         this.visiblyDisabled = true
         this.oldAlpha = this.sprite.alpha;
         this.sprite.alpha = 0.3
-        console.log('visiblyDisable, oldAlpha', this.oldAlpha, 'sprite alpha', this.sprite.alpha)
     }
 
     visiblyEnable() {
         this.visiblyDisabled = false
         this.oldAlpha = this.sprite.alpha;
         this.sprite.alpha = this.oldAlpha
-        console.log('visiblyEnable, oldAlpha', this.oldAlpha, 'sprite alpha', this.sprite.alpha)
     }
 }

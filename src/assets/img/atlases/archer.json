@@ -136,6 +136,48 @@
 					}
 				},
 				{
+					"filename": "archer_unconscious_0.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 100,
+						"h": 120
+					},
+					"spriteSourceSize": {
+						"x": 30,
+						"y": 58,
+						"w": 43,
+						"h": 34
+					},
+					"frame": {
+						"x": 103,
+						"y": 75,
+						"w": 43,
+						"h": 34
+					}
+				},
+				{
+					"filename": "archer_unconscious_1.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 100,
+						"h": 120
+					},
+					"spriteSourceSize": {
+						"x": 30,
+						"y": 58,
+						"w": 43,
+						"h": 34
+					},
+					"frame": {
+						"x": 103,
+						"y": 75,
+						"w": 43,
+						"h": 34
+					}
+				},
+				{
 					"filename": "archer_damaged_0.png",
 					"rotated": false,
 					"trimmed": true,
@@ -158,6 +200,48 @@
 				},
 				{
 					"filename": "archer_damaged_1.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 100,
+						"h": 120
+					},
+					"spriteSourceSize": {
+						"x": 17,
+						"y": 22,
+						"w": 67,
+						"h": 87
+					},
+					"frame": {
+						"x": 250,
+						"y": 1,
+						"w": 67,
+						"h": 87
+					}
+				},
+				{
+					"filename": "archer_fall_0.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 100,
+						"h": 120
+					},
+					"spriteSourceSize": {
+						"x": 17,
+						"y": 22,
+						"w": 67,
+						"h": 87
+					},
+					"frame": {
+						"x": 250,
+						"y": 1,
+						"w": 67,
+						"h": 87
+					}
+				},
+				{
+					"filename": "archer_fall_1.png",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
@@ -267,6 +351,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:c01b91dce89ba60448effa76cc0f4685:949c458d9f610420aa7cfd4a9a06ab11:bbed60d0c37d7d583029ac290d33128a$"
+		"smartupdate": "$TexturePacker:SmartUpdate:ac9a08b54ef1e0729eb181b10de10d03:65a7310dc572cbba8bf491917da23852:bbed60d0c37d7d583029ac290d33128a$"
 	}
 }

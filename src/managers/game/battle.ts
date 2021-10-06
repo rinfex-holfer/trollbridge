@@ -6,6 +6,7 @@ import {Char} from "../../entities/char/Char";
 import {actionButtonsMap, CharAction} from "../../interface/char-actions-menu";
 import {getRndItem} from "../../utils/utils-math";
 import {BattleActionsMenu} from "../../interface/battle-actions-menu";
+import {AfterBattleActionsMenu} from "../../interface/after-battle-actions-menu";
 
 export class BattleManager {
     unsub: any[] = []
@@ -13,10 +14,12 @@ export class BattleManager {
     isBattle = false
 
     actionsMenu: BattleActionsMenu
+    afterBattleMenu: AfterBattleActionsMenu
 
     constructor() {
         o_.register.battle(this);
         this.actionsMenu = new BattleActionsMenu()
+        this.afterBattleMenu = new AfterBattleActionsMenu()
     }
 
     startBattle() {
@@ -83,12 +86,15 @@ export class BattleManager {
     fail() {
         this.onBattleEnd();
         o_.characters.letAllTravellersPass()
+        onEncounterEnd()
     }
 
     win() {
         if (this.isBattle) eventBus.emit(Evt.BATTLE_WON)
 
-        this.onBattleEnd();
+        this.onBattleEnd()
+
+        this.afterBattleMenu.show()
     }
 
     onBattleEnd() {
@@ -97,8 +103,6 @@ export class BattleManager {
 
         this.isBattle = false;
         this.unsub.forEach(u => u())
-
-        onEncounterEnd();
     }
 
     async trollThrowRock(char: Char) {
@@ -122,27 +126,21 @@ export class BattleManager {
     trollGoCrazy() {
         o_.troll.setEnraged(true)
 
-
         const travellers = o_.characters.getTravellers()
         const devourable = travellers.find(t => (t.isUnconscious && !t.isPrisoner) || (t.isSurrender && !t.isPrisoner))
         if (devourable) return this.trollGoDevour(devourable)
 
-        const fighters = o_.characters.getFighters()
-        const fightersWithActions: [Char, CharAction[]][] = fighters.map(f => {
-            const actions = f.state.getPossibleTrollActions()
-            return [f, actions.filter(a => {
-                // do not try to hit mounted chard
-                // if (f.isMounted &&
-                //     (a === CharAction.BATTLE_HIT || a === CharAction.BATTLE_THROW_CHAR)
-                // ) return false
+        const possibleActions = [] as (() => void)[]
+        Object.values(this.actionsMenu.buttons).map(btn => {
 
-                return true
-            })]
+            travellers.forEach(t => {
+                if (btn.getIsActive(t)) {
+                    possibleActions.push(() => btn.execute(t))
+                }
+            })
         })
 
-        const rndFighter = getRndItem(fightersWithActions)
-        const rndAction = getRndItem(rndFighter[1])
-        return actionButtonsMap[rndAction].onClick(rndFighter[0].id)
+        return getRndItem(possibleActions)()
     }
 
     async trollGoAttack(char: Char) {

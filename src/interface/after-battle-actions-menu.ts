@@ -1,5 +1,5 @@
 import {o_} from "../managers/locator";
-import {BattleAction, CharAction} from "./char-actions-menu";
+import {AfterBattleAction} from "./char-actions-menu";
 import {resoursePaths} from "../resourse-paths";
 import {Char} from "../entities/char/Char";
 import {colorsCSS} from "../configs/constants";
@@ -7,46 +7,53 @@ import {positioner} from "../managers/game/positioner";
 import {O_Container} from "../managers/core/render/container";
 import {O_Sprite} from "../managers/core/render/sprite";
 import {O_Text} from "../managers/core/render/text";
+import {onEncounterEnd} from "../helpers";
 
-type BattleActionSpec = {
-    action: BattleAction,
+type AfterBattleActionSpec = {
+    action: AfterBattleAction,
     resource: keyof typeof resoursePaths.images,
     text: string,
     execute: (char: Char) => void
     getIsActive: (char: Char) => boolean
 }
 
-const actionSpecs: {[action in BattleAction]: BattleActionSpec} = {
-    [BattleAction.BATTLE_HIT]: {
-        action: BattleAction.BATTLE_HIT,
-        text: 'Ударить',
-        resource: 'button_strike',
-        execute: char => o_.battle.trollGoAttack(char),
-        getIsActive: char => char.hp > 0 && !char.getIsCovered()
+const actionSpecs: {[action in AfterBattleAction]: AfterBattleActionSpec} = {
+    [AfterBattleAction.RELEASE]: {
+        action: AfterBattleAction.RELEASE,
+        text: 'Отпустить',
+        resource: 'button_release',
+        execute: char => o_.characters.releaseChar(char),
+        getIsActive: char => true
     },
 
-    [BattleAction.BATTLE_THROW_ROCK]: {
-        action: BattleAction.BATTLE_THROW_ROCK,
-        text: 'Метнуть камень',
-        resource: 'button_throw_rock',
-        execute: char => o_.battle.trollThrowRock(char),
-        getIsActive: char => char.hp > 0 && o_.bridge.getHasAvailableRocks() && !(char.isUnconscious && char.getIsCovered())
+    [AfterBattleAction.ROB]: {
+        action: AfterBattleAction.ROB,
+        text: 'Отобрать плату',
+        resource: 'button_rob',
+        execute: char => {
+            o_.characters.makeCharPay(char)
+            o_.characters.releaseChar(char)
+        },
+        getIsActive: char => !char.isRobbed
     },
 
-    [BattleAction.BATTLE_THROW_CHAR]: {
-        action: BattleAction.BATTLE_THROW_CHAR,
-        text: 'Бросить об землю',
-        resource: 'button_throw_char',
-        execute: char => o_.battle.trollGoThrowChar(char),
-        getIsActive: char => char.hp > 0 && !char.getIsCovered()
+    [AfterBattleAction.TAKE_ALL]: {
+        action: AfterBattleAction.TAKE_ALL,
+        text: 'Отобрать все',
+        resource: 'button_rob',
+        execute: char => {
+            o_.characters.makeCharGiveAll(char)
+            o_.characters.releaseChar(char)
+        },
+        getIsActive: char => char.gold > 0 || char.food > 0
     },
 
-    [BattleAction.BATTLE_DEVOUR]: {
-        action: BattleAction.BATTLE_DEVOUR,
-        text: 'Сожрать',
-        resource: 'button_devour',
-        execute: char => o_.battle.trollGoDevour(char),
-        getIsActive: char => (char.isUnconscious || char.isSurrender) && !char.getIsCovered()
+    [AfterBattleAction.MAKE_FOOD]: {
+        action: AfterBattleAction.MAKE_FOOD,
+        text: 'Разорвать',
+        resource: 'button_make_food',
+        execute: char => o_.characters.transformToFood(char) ,
+        getIsActive: char => true
     },
 }
 
@@ -56,21 +63,21 @@ const DEFAULT_ALPHA = 0.5
 const HOVER_ALPHA = 0.75
 const SELECTED_ALPHA = 1
 
-export class BattleActionsMenu {
+export class AfterBattleActionsMenu {
     container: O_Container
 
     // @ts-ignore
     buttons = {} as {
-        [action in BattleAction]: {
+        [action in AfterBattleAction]: {
             sprite: O_Sprite;
             text: O_Text;
-            action: BattleAction;
-            execute: (char: Char) => void
+            action: AfterBattleAction;
             getIsActive: (char: Char) => boolean
+            execute: (char: Char) => void
         };
     };
 
-    selectedAction: BattleAction | null = null
+    selectedAction: AfterBattleAction | null = null
 
     constructor() {
         const bridgePos = positioner.bridgePosition()
@@ -104,7 +111,7 @@ export class BattleActionsMenu {
                     text.setVisibility(false)
                 }
             })
-            sprite.onClick(() => this.onClick(template.action))
+            sprite.onClick(() => this.onButtonClick(template.action))
             sprite.setOrigin(0, 0)
             sprite.alpha = DEFAULT_ALPHA
 
@@ -118,21 +125,22 @@ export class BattleActionsMenu {
             text.setOrigin(1, 0.5);
             text.setVisibility(false)
 
-            this.buttons[template.action] = {sprite, text, action, execute: template.execute, getIsActive: template.getIsActive}
+            this.buttons[template.action] = {sprite, text, action, getIsActive: template.getIsActive, execute: template.execute}
         })
 
         this.hide();
     }
 
-    onClick(action: BattleAction) {
+    onButtonClick(action: AfterBattleAction) {
         this.selectButton(action)
 
-        o_.characters.getSquadChars().forEach(c => {
+        o_.characters.getTravellersAfterBattle().forEach(c => {
             const isActive = actionSpecs[action].getIsActive(c)
             if (isActive) {
                 c.onSpriteClicked(char => {
                     actionSpecs[action].execute(char)
-                    this.selectButton(null)
+                    this.checkEnd()
+                    // this.selectButton(null)
                 })
                 c.setCursor('pointer')
             } else {
@@ -142,7 +150,14 @@ export class BattleActionsMenu {
         })
     }
 
-    deselectButton(action: BattleAction) {
+    checkEnd() {
+        if (o_.characters.getTravellersAfterBattle().length === 0) {
+            this.hide()
+            onEncounterEnd()
+        }
+    }
+
+    deselectButton(action: AfterBattleAction) {
         const btn = this.buttons[action]
         const sprite = btn.sprite
         sprite.alpha = DEFAULT_ALPHA
@@ -152,7 +167,7 @@ export class BattleActionsMenu {
         btn.text.setVisibility(false)
     }
 
-    selectButton(action: BattleAction | null) {
+    selectButton(action: AfterBattleAction | null) {
         if (this.selectedAction) this.deselectButton(this.selectedAction)
 
         this.selectedAction = action
@@ -171,11 +186,13 @@ export class BattleActionsMenu {
     }
 
     show() {
+        o_.characters.enableInteractivityOnBridge()
         Object.values(this.buttons).forEach(b => b.sprite.setVisibility(true))
     }
 
     hide() {
         Object.values(this.buttons).forEach(b => b.sprite.setVisibility(false))
+        this.selectButton(null)
 
         o_.characters.getSquadChars().forEach(c => c.sprite.removeClickListener())
     }

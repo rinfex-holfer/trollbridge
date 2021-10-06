@@ -155,6 +155,7 @@ export class CharactersManager {
 
     getNewTravellers() { return this.chars.filter(c => c.getIsNewTraveller())}
     getTravellers() { return this.chars.filter(c => c.getIsTraveller())}
+    getTravellersAfterBattle() { return this.chars.filter(c => c.getIsTraveller() && !c.isReleased)}
     getFighters() { return this.chars.filter(c => c.getIsFighter())}
     getPrisoners() { return this.chars.filter(c => c.getIsPrisoner())}
 
@@ -194,26 +195,23 @@ export class CharactersManager {
         this.getTravellers().forEach(t => t.giveAll());
     }
 
-    releaseChar(id: string) {
-        this.chars.find(t => t.id === id)?.goAcrossBridge();
+    releaseChar(char: Char) {
+        char.release()
     }
 
     makeImprisoned(id: string) {
         this.chars.find(t => t.id === id)?.makeImprisoned();
     }
 
-    makeCharGiveAll(id: string) {
-        this.getTravellers().find(t => t.id === id)?.giveAll();
+    makeCharGiveAll(char: Char) {
+        char.giveAll();
     }
 
-    makeCharPay(id: string) {
-        this.getTravellers().find(t => t.id === id)?.pay();
+    makeCharPay(char: Char) {
+        char.pay();
     }
 
-    killChar(id: string) {
-        let char = this.chars.find(t => t.id === id);
-        if (!char) throw Error('wtf');
-
+    killChar(char: Char) {
         char.getKilled();
     }
 
@@ -231,9 +229,8 @@ export class CharactersManager {
         char.getHit(dmg, options);
     }
 
-    transformToFood(id: string) {
-        let char = this.chars.find(t => t.id === id)
-        char?.transformToFood()
+    transformToFood(char: Char) {
+        char.transformToFood()
     }
 
     disableInteractivityAll() {

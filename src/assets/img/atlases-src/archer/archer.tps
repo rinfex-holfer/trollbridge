@@ -185,12 +185,16 @@
             <key type="filename">archer_damaged_1.png</key>
             <key type="filename">archer_dead_0.png</key>
             <key type="filename">archer_dead_1.png</key>
+            <key type="filename">archer_fall_0.png</key>
+            <key type="filename">archer_fall_1.png</key>
             <key type="filename">archer_idle_0.png</key>
             <key type="filename">archer_idle_1.png</key>
             <key type="filename">archer_scared_0.png</key>
             <key type="filename">archer_scared_1.png</key>
             <key type="filename">archer_strike_0.png</key>
             <key type="filename">archer_strike_1.png</key>
+            <key type="filename">archer_unconscious_0.png</key>
+            <key type="filename">archer_unconscious_1.png</key>
             <key type="filename">archer_walk_0.png</key>
             <key type="filename">archer_walk_1.png</key>
             <struct type="IndividualSpriteSettings">
