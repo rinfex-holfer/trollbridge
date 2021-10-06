@@ -2,7 +2,7 @@ import {eventBus, Evt} from "../../event-bus";
 import {o_} from "../locator";
 import {onEncounterEnd} from "../../helpers";
 import {pause} from "../../utils/utils-async";
-import {Char} from "../../entities/char/Char";
+import {Char} from "../../entities/char/char";
 import {actionButtonsMap, CharAction} from "../../interface/char-actions-menu";
 import {getRndItem} from "../../utils/utils-math";
 import {BattleActionsMenu} from "../../interface/battle-actions-menu";
@@ -52,6 +52,7 @@ export class BattleManager {
     }
 
     async travellersTurn() {
+        console.log('travellers Turn')
         this.actionsMenu.hide()
 
         if (this.getIsWin()) {
@@ -90,6 +91,7 @@ export class BattleManager {
     }
 
     win() {
+        console.log('win')
         if (this.isBattle) eventBus.emit(Evt.BATTLE_WON)
 
         this.onBattleEnd()

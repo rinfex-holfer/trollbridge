@@ -1,5 +1,5 @@
 import {SquadPlace} from "../../types";
-import {Char} from "../../entities/char/Char";
+import {Char} from "../../entities/char/char";
 import {getRndItem, rndBetween, Vec} from "../../utils/utils-math";
 import {positioner} from "./positioner";
 

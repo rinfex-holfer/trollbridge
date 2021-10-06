@@ -129,4 +129,9 @@ class Locator {
     }
 }
 
-export const o_ = new Locator();
+const o_ = new Locator();
+
+// @ts-ignore
+window.o_ = o_
+
+export { o_ }

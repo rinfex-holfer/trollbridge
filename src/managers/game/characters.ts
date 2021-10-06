@@ -1,6 +1,6 @@
 import {CharKey, EncounterDanger, EncounterTemplate, SquadPlace, TrollLocation} from "../../types";
 import {getRndItem, rndBetween} from "../../utils/utils-math";
-import {Char} from "../../entities/char/Char";
+import {Char} from "../../entities/char/char";
 import {eventBus, Evt} from "../../event-bus";
 import {encounterTemplates} from "../../encounter-templates";
 import {positioner} from "./positioner";

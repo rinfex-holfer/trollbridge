@@ -3,7 +3,7 @@ import {CharAnimation, CharStateKey} from "../char-constants";
 import {CharAction} from "../../../interface/char-actions-menu";
 import {eventBus, Evt} from "../../../event-bus";
 import {o_} from "../../../managers/locator";
-import {Char} from "../Char";
+import {Char} from "../char";
 import {TrollLocation} from "../../../types";
 import {charTexts} from "../../../char-texts";
 

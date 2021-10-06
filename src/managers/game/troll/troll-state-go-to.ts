@@ -36,7 +36,7 @@ export class TrollStateGoTo extends TrollState {
     }
 
     checkDistance() {
-        const distanceLeft = getDistanceBetween(this.host.sprite, this.options.target);
+        const distanceLeft = getDistanceBetween(this.host.container, this.options.target);
 
         if (distanceLeft <= this.minDistance) {
             this.host.goIdle()

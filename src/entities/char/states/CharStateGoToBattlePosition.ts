@@ -4,7 +4,7 @@ import {gameConstants} from "../../../configs/constants";
 import {getDistanceBetween, Vec} from "../../../utils/utils-math";
 import {o_} from "../../../managers/locator";
 import {createPromiseAndHandlers} from "../../../utils/utils-async";
-import {Char} from "../Char";
+import {Char} from "../char";
 
 export class CharStateGoToBattlePosition extends CharState {
     key = CharStateKey.GO_TO_BATTLE_POSITION
@@ -39,7 +39,7 @@ export class CharStateGoToBattlePosition extends CharState {
             this.char.stop();
             this.char.container.x = this.target.x
             this.char.container.y = this.target.y
-            this.char.directToTarget(o_.troll.sprite)
+            this.char.directToTarget(o_.troll.container)
             this.char.setState(CharStateKey.IDLE)
         }
     }

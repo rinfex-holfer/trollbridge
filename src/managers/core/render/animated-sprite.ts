@@ -70,6 +70,7 @@ export class O_AnimatedSprite {
         if (options?.parent) {
             options.parent.add(this);
         }
+        // TODO put to ELSE branch when https://github.com/photonstorm/phaser/issues/5803 will be resolved
         this.scene.add.existing(this.obj)
     }
 

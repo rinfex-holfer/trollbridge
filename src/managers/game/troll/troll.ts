@@ -17,11 +17,13 @@ import {Zzz} from "../../../entities/zzz";
 import {TrollStats} from "../../../interface/troll-stats";
 import {TrollStateBattleAttack} from "./troll-state-battle-attack";
 import {onTrollCameToBridge, onTrollCameToLair, onTrollSleep} from "../../../helpers";
-import {Char} from "../../../entities/char/Char";
+import {Char} from "../../../entities/char/char";
 import {createPromiseAndHandlers, pause} from "../../../utils/utils-async";
 import {Rock} from "../../../entities/rock";
 import {trollConfig} from "../../../configs/troll-config";
 import {foodConfig} from "../../../configs/food-config";
+import {StatusNotifications} from "../../../interface/status-notifications";
+import {O_Container} from "../../core/render/container";
 
 let troll: Troll
 
@@ -43,6 +45,9 @@ export class Troll {
     xp = 0
 
     sprite: O_AnimatedSprite
+    container: O_Container
+    statusNotifications: StatusNotifications
+
     zzz: Zzz
 
     speed = trollConfig.TROLL_SPEED
@@ -58,6 +63,10 @@ export class Troll {
 
         troll = this;
         const lairPos = positioner.getLairPosition();
+
+        this.container = o_.render.createContainer(lairPos.x + lairPos.width / 2, lairPos.y + lairPos.height / 2)
+        this.container.addPhysics();
+
         this.sprite = o_.render.createAnimatedSprite({
             atlasKey: 'troll',
             animations:  [
@@ -73,12 +82,16 @@ export class Troll {
                 {framesPrefix: CharAnimation.THROW_STONE, frameRate: 8},
                 {framesPrefix: CharAnimation.UNCONSCIOUS, frameRate: 1},
             ],
-            x: lairPos.x + lairPos.width / 2,
-            y: lairPos.y + lairPos.height / 2,
+            x: 0,
+            y: 0,
+            parent: this.container
         })
-        this.sprite.setOrigin(0.5, 1);
-        this.sprite.addPhysics();
-        o_.layers.add(this.sprite, LayerKey.FIELD_OBJECTS)
+        this.setInitialSpriteOrigin()
+
+        // o_.layers.add(this.sprite, LayerKey.FIELD_OBJECTS)
+        o_.layers.add(this.container, LayerKey.FIELD_OBJECTS)
+
+        this.statusNotifications = new StatusNotifications(this.container, 0, -this.sprite.height)
 
         this.zzz = new Zzz(0, 0);
 
@@ -94,8 +107,12 @@ export class Troll {
         this.onNewLevel(false);
     }
 
-    get x() { return this.sprite.x }
-    get y() { return this.sprite.y }
+    setInitialSpriteOrigin() {
+        this.sprite.setOrigin(0.5, 1);
+    }
+
+    get x() { return this.container.x }
+    get y() { return this.container.y }
 
     onNewLevel(animated = true) {
         this.xp = 0
@@ -160,8 +177,8 @@ export class Troll {
 
         const text = sign + val + ' ' + statStr;
 
-        const x = this.sprite.x
-        const y = this.sprite.y - this.sprite.height
+        const x = this.container.x
+        const y = this.container.y - this.sprite.height
         this.notificationsQueue.push([text, x, y, color])
 
         if (this.notificationTimer === null) {
@@ -186,14 +203,22 @@ export class Troll {
     }
 
     changeSelfControl(val: number) {
-        this.statChangeNotification('самоконтроль', val)
+        // if (val > 0) {
+        //     this.statusNotifications.showSelfControlIncrease(val)
+        // } else {
+        //     this.statusNotifications.showSelfControlReduce(val)
+        // }
 
         this.selfControl = clamp(this.selfControl + val, 0, this.maxSelfControl)
         this.stats.update()
     }
 
     changeTrollHp(val: number, cause = 'hunger') {
-        this.statChangeNotification('HP', val)
+        // if (val > 0) {
+        //     this.statusNotifications.showHeal(val)
+        // } else {
+        //     this.statusNotifications.showDmg(val)
+        // }
 
         const newVal = this.hp + val;
         this.hp = Math.max(Math.min(newVal, this.maxHp), 0);
@@ -254,7 +279,7 @@ export class Troll {
     goToBed() {
         const target = {x: 0, y: 0}
         const bedPos = positioner.getBedPosition();
-        target.x = bedPos.x + 50
+        target.x = bedPos.x
         target.y = bedPos.y
 
         onTrollSleep()
@@ -275,7 +300,7 @@ export class Troll {
     }
 
     async jumpTo(pos: Vec) {
-        await o_.render.jumpTo(this.sprite, pos)
+        await o_.render.jumpTo(this.container, pos)
     }
 
     moveToChar(char: Char) {
@@ -341,7 +366,7 @@ export class Troll {
 
         const dist = 100
         await Promise.all([
-            o_.render.flyTo(this.sprite, {x: this.sprite.x - dist, y: this.sprite.y}, 500),
+            o_.render.flyTo(this.container, {x: this.container.x - dist, y: this.container.y}, 500),
             o_.render.flyTo(char.container, {x: char.container.x - dist, y: char.container.y}, 500)
         ])
 
@@ -349,10 +374,11 @@ export class Troll {
     }
 
     getHit(dmg: number) {
+        console.log(dmg)
         if (dmg > this.armor + rndBetween(1, 2)) {
             o_.render.burstBlood(
-                this.sprite.x,
-                this.sprite.y - this.sprite.height / 2
+                this.container.x,
+                this.container.y - this.sprite.height / 2
             )
 
             o_.audio.playSound(SOUND_KEY.HIT);
@@ -362,14 +388,13 @@ export class Troll {
             this.changeTrollHp(-dmg, 'battle');
         } else {
             o_.audio.playSound(getRndItem([SOUND_KEY.TROLL_BLOCK_0, SOUND_KEY.TROLL_BLOCK_1, SOUND_KEY.TROLL_BLOCK_2]));
-
-            flyingStatusChange('blocked', this.sprite.x, this.sprite.y - 100, colorsCSS.WHITE);
+            this.statusNotifications.showBlock()
         }
     }
 
     moveTowards(x: number, y: number) {
         o_.render.moveTowards(
-            this.sprite,
+            this.container,
             x,
             y,
             this.speed,
@@ -378,7 +403,7 @@ export class Troll {
     }
 
     directToTarget(target: Vec) {
-        o_.render.directToTarget(this.sprite, target);
+        o_.render.directToTarget(this.sprite, target, this.container.x);
     }
 
     rageStopCheck() {
@@ -386,14 +411,14 @@ export class Troll {
     }
 
     rageStartCheck() {
-        // let percent = Math.floor((this.selfControl / this.maxSelfControl) * 100)
-        let percent = 10
+        let percent = Math.floor((this.selfControl / this.maxSelfControl) * 100)
+        // let percent = 10
         percent = Math.min(percent, 99)
         if (rndBetween(0, 100) > percent) this.setEnraged(true)
     }
 
     rollDmg() {
-        const dmg = this.dmg + rndBetween(1, 5)
+        const dmg = this.dmg + rndBetween(1, 10)
         return this.isEnraged ? dmg * 2 : dmg
     }
 
@@ -402,7 +427,7 @@ export class Troll {
     }
 
     stop() {
-        this.sprite.stop()
+        this.container.stop()
     }
 
     update(dt: number) {
@@ -456,7 +481,7 @@ export class Troll {
         this.setAnimation(CharAnimation.THROW_STONE, p.done)
         await p.promise
 
-        const rock = new Rock({x: this.x, y: this.sprite.y - this.sprite.height + 10})
+        const rock = new Rock({x: this.x, y: this.container.y - this.container.height + 10})
         rockPlace.ruin(true)
 
         this.setAnimation(CharAnimation.IDLE)
@@ -474,7 +499,7 @@ export class Troll {
         char.setAnimation(CharAnimation.UNCONSCIOUS)
 
         const p0 = createPromiseAndHandlers()
-        const jumpTimeline = o_.render.createJumpingTimeline([this.sprite, char.container], 100, 0)
+        const jumpTimeline = o_.render.createJumpingTimeline([this.container, char.container], 100, 0)
         jumpTimeline.once('complete', p0.done)
         jumpTimeline.play()
         await p0.promise
@@ -493,9 +518,9 @@ export class Troll {
 
         if (val) {
             o_.audio.playSound(SOUND_KEY.TROLL_BREATHING)
-            flyingStatusChange('Enraged!', this.sprite.x, this.sprite.y - 100, colorsCSS.RED);
+            flyingStatusChange('Enraged!', this.container.x, this.container.y - 100, colorsCSS.RED);
         } else {
-            flyingStatusChange('Rage stops', this.sprite.x, this.sprite.y - 100, colorsCSS.WHITE);
+            flyingStatusChange('Rage stops', this.container.x, this.container.y - 100, colorsCSS.WHITE);
         }
     }
 

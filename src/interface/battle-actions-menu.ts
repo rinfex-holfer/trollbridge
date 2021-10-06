@@ -1,7 +1,7 @@
 import {o_} from "../managers/locator";
 import {BattleAction, CharAction} from "./char-actions-menu";
 import {resoursePaths} from "../resourse-paths";
-import {Char} from "../entities/char/Char";
+import {Char} from "../entities/char/char";
 import {colorsCSS} from "../configs/constants";
 import {positioner} from "../managers/game/positioner";
 import {O_Container} from "../managers/core/render/container";

@@ -1,5 +1,5 @@
 import {colorsNum} from "../configs/constants";
-import {Char} from "../entities/char/Char";
+import {Char} from "../entities/char/char";
 import {ProgressBar} from "./basic/progress-bar";
 
 export class CharMpIndicator {

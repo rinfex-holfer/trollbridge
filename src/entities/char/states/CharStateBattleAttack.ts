@@ -3,7 +3,7 @@ import {CharAnimation, CharStateKey} from "../char-constants";
 import {positioner} from "../../../managers/game/positioner";
 import {getDistanceBetween} from "../../../utils/utils-math";
 import {o_} from "../../../managers/locator";
-import {Char} from "../Char";
+import {Char} from "../char";
 
 export class CharStateBattleAttack extends CharState {
     key = CharStateKey.BATTLE_ATTACK
@@ -19,7 +19,7 @@ export class CharStateBattleAttack extends CharState {
     }
 
     onStart() {
-        this.char.moveTowards(o_.troll.sprite.x, o_.troll.sprite.y)
+        this.char.moveTowards(o_.troll.x, o_.troll.y)
         this.char.setAnimation(CharAnimation.WALK);
     }
 
@@ -29,7 +29,7 @@ export class CharStateBattleAttack extends CharState {
         const battlePosition = this.char.getBattleCoords()
 
         if (this.phase === 'forward') {
-            const distanceLeft = getDistanceBetween(this.char.container, {x: o_.troll.sprite.x, y: o_.troll.sprite.y})
+            const distanceLeft = getDistanceBetween(this.char.container, {x: o_.troll.x, y: o_.troll.y})
 
             if (distanceLeft <= 100) {
                 this.char.stop();

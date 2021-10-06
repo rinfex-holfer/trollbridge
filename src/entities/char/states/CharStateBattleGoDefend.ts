@@ -2,7 +2,7 @@ import {CharState} from "./CharState";
 import {CharAnimation, CharStateKey} from "../char-constants";
 import {getDistanceBetween, Vec} from "../../../utils/utils-math";
 import {o_} from "../../../managers/locator";
-import {Char} from "../Char";
+import {Char} from "../char";
 import {createPromiseAndHandlers} from "../../../utils/utils-async";
 
 export class CharStateBattleGoDefend extends CharState {

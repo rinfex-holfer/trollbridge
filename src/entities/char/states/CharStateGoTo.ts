@@ -2,7 +2,7 @@ import {CharState} from "./CharState";
 import {CharAnimation, CharStateKey} from "../char-constants";
 import {gameConstants} from "../../../configs/constants";
 import {getDistanceBetween, Vec} from "../../../utils/utils-math";
-import {Char} from "../Char";
+import {Char} from "../char";
 
 export class CharStateGoTo extends CharState {
     key = CharStateKey.GO_TO

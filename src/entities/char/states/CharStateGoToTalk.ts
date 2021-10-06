@@ -33,7 +33,7 @@ export class CharStateGoToTalk extends CharState {
             this.char.stop();
             this.char.container.x = this.target.x
             this.char.container.y = this.target.y
-            this.char.directToTarget(o_.troll.sprite)
+            this.char.directToTarget(o_.troll.container)
             this.char.readyToTalk()
         }
     }

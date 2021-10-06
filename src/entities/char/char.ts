@@ -39,6 +39,7 @@ import {DmgOptions} from "../../utils/utils-types";
 import {goldConfig} from "../../configs/gold-config";
 import {foodConfig} from "../../configs/food-config";
 import {Squad} from "../../managers/game/squad";
+import {StatusNotifications} from "../../interface/status-notifications";
 
 export class Char {
     key: CharKey
@@ -49,7 +50,7 @@ export class Char {
     maxMorale: number
     moralePrice: number
     name: string
-    dmg = 0
+    dmg = [1, 1]
 
     speed = gameConstants.CHAR_SPEED * 3
 
@@ -91,6 +92,8 @@ export class Char {
     squad: Squad | null = null
     squadPlace: SquadPlace | null = null
 
+    statusNotifications: StatusNotifications
+
     constructor(key: CharKey, x: number, y: number) {
         const charTemplate = charConfig[key]
 
@@ -131,6 +134,8 @@ export class Char {
         this.speakText = new CharSpeakText(this.container);
         this.hpIndicator = new CharHpIndicator(this);
         this.mpIndicator = new CharMpIndicator(this);
+
+        this.statusNotifications = new StatusNotifications(this.container, 0, -130)
 
         this.state = this.getState(CharStateKey.GO_ACROSS)
         this.state.start();
@@ -389,10 +394,9 @@ export class Char {
     surrender() {
         this.setIndicatorsVisible(false)
 
-        flyingStatusChange('Сдаюсь, пощади!', this.container.x, this.container.y - 100)
+        this.statusNotifications.showSurrender()
 
         if (o_.battle.isBattle) {
-            console.trace('surrender')
             return this.setState(CharStateKey.BATTLE_SURRENDER);
         } else {
             return this.setState(CharStateKey.SURRENDER);
@@ -464,8 +468,8 @@ export class Char {
         this.speakText.hideText();
     }
 
-    rollDmg() {
-        return this.dmg + rndBetween(0, Math.ceil(this.dmg * 0.33));
+    rollDmg(): number {
+        return rndBetween(this.dmg[0], this.dmg[1]);
     }
 
     rollCounterAttack() {
@@ -480,12 +484,9 @@ export class Char {
         this.morale = clamp(this.morale+val, 0, this.maxMorale);
         this.mpIndicator.update();
 
-        flyingStatusChange(
-            ''+val + ' morale',
-            this.container.x,
-            this.container.y - 70,
-            colorsCSS.BLUE
-        );
+        if (val < 0) {
+            // this.statsNotifications.showMoraleReduce(val)
+        }
 
         if (!this.isSurrender && this.morale <= 0) {
             this.surrender();
@@ -514,12 +515,14 @@ export class Char {
 
         this.changeHp(-dmg);
 
-        flyingStatusChange(
-            '-'+dmg,
-            this.container.x,
-            this.container.y - 100,
-            colorsCSS.RED
-        );
+        // this.statusNotifications.showDmg(dmg)
+
+        // flyingStatusChange(
+        //     '-'+dmg,
+        //     this.container.x,
+        //     this.container.y - 100,
+        //     colorsCSS.RED
+        // );
 
         if (this.hp > 0) {
             if (this.isMounted && this.checkLooseHorse()) {

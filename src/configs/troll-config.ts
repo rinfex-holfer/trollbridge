@@ -11,33 +11,27 @@ export const trollConfig = {
     TROLL_SPEED: 500,
 
     TROLL_LEVELING: {
-        0: {
-            maxHp: 30,
-            armor: 5,
-            dmg: 20,
-            xp: 0,
-        },
         1: {
             maxHp: 10,
-            armor: 5,
+            armor: 1,
             dmg: 6,
             xp: 10,
         },
         2: {
             maxHp: 12,
-            armor: 2,
+            armor: 3,
             dmg: 9,
             xp: 20,
         },
         3: {
             maxHp: 15,
-            armor: 2,
+            armor: 4,
             dmg: 12,
             xp: 30,
         },
         4: {
             maxHp: 20,
-            armor: 3,
+            armor: 5,
             dmg: 15,
             xp: 40,
         },

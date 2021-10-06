@@ -12,6 +12,7 @@ export class TrollStateSleep extends TrollState {
         this.host.setAnimation(CharAnimation.IDLE);
         this.host.directToTarget({x: this.host.sprite.x + 1, y: this.host.sprite.y})
         this.host.sprite.obj.rotation = -Math.PI / 2
+        this.host.sprite.setOrigin(0.5,0.5)
         this.host.changeTrollHp(trollConfig.HP_FROM_SLEEP)
         this.host.zzz.show(this.host.x - 30, this.host.y - 30)
         o_.time.wait();
@@ -21,6 +22,7 @@ export class TrollStateSleep extends TrollState {
 
     onEnd() {
         this.host.zzz.hide()
+        this.host.setInitialSpriteOrigin()
         this.host.sprite.obj.rotation = 0
     }
 }

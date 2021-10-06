@@ -78,8 +78,8 @@ export class RenderManager {
         this.scene.physics.moveTo(obj.obj, x, y, speed, maxTime)
     }
 
-    directToTarget(obj: O_GameObject, target: Vec) {
-        obj.obj.scaleX = Math.sign(target.x - obj.obj.x) || 1
+    directToTarget(obj: O_GameObject, target: Vec, offset?: number) {
+        obj.obj.scaleX = Math.sign(target.x - (obj.obj.x + (offset || 0))) || 1
     }
 
     createContainer(x: number, y: number, options?: {parent?: O_Container}) {
@@ -125,6 +125,26 @@ export class RenderManager {
             x: pos.x,
             y: pos.y,
             ease: 'Linear',
+            duration: duration,
+            onComplete: done
+        })
+
+        timeline.play()
+
+        return promise
+    }
+
+    flyWithBounceTo(obj: O_GameObject, pos: Vec, speed: number, maxDuration?: number): Promise<any> {
+        const {promise, done} = createPromiseAndHandlers()
+        const timeline = this.createTimeline();
+        const distance = getDistanceBetween(obj, pos);
+        let duration = distance / (speed / 1000);
+        if (maxDuration && maxDuration < duration) duration = maxDuration;
+        timeline.add({
+            targets: obj.obj,
+            x: pos.x,
+            y: pos.y,
+            ease: 'Bounce.easeOut',
             duration: duration,
             onComplete: done
         })

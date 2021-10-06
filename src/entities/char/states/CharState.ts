@@ -1,4 +1,4 @@
-import {Char} from "../Char";
+import {Char} from "../char";
 import {CharStateKey} from "../char-constants";
 import {createPromiseAndHandlers} from "../../../utils/utils-async";
 import {subscriptions} from "../../../event-bus";

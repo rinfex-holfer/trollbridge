@@ -25,6 +25,7 @@ export const resoursePaths = {
         bridge_crack: `${imagesUrl}/bridge_crack.png`,
         bed_upgraded: `${imagesUrl}/bed-upgraded.png`,
         drying_rack: `${imagesUrl}/drying_rack.png`,
+
         button_release: `${imagesUrl}/leg.png`,
         button_rob: `${imagesUrl}/icon_pay.png`,
         button_imprison: `${imagesUrl}/prisoner.png`,
@@ -32,10 +33,19 @@ export const resoursePaths = {
         button_kill: `${imagesUrl}/icon_blood.png`,
         button_throw_rock: `${imagesUrl}/icon_rock.png`,
         button_throw_char: `${imagesUrl}/icon_throw_char.png`,
-        button_devour: `${imagesUrl}/devoure.png`,
+        button_devour: `${imagesUrl}/icon_devour.png`,
         button_make_food: `${imagesUrl}/makeFood_0.png`,
         button_feed: `${imagesUrl}/makeFood.png`,
         button_upgrade: `${imagesUrl}/upgrade.png`,
+
+        status_change_dmg: `${imagesUrl}/icon_blood.png`,
+        status_change_heal: `${imagesUrl}/icon_green_plus.png`,
+        status_change_morale: `${imagesUrl}/icon_morale.png`,
+        status_change_self_control: `${imagesUrl}/icon_self_control.png`,
+
+        icon_shield: `${imagesUrl}/icon_shield.png`,
+        icon_surrender: `${imagesUrl}/icon_surrender.png`,
+
         empty_sprite: `${imagesUrl}/tile_empty.png`,
         particle_hit: `${imagesUrl}/particle_hit.png`,
         particle_blood: `${imagesUrl}/particle_blood.jpg`,
@@ -49,6 +59,8 @@ export const resoursePaths = {
         "gold-many": `${imagesUrl}/gold-many.png`,
         "gold-almost": `${imagesUrl}/gold-almost.png`,
         "gold-chest": `${imagesUrl}/gold-chest.png`,
+
+        tile_black: `${imagesUrl}/tile_black.png`,
     },
 
     atlases: {

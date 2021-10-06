@@ -16,11 +16,11 @@ export const encounterTemplates: {[dangerLevel: number]: EncounterTemplate[]} = 
         //     level: 0,
         //     enemies: [[0, CharKey.FARMER], [1, CharKey.FARMER]],
         // },
-        // {
-        //     text: 'Группа фермеров',
-        //     level: 1,
-        //     enemies: [[0, CharKey.FARMER], [1, CharKey.FARMER], [2, CharKey.FARMER]],
-        // },
+        {
+            text: 'Группа фермеров',
+            level: 1,
+            enemies: [[0, CharKey.FARMER], [1, CharKey.FARMER], [2, CharKey.FARMER]],
+        },
         // {
         //     text: 'Группа фермеров',
         //     level: 1,
