@@ -59,6 +59,10 @@ export class StatusNotifications {
         }, 2000)
     }
 
+    public showCounterAttack() {
+        this.show('counter-attack!', 'icon_crossed_swords', colorsCSS.WHITE)
+    }
+
     public showBlock() {
         this.show('block!', 'icon_shield', colorsCSS.WHITE)
     }

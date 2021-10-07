@@ -7,6 +7,7 @@ export const trollConfig = {
     HUNGER_PER_TIME: 1,
     HP_MINUS_WHEN_HUNGRY: 1,
     HP_FROM_SLEEP: 2,
+    SELF_CONTROL_FROM_SLEEP: 1,
 
     TROLL_SPEED: 500,
 

@@ -2,14 +2,12 @@ import Phaser from "phaser";
 import {createMessageEmitter, getGameSize} from "../../utils/utils-misc";
 import {o_} from "../locator";
 import {TrollLocation} from "../../types";
-import {WaitButton} from "../../interface/wait-button";
 import {LayerKey} from "./layers";
 import {O_Sprite} from "./render/sprite";
 
 export type ClickHandler = (pointer: Phaser.Input.Pointer) => void
 
 export class InteractionManager {
-    waitBtn = new WaitButton()
     layerUnderButtons: O_Sprite
 
     constructor(private scene: Phaser.Scene) {
@@ -64,12 +62,10 @@ export class InteractionManager {
         o_.lair.mayButtonsBeClicked(false)
         o_.lair.mayBeMovedInto(false)
         o_.bridge.disableInterface()
-        o_.upgrade.setEnabled(false)
+        o_.lair.menu.hide()
 
         this.disableEntities()
         console.log('disableEverything')
-
-        this.waitBtn.setEnabled(false)
     }
 
     disableEntities() {
@@ -86,9 +82,9 @@ export class InteractionManager {
             o_.bridge.enableInterface()
         }
 
-        o_.upgrade.setEnabled(o_.troll.location === TrollLocation.LAIR)
+        if (o_.troll.location === TrollLocation.LAIR) {
+            o_.lair.menu.show()
+        }
         o_.entities.getAll().forEach(o => o.updateInteractive())
-
-        this.waitBtn.setEnabled(true)
     }
 }

@@ -25,7 +25,7 @@ export const foodConfig = {
             },
             HUMAN: {
                 hp: 4,
-                xp: 4,
+                xp: 6,
                 hunger: -4,
                 selfControl: -5,
             },
@@ -39,25 +39,25 @@ export const foodConfig = {
         [FoodType.DISH]: {
             ANIMAL: {
                 hp: 6,
-                xp: 1,
+                xp: 24,
                 hunger: -10,
                 selfControl: 0
             },
             ANIMAL_STALE: {
                 hp: 3,
-                xp: 1,
+                xp: 4,
                 hunger: -8,
                 selfControl: -1
             },
             HUMAN: {
                 hp: 10,
-                xp: 1,
+                xp: 24,
                 hunger: -12,
                 selfControl: -10
             },
             HUMAN_STALE: {
                 hp: 2,
-                xp: 1,
+                xp: 4,
                 hunger: -10,
                 selfControl: -15
             }

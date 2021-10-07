@@ -615,13 +615,8 @@ export class Char {
     }
 
     async performCounterAttack() {
-        flyingStatusChange(
-            'Counter-attack!',
-            this.container.x,
-            this.container.y - this.sprite.height,
-            colorsCSS.WHITE
-        );
-        return this.performBattleAction(0)
+        this.statusNotifications.showCounterAttack()
+        return this.performBattleAction(300)
     }
 
     async runAround() {

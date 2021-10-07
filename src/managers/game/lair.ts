@@ -7,6 +7,7 @@ import {FoodStorage} from "../../entities/buildings/food-storage";
 import {Bed} from "../../entities/buildings/bed";
 import {Pot} from "../../entities/buildings/pot";
 import {Treasury} from "../../entities/buildings/treasury";
+import {LairMenu} from "../../interface/lair-menu";
 
 export class Lair {
     foodStorage: FoodStorage
@@ -15,6 +16,8 @@ export class Lair {
     treasury: Treasury
 
     sprite: Tiles
+
+    menu: LairMenu
 
     constructor() {
         o_.register.lair(this);
@@ -28,6 +31,8 @@ export class Lair {
         this.foodStorage = new FoodStorage(positioner.getFoodStoragePosition())
         this.bed = new Bed(positioner.getBedPosition())
         this.pot = new Pot(positioner.getPotPosition());
+
+        this.menu = new LairMenu()
     }
 
     updateMayBeMovedInto() {

@@ -1,4 +1,3 @@
-import {colorsCSS} from "../../../configs/constants";
 import {eventBus, Evt} from "../../../event-bus";
 import {FoodType, TrollLocation} from "../../../types";
 import {positioner} from "../positioner";
@@ -105,6 +104,8 @@ export class Troll {
         this.stats = new TrollStats(this)
         this.hp = trollConfig.TROLL_LEVELING[this.level].maxHp
         this.onNewLevel(false);
+
+        onTrollCameToLair()
     }
 
     setInitialSpriteOrigin() {

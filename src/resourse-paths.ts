@@ -36,7 +36,8 @@ export const resoursePaths = {
         button_devour: `${imagesUrl}/icon_devour.png`,
         button_make_food: `${imagesUrl}/makeFood_0.png`,
         button_feed: `${imagesUrl}/makeFood.png`,
-        button_upgrade: `${imagesUrl}/upgrade.png`,
+        button_upgrade: `${imagesUrl}/icon_build.png`,
+        button_wait: `${imagesUrl}/icon_wait.png`,
 
         status_change_dmg: `${imagesUrl}/icon_blood.png`,
         status_change_heal: `${imagesUrl}/icon_green_plus.png`,
@@ -44,6 +45,7 @@ export const resoursePaths = {
         status_change_self_control: `${imagesUrl}/icon_self_control.png`,
 
         icon_shield: `${imagesUrl}/icon_shield.png`,
+        icon_crossed_swords: `${imagesUrl}/icon_crossed_swords.png`,
         icon_surrender: `${imagesUrl}/icon_surrender.png`,
         icon_rage: `${imagesUrl}/icon_rage.png`,
 

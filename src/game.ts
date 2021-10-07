@@ -68,11 +68,11 @@ const create = (scene: Phaser.Scene) => {
     new UpgradeManager()
     new Environment()
     new CharactersManager()
-    new Troll()
     new Lair()
     new BridgeManager()
     new Negotiations()
     new BattleManager()
+    new Troll()
     new MusicManager()
 
     new Meat({x: 100, y: 300})

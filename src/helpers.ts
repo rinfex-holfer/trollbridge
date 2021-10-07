@@ -27,8 +27,8 @@ export function onTrollCameToBridge() {
     o_.troll.location = TrollLocation.BRIDGE;
     o_.lair.mayButtonsBeClicked(false)
     o_.lair.mayBeMovedInto(true)
+    o_.lair.menu.hide()
     o_.bridge.disableInterface()
-    o_.upgrade.setEnabled(false)
     eventBus.emit(Evt.TROLL_LOCATION_CHANGED, TrollLocation.BRIDGE);
 }
 
@@ -36,8 +36,8 @@ export function onTrollCameToLair() {
     o_.troll.location = TrollLocation.LAIR;
     o_.lair.mayButtonsBeClicked(true)
     o_.lair.mayBeMovedInto(false)
+    o_.lair.menu.show()
     o_.bridge.enableInterface()
-    o_.upgrade.setEnabled(true)
     eventBus.emit(Evt.TROLL_LOCATION_CHANGED, TrollLocation.LAIR);
 }
 

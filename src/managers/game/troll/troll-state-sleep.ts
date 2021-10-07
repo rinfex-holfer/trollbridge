@@ -14,6 +14,7 @@ export class TrollStateSleep extends TrollState {
         this.host.sprite.obj.rotation = -Math.PI / 2
         this.host.sprite.setOrigin(0.5,0.5)
         this.host.heal(trollConfig.HP_FROM_SLEEP)
+        this.host.changeSelfControl(trollConfig.SELF_CONTROL_FROM_SLEEP)
         this.host.zzz.show(this.host.x - 30, this.host.y - 30)
         o_.time.wait();
 

@@ -31,11 +31,11 @@ export const encounterTemplates: {[dangerLevel: number]: EncounterTemplate[]} = 
         //     level: 1,
         //     enemies: [[0, CharKey.FARMER], [1, CharKey.FARMER], [2, CharKey.FARMER], [3, CharKey.FARMER], [4, CharKey.FARMER], [5, CharKey.FARMER]],
         // },
-        // {
-        //     text: 'Патрульные ополченцы',
-        //     level: 1,
-        //     enemies: [[0, CharKey.MILITIA], [1, CharKey.MILITIA], [4, CharKey.ARCHER]],
-        // },
+        {
+            text: 'Патрульные ополченцы',
+            level: 1,
+            enemies: [[0, CharKey.MILITIA], [1, CharKey.MILITIA], [4, CharKey.ARCHER]],
+        },
         // {
         //     text: 'Отряд ополчения',
         //     level: 2,

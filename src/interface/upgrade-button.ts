@@ -15,6 +15,8 @@ export class UpgradeButton {
             img: 'button_upgrade',
             x: pos.x,
             y: pos.y,
+            width: 32,
+            height: 32,
             text: text + ', стоимость: ' + cost + ' золота',
             onClick: () => this.onClick()
         })

@@ -4,7 +4,7 @@ import {o_} from "../../managers/locator";
 import {O_Sprite} from "../../managers/core/render/sprite";
 import {resoursePaths} from "../../resourse-paths";
 
-type ImgButtonOptions = ButtonOptions & { img: keyof typeof resoursePaths.images }
+type ImgButtonOptions = ButtonOptions & { img: keyof typeof resoursePaths.images, width?: number, height?: number }
 
 export class ImgButton extends BasicButton {
     sprite: O_Sprite
@@ -22,6 +22,8 @@ export class ImgButton extends BasicButton {
         this.sprite.alpha = 0.75
         this.sprite.setInteractive(true, {cursor: 'pointer'})
         this.sprite.onClick(() => this.onClick())
+        if (options.width) this.sprite.setWidth(options.width)
+        if (options.height) this.sprite.setHeight(options.height)
         this.sprite.onPointerOver(() => {
             if (!this.visiblyDisabled) this.sprite.alpha = 1
         })
