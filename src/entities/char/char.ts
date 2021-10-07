@@ -485,7 +485,7 @@ export class Char {
         this.mpIndicator.update();
 
         if (val < 0) {
-            // this.statsNotifications.showMoraleReduce(val)
+            this.statusNotifications.showMoraleDmg(-val, 'right')
         }
 
         if (!this.isSurrender && this.morale <= 0) {
@@ -515,6 +515,7 @@ export class Char {
 
         this.changeHp(-dmg);
 
+        this.statusNotifications.showDmg(dmg,'right')
         // this.statusNotifications.showDmg(dmg)
 
         // flyingStatusChange(

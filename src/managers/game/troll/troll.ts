@@ -133,6 +133,7 @@ export class Troll {
 
     increaseHunger(val: number = trollConfig.HUNGER_PER_TIME) {
         if (this.hunger === trollConfig.TROLL_MAX_HUNGER) {
+            this.statusNotifications.showDmg(-trollConfig.HP_MINUS_WHEN_HUNGRY)
             this.changeTrollHp(-trollConfig.HP_MINUS_WHEN_HUNGRY, 'hunger')
         }
 
@@ -152,7 +153,7 @@ export class Troll {
         // @ts-ignore
         const xpChange = foodConfig.FOOD[food][foodKey].xp
 
-        this.changeTrollHp(hpChange)
+        this.heal(hpChange)
         this.changeHunger(hungerChange)
         this.changeSelfControl(selfControlChange)
         this.addXp(xpChange)
@@ -163,28 +164,28 @@ export class Troll {
     }
 
     changeHunger(val: number) {
-        this.statChangeNotification('Голод', val, true)
+        // this.statChangeNotification('Голод', val, true)
 
         this.hunger = clamp(this.hunger + val, 0, this.maxHunger)
         this.stats.update()
     }
 
-    statChangeNotification(statStr: string, val: number, inverted?: boolean) {
-        if (val === 0) return
-
-        const sign = val < 0 ? '' : '+'
-        const color = ((val < 0 && !inverted) || (val > 0 && inverted)) ? colorsCSS.RED : colorsCSS.GREEN
-
-        const text = sign + val + ' ' + statStr;
-
-        const x = this.container.x
-        const y = this.container.y - this.sprite.height
-        this.notificationsQueue.push([text, x, y, color])
-
-        if (this.notificationTimer === null) {
-            this.showNextNotification()
-        }
-    }
+    // statChangeNotification(statStr: string, val: number, inverted?: boolean) {
+    //     if (val === 0) return
+    //
+    //     const sign = val < 0 ? '' : '+'
+    //     const color = ((val < 0 && !inverted) || (val > 0 && inverted)) ? colorsCSS.RED : colorsCSS.GREEN
+    //
+    //     const text = sign + val + ' ' + statStr;
+    //
+    //     const x = this.container.x
+    //     const y = this.container.y - this.sprite.height
+    //     this.notificationsQueue.push([text, x, y, color])
+    //
+    //     if (this.notificationTimer === null) {
+    //         this.showNextNotification()
+    //     }
+    // }
 
     notificationsQueue: [text: string, x: number, y: number, color: string][] = []
 
@@ -203,14 +204,19 @@ export class Troll {
     }
 
     changeSelfControl(val: number) {
-        // if (val > 0) {
-        //     this.statusNotifications.showSelfControlIncrease(val)
-        // } else {
-        //     this.statusNotifications.showSelfControlReduce(val)
-        // }
+        if (val > 0) {
+            this.statusNotifications.showSelfControlIncrease(val)
+        } else {
+            this.statusNotifications.showSelfControlReduce(val)
+        }
 
         this.selfControl = clamp(this.selfControl + val, 0, this.maxSelfControl)
         this.stats.update()
+    }
+
+    heal(val: number) {
+        this.statusNotifications.showHeal(val)
+        this.changeTrollHp(val)
     }
 
     changeTrollHp(val: number, cause = 'hunger') {
@@ -374,7 +380,6 @@ export class Troll {
     }
 
     getHit(dmg: number) {
-        console.log(dmg)
         if (dmg > this.armor + rndBetween(1, 2)) {
             o_.render.burstBlood(
                 this.container.x,
@@ -386,6 +391,7 @@ export class Troll {
                 o_.audio.playSound(getRndItem([SOUND_KEY.TROLL_WOUNDED_0, SOUND_KEY.TROLL_WOUNDED_1, SOUND_KEY.TROLL_WOUNDED_2]));
             })
             this.changeTrollHp(-dmg, 'battle');
+            this.statusNotifications.showDmg(dmg, 'left')
         } else {
             o_.audio.playSound(getRndItem([SOUND_KEY.TROLL_BLOCK_0, SOUND_KEY.TROLL_BLOCK_1, SOUND_KEY.TROLL_BLOCK_2]));
             this.statusNotifications.showBlock()
@@ -412,8 +418,9 @@ export class Troll {
 
     rageStartCheck() {
         let percent = Math.floor((this.selfControl / this.maxSelfControl) * 100)
-        // let percent = 10
         percent = Math.min(percent, 99)
+        // let percent = 10
+        // percent = 0
         if (rndBetween(0, 100) > percent) this.setEnraged(true)
     }
 
@@ -518,9 +525,9 @@ export class Troll {
 
         if (val) {
             o_.audio.playSound(SOUND_KEY.TROLL_BREATHING)
-            flyingStatusChange('Enraged!', this.container.x, this.container.y - 100, colorsCSS.RED);
+            this.statusNotifications.showRage()
         } else {
-            flyingStatusChange('Rage stops', this.container.x, this.container.y - 100, colorsCSS.WHITE);
+            this.statusNotifications.showRageStops()
         }
     }
 

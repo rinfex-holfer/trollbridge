@@ -133,7 +133,7 @@ export class BattleManager {
         if (devourable) return this.trollGoDevour(devourable)
 
         const possibleActions = [] as (() => void)[]
-        Object.values(this.actionsMenu.buttons).map(btn => {
+        Object.values(this.actionsMenu.actions).map(btn => {
 
             travellers.forEach(t => {
                 if (btn.getIsActive(t)) {
@@ -238,7 +238,7 @@ export class BattleManager {
         if (this.getIsWin()) return this.win()
 
         const allGoBack = [] as Promise<any>[]
-        if (defender.isAlive) allGoBack.push(defender.goToBattlePosition())
+        if (defender.getIsFighter()) allGoBack.push(defender.goToBattlePosition())
         allGoBack.push(o_.troll.goToBattlePosition())
         await Promise.all(allGoBack)
     }

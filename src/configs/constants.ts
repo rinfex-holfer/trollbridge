@@ -24,7 +24,7 @@ export const zLayers = {
 export const colors = {
     GREEN: '0x00AA00',
     RED: '0xFF0000',
-    BLUE: '0x0000FF',
+    BLUE: '0x0099FF',
     PURPLE: '0x080008',
     WHITE: '0xFFFFFF',
     BLACK: '0x000000',
@@ -34,7 +34,7 @@ export const colors = {
 export const colorsCSS = {
     GREEN: 'rgb(0, 256, 0)',
     RED: 'rgb(256, 0, 0)',
-    BLUE: 'rgb(0, 0, 256)',
+    BLUE: 'rgb(0,119,255)',
     LIGHT_BLUE: 'rgb(173, 216, 230)',
     PURPLE: 'rgb(138,43,226)',
     WHITE: 'rgb(256, 256, 256)',
@@ -47,7 +47,7 @@ export const colorsNum = {
     GREEN: 0x00AA00,
     ROTTEN: 0xAAFFAA,
     RED: 0xFF0000,
-    BLUE: 0x0000FF,
+    BLUE: 0x0099FF,
     LIGHT_BLUE: 0xADD8E6,
     PURPLE: 0x080008,
     WHITE: 0xFFFFFF,

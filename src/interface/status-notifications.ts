@@ -2,6 +2,7 @@ import {O_Container} from "../managers/core/render/container";
 import {o_} from "../managers/locator";
 import {ImageKey} from "../utils/utils-types";
 import {colorsCSS} from "../configs/constants";
+import {flyingStatusChange} from "./basic/flying-status-change";
 
 const ICON_SIZE = 36
 const PADDING = 5
@@ -19,7 +20,7 @@ export class StatusNotifications {
     notifications: O_Container[] = []
     deleteTimer: any
 
-    constructor(parent: O_Container, x: number, y: number) {
+    constructor(private parent: O_Container, private x: number, private y: number) {
         this.container = o_.render.createContainer(x - NOTIFICATION_WIDTH / 2, y - NOTIFICATION_HEIGHT, {parent})
     }
 
@@ -66,23 +67,61 @@ export class StatusNotifications {
         this.show('surrender!', 'icon_surrender', colorsCSS.WHITE)
     }
 
-    // public showDmg(val: number) {
-    //     this.show('' + val, 'status_change_dmg', colorsCSS.RED)
-    // }
-    //
-    // public showHeal(val: number) {
-    //     this.show('' + val, 'status_change_heal', colorsCSS.GREEN)
-    // }
-    //
-    // public showSelfControlReduce(val: number) {
-    //     this.show('' + val, 'status_change_self_control', colorsCSS.RED)
-    // }
-    //
-    // public showSelfControlIncrease(val: number) {
-    //     this.show('' + val, 'status_change_self_control', colorsCSS.BLUE)
-    // }
-    //
-    // public showMoraleReduce(val: number) {
-    //     this.show('' + val, 'status_change_morale', colorsCSS.RED)
-    // }
+    public showRage() {
+        this.show('Rage!', 'icon_rage', colorsCSS.RED)
+    }
+
+    public showRageStops() {
+        this.show('Rage stops', 'status_change_self_control', colorsCSS.WHITE)
+    }
+
+    public showDmg(val: number, direction?: 'left' | 'right') {
+        this.flyingNumbers(''+val, colorsCSS.RED, direction)
+    }
+
+    public showHeal(val: number) {
+        this.flyingNumbers('+'+val, colorsCSS.GREEN)
+    }
+
+    public showMoraleDmg(val: number, direction?: 'left' | 'right') {
+        this.flyingNumbers(''+val, colorsCSS.BLUE, direction)
+    }
+
+    numbersQueue: Parameters<typeof flyingStatusChange>[] = []
+    private flyingNumbers(val: string, color: string, direction?: 'left' | 'right') {
+        let x = this.parent.x
+        let y = this.parent.y - 100
+
+        if (direction) {
+            y += 50
+            x = direction === 'left' ? x - 30 : x + 30
+        }
+
+
+        this.numbersQueue.push(['' + val, x, y, color, direction])
+
+        if (this.timer) return
+        else this.nextNumbers()
+    }
+
+    timer: any
+    nextNumbers() {
+        const p = this.numbersQueue.shift()
+        if (!p) {
+            this.timer = null
+            return
+        }
+        flyingStatusChange(...p)
+        this.timer = setTimeout(() => {
+            this.nextNumbers()
+        }, 300)
+    }
+
+    public showSelfControlReduce(val: number) {
+        this.flyingNumbers('' + val, colorsCSS.BLUE)
+    }
+
+    public showSelfControlIncrease(val: number) {
+        this.flyingNumbers('+' + val, colorsCSS.BLUE)
+    }
 }
