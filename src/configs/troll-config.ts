@@ -14,8 +14,8 @@ export const trollConfig = {
     TROLL_LEVELING: {
         1: {
             maxHp: 10,
-            armor: 1,
-            dmg: 6,
+            block: 0,
+            dmg: [3, 6],
             xp: 20,
             xpRewards: {
                 [CharKey.FARMER]: 100,
@@ -27,9 +27,9 @@ export const trollConfig = {
             newAbilities: [TrollAbility.MAN_EATER],
         },
         2: {
-            maxHp: 12,
-            armor: 3,
-            dmg: 9,
+            maxHp: 20,
+            block: 0,
+            dmg: [5, 10],
             xp: 50,
             xpRewards: {
                 [CharKey.FARMER]: 100,
@@ -41,9 +41,9 @@ export const trollConfig = {
             newAbilities: [TrollAbility.THROW_ROCK],
         },
         3: {
-            maxHp: 15,
-            armor: 4,
-            dmg: 12,
+            maxHp: 40,
+            block: 0,
+            dmg: [10, 20],
             xp: 100,
             xpRewards: {
                 [CharKey.FARMER]: 0,
@@ -55,9 +55,9 @@ export const trollConfig = {
             newAbilities: [TrollAbility.GRAPPLE],
         },
         4: {
-            maxHp: 20,
-            armor: 5,
-            dmg: 15,
+            maxHp: 60,
+            block: 0,
+            dmg: [15, 50],
             xp: 300,
             xpRewards: {
                 [CharKey.FARMER]: 0,
@@ -69,16 +69,16 @@ export const trollConfig = {
             newAbilities: [],
         },
         5: {
-            maxHp: 20,
-            armor: 5,
-            dmg: 15,
+            maxHp: 100,
+            block: 0,
+            dmg: [20, 40],
             xp: -1,
             xpRewards: {
                 [CharKey.FARMER]: 0,
                 [CharKey.MILITIA]: 0,
                 [CharKey.ARCHER]: 0,
-                [CharKey.SHIELDMAN]: 10,
-                [CharKey.KNIGHT]: 50,
+                [CharKey.SHIELDMAN]: 0,
+                [CharKey.KNIGHT]: 0,
             },
             newAbilities: [],
         },

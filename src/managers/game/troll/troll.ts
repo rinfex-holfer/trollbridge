@@ -32,16 +32,20 @@ export class Troll {
 
     isEnraged: boolean = false
 
-    armor = 0
+    xp = 0
+
     level = 1
-    dmg = 1
+
     hp = 1
     maxHp = 1
+
     hunger = 0
     maxHunger = trollConfig.TROLL_MAX_HUNGER
     selfControl = trollConfig.TROLL_MAX_SELF_CONTROL
     maxSelfControl = trollConfig.TROLL_MAX_SELF_CONTROL
-    xp = 0
+
+    block = 0
+    dmg = [1, 1]
 
     sprite: O_AnimatedSprite
     container: O_Container
@@ -119,7 +123,7 @@ export class Troll {
         const levelConfig = trollConfig.TROLL_LEVELING[this.level]
         this.xp = 0
         this.maxHp = levelConfig.maxHp
-        this.armor = levelConfig.armor
+        this.block = levelConfig.block
         this.dmg = levelConfig.dmg
 
         this.stats.update(animated)
@@ -372,7 +376,7 @@ export class Troll {
     }
 
     getHit(dmg: number) {
-        if (dmg > this.armor + rndBetween(1, 2)) {
+        if (dmg > this.block + rndBetween(1, 2)) {
             o_.render.burstBlood(
                 this.container.x,
                 this.container.y - this.sprite.height / 2
@@ -417,8 +421,8 @@ export class Troll {
     }
 
     rollDmg() {
-        const dmg = this.dmg + rndBetween(1, 10)
-        return this.isEnraged ? dmg * 2 : dmg
+        const dmg = rndBetween( this.dmg[0], this.dmg[1])
+        return this.isEnraged ? dmg * 1.2 : dmg
     }
 
     rollStun() {

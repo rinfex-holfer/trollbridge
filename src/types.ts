@@ -92,8 +92,8 @@ export type Enemy = {
 
 export type LevelReqs = {
     maxHp: number,
-    armor: number,
-    dmg: number,
+    block: number,
+    dmg: [number, number],
     xp: number,
     xpRewards: {
         [CharKey.FARMER]: number,
