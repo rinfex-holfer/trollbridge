@@ -7,6 +7,8 @@ import {actionButtonsMap, CharAction} from "../../interface/char-actions-menu";
 import {getRndItem} from "../../utils/utils-math";
 import {BattleActionsMenu} from "../../interface/battle-actions-menu";
 import {AfterBattleActionsMenu} from "../../interface/after-battle-actions-menu";
+import {trollConfig} from "../../configs/troll-config";
+import {CharKey} from "../../types";
 
 export class BattleManager {
     unsub: any[] = []
@@ -22,6 +24,7 @@ export class BattleManager {
         this.afterBattleMenu = new AfterBattleActionsMenu()
     }
 
+    xpForBattle = 0
     startBattle() {
         this.isBattle = true;
 
@@ -34,6 +37,8 @@ export class BattleManager {
         this.unsub.push(() => eventBus.unsubscribe(Evt.TROLL_TURN_END, sub));
 
         eventBus.emit(Evt.BATTLE_STARTED)
+
+        this.xpForBattle = o_.troll.getXpForSquad(fighters.map(f => f.key))
 
         o_.characters.startFighting();
         this.trollTurn();
@@ -97,6 +102,9 @@ export class BattleManager {
         this.onBattleEnd()
 
         this.afterBattleMenu.show()
+
+        o_.troll.addXp(this.xpForBattle)
+        this.xpForBattle = 0
     }
 
     onBattleEnd() {

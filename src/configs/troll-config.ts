@@ -1,4 +1,4 @@
-import {LevelReqs} from "../types";
+import {CharKey, LevelReqs, TrollAbility} from "../types";
 
 export const trollConfig = {
     TROLL_MAX_HUNGER: 10,
@@ -16,25 +16,71 @@ export const trollConfig = {
             maxHp: 10,
             armor: 1,
             dmg: 6,
-            xp: 10,
+            xp: 20,
+            xpRewards: {
+                [CharKey.FARMER]: 100,
+                [CharKey.MILITIA]: 5,
+                [CharKey.ARCHER]: 5,
+                [CharKey.SHIELDMAN]: 10,
+                [CharKey.KNIGHT]: 50,
+            },
+            newAbilities: [TrollAbility.MAN_EATER],
         },
         2: {
             maxHp: 12,
             armor: 3,
             dmg: 9,
-            xp: 20,
+            xp: 50,
+            xpRewards: {
+                [CharKey.FARMER]: 100,
+                [CharKey.MILITIA]: 2,
+                [CharKey.ARCHER]: 5,
+                [CharKey.SHIELDMAN]: 10,
+                [CharKey.KNIGHT]: 50,
+            },
+            newAbilities: [TrollAbility.THROW_ROCK],
         },
         3: {
             maxHp: 15,
             armor: 4,
             dmg: 12,
-            xp: 30,
+            xp: 100,
+            xpRewards: {
+                [CharKey.FARMER]: 0,
+                [CharKey.MILITIA]: 2,
+                [CharKey.ARCHER]: 5,
+                [CharKey.SHIELDMAN]: 10,
+                [CharKey.KNIGHT]: 50,
+            },
+            newAbilities: [TrollAbility.GRAPPLE],
         },
         4: {
             maxHp: 20,
             armor: 5,
             dmg: 15,
-            xp: 40,
+            xp: 300,
+            xpRewards: {
+                [CharKey.FARMER]: 0,
+                [CharKey.MILITIA]: 2,
+                [CharKey.ARCHER]: 5,
+                [CharKey.SHIELDMAN]: 10,
+                [CharKey.KNIGHT]: 50,
+            },
+            newAbilities: [],
+        },
+        5: {
+            maxHp: 20,
+            armor: 5,
+            dmg: 15,
+            xp: -1,
+            xpRewards: {
+                [CharKey.FARMER]: 0,
+                [CharKey.MILITIA]: 0,
+                [CharKey.ARCHER]: 0,
+                [CharKey.SHIELDMAN]: 10,
+                [CharKey.KNIGHT]: 50,
+            },
+            newAbilities: [],
         },
     } as {[key: number]: LevelReqs},
 }

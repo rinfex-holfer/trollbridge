@@ -1,5 +1,5 @@
 import {eventBus, Evt} from "../../../event-bus";
-import {FoodType, TrollLocation} from "../../../types";
+import {CharKey, FoodType, TrollAbility, TrollLocation} from "../../../types";
 import {positioner} from "../positioner";
 import {CharAnimation} from "../../../entities/char/char-constants";
 import {clamp, getRndItem, getRndSign, rndBetween, Vec} from "../../../utils/utils-math";
@@ -116,16 +116,23 @@ export class Troll {
     get y() { return this.container.y }
 
     onNewLevel(animated = true) {
+        const levelConfig = trollConfig.TROLL_LEVELING[this.level]
         this.xp = 0
-        this.maxHp = trollConfig.TROLL_LEVELING[this.level].maxHp
-        this.armor = trollConfig.TROLL_LEVELING[this.level].armor
-        this.dmg = trollConfig.TROLL_LEVELING[this.level].dmg
+        this.maxHp = levelConfig.maxHp
+        this.armor = levelConfig.armor
+        this.dmg = levelConfig.dmg
 
         this.stats.update(animated)
+
+        if (animated && levelConfig.newAbilities.length) {
+            setTimeout(() => {
+                this.stats.showNewAbility(levelConfig.newAbilities[0])
+            }, 2000)
+        }
     }
 
     getNextLvlReqs() {
-        return trollConfig.TROLL_LEVELING[this.level+1].xp
+        return trollConfig.TROLL_LEVELING[this.level].xp
     }
 
     getIsAlive() {
@@ -134,7 +141,7 @@ export class Troll {
 
     increaseHunger(val: number = trollConfig.HUNGER_PER_TIME) {
         if (this.hunger === trollConfig.TROLL_MAX_HUNGER) {
-            this.statusNotifications.showDmg(-trollConfig.HP_MINUS_WHEN_HUNGRY)
+            this.statusNotifications.showHungerDmg(-trollConfig.HP_MINUS_WHEN_HUNGRY)
             this.changeTrollHp(-trollConfig.HP_MINUS_WHEN_HUNGRY, 'hunger')
         }
 
@@ -151,13 +158,10 @@ export class Troll {
         const hungerChange = foodConfig.FOOD[food][foodKey].hunger
         // @ts-ignore
         const selfControlChange = foodConfig.FOOD[food][foodKey].selfControl
-        // @ts-ignore
-        const xpChange = foodConfig.FOOD[food][foodKey].xp
 
         this.heal(hpChange)
         this.changeHunger(hungerChange)
         this.changeSelfControl(selfControlChange)
-        this.addXp(xpChange)
 
         // o_.audio.playSound(SOUND_KEY.CHEW)
         o_.audio.playSound(getRndItem([SOUND_KEY.EATING_0, SOUND_KEY.EATING_1, SOUND_KEY.EATING_2, SOUND_KEY.EATING_3]))
@@ -165,28 +169,21 @@ export class Troll {
     }
 
     changeHunger(val: number) {
-        // this.statChangeNotification('Голод', val, true)
-
         this.hunger = clamp(this.hunger + val, 0, this.maxHunger)
         this.stats.update()
     }
 
-    // statChangeNotification(statStr: string, val: number, inverted?: boolean) {
-    //     if (val === 0) return
-    //
-    //     const sign = val < 0 ? '' : '+'
-    //     const color = ((val < 0 && !inverted) || (val > 0 && inverted)) ? colorsCSS.RED : colorsCSS.GREEN
-    //
-    //     const text = sign + val + ' ' + statStr;
-    //
-    //     const x = this.container.x
-    //     const y = this.container.y - this.sprite.height
-    //     this.notificationsQueue.push([text, x, y, color])
-    //
-    //     if (this.notificationTimer === null) {
-    //         this.showNextNotification()
-    //     }
-    // }
+    getXpForSquad(chars: CharKey[]) {
+        let sum = 0
+        chars.forEach(c => sum += trollConfig.TROLL_LEVELING[this.level].xpRewards[c])
+        return sum
+    }
+
+    getCurrentAbilities(): TrollAbility[] {
+        let abilities: TrollAbility[] = []
+        for (let i = this.level; i > 0; i--) abilities = abilities.concat(trollConfig.TROLL_LEVELING[i].newAbilities)
+        return abilities
+    }
 
     notificationsQueue: [text: string, x: number, y: number, color: string][] = []
 
@@ -221,12 +218,6 @@ export class Troll {
     }
 
     changeTrollHp(val: number, cause = 'hunger') {
-        // if (val > 0) {
-        //     this.statusNotifications.showHeal(val)
-        // } else {
-        //     this.statusNotifications.showDmg(val)
-        // }
-
         const newVal = this.hp + val;
         this.hp = Math.max(Math.min(newVal, this.maxHp), 0);
 

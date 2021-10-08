@@ -1,5 +1,5 @@
 import {CharKey, EncounterDanger, EncounterTemplate, SquadPlace, TrollLocation} from "../../types";
-import {getRndItem, rndBetween} from "../../utils/utils-math";
+import {clamp, getRndItem, rndBetween} from "../../utils/utils-math";
 import {Char} from "../../entities/char/char";
 import {eventBus, Evt} from "../../event-bus";
 import {encounterTemplates} from "../../encounter-templates";
@@ -50,11 +50,10 @@ export class CharactersManager {
     }
 
     createRandomEncounter() {
-        // const rnd = rndBetween(Math.max(0, gameState.troll.level - 1), gameState.troll.level + 1);
-        const rnd = 0;
+        const rnd = rndBetween(1, o_.troll.level + 2 )
         const encounter = getRndItem(encounterTemplates[rnd]);
 
-        this.createTravellers(encounter.enemies, encounter.level)
+        this.createTravellers(encounter.enemies)
 
         // this.dangerIndicator.setDanger(this.getDangerKey(), encounter.text);
     }
@@ -108,9 +107,7 @@ export class CharactersManager {
         this.chars.splice(idx, 1)[0]
     }
 
-    createTravellers(keys: [SquadPlace, CharKey][], travellersLevel: number) {
-        this.encounterLevel = travellersLevel;
-
+    createTravellers(keys: [SquadPlace, CharKey][]) {
         const bridgePos = positioner.bridgePosition()
 
         const startY = bridgePos.height / 5 + bridgePos.y + bridgePos.height / 5

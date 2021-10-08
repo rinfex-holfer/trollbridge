@@ -1,19 +1,16 @@
 import {o_} from "../managers/locator";
-import {AfterBattleAction, BattleAction} from "./char-actions-menu";
+import {BattleAction} from "./char-actions-menu";
 import {resoursePaths} from "../resourse-paths";
 import {Char} from "../entities/char/char";
-import {colorsCSS} from "../configs/constants";
 import {positioner} from "../managers/game/positioner";
-import {O_Container} from "../managers/core/render/container";
-import {O_Sprite} from "../managers/core/render/sprite";
-import {O_Text} from "../managers/core/render/text";
-import {LayerKey} from "../managers/core/layers";
 import {VerticalMenu} from "./vertical-menu";
+import {TrollAbility} from "../types";
 
 type BattleActionSpec = {
     key: BattleAction,
     resource: keyof typeof resoursePaths.images,
     text: string,
+    abilityKey?: TrollAbility,
     execute: (char: Char) => void
     getIsActive: (char: Char) => boolean
 }
@@ -31,6 +28,7 @@ const actionSpecs: {[action in BattleAction]: BattleActionSpec} = {
         key: BattleAction.BATTLE_THROW_ROCK,
         text: 'Метнуть камень',
         resource: 'button_throw_rock',
+        abilityKey: TrollAbility.THROW_ROCK,
         execute: char => o_.battle.trollThrowRock(char),
         getIsActive: char => char.hp > 0 && o_.bridge.getHasAvailableRocks() && !(char.isUnconscious && char.getIsCovered())
     },
@@ -39,12 +37,14 @@ const actionSpecs: {[action in BattleAction]: BattleActionSpec} = {
         key: BattleAction.BATTLE_THROW_CHAR,
         text: 'Бросить об землю',
         resource: 'button_throw_char',
+        abilityKey: TrollAbility.GRAPPLE,
         execute: char => o_.battle.trollGoThrowChar(char),
         getIsActive: char => char.hp > 0 && !char.getIsCovered()
     },
 
     [BattleAction.BATTLE_DEVOUR]: {
         key: BattleAction.BATTLE_DEVOUR,
+        abilityKey: TrollAbility.MAN_EATER,
         text: 'Сожрать',
         resource: 'button_devour',
         execute: char => o_.battle.trollGoDevour(char),
@@ -53,18 +53,23 @@ const actionSpecs: {[action in BattleAction]: BattleActionSpec} = {
 }
 
 export class BattleActionsMenu {
-    verticalMenu: VerticalMenu<BattleAction>
+    verticalMenu!: VerticalMenu<BattleAction>
 
     actions = actionSpecs
 
     constructor() {
-        const bridgePos = positioner.bridgePosition()
+        // this.verticalMenu = this.createVerticalMenu()
+    }
 
+    createVerticalMenu() {
+        const bridgePos = positioner.bridgePosition()
         const y = bridgePos.y + bridgePos.height / 2
         const x = bridgePos.x + bridgePos.width / 4
 
-        const a = Object.values(actionSpecs)
-        this.verticalMenu = new VerticalMenu(a, {x, y}, (key) => this.onClick(key))
+        const trollActions = o_.troll.getCurrentAbilities()
+        const actions = Object.values(actionSpecs).filter(a => a.abilityKey === undefined || trollActions.includes(a.abilityKey))
+        this.verticalMenu = new VerticalMenu(actions, {x, y}, (key) => this.onClick(key))
+        return this.verticalMenu
     }
 
     onClick(action: BattleAction) {
@@ -86,11 +91,13 @@ export class BattleActionsMenu {
     }
 
     show() {
+        this.createVerticalMenu()
         this.verticalMenu.show()
     }
 
     hide() {
         this.verticalMenu.hide()
+        this.verticalMenu.container.destroy()
 
         o_.characters.getSquadChars().forEach(c => c.sprite.removeClickListener())
     }

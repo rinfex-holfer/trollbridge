@@ -50,21 +50,23 @@ export class XpMeter {
     transitionsQueue: Transition[] = []
 
     public updateVal(xp: number, nextLevelXp: number, level: number) {
+        if (nextLevelXp === -1 || this.maxLevelReached) {
+            return
+        }
         this.xpBar.setMaxValue(nextLevelXp)
         this.xpBar.setValue(xp, false)
-
-        const text = 'Следующий уровень: ' + +(level + 1)
-        this.xpBar.setLabel(text)
+        this.xpBar.setLabel('Уровень ' + +(level))
     }
 
     public async addTransition(transition: Transition) {
+        if (this.maxLevelReached) return
+
         this.transitionsQueue.push(transition)
 
         if (this.state === MeterState.HIDDEN) return this.setState(MeterState.FADE_IN)
     }
 
-
-    async setState(state: MeterState): Promise<any> {
+    private async setState(state: MeterState): Promise<any> {
         this.state = state
 
         switch (state) {
@@ -79,12 +81,12 @@ export class XpMeter {
         }
     }
 
-    async fadeIn() {
+    private async fadeIn() {
         await o_.render.fadeIn(this.xpContainer)
         return this.setState(MeterState.CHANGE)
     }
 
-    async fadeOut() {
+    private async fadeOut() {
         await o_.render.fadeOut(this.xpContainer)
 
         if (this.transitionsQueue.length) return this.setState(MeterState.FADE_IN)
@@ -92,15 +94,14 @@ export class XpMeter {
         return this.setState(MeterState.HIDDEN)
     }
 
-    async change() {
+    private async change() {
         const nextTransition = this.transitionsQueue.shift()
 
-        if (!nextTransition) return this.setState(MeterState.FADE_OUT)
-
+        if (!nextTransition || this.maxLevelReached) return this.setState(MeterState.FADE_OUT)
 
         const [xp, nextLevelXp, level] = nextTransition;
 
-        this.xpBar.setLabel('Следующий уровень: ' + +(level + 1))
+        this.xpBar.setLabel('Уровень ' + +(level))
         this.xpBar.setMaxValue(nextLevelXp)
         this.xpBar.setValue(xp, true)
 
@@ -112,7 +113,7 @@ export class XpMeter {
 
             this.xpBar.setValue(0, false)
 
-            this.xpBar.setLabel(`Уровень ${level + 1}!`)
+            this.xpBar.setLabel(`Достигнут уровень ${level + 1}!`)
             o_.render.burstYellow(this.xpContainer.x - WIDTH / 2, this.xpContainer.y)
             o_.render.burstYellow(this.xpContainer.x + WIDTH / 2, this.xpContainer.y)
             await pause(500)
@@ -122,10 +123,16 @@ export class XpMeter {
             o_.render.burstYellow(this.xpContainer.x - WIDTH / 2, this.xpContainer.y)
             o_.render.burstYellow(this.xpContainer.x + WIDTH / 2, this.xpContainer.y)
             await pause(500)
-            this.xpBar.setLabel('Следующий уровень: ' + +(level + 2))
+            if (nextLevelXp === -1) {
+                this.maxLevelReached = true
+                this.xpBar.setLabel('Уровень ' + +(level + 1) + ' (max!)')
+            }
+
             await pause(500)
         }
 
         return this.setState(MeterState.CHANGE)
     }
+
+    maxLevelReached = false
 }

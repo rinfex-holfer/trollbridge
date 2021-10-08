@@ -79,6 +79,11 @@ export class StatusNotifications {
         this.show('Rage stops', 'status_change_self_control', colorsCSS.WHITE)
     }
 
+    public showHungerDmg(val: number) {
+        this.flyingNumbers('Голод!', colorsCSS.RED)
+        this.showDmg(val)
+    }
+
     public showDmg(val: number, direction?: 'left' | 'right') {
         this.flyingNumbers(''+val, colorsCSS.RED, direction)
     }

@@ -117,9 +117,8 @@ export class Char {
         this.isRanged = !!charTemplate.isRanged
         this.isMounted = !!charTemplate.isMounted
 
-        const {gold, food} = charTemplate.createResources()
-        this.gold = gold
-        this.food = food
+        this.gold = rndBetween(charTemplate.resources.gold[0], charTemplate.resources.gold[1])
+        this.food = rndBetween(charTemplate.resources.food[0], charTemplate.resources.food[1])
 
         this.container = o_.render.createContainer(x, y)
         this.container.addPhysics()

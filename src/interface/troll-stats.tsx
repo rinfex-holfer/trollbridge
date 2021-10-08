@@ -2,8 +2,13 @@ import {O_Container} from "../managers/core/render/container";
 import {o_} from "../managers/locator";
 import {Troll} from "../managers/game/troll/troll";
 import {ProgressBar} from "./basic/progress-bar";
-import {colorsNum} from "../configs/constants";
+import {colorsCSS, colorsNum} from "../configs/constants";
 import {XpMeter} from "./xp-meter";
+import {TrollAbility} from "../types";
+import {positioner} from "../managers/game/positioner";
+import {LayerKey} from "../managers/core/layers";
+import {getGameSize} from "../utils/utils-misc";
+import {ImageKey} from "../utils/utils-types";
 
 const X = 50
 const Y = 30
@@ -85,5 +90,57 @@ export class TrollStats {
         }
 
         return this.xpMeter.addTransition([xp, nextLevelXp, level])
+    }
+
+    public showNewAbility(ability: TrollAbility) {
+        switch (ability) {
+            case TrollAbility.THROW_ROCK:
+                break;
+            case TrollAbility.GRAPPLE:
+                break;
+            case TrollAbility.MAN_EATER:
+                break;
+        }
+
+        const ICON_SIZE = 50
+        const gameSize = getGameSize()
+        const x = gameSize.width / 2
+        const y = gameSize.height / 2
+
+        let str = ''
+        let image: ImageKey = 'button_throw_rock'
+        switch (ability) {
+            case TrollAbility.THROW_ROCK:
+                str = 'Метнуть камень'
+                image = 'button_throw_rock'
+                break;
+            case TrollAbility.GRAPPLE:
+                str = 'Бросить об землю'
+                image = 'button_throw_char'
+                break;
+            case TrollAbility.MAN_EATER:
+                str = 'Сожрать'
+                image = 'button_devour'
+                break;
+        }
+
+        let sprite = o_.render.createSprite(image, x, y, {width: ICON_SIZE, height: ICON_SIZE})
+        let text = o_.render.createText('New ability: ' + str, x, y + ICON_SIZE, {
+            align: 'center',
+            color: colorsCSS.WHITE,
+            fontStyle: 'bold',
+            fontSize: '22px',
+            stroke: colorsCSS.BLACK,
+            strokeThickness: 3
+        })
+        text.setOrigin(0.5, 0)
+        o_.layers.add(sprite, LayerKey.FIELD_BUTTONS)
+        o_.layers.add(text, LayerKey.FIELD_BUTTONS)
+        setTimeout(() => {
+            o_.render.fadeOut([sprite, text]).then(() => {
+                sprite.destroy()
+                text.destroy()
+            })
+        }, 3000)
     }
 }

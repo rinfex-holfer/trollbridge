@@ -57,7 +57,6 @@ export const enum EncounterDanger {
 export type SquadPlace = 0 | 1 | 2 | 3 | 4 | 5
 
 export type EncounterTemplate = {
-    level: number,
     enemies: [SquadPlace, CharKey][],
     speakerIdx?: number,
     text: string
@@ -96,29 +95,19 @@ export type LevelReqs = {
     armor: number,
     dmg: number,
     xp: number,
+    xpRewards: {
+        [CharKey.FARMER]: number,
+        [CharKey.MILITIA]: number,
+        [CharKey.ARCHER]: number,
+        [CharKey.SHIELDMAN]: number,
+        [CharKey.KNIGHT]: number,
+    },
+    newAbilities: TrollAbility[]
 }
 
-type Entity1Props = {
-    entity1prop1: boolean
+export enum TrollAbility {
+    THROW_ROCK,
+    GRAPPLE,
+    MAN_EATER
 }
 
-interface InterfaceMap {
-    entity1: Entity1Props
-}
-
-interface AbstractInterface<T extends keyof InterfaceMap> {
-    type: T,
-    props: InterfaceMap[T]
-}
-
-class Entity1Class implements AbstractInterface<'entity1'> {
-    type: 'entity1' = "entity1"
-
-    props: Entity1Props = {
-        entity1prop1: false
-    }
-
-    myFn() {
-        // ..
-    }
-}
