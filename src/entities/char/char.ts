@@ -40,6 +40,7 @@ import {goldConfig} from "../../configs/gold-config";
 import {foodConfig} from "../../configs/food-config";
 import {Squad} from "../../managers/game/squad";
 import {StatusNotifications} from "../../interface/status-notifications";
+import {positioner} from "../../managers/game/positioner";
 
 export class Char {
     key: CharKey
@@ -74,6 +75,7 @@ export class Char {
     isDefender: boolean
     isRanged: boolean
     isMounted: boolean
+    isDeMounted: boolean = false
 
     state: CharState
     timeWithoutFood = 0
@@ -474,7 +476,7 @@ export class Char {
     }
 
     goAcrossBridge() {
-        return this.setState(CharStateKey.GO_ACROSS);
+        if (this.state.key !== CharStateKey.GO_ACROSS) return this.setState(CharStateKey.GO_ACROSS);
     }
 
     release() {
@@ -555,15 +557,7 @@ export class Char {
 
         if (this.hp > 0) {
             if (this.isMounted && this.checkLooseHorse()) {
-                this.isMounted = false
-                await this.runAnimationOnce(CharAnimation.FALL)
-                this.sprite.destroy()
-                this.createSprite(0, 0, 'shieldman')
-                this.setAnimation(CharAnimation.IDLE)
-
-                this.directToTarget(o_.troll)
-
-                new Horse(this.container.x, this.container.y)
+                await this.looseHorse()
             } else {
                 if (options?.stun) {
                     this.setUnconscious(options.stun, false)
@@ -582,6 +576,31 @@ export class Char {
                 this.setUnconscious(9999)
             }
         }
+    }
+
+    async looseHorse() {
+        this.isMounted = false
+        this.isDeMounted = true
+        await this.runAnimationOnce(CharAnimation.FALL)
+        this.sprite.destroy()
+        this.createSprite(0, 0, 'shieldman')
+        this.setAnimation(CharAnimation.IDLE)
+
+        this.directToTarget(o_.troll)
+
+        const horse = new Horse(this.container.x, this.container.y)
+        horse.runAway()
+    }
+
+    async acquireHorse() {
+        this.setAnimation(CharAnimation.IDLE);
+        const horse = new Horse(positioner.bridgePosition().width + 200, this.container.y)
+        await horse.runToChar(this)
+        this.isDeMounted = false
+        this.isMounted = true
+        this.sprite.destroy()
+        this.createSprite(0, 0, 'knight')
+        this.setAnimation(CharAnimation.IDLE);
     }
 
     checkLooseHorse() {

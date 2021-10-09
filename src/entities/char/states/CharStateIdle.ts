@@ -6,5 +6,6 @@ export class CharStateIdle extends CharState {
 
     onStart() {
         this.char.setAnimation(CharAnimation.IDLE);
+        this.char.stop()
     }
 }

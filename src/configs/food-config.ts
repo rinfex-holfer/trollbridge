@@ -38,7 +38,7 @@ export const foodConfig = {
         },
         [FoodType.DISH]: {
             ANIMAL: {
-                hp: 6,
+                hp: 10,
                 xp: 24,
                 hunger: -10,
                 selfControl: 0

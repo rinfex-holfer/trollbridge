@@ -2,6 +2,8 @@ import {o_} from "../managers/locator";
 import {CharAnimation} from "./char/char-constants";
 import {O_AnimatedSprite} from "../managers/core/render/animated-sprite";
 import {gameConstants} from "../configs/constants";
+import {Vec} from "../utils/utils-math";
+import {Char} from "./char/char";
 
 
 export class Horse {
@@ -20,17 +22,25 @@ export class Horse {
         sprite.addPhysics()
 
         this.sprite = sprite
-
-        this.runAway()
     }
 
-    runAway() {
+    public runAway() {
         this.sprite.play(CharAnimation.WALK);
 
-        o_.render.moveTowards(this.sprite, o_.bridge.pos.x + o_.bridge.pos.width, this.sprite.y, gameConstants.horse.speed)
+        this.runTo({x :o_.bridge.pos.x + o_.bridge.pos.width, y: this.sprite.y})
+            .then(() => this.sprite.destroy())
+    }
 
-        setTimeout(() => {
-            this.sprite.destroy()
-        }, 5000)
+    public runToChar(char: Char) {
+        return this.runTo({x: char.container.x, y: char.container.y})
+            .then(() => {
+                this.sprite.destroy()
+            })
+    }
+
+    private runTo(pos: Vec) {
+        this.sprite.play(CharAnimation.WALK);
+        o_.render.directToTarget(this.sprite, pos)
+        return o_.render.moveTo(this.sprite, pos, gameConstants.horse.speed).promise
     }
 }

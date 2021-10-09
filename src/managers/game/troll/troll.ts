@@ -35,7 +35,7 @@ export class Troll {
 
     xp = 0
 
-    level = 1
+    level = 5
 
     hp = 1
     maxHp = 1
@@ -419,11 +419,9 @@ export class Troll {
     }
 
     rageStartCheck() {
-        let percent = Math.floor((this.selfControl / this.maxSelfControl) * 100)
-        percent = Math.min(percent, 99)
-        // let percent = 10
-        // percent = 0
-        if (rndBetween(0, 100) > percent) this.setEnraged(true)
+        let chanceOfRage = (this.maxSelfControl - this.selfControl) / 2
+        chanceOfRage = Math.max(chanceOfRage, 0.01)
+        if (rnd() <= chanceOfRage) this.setEnraged(true)
     }
 
     rollDmg() {

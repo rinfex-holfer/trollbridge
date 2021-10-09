@@ -78,6 +78,31 @@ export class RenderManager {
         this.scene.physics.moveTo(obj.obj, x, y, speed, maxTime)
     }
 
+    moveTo(obj: O_GameObject, pos: Vec, speed: number) {
+        this.scene.physics.moveTo(obj.obj, pos.x, pos.y, speed)
+
+        const p = createPromiseAndHandlers()
+        const unsubId = o_.time.sub(dt => {
+            const step = (speed / 1000) * dt
+            console.log(getDistanceBetween(obj, pos))
+            if (getDistanceBetween(obj, pos) > step) return
+
+            obj.x = pos.x
+            obj.y = pos.y
+            obj.stop()
+
+            o_.time.unsub(unsubId)
+
+            p.done()
+        })
+
+        p.promise.catch(() => {
+            o_.time.unsub(unsubId)
+        })
+
+        return {promise: p.promise, stop: p.fail}
+    }
+
     directToTarget(obj: O_GameObject, target: Vec, offset?: number) {
         obj.obj.scaleX = Math.sign(target.x - (obj.obj.x + (offset || 0))) || 1
     }

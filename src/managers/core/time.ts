@@ -17,8 +17,11 @@ export class TimeManager {
         o_.register.time(this)
     }
 
-    sub(fn:UpdateListener) {
-        this.listeners.push([nextId++, fn]);
+    sub(fn:UpdateListener): number {
+        const lastId = nextId
+        nextId++
+        this.listeners.push([lastId, fn]);
+        return lastId
     }
 
     unsub(id: number) {

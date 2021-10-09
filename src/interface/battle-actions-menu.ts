@@ -39,7 +39,7 @@ const actionSpecs: {[action in BattleAction]: BattleActionSpec} = {
         resource: 'button_throw_char',
         abilityKey: TrollAbility.GRAPPLE,
         execute: char => o_.battle.trollGoThrowChar(char),
-        getIsActive: char => char.hp > 0 && !char.getIsCovered()
+        getIsActive: char => char.hp > 0 && !char.getIsCovered() && !char.isMounted
     },
 
     [BattleAction.BATTLE_DEVOUR]: {
