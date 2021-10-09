@@ -9,6 +9,7 @@ export const enum Evt {
 
     BATTLE_STARTED = 'BATTLE_STARTED',
     BATTLE_WON = 'BATTLE_WON',
+    BATTLE_END = 'BATTLE_END',
 
     BATTLE_TRAVELLERS_TURN_END = 'BATTLE_TRAVELLERS_TURN_END',
 
@@ -38,6 +39,7 @@ export type EvtData = {
     [Evt.BATTLE_STARTED]: undefined,
     [Evt.BATTLE_TRAVELLERS_TURN_END]: undefined,
     [Evt.BATTLE_WON]: undefined,
+    [Evt.BATTLE_END]: undefined,
 
     [Evt.BYPASSED]: undefined,
     [Evt.TIME_PASSED]: undefined,

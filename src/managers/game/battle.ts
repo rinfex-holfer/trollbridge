@@ -111,6 +111,7 @@ export class BattleManager {
     }
 
     onBattleEnd() {
+        eventBus.emit(Evt.BATTLE_END)
         this.actionsMenu.hide()
         o_.troll.setEnraged(false)
 

@@ -21,7 +21,7 @@ import {createPromiseAndHandlers, pause} from "../../utils/utils-async";
 import {CharStateBattleAttack} from "./states/CharStateBattleAttack";
 import {flyingStatusChange} from "../../interface/basic/flying-status-change";
 import {CharStateBattleSurrender} from "./states/CharStateBattleSurrender";
-import {CharHpIndicator} from "../../interface/char-hp-indicator";
+import {HpIndicator} from "../../interface/hp-indicator";
 import {CharMpIndicator} from "../../interface/char-mp-indicator";
 import {O_AnimatedSprite} from "../../managers/core/render/animated-sprite";
 import {O_Sprite} from "../../managers/core/render/sprite";
@@ -82,7 +82,7 @@ export class Char {
 
     // actionsMenu: CharActionsMenu
     speakText: CharSpeakText
-    hpIndicator: CharHpIndicator
+    hpIndicator: HpIndicator
     mpIndicator: CharMpIndicator
 
     sprite: O_AnimatedSprite
@@ -133,7 +133,7 @@ export class Char {
 
         // this.actionsMenu = new CharActionsMenu(this);
         this.speakText = new CharSpeakText(this.container);
-        this.hpIndicator = new CharHpIndicator(this);
+        this.hpIndicator = new HpIndicator(this);
         this.mpIndicator = new CharMpIndicator(this);
 
         this.statusNotifications = new StatusNotifications(this.container, 0, -130)

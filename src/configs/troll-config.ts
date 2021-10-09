@@ -16,7 +16,7 @@ export const trollConfig = {
             maxHp: 10,
             block: 0,
             dmg: [3, 6],
-            xp: 20,
+            xp: 10,
             xpRewards: {
                 [CharKey.FARMER]: 1,
                 [CharKey.MILITIA]: 5,
@@ -69,7 +69,7 @@ export const trollConfig = {
             newAbilities: [],
         },
         5: {
-            maxHp: 50,
+            maxHp: 100,
             block: 0,
             dmg: [20, 40],
             xp: -1,

@@ -24,6 +24,7 @@ import {foodConfig} from "../../../configs/food-config";
 import {StatusNotifications} from "../../../interface/status-notifications";
 import {O_Container} from "../../core/render/container";
 import {TrollStateUnconscious} from "./troll-state-unconscious";
+import {HpIndicator} from "../../../interface/hp-indicator";
 
 let troll: Troll
 
@@ -35,7 +36,7 @@ export class Troll {
 
     xp = 0
 
-    level = 5
+    level = 1
 
     hp = 1
     maxHp = 1
@@ -51,6 +52,7 @@ export class Troll {
     sprite: O_AnimatedSprite
     container: O_Container
     statusNotifications: StatusNotifications
+    hpIndicator: HpIndicator
 
     zzz: Zzz
 
@@ -110,6 +112,10 @@ export class Troll {
         this.hp = trollConfig.TROLL_LEVELING[this.level].maxHp
         this.onNewLevel(false);
 
+        this.hpIndicator = new HpIndicator(this, -30, -100, 50, 10)
+        eventBus.on(Evt.BATTLE_STARTED, () => this.hpIndicator.show());
+        eventBus.on(Evt.BATTLE_END, () => this.hpIndicator.hide());
+
         onTrollCameToLair()
     }
 
@@ -146,8 +152,10 @@ export class Troll {
 
     increaseHunger(val: number = trollConfig.HUNGER_PER_TIME) {
         if (this.hunger === trollConfig.TROLL_MAX_HUNGER) {
-            this.statusNotifications.showHungerDmg(-trollConfig.HP_MINUS_WHEN_HUNGRY)
-            this.changeTrollHp(-trollConfig.HP_MINUS_WHEN_HUNGRY, 'hunger')
+            const dmg = -Math.ceil(this.maxHp * trollConfig.HP_MINUS_WHEN_HUNGRY)
+            this.statusNotifications.showHungerDmg(dmg)
+            this.changeTrollHp(dmg, 'hunger')
+            this.hpIndicator.updateShowAndHide()
         }
 
         this.changeHunger(val)
@@ -220,13 +228,18 @@ export class Troll {
     }
 
     heal(val: number) {
+        if (this.hp === this.maxHp) return
+        val = Math.ceil(val)
         this.statusNotifications.showHeal(val)
         this.changeTrollHp(val)
+        this.hpIndicator.updateShowAndHide()
     }
 
     changeTrollHp(val: number, cause = 'hunger') {
         const newVal = this.hp + val;
         this.hp = Math.max(Math.min(newVal, this.maxHp), 0);
+
+        this.hpIndicator.update()
 
         if (this.hp === 0) {
             o_.game.gameOver(cause)
@@ -381,6 +394,7 @@ export class Troll {
     }
 
     getHit(dmg: number) {
+        dmg = Math.ceil(dmg)
         const isBlocked = rnd() < this.block
         if (!isBlocked) {
             o_.render.burstBlood(
@@ -419,8 +433,10 @@ export class Troll {
     }
 
     rageStartCheck() {
-        let chanceOfRage = (this.maxSelfControl - this.selfControl) / 2
+        let chanceOfRage = (this.maxSelfControl - this.selfControl) / (100 * 2)
         chanceOfRage = Math.max(chanceOfRage, 0.01)
+        const roll = rnd()
+        console.log('chance of rage', chanceOfRage, 'roll', roll, rnd() <= chanceOfRage)
         if (rnd() <= chanceOfRage) this.setEnraged(true)
     }
 
