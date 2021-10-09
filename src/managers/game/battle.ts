@@ -3,12 +3,12 @@ import {o_} from "../locator";
 import {onEncounterEnd} from "../../helpers";
 import {pause} from "../../utils/utils-async";
 import {Char} from "../../entities/char/char";
-import {actionButtonsMap, CharAction} from "../../interface/char-actions-menu";
 import {getRndItem} from "../../utils/utils-math";
 import {BattleActionsMenu} from "../../interface/battle-actions-menu";
 import {AfterBattleActionsMenu} from "../../interface/after-battle-actions-menu";
-import {trollConfig} from "../../configs/troll-config";
-import {CharKey} from "../../types";
+import {EntityType} from "../core/entities";
+import {GoldLocation} from "../../entities/gold";
+import {MeatLocation} from "../../entities/meat";
 
 export class BattleManager {
     unsub: any[] = []
@@ -90,9 +90,12 @@ export class BattleManager {
     }
 
     fail() {
-        this.onBattleEnd();
-        o_.characters.letAllTravellersPass()
-        onEncounterEnd()
+        this.onBattleEnd()
+
+        o_.characters.travellersTakeResourcesOnBridge().then(() => {
+            o_.characters.letAllTravellersPass()
+            onEncounterEnd()
+        })
     }
 
     win() {
@@ -141,7 +144,11 @@ export class BattleManager {
         if (devourable) return this.trollGoDevour(devourable)
 
         const possibleActions = [] as (() => void)[]
-        Object.values(this.actionsMenu.actions).map(btn => {
+        const trollAbilities = o_.troll.getCurrentAbilities()
+
+        Object.values(this.actionsMenu.actions)
+            .filter(a => a.abilityKey === undefined || trollAbilities.includes(a.abilityKey))
+            .map(btn => {
 
             travellers.forEach(t => {
                 if (btn.getIsActive(t)) {
@@ -246,7 +253,7 @@ export class BattleManager {
         if (this.getIsWin()) return this.win()
 
         const allGoBack = [] as Promise<any>[]
-        if (defender.getIsFighter()) allGoBack.push(defender.goToBattlePosition())
+        if (defender.getIsAbleToFight()) allGoBack.push(defender.goToBattlePosition())
         allGoBack.push(o_.troll.goToBattlePosition())
         await Promise.all(allGoBack)
     }
@@ -257,7 +264,7 @@ export class BattleManager {
         if (this.getIsWin()) return this.win()
 
         const allGoBack = [] as Promise<any>[]
-        if (defender.getIsFighter()) allGoBack.push(defender.goToBattlePosition())
+        if (defender.getIsAbleToFight()) allGoBack.push(defender.goToBattlePosition())
         allGoBack.push(o_.troll.goToBattlePosition())
         await Promise.all(allGoBack)
     }

@@ -18,7 +18,7 @@ export const trollConfig = {
             dmg: [3, 6],
             xp: 20,
             xpRewards: {
-                [CharKey.FARMER]: 100,
+                [CharKey.FARMER]: 1,
                 [CharKey.MILITIA]: 5,
                 [CharKey.ARCHER]: 5,
                 [CharKey.SHIELDMAN]: 10,
@@ -32,7 +32,7 @@ export const trollConfig = {
             dmg: [5, 10],
             xp: 50,
             xpRewards: {
-                [CharKey.FARMER]: 100,
+                [CharKey.FARMER]: 1,
                 [CharKey.MILITIA]: 2,
                 [CharKey.ARCHER]: 5,
                 [CharKey.SHIELDMAN]: 10,

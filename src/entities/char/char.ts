@@ -160,17 +160,17 @@ export class Char {
 
     getIsNewTraveller() { return !this.isMetTroll }
     getIsTraveller() { return this.isAlive && !this.isPrisoner }
-    getIsFighter() { return this.getIsTraveller() && !this.isSurrender && !this.isUnconscious }
+    getIsAbleToFight() { return this.getIsTraveller() && !this.isSurrender && !this.isUnconscious }
     getIsPrisoner() { return this.isAlive && this.isPrisoner }
 
     onCharDefeated(key: CharKey) {
-        if (this.getIsFighter()) {
+        if (this.getIsAbleToFight()) {
             this.changeMp(-charConfig[key].moralePrice)
         }
     }
 
     onCharDevoured(key: CharKey) {
-        if (this.getIsFighter()) {
+        if (this.getIsAbleToFight()) {
             this.changeMp(-charConfig[key].moralePrice)
         }
     }
@@ -328,20 +328,27 @@ export class Char {
     }
 
     pay() {
-        const amount = Math.ceil(this.gold * 0.33);
-        this.dropGold(amount)
+        const amountGold = Math.ceil(this.gold * 0.33);
+        const amountFood = Math.ceil(this.food * 0.33);
+        this.dropGold(amountGold, true)
+        pause(300).then(() => this.dropFood(amountFood, true))
     }
 
     eat() {
         this.timeWithoutFood = 0;
     }
 
-    giveAll() {
+    public dropAll() {
         this.dropGold(this.gold)
         this.dropFood(this.food)
     }
 
-    dropGold(amount: number) {
+    public giveAll() {
+        this.dropGold(this.gold, true)
+        this.dropFood(this.food, true)
+    }
+
+    dropGold(amount: number, flyToStorage?: boolean) {
         this.changeResources(ResourceKey.GOLD, -amount);
 
         while (amount) {
@@ -351,11 +358,15 @@ export class Char {
             coord.x += rndBetween(-40, 40)
             coord.y += rndBetween(-40, 40)
             const gold = new Gold(this.getCoords(), goldInSprite)
-            gold.throwTo(coord)
+            if (flyToStorage) {
+                gold.flyToStorage()
+            } else {
+                gold.throwTo(coord)
+            }
         }
     }
 
-    dropFood(amount: number) {
+    dropFood(amount: number, flyToStorage?: boolean) {
         this.changeResources(ResourceKey.FOOD, -amount);
 
         while (amount) {
@@ -365,7 +376,11 @@ export class Char {
             coord.y += (-this.sprite.height / 2) + rndBetween(-80, 80)
 
             const meat = new Meat(this.getCoords(), MeatLocation.GROUND)
-            meat.throwTo(coord)
+            if (flyToStorage) {
+                meat.flyToStorage()
+            } else {
+                meat.throwTo(coord)
+            }
         }
     }
 
@@ -378,6 +393,22 @@ export class Char {
             const meat = new Meat(this.getCoords(), MeatLocation.GROUND, true, i < 2 ? meatSprite.HUMAN_LEG : meatSprite.HUMAN_HAND)
             meat.throwTo(coord)
         }
+    }
+
+    takeGold(gold: Gold) {
+        return gold.flyTo({x: this.container.x, y: this.container.y - 70}).then(() => {
+            o_.audio.playSound(SOUND_KEY.PICK)
+            this.gold += gold.props.amount
+            gold.destroy()
+        })
+    }
+
+    takeMeat(meat: Meat) {
+        return meat.flyTo({x: this.container.x, y: this.container.y - 70}).then(() => {
+            o_.audio.playSound(SOUND_KEY.BONK)
+            this.food += 1
+            meat.destroy()
+        })
     }
 
     setIndicatorsVisible(val: boolean) {
@@ -410,7 +441,7 @@ export class Char {
         o_.render.burstBlood(this.container.x, this.container.y);
         o_.render.burstBlood(this.container.x, this.container.y - 10);
         o_.render.burstBlood(this.container.x, this.container.y - 20);
-        this.giveAll()
+        this.dropAll()
         this.dropSelfMeat(foodConfig.FOOD_FROM_DEVOURED_CHARACTER)
         this.toBones()
     }
@@ -476,7 +507,10 @@ export class Char {
     }
 
     rollBlock() {
-        return !!this.block && rnd() < this.block
+        if (!this.block) return false
+        const roll = rnd()
+        console.log('roll', roll)
+        return roll < this.block
     }
 
     changeMp(val: number) {
@@ -498,10 +532,10 @@ export class Char {
     }
 
     tryToBlock(dmg: number, options?: DmgOptions) {
-        if (!options?.grabbed && !this.isUnconscious && this.rollBlock()) {
+        if (!options?.grabbed && this.getIsAbleToFight() && this.rollBlock()) {
             this.runAnimationOnce(CharAnimation.BLOCK).then(() => this.setAnimation(CharAnimation.IDLE))
             o_.audio.playSound(SOUND_KEY.BLOCK);
-            this.statusFly('blocked')
+            this.statusNotifications.showBlock()
             return true
         }
 
@@ -509,20 +543,15 @@ export class Char {
     }
 
     async getHit(dmg: number, options?: DmgOptions) {
+        const blocked = this.tryToBlock(dmg, options)
+        if (blocked) return
+
         o_.audio.playSound(SOUND_KEY.HIT);
         o_.render.burstBlood(this.container.x, this.container.y - 70);
 
         this.changeHp(-dmg);
 
         this.statusNotifications.showDmg(dmg,'right')
-        // this.statusNotifications.showDmg(dmg)
-
-        // flyingStatusChange(
-        //     '-'+dmg,
-        //     this.container.x,
-        //     this.container.y - 100,
-        //     colorsCSS.RED
-        // );
 
         if (this.hp > 0) {
             if (this.isMounted && this.checkLooseHorse()) {
@@ -583,7 +612,7 @@ export class Char {
     }
 
     transformToFood() {
-        this.giveAll()
+        this.dropAll()
         this.dropSelfMeat(foodConfig.FOOD_FROM_CHARACTER)
         o_.characters.removeChar(this.id)
     }
@@ -634,7 +663,7 @@ export class Char {
     }
 
     canProtect(char: Char) {
-        return this.getIsFighter()
+        return this.getIsAbleToFight()
             && this.isDefender
             && char.id !== this.id
             && char.key !== this.key
@@ -673,10 +702,6 @@ export class Char {
         flyingStatusChange(text, this.container.x, this.container.y - 100)
     }
 
-    statusFly(text: string, color: string = colorsCSS.WHITE) {
-        flyingStatusChange(text, this.container.x, this.container.y - 100, color);
-    }
-
     getBattleCoords(): Vec {
         if (this.squad === null || this.squadPlace === null) throw Error('no squad assigned, cant find battle coords')
 
@@ -695,11 +720,11 @@ export class Char {
             case 2:
                 return false
             case 3:
-                return this.squad.placeToChar[0]?.getIsFighter()
+                return this.squad.placeToChar[0]?.getIsAbleToFight()
             case 4:
-                return this.squad.placeToChar[1]?.getIsFighter()
+                return this.squad.placeToChar[1]?.getIsAbleToFight()
             case 5:
-                return this.squad.placeToChar[2]?.getIsFighter()
+                return this.squad.placeToChar[2]?.getIsAbleToFight()
         }
     }
 }

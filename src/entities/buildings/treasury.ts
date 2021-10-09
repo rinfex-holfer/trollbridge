@@ -101,7 +101,7 @@ export class Treasury {
 
     addGold(amount: number) {
         o_.audio.playSound(SOUND_KEY.PICK_BIG)
-        flyingStatusChange('+ ' + amount + ' gold', this.sprite.x, this.sprite.y - 20, colorsCSS.YELLOW)
+        this.flyingNumbers('+ ' + amount + ' gold')
 
         const goldEntity = this.gold[this.gold.length - 1];
         if (goldEntity && goldEntity.props.amount < goldConfig.MAX_GOLD_IN_SPRITE) {
@@ -117,6 +117,32 @@ export class Treasury {
         }
 
         this.onGoldChanged()
+    }
+
+    numbersQueue: string[] = []
+    private flyingNumbers(val: string) {
+
+
+        this.numbersQueue.push(val)
+
+        if (this.timer) return
+        else this.nextNumbers()
+    }
+
+    timer: any
+    nextNumbers() {
+        const p = this.numbersQueue.shift()
+        if (!p) {
+            this.timer = null
+            return
+        }
+        let x = this.sprite.x
+        let y = this.sprite.y - 20
+        flyingStatusChange(p, x, y, colorsCSS.YELLOW)
+
+        this.timer = setTimeout(() => {
+            this.nextNumbers()
+        }, 300)
     }
 
     removeGold(amount: number) {

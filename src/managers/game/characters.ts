@@ -1,12 +1,16 @@
 import {CharKey, EncounterDanger, EncounterTemplate, SquadPlace, TrollLocation} from "../../types";
-import {clamp, getRndItem, rndBetween} from "../../utils/utils-math";
+import {clamp, getRndItem, rnd, rndBetween} from "../../utils/utils-math";
 import {Char} from "../../entities/char/char";
 import {eventBus, Evt} from "../../event-bus";
-import {encounterTemplates} from "../../encounter-templates";
+import {encounterTemplates, maxEncounterLevel} from "../../encounter-templates";
 import {positioner} from "./positioner";
 import {o_} from "../locator";
 import {DmgOptions} from "../../utils/utils-types";
 import {Squad} from "./squad";
+import {EntityType} from "../core/entities";
+import {GoldLocation} from "../../entities/gold";
+import {pause} from "../../utils/utils-async";
+import {MeatLocation} from "../../entities/meat";
 
 export class CharactersManager {
     chars: Char[] = []
@@ -50,9 +54,37 @@ export class CharactersManager {
     }
 
     createRandomEncounter() {
-        const rnd = rndBetween(1, o_.troll.level + 2 )
-        const encounter = getRndItem(encounterTemplates[rnd]);
+        // 0 - 40 troll level
+        // 41 - 80 - lower
+        // 81 - 95 - 1-2 higher
+        // 96-100 - 3 higher
 
+        let rndLevel: number
+
+        console.log('Create random encounter');
+
+        const roll = rnd()
+        console.log('encounter roll', roll, ', encounter level:')
+        if (roll <= 0.4) {
+            rndLevel = o_.troll.level
+            console.log('exact troll level', rndLevel)
+        } else if (roll <= 0.8) {
+            rndLevel = rndBetween(0, o_.troll.level - 1)
+            console.log('lower', rndLevel)
+        } else if (roll <= 0.95) {
+            rndLevel = rndBetween(o_.troll.level + 1, o_.troll.level + 2)
+            console.log('higher', rndLevel)
+        } else {
+            rndLevel = o_.troll.level + 3
+            console.log('highest possible', rndLevel)
+        }
+
+        rndLevel = clamp(rndLevel, 0, maxEncounterLevel)
+        console.log('after clamp', rndLevel)
+
+        const encounter = getRndItem(encounterTemplates[rndLevel]);
+
+        this.encounterLevel = rndLevel
         this.createTravellers(encounter.enemies)
 
         // this.dangerIndicator.setDanger(this.getDangerKey(), encounter.text);
@@ -153,7 +185,7 @@ export class CharactersManager {
     getNewTravellers() { return this.chars.filter(c => c.getIsNewTraveller())}
     getTravellers() { return this.chars.filter(c => c.getIsTraveller())}
     getTravellersAfterBattle() { return this.chars.filter(c => c.getIsTraveller() && !c.isReleased)}
-    getFighters() { return this.chars.filter(c => c.getIsFighter())}
+    getFighters() { return this.chars.filter(c => c.getIsAbleToFight())}
     getPrisoners() { return this.chars.filter(c => c.getIsPrisoner())}
 
     getTraveller(id: string) {
@@ -190,6 +222,27 @@ export class CharactersManager {
 
     makeAllTravellersGiveAll() {
         this.getTravellers().forEach(t => t.giveAll());
+    }
+
+    travellersTakeResourcesOnBridge() {
+        let start = 0
+
+        const travellers = o_.characters.getTravellers()
+        const promises = o_.entities
+            .get(EntityType.GOLD)
+            .filter(g => g.location === GoldLocation.GROUND)
+            .map(g => {
+                return pause((start++) * 50).then(() => getRndItem(travellers).takeGold(g))
+            })
+
+        o_.entities
+            .get(EntityType.MEAT)
+            .filter(m => m.location === MeatLocation.GROUND && !m.props.isStale && !m.props.isHuman)
+            .forEach(m => {
+                promises.push(pause((start++) * 50).then(() => getRndItem(travellers).takeMeat(m)))
+            })
+
+        return Promise.all(promises)
     }
 
     releaseChar(char: Char) {

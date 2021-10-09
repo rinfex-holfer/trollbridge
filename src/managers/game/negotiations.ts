@@ -95,6 +95,9 @@ export class Negotiations {
         this.travellersReadyToTalk.push(id);
         if (this.travellersReadyToTalk.length === o_.characters.getTravellers().length) {
             this.travellersReadyToTalk = [];
+            console.log('===========================')
+            console.log('encounterLevel', o_.characters.encounterLevel, 'danger', o_.characters.getDangerKey())
+            console.log('===========================')
             this.startNegotiations(o_.characters.getDangerKey());
         }
     }
@@ -114,11 +117,17 @@ export class Negotiations {
                 break;
             case NegotiationsState.ALL_GIVEN:
                 o_.characters.makeAllTravellersGiveAll();
-                pause(700).then(() => o_.troll.laughHard())
+                pause(700).then(() => {
+                    o_.troll.laughHard()
+                    o_.troll.addXpForCurrentFighters(0.75)
+                })
                 break;
             case NegotiationsState.PAYMENT_GIVEN:
                 o_.characters.makeAllTravellersPay();
-                pause(700).then(() => o_.troll.laugh())
+                pause(700).then(() => {
+                    o_.troll.laugh()
+                    o_.troll.addXpForCurrentFighters(0.5)
+                })
                 break;
             case NegotiationsState.BATTLE:
                 this.isNegotiationInProgress = false
@@ -174,6 +183,8 @@ export class Negotiations {
 
     onMessage(message: NegotiationsMessage) {
         const roll = rnd() * 100;
+
+        console.log('onMessage roll', roll)
 
         if (!this.encounterState[message]) {
             throw Error('wrong message ' + message)
@@ -269,7 +280,7 @@ const negotiationTree: NegotiationTree = {
             [EncounterDanger.MEDIUM]:       {
                 66: {nextState: NegotiationsState.PAYMENT_GIVEN, text: 'Справедливое требование. Держи оплату.',},
                 90: {nextState: NegotiationsState.PAY_REFUSED,   text: 'Нет, платы ты не дождешься. Дай пройти!',},
-                100: {nextState: NegotiationsState.BATTLE,       text: 'Чем отдавать тебе плату - лучше намять тебе бока!',},
+                100: {nextState: NegotiationsState.BATTLE,       text: 'Пожалуй, лучше будет намять тебе бока!',},
             },
             [EncounterDanger.LOW]:          {
                 80: {nextState: NegotiationsState.PAYMENT_GIVEN, text: 'Да, конечно. Вот плата.',},
@@ -343,14 +354,14 @@ const negotiationTree: NegotiationTree = {
         },
     },
     [NegotiationsState.ALL_GIVEN]: {
-        [NegotiationsMessage.TO_BATTLE]:   {
-            [EncounterDanger.IMPOSSIBLE]:   {100: {nextState: NegotiationsState.BATTLE, text: 'Тварь обезумела!'},},
-            [EncounterDanger.VERY_HIGH]:    {100: {nextState: NegotiationsState.BATTLE, text: 'Тварь обезумела!'},},
-            [EncounterDanger.HIGH]:         {100: {nextState: NegotiationsState.BATTLE, text: 'Тролль совсем обезумел!'},},
-            [EncounterDanger.MEDIUM]:       {100: {nextState: NegotiationsState.BATTLE, text: 'Что за коварство?!'},},
-            [EncounterDanger.LOW]:          {100: {nextState: NegotiationsState.BATTLE, text: 'Ты чего, тролль?!'},},
-            [EncounterDanger.NONE]:         {100: {nextState: NegotiationsState.BATTLE, text: 'Но почему?! За что?!'},},
-        },
+        // [NegotiationsMessage.TO_BATTLE]:   {
+        //     [EncounterDanger.IMPOSSIBLE]:   {100: {nextState: NegotiationsState.BATTLE, text: 'Тварь обезумела!'},},
+        //     [EncounterDanger.VERY_HIGH]:    {100: {nextState: NegotiationsState.BATTLE, text: 'Тварь обезумела!'},},
+        //     [EncounterDanger.HIGH]:         {100: {nextState: NegotiationsState.BATTLE, text: 'Тролль совсем обезумел!'},},
+        //     [EncounterDanger.MEDIUM]:       {100: {nextState: NegotiationsState.BATTLE, text: 'Что за коварство?!'},},
+        //     [EncounterDanger.LOW]:          {100: {nextState: NegotiationsState.BATTLE, text: 'Ты чего, тролль?!'},},
+        //     [EncounterDanger.NONE]:         {100: {nextState: NegotiationsState.BATTLE, text: 'Но почему?! За что?!'},},
+        // },
         [NegotiationsMessage.GO_IN_PEACE]: {
             [EncounterDanger.IMPOSSIBLE]:   {100: {nextState: NegotiationsState.END, text: '...'},},
             [EncounterDanger.VERY_HIGH]:    {100: {nextState: NegotiationsState.END, text: 'Твой счастливый день.'},},

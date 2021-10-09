@@ -2,7 +2,7 @@ import {eventBus, Evt} from "../../../event-bus";
 import {CharKey, FoodType, TrollAbility, TrollLocation} from "../../../types";
 import {positioner} from "../positioner";
 import {CharAnimation} from "../../../entities/char/char-constants";
-import {clamp, getRndItem, getRndSign, rndBetween, Vec} from "../../../utils/utils-math";
+import {clamp, getRndItem, getRndSign, rnd, rndBetween, Vec} from "../../../utils/utils-math";
 import {flyingStatusChange} from "../../../interface/basic/flying-status-change";
 import {O_AnimatedSprite} from "../../core/render/animated-sprite";
 import {o_} from "../../locator";
@@ -23,6 +23,7 @@ import {trollConfig} from "../../../configs/troll-config";
 import {foodConfig} from "../../../configs/food-config";
 import {StatusNotifications} from "../../../interface/status-notifications";
 import {O_Container} from "../../core/render/container";
+import {TrollStateUnconscious} from "./troll-state-unconscious";
 
 let troll: Troll
 
@@ -206,6 +207,8 @@ export class Troll {
     }
 
     changeSelfControl(val: number) {
+        if (val === 0) return
+
         if (val > 0) {
             this.statusNotifications.showSelfControlIncrease(val)
         } else {
@@ -227,8 +230,8 @@ export class Troll {
 
         if (this.hp === 0) {
             o_.game.gameOver(cause)
-            this.setAnimation(CharAnimation.DEAD)
             o_.audio.playSound(SOUND_KEY.TROLL_DEATH)
+            this.setState(TrollStateKey.UNCONSCIOUS)
         }
 
         this.stats.update()
@@ -248,6 +251,8 @@ export class Troll {
                 return new TrollStateSleep(this);
             case TrollStateKey.BATTLE_ATTACK:
                 return new TrollStateBattleAttack(this, options);
+            case TrollStateKey.UNCONSCIOUS:
+                return new TrollStateUnconscious(this);
             default:
                 throw Error('wrong state key ' + stateKey);
         }
@@ -376,7 +381,8 @@ export class Troll {
     }
 
     getHit(dmg: number) {
-        if (dmg > this.block + rndBetween(1, 2)) {
+        const isBlocked = rnd() < this.block
+        if (!isBlocked) {
             o_.render.burstBlood(
                 this.container.x,
                 this.container.y - this.sprite.height / 2
@@ -421,8 +427,9 @@ export class Troll {
     }
 
     rollDmg() {
-        const dmg = rndBetween( this.dmg[0], this.dmg[1])
-        return this.isEnraged ? dmg * 1.2 : dmg
+        let dmg = rndBetween( this.dmg[0], this.dmg[1])
+        if (this.isEnraged) dmg *= 1.2
+        return Math.ceil(dmg)
     }
 
     rollStun() {
@@ -437,7 +444,15 @@ export class Troll {
         this.state.update(dt)
     }
 
+    addXpForCurrentFighters(factor = 1) {
+        const fighters = o_.characters.getFighters();
+        const xp = this.getXpForSquad(fighters.map(f => f.key))
+        this.addXp(Math.ceil(factor * xp))
+    }
+
     addXp(val: number) {
+        if (val === 0) return
+
         this.xp = Math.min(this.getNextLvlReqs(), this.xp + val)
 
         const nextLevelXp = this.getNextLvlReqs()

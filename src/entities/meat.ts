@@ -80,6 +80,10 @@ export class Meat extends GameEntityBase<EntityType.MEAT> {
     }
 
    private onClickDefault() {
+        this.flyToStorage()
+    }
+
+    public flyToStorage() {
         switch (this.location) {
             case MeatLocation.GROUND:
                 if (o_.lair.foodStorage.hasFreeSpace()) {

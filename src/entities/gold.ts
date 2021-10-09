@@ -51,6 +51,10 @@ export class Gold extends GameEntityBase<EntityType.GOLD> {
     }
 
     private onClick() {
+        this.flyToStorage()
+    }
+
+    public flyToStorage() {
         switch (this.location) {
             case GoldLocation.GROUND:
                 o_.audio.playSound(SOUND_KEY.PICK_THIN)
@@ -67,6 +71,11 @@ export class Gold extends GameEntityBase<EntityType.GOLD> {
             case GoldLocation.TREASURY:
                 break;
         }
+    }
+
+    public flyTo(pos: Vec) {
+        this.sprite.setInteractive(false)
+        return o_.render.flyTo(this.sprite, pos, 500, 300)
     }
 
     private updateSprite() {
