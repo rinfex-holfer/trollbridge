@@ -9,6 +9,8 @@ import {AfterBattleActionsMenu} from "../../interface/after-battle-actions-menu"
 import {EntityType} from "../core/entities";
 import {GoldLocation} from "../../entities/gold";
 import {MeatLocation} from "../../entities/meat";
+import {gameConstants} from "../../configs/constants";
+import {battleConfig} from "../../configs/battle-config";
 
 export class BattleManager {
     unsub: any[] = []
@@ -45,6 +47,7 @@ export class BattleManager {
     }
 
     async trollTurn() {
+        o_.troll.updateCooldowns()
         o_.troll.rageStartCheck()
 
         if (o_.troll.isEnraged) {
@@ -141,7 +144,7 @@ export class BattleManager {
         o_.troll.setEnraged(true)
 
         const travellers = o_.characters.getTravellers()
-        const devourable = travellers.find(t => (t.isUnconscious && !t.isPrisoner) || (t.isSurrender && !t.isPrisoner))
+        const devourable = travellers.find(t => this.actionsMenu.actions.BATTLE_DEVOUR.getIsActive(t))
         if (devourable) return this.trollGoDevour(devourable)
 
         const possibleActions = [] as (() => void)[]
@@ -164,35 +167,28 @@ export class BattleManager {
     async trollGoAttack(char: Char) {
         o_.characters.disableInteractivityAll();
 
-        const counterAttack = char.canCounterAttack() && char.rollCounterAttack()
+        const counterAttack = char.rollCounterAttack()
+        const isEvaded = char.rollEvade()
         const defender = o_.characters.getDefenderOf(char)
 
         if (defender) {
             await this.defendAgainstHit(char, defender, (char) => o_.troll.attack(char))
-        } else if (char.isMounted) {
-            if (o_.troll.isEnraged) {
-                await o_.troll.jumpToChar(char)
-                await o_.troll.attack(char)
-                if (this.getIsWin()) return this.win()
-                await o_.troll.jumpToBattlePosition()
-            } else {
-                o_.troll.goToChar(char.id)
-                await char.runAround()
-                char.directToTarget(o_.troll)
-                await o_.troll.goToBattlePosition()
-            }
-        } else {
+        } else if (isEvaded) {
             await o_.troll.moveToChar(char)
-
-            if (counterAttack) {
-                await o_.characters.counterAttack(char.id)
-                await pause(500)
-                if (!o_.troll.getIsAlive()) return this.fail()
-            }
-
+            await char.evade()
+            await Promise.all([o_.troll.goToBattlePosition(), char.goToBattlePosition()])
+        } else if (counterAttack) {
+            await o_.troll.moveToChar(char)
+            await o_.characters.counterAttack(char.id)
+            await pause(500)
+            if (!o_.troll.getIsAlive()) return this.fail()
             await o_.troll.attack(char)
             if (this.getIsWin()) return this.win()
-
+            await o_.troll.goToBattlePosition()
+        } else {
+            await o_.troll.moveToChar(char)
+            await o_.troll.attack(char)
+            if (this.getIsWin()) return this.win()
             await o_.troll.goToBattlePosition()
         }
 
@@ -205,7 +201,7 @@ export class BattleManager {
     async trollGoThrowChar(char: Char) {
         o_.characters.disableInteractivityAll();
 
-        const counterAttack = char.canCounterAttack() && char.rollCounterAttack()
+        const counterAttack = char.rollCounterAttack(battleConfig.COUNTER_ATTACK_AGAINST_GRAPPLE_BONUS)
         const defender = o_.characters.getDefenderOf(char)
 
         if (defender) {

@@ -13,6 +13,7 @@ type BattleActionSpec = {
     abilityKey?: TrollAbility,
     execute: (char: Char) => void
     getIsActive: (char: Char) => boolean
+    getDisabledAndReason?: () => false | string
 }
 
 const actionSpecs: {[action in BattleAction]: BattleActionSpec} = {
@@ -30,7 +31,8 @@ const actionSpecs: {[action in BattleAction]: BattleActionSpec} = {
         resource: 'button_throw_rock',
         abilityKey: TrollAbility.THROW_ROCK,
         execute: char => o_.battle.trollThrowRock(char),
-        getIsActive: char => char.hp > 0 && o_.bridge.getHasAvailableRocks() && !(char.isUnconscious && char.getIsCovered())
+        getIsActive: char => char.hp > 0 && !(char.isUnconscious && char.getIsCovered()),
+        getDisabledAndReason: () => o_.bridge.getHasAvailableRocks() ? false : 'нет камней, надо починить мост'
     },
 
     [BattleAction.BATTLE_THROW_CHAR]: {
@@ -39,13 +41,14 @@ const actionSpecs: {[action in BattleAction]: BattleActionSpec} = {
         resource: 'button_throw_char',
         abilityKey: TrollAbility.GRAPPLE,
         execute: char => o_.battle.trollGoThrowChar(char),
-        getIsActive: char => char.hp > 0 && !char.getIsCovered() && !char.isMounted
+        getIsActive: char => char.hp > 0 && !char.getIsCovered() && !char.isMounted,
+        getDisabledAndReason: () => o_.troll.grappleCooldown > 0 ? 'Cooldown: ' + o_.troll.grappleCooldown : false
     },
 
     [BattleAction.BATTLE_DEVOUR]: {
         key: BattleAction.BATTLE_DEVOUR,
         abilityKey: TrollAbility.MAN_EATER,
-        text: 'Сожрать',
+        text: 'Сожрать лежачего',
         resource: 'button_devour',
         execute: char => o_.battle.trollGoDevour(char),
         getIsActive: char => (char.isUnconscious || char.isSurrender) && !char.getIsCovered()
@@ -92,6 +95,7 @@ export class BattleActionsMenu {
 
     show() {
         this.createVerticalMenu()
+        this.verticalMenu.updateButtons()
         this.verticalMenu.show()
     }
 

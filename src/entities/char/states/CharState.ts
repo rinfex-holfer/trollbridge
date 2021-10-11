@@ -23,7 +23,6 @@ export abstract class CharState {
 
     start() {
         this.onStart()
-        this.char.updateActionButtons()
         return this.onEndPromise
     }
     protected onStart() {}

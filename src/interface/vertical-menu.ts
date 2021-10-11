@@ -4,21 +4,26 @@ import {LayerKey} from "../managers/core/layers";
 import {Vec} from "../utils/utils-math";
 import {O_Container} from "../managers/core/render/container";
 import {colorsCSS} from "../configs/constants";
+import {O_Sprite} from "../managers/core/render/sprite";
+import {O_Text} from "../managers/core/render/text";
 
-type BtnTemplate<K> = {text: string, key: K, resource: keyof typeof resoursePaths.images}
+type BtnTemplate<K> = {text: string, key: K, resource: keyof typeof resoursePaths.images, getDisabledAndReason?: () => false | string}
 
 const BUTTON_SIZE = 64
 const BUTTON_MARGIN = 20
 const DEFAULT_ALPHA = 0.5
 const HOVER_ALPHA = 0.75
 const SELECTED_ALPHA = 1
+const DISABLED_ALPHA = 0.33
 
 const MENU_PADDING = BUTTON_MARGIN
 const MENU_WIDTH = MENU_PADDING * 2 + BUTTON_SIZE
 
-export class VerticalMenu<Keys> {
+export class VerticalMenu<Keys extends string> {
     container: O_Container
     selectedKey: Keys | null = null
+
+    buttons = {} as {[key: string]: {sprite: O_Sprite, text: O_Text, key: Keys, disabledText: O_Text, getDisabledAndReason: (() => false | string)}}
 
     constructor(private templates: BtnTemplate<Keys>[], center: Vec, private onClick: (key: Keys) => void) {
         const height = this.getMenuHeight()
@@ -73,16 +78,51 @@ export class VerticalMenu<Keys> {
             text.setOrigin(1, 0.5);
             text.setVisibility(false)
 
-            this.buttons[template.key] = {sprite, text, key}
+            const disabledText = o_.render.createText(
+                '',
+                x + BUTTON_SIZE / 2,
+                y + BUTTON_SIZE / 2,
+                {color: colorsCSS.WHITE, wordWrap: {width: BUTTON_SIZE * 2}, align: 'center'},
+                {parent: this.container}
+            )
+            disabledText.setOrigin(0.5, 0.5);
+            disabledText.setVisibility(false)
+
+            this.buttons[template.key] = {sprite, text, key, disabledText, getDisabledAndReason: template.getDisabledAndReason || (() => false)}
         })
 
         this.hide();
     }
 
-    buttons = {} as any
-
     getMenuHeight(): number {
         return this.templates.length * (BUTTON_SIZE + BUTTON_MARGIN) - BUTTON_MARGIN + MENU_PADDING * 2
+    }
+
+    updateButtons() {
+        Object.values(this.buttons).forEach(b => {
+            const disabledReason = b.getDisabledAndReason()
+            if (disabledReason) this.disableButton(b.key, disabledReason)
+            else this.enableButton(b.key)
+        })
+    }
+
+    disableButton(action: Keys, text: string) {
+        this.deselectButton(action)
+        const btn = this.buttons[action]
+        const sprite = btn.sprite
+        sprite.alpha =DISABLED_ALPHA
+        sprite.setInteractive(false)
+        btn.disabledText.setText(text)
+        btn.disabledText.setVisibility(true)
+    }
+
+    enableButton(action: Keys) {
+        const btn = this.buttons[action]
+        const sprite = btn.sprite
+        sprite.alpha = DEFAULT_ALPHA
+        sprite.setInteractive(true)
+        btn.disabledText.setText('')
+        btn.disabledText.setVisibility(false)
     }
 
     deselectButton(action: Keys) {

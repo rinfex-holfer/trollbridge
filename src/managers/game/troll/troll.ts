@@ -25,6 +25,9 @@ import {StatusNotifications} from "../../../interface/status-notifications";
 import {O_Container} from "../../core/render/container";
 import {TrollStateUnconscious} from "./troll-state-unconscious";
 import {HpIndicator} from "../../../interface/hp-indicator";
+import {debugExpose} from "../../../utils/utils-misc";
+import {gameConstants} from "../../../configs/constants";
+import {battleConfig} from "../../../configs/battle-config";
 
 let troll: Troll
 
@@ -36,7 +39,7 @@ export class Troll {
 
     xp = 0
 
-    level = 1
+    level = 5
 
     hp = 1
     maxHp = 1
@@ -63,6 +66,8 @@ export class Troll {
     stats: TrollStats
 
     notificationTimer: null | number = null
+
+    grappleCooldown = 0
 
     constructor() {
         o_.register.troll(this)
@@ -117,6 +122,12 @@ export class Troll {
         eventBus.on(Evt.BATTLE_END, () => this.hpIndicator.hide());
 
         onTrollCameToLair()
+
+        debugExpose((val: number) => this.addXp(val), 'addXp')
+        debugExpose(() => {
+            this.level = 5
+            this.onNewLevel(false)
+        }, 'maxLevel')
     }
 
     setInitialSpriteOrigin() {
@@ -171,6 +182,8 @@ export class Troll {
         const hungerChange = foodConfig.FOOD[food][foodKey].hunger
         // @ts-ignore
         const selfControlChange = foodConfig.FOOD[food][foodKey].selfControl
+
+        console.log(food, isHuman, )
 
         this.heal(hpChange)
         this.changeHunger(hungerChange)
@@ -440,14 +453,14 @@ export class Troll {
         if (rnd() <= chanceOfRage) this.setEnraged(true)
     }
 
-    rollDmg() {
+    rollDmg(modifier = 1) {
         let dmg = rndBetween( this.dmg[0], this.dmg[1])
         if (this.isEnraged) dmg *= 1.2
-        return Math.ceil(dmg)
+        return Math.ceil(dmg * modifier)
     }
 
     rollStun() {
-        return 2
+        return rndBetween(1, 3)
     }
 
     stop() {
@@ -538,9 +551,15 @@ export class Troll {
 
         this.setAnimation(CharAnimation.IDLE)
 
-        o_.characters.hitChar(char.id, this.rollDmg(), {grabbed: true, stun: this.rollStun()})
+        o_.characters.hitChar(char.id, this.rollDmg(battleConfig.GRAPPLE_DMG_MODIFIER), {grabbed: true, stun: this.rollStun()})
 
         await o_.render.bounceOfGround(char.container, 50, 1000)
+
+        this.grappleCooldown = battleConfig.GRAPPLE_COOLDOWN
+    }
+
+    updateCooldowns() {
+        if (this.grappleCooldown > 0) this.grappleCooldown--
     }
 
     setEnraged(val: boolean) {

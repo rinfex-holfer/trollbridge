@@ -10,12 +10,16 @@ export const encounterTemplates: {[dangerLevel: number]: EncounterTemplate[]} = 
             text: 'Одинокий путник',
             enemies: [[1, CharKey.FARMER]],
         },
+    ],
+    1: [
+        {
+            text: 'Группа фермеров',
+            enemies: [[1, CharKey.FARMER], [2, CharKey.FARMER]],
+        },
         {
             text: 'Группа фермеров',
             enemies: [[0, CharKey.FARMER], [1, CharKey.FARMER]],
         },
-    ],
-    1: [
         {
             text: 'Группа фермеров',
             enemies: [[0, CharKey.FARMER], [1, CharKey.FARMER], [2, CharKey.FARMER]],
@@ -36,6 +40,13 @@ export const encounterTemplates: {[dangerLevel: number]: EncounterTemplate[]} = 
             enemies: [[0, CharKey.MILITIA], [1, CharKey.MILITIA], [4, CharKey.ARCHER]],
         },
         {
+            text: 'Cолдат',
+            enemies: [[1, CharKey.SHIELDMAN]],
+        },
+    ],
+
+    3: [
+        {
             text: 'Пара солдат',
             enemies: [[0, CharKey.MILITIA], [1, CharKey.SHIELDMAN]],
         },
@@ -43,9 +54,6 @@ export const encounterTemplates: {[dangerLevel: number]: EncounterTemplate[]} = 
             text: 'Малый отряд солдат',
             enemies: [[0, CharKey.MILITIA], [1, CharKey.SHIELDMAN], [4, CharKey.ARCHER]],
         },
-    ],
-
-    3: [
         {
             text: 'Толпа крестьян',
             enemies: [[0, CharKey.FARMER], [1, CharKey.FARMER], [2, CharKey.FARMER], [3, CharKey.FARMER], [4, CharKey.ARCHER], [5, CharKey.FARMER]],
@@ -91,7 +99,7 @@ export const encounterTemplates: {[dangerLevel: number]: EncounterTemplate[]} = 
     6: [
         {
             text: 'Рыцарь с отрядом',
-            enemies: [[0, CharKey.SHIELDMAN], [1, CharKey.MILITIA], [2, CharKey.SHIELDMAN], [3, CharKey.KNIGHT], [4, CharKey.KNIGHT], [5, CharKey.ARCHER]],
+            enemies: [[0, CharKey.SHIELDMAN], [1, CharKey.MILITIA], [2, CharKey.SHIELDMAN], [3, CharKey.ARCHER], [4, CharKey.KNIGHT], [5, CharKey.ARCHER]],
         },
     ],
     7: [

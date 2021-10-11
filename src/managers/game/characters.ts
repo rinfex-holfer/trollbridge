@@ -8,7 +8,7 @@ import {o_} from "../locator";
 import {DmgOptions} from "../../utils/utils-types";
 import {Squad} from "./squad";
 import {EntityType} from "../core/entities";
-import {GoldLocation} from "../../entities/gold";
+import {Gold, GoldLocation} from "../../entities/gold";
 import {pause} from "../../utils/utils-async";
 import {MeatLocation} from "../../entities/meat";
 
@@ -217,11 +217,21 @@ export class CharactersManager {
     }
 
     makeAllTravellersPay() {
-        this.getTravellers().forEach(t => t.pay());
+        let gold = [] as Gold[]
+        this.getTravellers().forEach(t => {
+            gold = gold.concat(t.giveGoldPayment())
+            t.payFood()
+        });
+        o_.lair.treasury.gatherGold(gold)
     }
 
     makeAllTravellersGiveAll() {
-        this.getTravellers().forEach(t => t.giveAll());
+        let gold = [] as Gold[]
+        this.getTravellers().forEach(t => {
+            gold = gold.concat(t.giveGold(t.gold))
+            t.dropFood(t.food, true)
+        });
+        o_.lair.treasury.gatherGold(gold)
     }
 
     travellersTakeResourcesOnBridge() {

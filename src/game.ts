@@ -80,11 +80,11 @@ const create = (scene: Phaser.Scene) => {
     new Meat({x: 220, y: 300})
     new Meat({x: 240, y: 300})
     new Meat({x: 260, y: 300})
-    new Gold({x: 220, y: 300}, 1)
-    new Gold({x: 240, y: 300}, 2)
-    new Gold({x: 260, y: 300}, 3)
-    new Gold({x: 280, y: 300}, 4)
-    new Gold({x: 300, y: 300}, 10)
+    // new Gold({x: 220, y: 300}, 1)
+    // new Gold({x: 240, y: 300}, 2)
+    // new Gold({x: 260, y: 300}, 3)
+    // new Gold({x: 280, y: 300}, 4)
+    // new Gold({x: 300, y: 300}, 10)
 
     scene.update = function(time, delta) {
         timeManager.onUpdate(delta);

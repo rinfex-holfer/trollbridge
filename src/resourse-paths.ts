@@ -48,6 +48,7 @@ export const resoursePaths = {
         icon_crossed_swords: `${imagesUrl}/icon_crossed_swords.png`,
         icon_surrender: `${imagesUrl}/icon_surrender.png`,
         icon_rage: `${imagesUrl}/icon_rage.png`,
+        icon_speed: `${imagesUrl}/icon_speed.png`,
 
         empty_sprite: `${imagesUrl}/tile_empty.png`,
         particle_hit: `${imagesUrl}/particle_hit.png`,

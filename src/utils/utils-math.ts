@@ -41,6 +41,11 @@ export function rnd() {
     return Math.random();
 }
 
+export function rnd2<T1, T2>(option1: T1, option2: T2) {
+    if (rnd() > 0.5) return option1
+    else return option2
+}
+
 export function getRndItem<T>(arr: T[]): T {
     const rndIndex = rndBetween(0, arr.length - 1);
     return arr[rndIndex];

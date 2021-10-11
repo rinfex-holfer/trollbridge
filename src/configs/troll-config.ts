@@ -6,10 +6,13 @@ export const trollConfig = {
 
     HUNGER_PER_TIME: 1,
     HP_MINUS_WHEN_HUNGRY: 0.05,
-    HP_FROM_SLEEP: 0.2,
+    HP_FROM_SLEEP: 0.1,
+    HP_FROM_SLEEP_ON_BED: 0.25,
     SELF_CONTROL_FROM_SLEEP: 1,
 
     TROLL_SPEED: 500,
+
+    PASS_COST: 0.33,
 
     TROLL_LEVELING: {
         1: {
@@ -69,7 +72,7 @@ export const trollConfig = {
             newAbilities: [],
         },
         5: {
-            maxHp: 100,
+            maxHp: 1000,
             block: 0,
             dmg: [20, 40],
             xp: -1,

@@ -5,22 +5,19 @@ import {CharState} from "./states/CharState";
 import {CharStateIdle} from "./states/CharStateIdle";
 import {CharStateGoAcross} from "./states/CharStateGoAcross";
 import {CharAnimation, CharStateKey} from "./char-constants";
-import {CharActionsMenu} from "../../interface/char-actions-menu";
 import {CharStateSurrender} from "./states/CharStateSurrender";
 import {CharStateDead} from "./states/CharStateDead";
 import {CharStateBones} from "./states/CharStateBones";
-// import {CharStatePrisoner} from "./states/CharStatePrisoner";
 import {CharSpeakText} from "../../interface/char-speak-text";
 import {eventBus, Evt} from "../../event-bus";
 import {CharStateGoToTalk} from "./states/CharStateGoToTalk";
-import {colorsCSS, gameConstants} from "../../configs/constants";
+import {gameConstants} from "../../configs/constants";
 import {SOUND_KEY} from "../../managers/core/audio";
 import {CharStateBattleIdle} from "./states/CharStateBattleIdle";
 import {clamp, rnd, rndBetween, Vec} from "../../utils/utils-math";
 import {createPromiseAndHandlers, pause} from "../../utils/utils-async";
 import {CharStateBattleAttack} from "./states/CharStateBattleAttack";
 import {flyingStatusChange} from "../../interface/basic/flying-status-change";
-import {CharStateBattleSurrender} from "./states/CharStateBattleSurrender";
 import {HpIndicator} from "../../interface/hp-indicator";
 import {CharMpIndicator} from "../../interface/char-mp-indicator";
 import {O_AnimatedSprite} from "../../managers/core/render/animated-sprite";
@@ -41,6 +38,7 @@ import {foodConfig} from "../../configs/food-config";
 import {Squad} from "../../managers/game/squad";
 import {StatusNotifications} from "../../interface/status-notifications";
 import {positioner} from "../../managers/game/positioner";
+import {trollConfig} from "../../configs/troll-config";
 
 export class Char {
     key: CharKey
@@ -49,7 +47,7 @@ export class Char {
     maxHp: number
     morale: number
     maxMorale: number
-    moralePrice: number
+    moralePrice: [number, number]
     name: string
     dmg = [1, 1]
 
@@ -70,7 +68,8 @@ export class Char {
     isMetTroll = false
 
     isCombatant: boolean
-    counterAttack?: number
+    counterAttack: number = 0
+    evasion: number = 0
     block?: number
     isDefender: boolean
     isRanged: boolean
@@ -112,7 +111,8 @@ export class Char {
         this.isCombatant = charTemplate.isCombatant
         this.dmg = charTemplate.dmg;
 
-        this.counterAttack = charTemplate.counterAttack
+        if (charTemplate.counterAttack) this.counterAttack = charTemplate.counterAttack
+        if (charTemplate.evade) this.evasion = charTemplate.evade
         this.block = charTemplate.block
 
         this.isDefender = !!charTemplate.isDefender
@@ -156,10 +156,6 @@ export class Char {
         // window.changeMp = (a) => this.changeMp(a)
     }
 
-    updateActionButtons() {
-        // this.actionsMenu.changeActiveButtons(this.state.getPossibleTrollActions())
-    }
-
     getIsNewTraveller() { return !this.isMetTroll }
     getIsTraveller() { return this.isAlive && !this.isPrisoner }
     getIsAbleToFight() { return this.getIsTraveller() && !this.isSurrender && !this.isUnconscious }
@@ -167,13 +163,13 @@ export class Char {
 
     onCharDefeated(key: CharKey) {
         if (this.getIsAbleToFight()) {
-            this.changeMp(-charConfig[key].moralePrice)
+            this.changeMp(-rndBetween(charConfig[key].moralePrice[0], charConfig[key].moralePrice[1]))
         }
     }
 
     onCharDevoured(key: CharKey) {
         if (this.getIsAbleToFight()) {
-            this.changeMp(-charConfig[key].moralePrice)
+            this.changeMp(-rndBetween(charConfig[key].moralePrice[0], charConfig[key].moralePrice[1]))
         }
     }
 
@@ -198,7 +194,7 @@ export class Char {
             case CharStateKey.GO_ACROSS:
                 return new CharStateGoAcross(this);
             case CharStateKey.SURRENDER:
-                return new CharStateSurrender(this);
+                return new CharStateSurrender(this, options);
             case CharStateKey.DEAD:
                 return new CharStateDead(this);
             case CharStateKey.BONES:
@@ -211,8 +207,6 @@ export class Char {
                 return new CharStateBattleIdle(this);
             case CharStateKey.BATTLE_ATTACK:
                 return new CharStateBattleAttack(this);
-            case CharStateKey.BATTLE_SURRENDER:
-                return new CharStateBattleSurrender(this);
             case CharStateKey.BATTLE_GO_DEFEND:
                 return new CharStateBattleGoDefend(this, options)
             case CharStateKey.GO_TO:
@@ -350,24 +344,41 @@ export class Char {
         this.dropFood(this.food, true)
     }
 
-    dropGold(amount: number, flyToStorage?: boolean) {
+    giveGoldPayment() {
+        return this.giveGold(Math.ceil(trollConfig.PASS_COST * this.gold))
+    }
+
+    giveGold(amount: number) {
         this.changeResources(ResourceKey.GOLD, -amount);
 
+        const gold: Gold[] = []
         while (amount) {
             const goldInSprite = Math.min(amount, goldConfig.MAX_GOLD_IN_SPRITE)
             amount -= goldInSprite
-            let coord = this.getCoords();
-            coord.x += rndBetween(-40, 40)
-            coord.y += rndBetween(-40, 40)
-            const gold = new Gold(this.getCoords(), goldInSprite)
-            if (flyToStorage) {
-                gold.flyToStorage()
-            } else {
-                gold.throwTo(coord)
-            }
+            gold.push(new Gold(this.getCoords(), goldInSprite))
+        }
+
+        return gold
+    }
+
+    dropGold(amount: number, flyToStorage?: boolean) {
+        const gold = this.giveGold(amount)
+
+        if (flyToStorage) {
+            o_.lair.treasury.gatherGold(gold)
+        } else {
+            gold.forEach(g => {
+                let coord = this.getCoords();
+                coord.x += rndBetween(-40, 40)
+                coord.y += rndBetween(-40, 40)
+                g.throwTo(coord)
+            })
         }
     }
 
+    payFood() {
+        this.dropFood(Math.ceil(this.food * trollConfig.PASS_COST), true)
+    }
     dropFood(amount: number, flyToStorage?: boolean) {
         this.changeResources(ResourceKey.FOOD, -amount);
 
@@ -423,16 +434,9 @@ export class Char {
         }
     }
 
-    surrender() {
+    surrender(showNotification?: boolean) {
         this.setIndicatorsVisible(false)
-
-        this.statusNotifications.showSurrender()
-
-        if (o_.battle.isBattle) {
-            return this.setState(CharStateKey.BATTLE_SURRENDER);
-        } else {
-            return this.setState(CharStateKey.SURRENDER);
-        }
+        return this.setState(CharStateKey.SURRENDER, {goBack: !this.isUnconscious, showNotification});
     }
 
     becomeDevoured() {
@@ -504,8 +508,12 @@ export class Char {
         return rndBetween(this.dmg[0], this.dmg[1]);
     }
 
-    rollCounterAttack() {
-        return !!this.counterAttack && rnd() < this.counterAttack
+    rollCounterAttack(modifier: number = 0) {
+        return rnd() < (this.counterAttack + modifier)
+    }
+
+    rollEvade(modifier: number = 0) {
+        return rnd() < (this.evasion + modifier)
     }
 
     rollBlock() {
@@ -524,7 +532,7 @@ export class Char {
         }
 
         if (!this.isSurrender && this.morale <= 0) {
-            this.surrender();
+            this.surrender(true);
         }
     }
 
@@ -581,6 +589,7 @@ export class Char {
     async looseHorse() {
         this.isMounted = false
         this.isDeMounted = true
+        this.evasion = 0
         await this.runAnimationOnce(CharAnimation.FALL)
         this.sprite.destroy()
         this.createSprite(0, 0, 'shieldman')
@@ -666,18 +675,11 @@ export class Char {
         return this.performBattleAction(300)
     }
 
-    async runAround() {
+    async evade() {
+        this.statusNotifications.showEvade()
         const oldSpeed = this.speed
         this.speed = this.speed * 3
-        const points = [
-            {x: this.container.x - 300, y: this.container.y - 200},
-            {x: this.container.x - 600, y: this.container.y},
-            {x: this.container.x - 300, y: this.container.y + 200},
-            {x: this.container.x, y: this.container.y},
-        ]
-        for (let i = 0; i < points.length; i++) {
-            await this.setState(CharStateKey.GO_TO, {target: points[i], speed: this.speed})
-        }
+        await this.setState(CharStateKey.GO_TO, {target: {x: this.container.x + 200, y: this.container.y}, speed: this.speed, directToTarget: true})
         this.speed = oldSpeed
     }
 
@@ -704,13 +706,19 @@ export class Char {
     onMoveEnd: any = stub
 
     goDefend(target: Char) {
-        this.setState(CharStateKey.BATTLE_GO_DEFEND, {target})
-        return this.movePromise
+        return this.setState(CharStateKey.BATTLE_GO_DEFEND, {target})
     }
 
     goToBattlePosition() {
-        this.setState(CharStateKey.GO_TO_BATTLE_POSITION)
-        return this.movePromise
+        return this.setState(CharStateKey.GO_TO_BATTLE_POSITION)
+    }
+
+    goToSurrenderPosition() {
+        if (!this.squad || !this.squadPlace) return {promise: Promise.resolve(), stop: stub}
+        const target = this.squad.getSurrenderPositionForPlace(this.squadPlace)
+
+        this.setAnimation(CharAnimation.WALK)
+        return o_.render.moveTo(this.container, target, this.speed)
     }
 
     setUnconscious(duration: number, withAnimation = true) {

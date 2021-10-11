@@ -166,8 +166,9 @@ export class Pot {
     }
 
     private eat() {
+        console.log(this.isDishHuman)
+        o_.troll.eat(FoodType.DISH, this.isDishStale, this.isDishHuman)
         this.setState(PotState.EMPTY)
-        o_.troll.eat(FoodType.DISH)
     }
 
     public getFreePlaceForChosenFood(): Vec {

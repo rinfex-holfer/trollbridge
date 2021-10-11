@@ -28,7 +28,7 @@ const actionSpecs: {[action in AfterBattleAction]: AfterBattleActionSpec} = {
         text: 'Отобрать плату',
         resource: 'button_rob',
         execute: char => {
-            o_.characters.makeCharPay(char)
+            char.dropGold(Math.ceil(char.gold * 0.33), true)
             o_.characters.releaseChar(char)
         },
         getIsActive: char => !char.isRobbed

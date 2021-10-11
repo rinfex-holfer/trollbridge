@@ -9,6 +9,7 @@ import {Gold, GoldLocation} from "../gold";
 import {flyingStatusChange} from "../../interface/basic/flying-status-change";
 import {SOUND_KEY} from "../../managers/core/audio";
 import {goldConfig} from "../../configs/gold-config";
+import {debugExpose} from "../../utils/utils-misc";
 
 export class Treasury {
     text: O_Text
@@ -36,16 +37,8 @@ export class Treasury {
         o_.layers.add(this.text, LayerKey.FIELD_BUTTONS)
 
         this.subs.on(Evt.TIME_PASSED, () => this.onTimePassed())
-    }
 
-    private getRect() {
-        const padding = 10;
-        return {
-            x: -padding,
-            y: -padding,
-            width: 100 + padding * 2,
-            height: 100
-        }
+        debugExpose((amount: number) => this.addGold(amount), 'addGold')
     }
 
     private onTimePassed() {
@@ -87,6 +80,15 @@ export class Treasury {
     onGoldChanged() {
         this.amount = this.gold.reduce((acc, g) => acc + g.props.amount, 0)
         this.text.setText('Золото: ' + this.amount)
+    }
+
+    public async gatherGold(gold: Gold[]) {
+        let amount = 0
+        await Promise.all(gold.map(g => {
+            amount += g.props.amount
+            return g.flyToStorage()
+        }))
+        this.addGold(amount)
     }
 
     getNextPosition() {

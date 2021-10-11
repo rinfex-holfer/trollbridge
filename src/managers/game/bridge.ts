@@ -26,6 +26,7 @@ export class BridgeManager {
         o_.register.bridge(this);
 
         this.createRockPlaces()
+        this.rockPlaces.forEach(p => p.ruin(false))
     }
 
     enableInterface() {

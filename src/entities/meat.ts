@@ -1,4 +1,4 @@
-import {rnd, Vec} from "../utils/utils-math";
+import {rnd, rnd2, rndBetween, Vec} from "../utils/utils-math";
 import {O_Sprite} from "../managers/core/render/sprite";
 import {o_} from "../managers/locator";
 import {colorsNum, gameConstants} from "../configs/constants";
@@ -13,6 +13,8 @@ import {FoodType} from "../types";
 import ParticleEmitter = Phaser.GameObjects.Particles.ParticleEmitter;
 import {GoldLocation} from "./gold";
 import {foodConfig} from "../configs/food-config";
+import {destroyInteractiveObjWithFade, destroyInteractiveObjWithJump} from "../helpers";
+import {debugExpose} from "../utils/utils-misc";
 
 export const enum MeatLocation {
     GROUND = 'GROUND',
@@ -66,6 +68,9 @@ export class Meat extends GameEntityBase<EntityType.MEAT> {
             if (this.onClick) return this.onClick()
             else this.onClickDefault()
         })
+        this.sprite.onRightClick(() => {
+            this.onRightClick()
+        })
         this.realPosition = this.updateRealPosition()
 
         this.jumpTimeline = o_.render.createJumpingTimeline(this.sprite)
@@ -83,14 +88,27 @@ export class Meat extends GameEntityBase<EntityType.MEAT> {
         this.flyToStorage()
     }
 
+    private onRightClick() {
+        if (this.location === MeatLocation.STORAGE) {
+            this.flyOnLairGround()
+        } else {
+            destroyInteractiveObjWithJump(this)
+        }
+    }
+
+    private flyOnLairGround() {
+        this.flyTo(positioner.getRandomPlaceForMeat(this)).then(() => o_.audio.playSound(SOUND_KEY.BONK))
+        this.setLocation(MeatLocation.LAIR)
+        o_.lair.foodStorage.updateFood()
+    }
+
     public flyToStorage() {
         switch (this.location) {
             case MeatLocation.GROUND:
                 if (o_.lair.foodStorage.hasFreeSpace()) {
                     o_.lair.foodStorage.placeFood(this)
                 } else {
-                    this.flyTo(positioner.getRandomPlaceForMeat()).then(() => o_.audio.playSound(SOUND_KEY.BONK))
-                    this.setLocation(MeatLocation.LAIR)
+                    this.flyOnLairGround()
                 }
                 break;
             case MeatLocation.STORAGE:
@@ -132,6 +150,7 @@ export class Meat extends GameEntityBase<EntityType.MEAT> {
         this.updateEmitters()
         this.rottenGas.active = true
         this.sprite.obj.setTint(colorsNum.ROTTEN)
+        if (this.location === MeatLocation.LAIR) this.flyOnLairGround()
         // this.rottenGas.start()
     }
 
@@ -148,13 +167,15 @@ export class Meat extends GameEntityBase<EntityType.MEAT> {
         this.timePassed++;
         if (this.location !== MeatLocation.STORAGE) {
             this.timePassed += 2;
-            if (rnd() > 0.9) return this.destroy()
+            if (rnd() > 0.9) {
+                return destroyInteractiveObjWithFade(this)
+            }
         }
 
         if (!this.props.isStale && this.timePassed > foodConfig.RAW_MEAT_TIME_LIMIT) {
             this.becomeRotten()
         } else if (this.props.isStale && this.timePassed > foodConfig.STALE_MEAT_TIME_LIMIT) {
-            this.destroy()
+            destroyInteractiveObjWithFade(this)
         }
     }
 
@@ -232,7 +253,7 @@ export class Meat extends GameEntityBase<EntityType.MEAT> {
         }
         return o_.render.flyTo(this.sprite, pos, speed, maxDuration).then(() => {
             this.updateEmitters()
-            if (this.rottenGas.active) this.rottenGas.resume()
+            if (this.props.isStale && !this.rottenGas.active) this.rottenGas.resume()
         });
     }
 
@@ -250,3 +271,19 @@ export class Meat extends GameEntityBase<EntityType.MEAT> {
         o_.lair.foodStorage.updateFood()
     }
 }
+
+debugExpose((amount = 1) => {
+    for (let i = 0; i < amount; i++) {
+        const x = rndBetween(200, 250)
+        const y = rndBetween(200, 250)
+        new Meat({x, y}, MeatLocation.GROUND, true, rnd2(meatSprite.HUMAN_LEG, meatSprite.HUMAN_HAND))
+    }
+}, 'spawnHumanMeat')
+
+debugExpose((amount = 1) => {
+    for (let i = 0; i < amount; i++) {
+        const x = rndBetween(200, 250)
+        const y = rndBetween(200, 250)
+        new Meat({x, y}, MeatLocation.GROUND, false)
+    }
+}, 'spawnMeat')

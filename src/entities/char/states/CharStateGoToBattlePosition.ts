@@ -29,6 +29,7 @@ export class CharStateGoToBattlePosition extends CharState {
         const p = createPromiseAndHandlers()
         this.char.movePromise = p.promise
         this.char.onMoveEnd = p.done
+        this.char.directToTarget(this.target)
     }
 
     update(dt: number) {
@@ -40,7 +41,7 @@ export class CharStateGoToBattlePosition extends CharState {
             this.char.container.x = this.target.x
             this.char.container.y = this.target.y
             this.char.directToTarget(o_.troll.container)
-            this.char.setState(CharStateKey.IDLE)
+            this.char.setState(o_.battle.isBattle ? CharStateKey.BATTLE_IDLE : CharStateKey.IDLE)
         }
     }
 }

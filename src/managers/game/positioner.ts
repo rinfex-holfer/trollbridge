@@ -1,6 +1,7 @@
 import {getGameSize} from "../../utils/utils-misc";
 import {o_} from "../locator";
 import {rndBetween} from "../../utils/utils-math";
+import {Meat} from "../../entities/meat";
 
 export const positioner = {
     negotiationX() {
@@ -60,10 +61,13 @@ export const positioner = {
         }
     },
 
-    getRandomPlaceForMeat() {
+    getRandomPlaceForMeat(meat: Meat) {
         const foodStoragePos = this.getFoodStoragePosition()
-        const xRand = rndBetween(-20, 20)
-        const yRand = rndBetween(-20, 20)
+        let xRand = rndBetween(-20, 20)
+        let yRand = rndBetween(-20, 20)
+
+        if (meat.props.isStale) xRand += 100
+        if (meat.props.isHuman) yRand -= 50
         return {x: foodStoragePos.x - 100 + xRand, y: foodStoragePos.y - 50 + yRand}
     },
 

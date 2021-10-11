@@ -43,7 +43,7 @@ export class Squad {
         const startY = bridgePos.height / 5 + bridgePos.y + bridgePos.height / 5
         const marginY = bridgePos.height / 5;
         const startX = bridgePos.x + bridgePos.width * 0.7
-        const marginX = marginY
+        const marginX = 100
 
         return {
             x: place <= 2 ? startX : startX + marginX,
@@ -51,8 +51,17 @@ export class Squad {
         }
     }
 
-    enableBattleActionButtons() {
+    getSurrenderPositionForPlace(place: SquadPlace): Vec {
+        const bridgePos = positioner.bridgePosition()
+        const startY = bridgePos.height / 5 + bridgePos.y + bridgePos.height / 5
+        const marginY = bridgePos.height / 5;
+        const startX = bridgePos.x + bridgePos.width * 0.7 + 150
+        const marginX = marginY
 
+        return {
+            x: place <= 2 ? startX : startX + marginX,
+            y: startY + (place % 3) * marginY
+        }
     }
 
     removeChar(char: Char) {

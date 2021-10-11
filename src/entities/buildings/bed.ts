@@ -22,6 +22,7 @@ export class Bed {
 
     upgrade() {
         this.sprite.setTexture('bed_upgraded')
+        this.upgraded = true
     }
 
     setEnabled(val: boolean) {

@@ -51,7 +51,7 @@ export class Gold extends GameEntityBase<EntityType.GOLD> {
     }
 
     private onClick() {
-        this.flyToStorage()
+        o_.lair.treasury.gatherGold([this])
     }
 
     public flyToStorage() {
@@ -63,12 +63,12 @@ export class Gold extends GameEntityBase<EntityType.GOLD> {
                 const coord = (lastGoldItem && lastGoldItem.props.amount < goldConfig.MAX_GOLD_IN_SPRITE)
                     ? lastGoldItem.sprite
                     : o_.lair.treasury.getNextPosition()
-                o_.render.flyTo(this.sprite, coord, 500, 300).then(() => {
-                    o_.lair.treasury.addGold(this.props.amount)
+                return o_.render.flyTo(this.sprite, coord, 500, 300).then(() => {
                     this.destroy()
                 })
                 break;
             case GoldLocation.TREASURY:
+                return Promise.resolve()
                 break;
         }
     }

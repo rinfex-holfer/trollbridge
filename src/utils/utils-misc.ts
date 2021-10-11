@@ -55,3 +55,8 @@ export function createMessageEmitter<Message>() {
         }
     }
 }
+
+export function debugExpose(fn: Function, key: string) {
+    // @ts-ignore
+    window[key] = fn
+}

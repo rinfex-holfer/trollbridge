@@ -6,6 +6,7 @@ import {Meat, MeatLocation} from "../meat";
 import {O_Container} from "../../managers/core/render/container";
 import {O_Sprite} from "../../managers/core/render/sprite";
 import {SOUND_KEY} from "../../managers/core/audio";
+import {dumbClone} from "../../utils/utils-misc";
 
 const START_X = 60
 const START_Y = -70
@@ -71,11 +72,11 @@ export class FoodStorage {
 
         o_.audio.playSound(SOUND_KEY.PICK)
         place[1] = food
+        food.setLocation(MeatLocation.STORAGE)
         food.flyTo({x: this.container.x + coord.x, y: this.container.y + coord.y})
             .then(() => {
                 this.container.add(food.sprite);
                 food.sprite.move(coord.x, coord.y)
-                food.setLocation(MeatLocation.STORAGE)
                 food.updateRealPosition()
                 o_.audio.playSound(SOUND_KEY.PICK_BIG)
             })
@@ -86,6 +87,7 @@ export class FoodStorage {
     }
 
     getNextPlace() {
+        console.log('getNextPlace', this.places.findIndex(p => p[1] === null), this.places.map(p => p[1]))
         return this.places.find(p => p[1] === null)
     }
 
@@ -95,7 +97,7 @@ export class FoodStorage {
 
     updateFood() {
         this.places.forEach(p => {
-            if (p[1]?.destroyed === true) {
+            if (p[1]?.destroyed === true || p[1]?.location !== MeatLocation.STORAGE) {
                 p[1] = null;
             }
         })

@@ -79,6 +79,10 @@ export class StatusNotifications {
         this.show('Rage stops', 'status_change_self_control', colorsCSS.WHITE)
     }
 
+    public showEvade() {
+        this.show('Evade!', 'icon_speed', colorsCSS.WHITE)
+    }
+
     public showHungerDmg(val: number) {
         this.flyingNumbers('Голод!', colorsCSS.RED)
         this.showDmg(val)
@@ -123,7 +127,7 @@ export class StatusNotifications {
         flyingStatusChange(...p)
         this.timer = setTimeout(() => {
             this.nextNumbers()
-        }, 300)
+        }, 600)
     }
 
     public showSelfControlReduce(val: number) {

@@ -232,7 +232,7 @@ const wordsOnStart = {
             100: 'Опасное создание! Что же делать?..'
         },
         [EncounterDanger.NONE]:         {
-            100: 'Кошмар... Это конец...'
+            100: 'Кошмар... Это конец!'
         },
 }
 
@@ -250,16 +250,16 @@ const negotiationTree: NegotiationTree = {
                 100: {nextState: NegotiationsState.BATTLE,       text: 'За кого ты нас принимаешь, тролль? Как ты посмел? Мы заставим тебя молить о прощении!'}
             },
             [EncounterDanger.MEDIUM]:       {
-                33: {nextState: NegotiationsState.ALL_GIVEN,     text: 'Невероятна жадность твоя. Ладно, забирай все и дай пройти.'},
-                66: {nextState: NegotiationsState.ALL_REFUSED,   text: 'Нет, ты требуешь слишком многого.'},
+                10: {nextState: NegotiationsState.ALL_GIVEN,     text: 'Невероятна жадность твоя. Ладно, забирай все и дай пройти.'},
+                75: {nextState: NegotiationsState.ALL_REFUSED,   text: 'Нет, ты требуешь слишком многого.'},
                 100: {nextState: NegotiationsState.BATTLE,       text: 'Убирайся прочь с дороги, мерзкое создание!'}
             },
             [EncounterDanger.LOW]:          {
-                50: {nextState: NegotiationsState.ALL_GIVEN,     text: 'Ладно, тролль-грабитель, забирай все. Чтоб тебя!',},
+                20: {nextState: NegotiationsState.ALL_GIVEN,     text: 'Ладно, тролль-грабитель, забирай все. Чтоб тебя!',},
                 100: {nextState: NegotiationsState.ALL_REFUSED,  text: 'Отдать все до последнего? Ни за что!',}
             },
             [EncounterDanger.NONE]:         {
-                90: {nextState: NegotiationsState.ALL_GIVEN,     text: 'Деваться некуда. Забирай все пожитки, безжалостное создание...',},
+                75: {nextState: NegotiationsState.ALL_GIVEN,     text: 'Деваться некуда. Забирай все пожитки, безжалостное создание...',},
                 100: {nextState: NegotiationsState.ALL_REFUSED,  text: 'Отдать все тебе и умереть от голода и холода? Ни за что! Лучше на месте ешь, хотя бы быстрее будет.',}
             },
         },
@@ -268,22 +268,22 @@ const negotiationTree: NegotiationTree = {
                 100: {nextState: NegotiationsState.BATTLE,       text: 'Какая невероятная наглость. Уберем эту гадость с моста!'}
             },
             [EncounterDanger.VERY_HIGH]:    {
-                33: {nextState: NegotiationsState.PAYMENT_GIVEN, text: 'Так уж и быть, возьми плату и дай пройти.',},
-                66: {nextState: NegotiationsState.PAY_REFUSED,   text: 'Ты ничего не получишь. Освободи путь!',},
+                10: {nextState: NegotiationsState.PAYMENT_GIVEN, text: 'Так уж и быть, возьми плату и дай пройти.',},
+                80: {nextState: NegotiationsState.PAY_REFUSED,   text: 'Ты ничего не получишь. Освободи путь!',},
                 100: {nextState: NegotiationsState.BATTLE,       text: 'Что на нахальство! Это мост Короля, а не твой. Ну, берегись!'}
             },
             [EncounterDanger.HIGH]:         {
-                50: {nextState: NegotiationsState.PAYMENT_GIVEN, text: 'Ладно, вот твоя плата.'},
+                20: {nextState: NegotiationsState.PAYMENT_GIVEN, text: 'Ладно, вот твоя плата.'},
                 75: {nextState: NegotiationsState.PAY_REFUSED,   text: 'Ты ничего не получишь. Уходи.'},
                 100: {nextState: NegotiationsState.BATTLE,       text: 'Ты слишком много на себя берешь, нечестивое создание!',},
             },
             [EncounterDanger.MEDIUM]:       {
-                66: {nextState: NegotiationsState.PAYMENT_GIVEN, text: 'Справедливое требование. Держи оплату.',},
+                40: {nextState: NegotiationsState.PAYMENT_GIVEN, text: 'Справедливое требование. Держи оплату.',},
                 90: {nextState: NegotiationsState.PAY_REFUSED,   text: 'Нет, платы ты не дождешься. Дай пройти!',},
                 100: {nextState: NegotiationsState.BATTLE,       text: 'Пожалуй, лучше будет намять тебе бока!',},
             },
             [EncounterDanger.LOW]:          {
-                80: {nextState: NegotiationsState.PAYMENT_GIVEN, text: 'Да, конечно. Вот плата.',},
+                75: {nextState: NegotiationsState.PAYMENT_GIVEN, text: 'Да, конечно. Вот плата.',},
                 100: {nextState: NegotiationsState.PAY_REFUSED,  text: 'Ты, конечно, страшен. Но платы тебе не видать.',},
             },
             [EncounterDanger.NONE]:         {
@@ -293,7 +293,7 @@ const negotiationTree: NegotiationTree = {
         },
         [NegotiationsMessage.TO_BATTLE]:   {
             [EncounterDanger.IMPOSSIBLE]:   {100: {nextState: NegotiationsState.BATTLE, text: 'Ха-ха, эта жалкая тварь собирается броситься!'}},
-            [EncounterDanger.VERY_HIGH]:    {100: {nextState: NegotiationsState.BATTLE, text: 'Мезркая тварь, тебе не сдобровать.'}},
+            [EncounterDanger.VERY_HIGH]:    {100: {nextState: NegotiationsState.BATTLE, text: 'Мерзкая тварь, тебе не сдобровать.'}},
             [EncounterDanger.HIGH]:         {100: {nextState: NegotiationsState.BATTLE, text: 'Злобный тролль, ты пожалеешь о том, что поднимаешь лапу на путников.'}},
             [EncounterDanger.MEDIUM]:       {100: {nextState: NegotiationsState.BATTLE, text: 'Ты получишь отпор, чудище!'}},
             [EncounterDanger.LOW]:          {100: {nextState: NegotiationsState.BATTLE, text: 'Ааа, тролль атакует!'}},
@@ -314,25 +314,25 @@ const negotiationTree: NegotiationTree = {
                 100: {nextState: NegotiationsState.BATTLE, text: 'Да как ты вообще смеешь! Сейчас поплатишься за дерзость!'},
             },
             [EncounterDanger.VERY_HIGH]:    {
-                33: {nextState: NegotiationsState.PAYMENT_GIVEN, text: 'Ладно, просто плату ты, так уж и быть, получишь.'},
-                90: {nextState: NegotiationsState.PAY_REFUSED, text: 'Собираешься содрать хоть что-то? Не тут-то было. Убирайся с дороги!'},
+                5: {nextState: NegotiationsState.PAYMENT_GIVEN, text: 'Ладно, просто плату ты, так уж и быть, получишь.'},
+                66: {nextState: NegotiationsState.PAY_REFUSED, text: 'Собираешься содрать хоть что-то? Не тут-то было. Убирайся с дороги!'},
                 100: {nextState: NegotiationsState.BATTLE, text: 'Тебе был дан шанс, упрямая тварь!'},
             },
             [EncounterDanger.HIGH]:         {
-                50: {nextState: NegotiationsState.PAYMENT_GIVEN, text: 'Это еще куда ни шло. Держи и дай пройти.'},
-                90: {nextState: NegotiationsState.PAY_REFUSED, text: 'И платы ты тоже не получишь.'},
+                10: {nextState: NegotiationsState.PAYMENT_GIVEN, text: 'Это еще куда ни шло. Держи и дай пройти.'},
+                75: {nextState: NegotiationsState.PAY_REFUSED, text: 'И платы ты тоже не получишь.'},
                 100: {nextState: NegotiationsState.BATTLE, text: 'Да что ты за наглое создание! Ну все, берегись!'},
             },
             [EncounterDanger.MEDIUM]:       {
-                66: {nextState: NegotiationsState.PAYMENT_GIVEN, text: 'Это более справедливое требование.'},
+                30: {nextState: NegotiationsState.PAYMENT_GIVEN, text: 'Это более справедливое требование.'},
                 100: {nextState: NegotiationsState.PAY_REFUSED, text: 'Нет, жадный тролль, ты не получишь и просто платы.'},
             },
             [EncounterDanger.LOW]:          {
-                90: {nextState: NegotiationsState.PAYMENT_GIVEN, text: 'Так бы сразу. Вот, это твое.'},
+                75: {nextState: NegotiationsState.PAYMENT_GIVEN, text: 'Так бы сразу. Вот, это твое.'},
                 100: {nextState: NegotiationsState.PAY_REFUSED, text: 'Тролль, будь добр, пропусти за так?'},
             },
             [EncounterDanger.NONE]:         {
-                95: {nextState: NegotiationsState.PAYMENT_GIVEN, text: 'Ох, ладно, тролль. Вот плата.'},
+                75: {nextState: NegotiationsState.PAYMENT_GIVEN, text: 'Ох, ладно, тролль. Вот плата.'},
                 100: {nextState: NegotiationsState.PAY_REFUSED, text: 'Не отнимай последнее, пожалуйста...'},
             },
         },

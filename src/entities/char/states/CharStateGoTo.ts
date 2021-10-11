@@ -9,9 +9,11 @@ export class CharStateGoTo extends CharState {
 
     target: Vec
     speed: number
+    directToTarget: boolean = false
 
-    constructor(host: Char, options: {target: Vec, speed?: number}) {
+    constructor(host: Char, options: {target: Vec, speed?: number, directToTarget?: boolean}) {
         super(host);
+        this.directToTarget = options.directToTarget || false
         this.target = options.target
         this.speed = options.speed || gameConstants.CHAR_VERY_FAST
     }
@@ -19,7 +21,8 @@ export class CharStateGoTo extends CharState {
     onStart() {
         this.char.speed = this.speed
         this.char.setAnimation(CharAnimation.WALK);
-        this.char.directToTarget(this.target)
+
+        if (this.directToTarget) this.char.directToTarget(this.target)
         this.char.moveTowards(this.target.x, this.target.y);
     }
 
