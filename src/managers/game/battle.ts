@@ -151,7 +151,11 @@ export class BattleManager {
         const trollAbilities = o_.troll.getCurrentAbilities()
 
         Object.values(this.actionsMenu.actions)
-            .filter(a => a.abilityKey === undefined || trollAbilities.includes(a.abilityKey))
+            .filter(a =>
+                (a.abilityKey === undefined || trollAbilities.includes(a.abilityKey))
+                &&
+                (!a.getDisabledAndReason?.())
+            )
             .map(btn => {
 
             travellers.forEach(t => {

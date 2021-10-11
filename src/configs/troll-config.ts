@@ -72,7 +72,7 @@ export const trollConfig = {
             newAbilities: [],
         },
         5: {
-            maxHp: 1000,
+            maxHp: 100,
             block: 0,
             dmg: [20, 40],
             xp: -1,

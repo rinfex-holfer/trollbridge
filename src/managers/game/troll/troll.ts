@@ -39,7 +39,7 @@ export class Troll {
 
     xp = 0
 
-    level = 5
+    level = 1
 
     hp = 1
     maxHp = 1
