@@ -2,7 +2,7 @@ import Phaser from "phaser";
 import {resoursePaths} from "../../../resourse-paths";
 import Pointer = Phaser.Input.Pointer;
 
-export class Tiles {
+export class O_Tiles {
     obj: Phaser.GameObjects.TileSprite
 
     constructor(private scene: Phaser.Scene, key: keyof typeof resoursePaths.images, x: number, y: number, width: number, height: number) {

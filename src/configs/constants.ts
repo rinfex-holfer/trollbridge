@@ -10,7 +10,14 @@ export const gameConstants = {
 
     horse: {
         speed: 500,
-    }
+    },
+
+    BRIDGE_HOLES: [
+        [3, 0],
+        [4, 0.1],
+        [5, 0.33],
+        [6, 1]
+    ] as [holeNumbers: number, chanceOfGameOver: number][]
 }
 
 export const zLayers = {

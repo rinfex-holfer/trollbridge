@@ -20,6 +20,9 @@ export function onEncounterStart() {
 
 export function onEncounterEnd() {
     console.log('onEncounterEnd')
+
+    if (o_.game.isGameover) return
+
     o_.interaction.enableEverything()
 
     o_.characters.enableInteractivityOnBridge();

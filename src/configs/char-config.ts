@@ -71,7 +71,7 @@ export const charConfig: {[key: string]: CharTemplate} = {
         moralePrice: [20,35],
         dmg: [4, 6],
         block: 0.5,
-        resources: {gold: [10, 30], food: [1, 3]},
+        resources: {gold: [20, 40], food: [1, 3]},
         isCombatant: true,
         atlasKey: 'shieldman',
         isDefender: true,

@@ -6,20 +6,18 @@ export const GameOver = () => {
     const [state, setState] = useState('');
 
     useEffect(() => {
-        const sub = eventBus.on(Evt.GAME_OVER, () => {
-            setState(o_.game.gameoverCause)
-        })
-        return () => {
-            eventBus.unsubscribe(Evt.GAME_OVER, sub);
-        }
+        const sub = eventBus.on(Evt.GAME_OVER, () => setState(o_.game.gameOverReason))
+        return () => eventBus.unsubscribe(Evt.GAME_OVER, sub)
     }, [setState])
 
-    return state ? <div id="gameover">
-        <div id="gameover-reason">
+    if (!state) return null
+
+    return <div id="gameover">
+        <div className='title'>
+            GAME OVER
+        </div>
+        <div className='reason'>
             {state}
         </div>
-        <div>=============================</div>
-        <div>========= GAME OVER =========</div>
-        <div>=============================</div>
-    </div> : null;
+    </div>
 }

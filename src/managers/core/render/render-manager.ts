@@ -5,7 +5,7 @@ import {O_GameObject} from "./types";
 import {O_Container} from "./container";
 import {O_Sprite} from "./sprite";
 import {O_AnimatedSprite} from "./animated-sprite";
-import {Tiles} from "./tiles";
+import {O_Tiles} from "./o_Tiles";
 import {O_Text} from "./text";
 import {o_} from "../../locator";
 import {LayerKey} from "../layers";
@@ -128,7 +128,7 @@ export class RenderManager {
     }
 
     createTiles(key: keyof typeof resoursePaths.images, x: number, y: number, width: number, height: number) {
-        return new Tiles(this.scene, key, x, y, width, height);
+        return new O_Tiles(this.scene, key, x, y, width, height);
     }
 
     createText(text: string, x: number, y: number, style: Phaser.Types.GameObjects.Text.TextStyle, options?: {parent?: O_Container}) {

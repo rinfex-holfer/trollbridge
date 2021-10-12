@@ -40,6 +40,7 @@ var config: Phaser.Types.Core.GameConfig = {
     },
     scene: {
         preload: function() {
+            this.load.plugin('rexshakepositionplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexshakepositionplugin.min.js', true);
             resourseLoader.load(this)
             preload(this);
         },

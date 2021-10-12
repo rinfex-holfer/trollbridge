@@ -26,8 +26,8 @@ import {O_Container} from "../../core/render/container";
 import {TrollStateUnconscious} from "./troll-state-unconscious";
 import {HpIndicator} from "../../../interface/hp-indicator";
 import {debugExpose} from "../../../utils/utils-misc";
-import {gameConstants} from "../../../configs/constants";
 import {battleConfig} from "../../../configs/battle-config";
+import {EntityType} from "../../core/entities";
 
 let troll: Troll
 
@@ -39,7 +39,7 @@ export class Troll {
 
     xp = 0
 
-    level = 1
+    level = 5
 
     hp = 1
     maxHp = 1
@@ -255,9 +255,9 @@ export class Troll {
         this.hpIndicator.update()
 
         if (this.hp === 0) {
-            o_.game.gameOver(cause)
-            o_.audio.playSound(SOUND_KEY.TROLL_DEATH)
             this.setState(TrollStateKey.UNCONSCIOUS)
+
+            if (this.hunger === this.maxHunger) o_.game.gameOver('Тролль умер!')
         }
 
         this.stats.update()
@@ -521,13 +521,13 @@ export class Troll {
         this.directToTarget(char.container)
 
         o_.audio.playSound(SOUND_KEY.TROLL_ATTACK_VOICE)
+        rockPlace.ruin(true)
 
         const p = createPromiseAndHandlers()
         this.setAnimation(CharAnimation.THROW_STONE, p.done)
         await p.promise
 
         const rock = new Rock({x: this.x, y: this.container.y - this.container.height + 10})
-        rockPlace.ruin(true)
 
         this.setAnimation(CharAnimation.IDLE)
 

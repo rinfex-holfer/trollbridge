@@ -3,14 +3,14 @@ import {o_} from "../locator";
 import {onEncounterEnd} from "../../helpers";
 import {pause} from "../../utils/utils-async";
 import {Char} from "../../entities/char/char";
-import {getRndItem} from "../../utils/utils-math";
+import {getRndItem, rndBetween} from "../../utils/utils-math";
 import {BattleActionsMenu} from "../../interface/battle-actions-menu";
 import {AfterBattleActionsMenu} from "../../interface/after-battle-actions-menu";
 import {EntityType} from "../core/entities";
-import {GoldLocation} from "../../entities/gold";
-import {MeatLocation} from "../../entities/meat";
-import {gameConstants} from "../../configs/constants";
 import {battleConfig} from "../../configs/battle-config";
+import {getGameSize} from "../../utils/utils-misc";
+import {MeatLocation} from "../../entities/meat";
+import {GoldLocation} from "../../entities/gold";
 
 export class BattleManager {
     unsub: any[] = []
@@ -122,6 +122,16 @@ export class BattleManager {
         this.unsub.forEach(u => u())
     }
 
+    onBridgeDestroyed() {
+        const gameSize = getGameSize()
+        this.actionsMenu.hide()
+        o_.render.moveTo(o_.troll.container, {x: o_.troll.container.x, y: gameSize.height + 100}, rndBetween(400, 600))
+
+        o_.characters.getTravellers().forEach(t => o_.render.moveTo(t.container, {x: t.container.x, y: gameSize.height + 100}, rndBetween(400, 600)))
+        o_.entities.get(EntityType.MEAT).filter(m => m.location === MeatLocation.GROUND).forEach(m => m.destroy())
+        o_.entities.get(EntityType.GOLD).filter(m => m.location === GoldLocation.GROUND).forEach(m => m.destroy())
+    }
+
     async trollThrowRock(char: Char) {
         o_.characters.disableInteractivityAll();
 
@@ -131,7 +141,13 @@ export class BattleManager {
             await this.defendAgainstThrow(char, defender, c => o_.troll.throwRockAt(c))
         } else {
             await o_.troll.throwRockAt(char)
-            if (this.getIsWin()) return this.win()
+
+            const gameOver = o_.bridge.checkDestruction()
+            if (gameOver) return this.onBridgeDestroyed()
+
+            if (this.getIsWin()) {
+                return this.win()
+            }
             await o_.troll.goToBattlePosition()
         }
 
@@ -262,7 +278,12 @@ export class BattleManager {
     async defendAgainstThrow(char: Char, defender: Char, trollAttackAction: (char: Char) => Promise<any>) {
         await Promise.all([defender.goDefend(char), trollAttackAction(defender)])
 
-        if (this.getIsWin()) return this.win()
+        const gameOver = o_.bridge.checkDestruction()
+        if (gameOver) return this.onBridgeDestroyed()
+
+        if (this.getIsWin()) {
+            return this.win()
+        }
 
         const allGoBack = [] as Promise<any>[]
         if (defender.getIsAbleToFight()) allGoBack.push(defender.goToBattlePosition())
