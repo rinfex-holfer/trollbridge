@@ -1,4 +1,4 @@
-import {CharKey, TrollLocation} from "./types";
+import {CharKey, EncounterDanger, TrollLocation} from "./types";
 
 let nextId = 0;
 
@@ -9,6 +9,7 @@ export const enum Evt {
 
     BATTLE_STARTED = 'BATTLE_STARTED',
     BATTLE_WON = 'BATTLE_WON',
+    BATTLE_DEFEAT = 'BATTLE_DEFEAT',
     BATTLE_END = 'BATTLE_END',
 
     BATTLE_TRAVELLERS_TURN_END = 'BATTLE_TRAVELLERS_TURN_END',
@@ -25,11 +26,14 @@ export const enum Evt {
     ENCOUNTER_ENDED = 'ENCOUNTER_ENDED',
     ENCOUNTER_STARTED = 'ENCOUNTER_STARTED',
     CHAR_LEFT_BRIDGE = 'CHAR_LEFT_BRIDGE',
+    CHARS_PASSED_AFTER_ASKING = 'CHARS_PASSED_AFTER_ASKING',
     CHAR_READY_TO_TALK = 'CHAR_READY_TO_TALK',
     TROLL_TURN_END = 'TROLL_TURN_END',
 
     CHAR_DEFEATED = 'CHAR_DEFEATED',
     CHAR_DEVOURED_IN_BATTLE = 'CHAR_DEVOURED_IN_BATTLE',
+    CHAR_DEVOURED = 'CHAR_DEVOURED',
+    CHAR_TORN_APART = 'CHAR_TORN_APART',
 }
 
 export type EvtData = {
@@ -38,7 +42,9 @@ export type EvtData = {
 
     [Evt.BATTLE_STARTED]: undefined,
     [Evt.BATTLE_TRAVELLERS_TURN_END]: undefined,
-    [Evt.BATTLE_WON]: undefined,
+    [Evt.CHARS_PASSED_AFTER_ASKING]: undefined,
+    [Evt.BATTLE_WON]: EncounterDanger,
+    [Evt.BATTLE_DEFEAT]: EncounterDanger,
     [Evt.BATTLE_END]: undefined,
 
     [Evt.BYPASSED]: undefined,
@@ -57,6 +63,8 @@ export type EvtData = {
 
     [Evt.CHAR_DEFEATED]: CharKey,
     [Evt.CHAR_DEVOURED_IN_BATTLE]: CharKey,
+    [Evt.CHAR_DEVOURED]: CharKey,
+    [Evt.CHAR_TORN_APART]: CharKey,
 }
 
 type Subscribers = {

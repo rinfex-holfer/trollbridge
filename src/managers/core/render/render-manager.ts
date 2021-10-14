@@ -5,7 +5,7 @@ import {O_GameObject} from "./types";
 import {O_Container} from "./container";
 import {O_Sprite} from "./sprite";
 import {O_AnimatedSprite} from "./animated-sprite";
-import {O_Tiles} from "./o_Tiles";
+import {O_Tiles} from "./tiles";
 import {O_Text} from "./text";
 import {o_} from "../../locator";
 import {LayerKey} from "../layers";
@@ -84,7 +84,6 @@ export class RenderManager {
         const p = createPromiseAndHandlers()
         const unsubId = o_.time.sub(dt => {
             const step = (speed / 1000) * dt
-            console.log(getDistanceBetween(obj, pos))
             if (getDistanceBetween(obj, pos) > step) return
 
             obj.x = pos.x

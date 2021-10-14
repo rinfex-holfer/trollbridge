@@ -131,10 +131,15 @@ export class StatusNotifications {
     }
 
     public showSelfControlReduce(val: number) {
-        this.flyingNumbers('' + val, colorsCSS.BLUE)
+        this.flyingNumbers('Самоконтроль: ' + val, colorsCSS.BLUE)
     }
 
     public showSelfControlIncrease(val: number) {
-        this.flyingNumbers('+' + val, colorsCSS.BLUE)
+        this.flyingNumbers('Самоконтроль: +' + val, colorsCSS.BLUE)
+    }
+
+    public showFearChange(val: number) {
+        const str = 'Страшность: ' + (val > 0 ? '+'+val : ''+val)
+        this.flyingNumbers(str, val > 0  ? colorsCSS.RED : colorsCSS.WHITE)
     }
 }

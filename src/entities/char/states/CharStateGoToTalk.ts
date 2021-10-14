@@ -19,6 +19,7 @@ export class CharStateGoToTalk extends CharState {
         this.char.speed = gameConstants.CHAR_VERY_FAST
         this.char.setAnimation(CharAnimation.WALK);
         this.char.moveTowards(this.target.x, this.target.y);
+        this.char.directToTarget(this.target)
 
         const p = createPromiseAndHandlers()
         this.char.movePromise = p.promise

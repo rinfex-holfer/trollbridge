@@ -1,5 +1,5 @@
 import {eventBus, Evt} from "../../../event-bus";
-import {CharKey, FoodType, TrollAbility, TrollLocation} from "../../../types";
+import {CharKey, EncounterDanger, FoodType, TrollAbility, TrollLocation} from "../../../types";
 import {positioner} from "../positioner";
 import {CharAnimation} from "../../../entities/char/char-constants";
 import {clamp, getRndItem, getRndSign, rnd, rndBetween, Vec} from "../../../utils/utils-math";
@@ -27,7 +27,6 @@ import {TrollStateUnconscious} from "./troll-state-unconscious";
 import {HpIndicator} from "../../../interface/hp-indicator";
 import {debugExpose} from "../../../utils/utils-misc";
 import {battleConfig} from "../../../configs/battle-config";
-import {EntityType} from "../../core/entities";
 
 let troll: Troll
 
@@ -48,6 +47,8 @@ export class Troll {
     maxHunger = trollConfig.TROLL_MAX_HUNGER
     selfControl = trollConfig.TROLL_MAX_SELF_CONTROL
     maxSelfControl = trollConfig.TROLL_MAX_SELF_CONTROL
+
+    fear = 0
 
     block = 0
     dmg = [1, 1]
@@ -120,6 +121,16 @@ export class Troll {
         this.hpIndicator = new HpIndicator(this, -30, -100, 50, 10)
         eventBus.on(Evt.BATTLE_STARTED, () => this.hpIndicator.show());
         eventBus.on(Evt.BATTLE_END, () => this.hpIndicator.hide());
+
+        eventBus.on(Evt.BATTLE_DEFEAT, () => this.changeFear(trollConfig.FEAR.DEFEAT));
+        eventBus.on(Evt.CHARS_PASSED_AFTER_ASKING, () => this.changeFear(trollConfig.FEAR.LET_PASS_AFTER_ASKING));
+        eventBus.on(Evt.BATTLE_WON, d => {
+            if (d === EncounterDanger.LOW || d === EncounterDanger.NONE) return
+            this.changeFear(trollConfig.FEAR.VICTORY)
+        });
+        eventBus.on(Evt.CHAR_DEVOURED, () => this.changeFear(trollConfig.FEAR.DEVOUR));
+        eventBus.on(Evt.CHAR_DEVOURED_IN_BATTLE, () => this.changeFear(trollConfig.FEAR.DEVOUR));
+        eventBus.on(Evt.CHAR_TORN_APART, () => this.changeFear(trollConfig.FEAR.DEVOUR));
 
         onTrollCameToLair()
 
@@ -246,6 +257,15 @@ export class Troll {
         this.statusNotifications.showHeal(val)
         this.changeTrollHp(val)
         this.hpIndicator.updateShowAndHide()
+    }
+
+    changeFear(val: number) {
+        const newFear = clamp(this.fear + val, -trollConfig.TROLL_MAX_FEAR, trollConfig.TROLL_MAX_FEAR)
+        if (newFear === this.fear) return
+
+        this.fear = newFear
+        this.statusNotifications.showFearChange(val)
+        this.stats.update()
     }
 
     changeTrollHp(val: number, cause = 'hunger') {
@@ -383,8 +403,8 @@ export class Troll {
     async devour(id: string) {
         await this.runAnimationOnce(CharAnimation.STRIKE_DOWN)
 
-        this.eat(FoodType.MEAT, false, true);
-        o_.characters.charEaten(id);
+        this.eat(FoodType.MEAT, false, true)
+        o_.characters.charEaten(id)
 
         await pause(1000)
 

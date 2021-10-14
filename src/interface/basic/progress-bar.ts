@@ -12,6 +12,7 @@ type ProgressBarOptions = {
     height: number,
     text?: string,
     textStyle?: any,
+    minValue?: number,
     maxValue?: number,
     value?: number,
     color?: number,
@@ -33,6 +34,7 @@ export class ProgressBar {
     container: O_Container
     value: number
     maxValue: number
+    minValue: number
 
     private label?: string
     private text: O_Text
@@ -49,6 +51,7 @@ export class ProgressBar {
 
         this.maxValue = options.maxValue || 100
         this.value = options.value || this.maxValue
+        this.minValue = options.minValue || 0
 
         this.container = o_.render.createContainer(this.x, this.y, options.parent ? {parent: options.parent} : undefined)
 
@@ -75,19 +78,27 @@ export class ProgressBar {
         let str = ''
         if (this.label) str = `${this.label}`
         if (!this.withoutNumbers) {
-            if (this.label) str += `: ${Math.round(val)}/${this.maxValue}`
-            else str += `${Math.round(val)}/${this.maxValue}`
+            // if (this.label) str += `: ${Math.round(val)}/${this.maxValue}`
+            // else str += `${Math.round(val)}/${this.maxValue}`
+
+            if (this.label) str += `: ${Math.round(val)}`
+            else str += `${Math.round(val)}`
         }
 
         this.text.setText(str)
     }
 
     private updateScale() {
-        this.rect.scaleX = this.value / this.maxValue
+        this.rect.scaleX = this.getPercent()
+    }
+
+    private getPercent() {
+        const range = this.maxValue - this.minValue // 200
+        return (this.value - this.minValue) / range
     }
 
     private updateColor() {
-        const currentRatio = this.value / this.maxValue
+        const currentRatio = this.getPercent()
 
         for (let i = 0; i < this.colorOptions.length; i++) {
             const borderRatio = this.colorOptions[i][0];

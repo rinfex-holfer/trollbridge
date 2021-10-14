@@ -28,6 +28,7 @@ export const enum CharKey {
     ARCHER = 'archer',
     SHIELDMAN = 'shieldman',
     KNIGHT = 'knight',
+    VIGILANTE = 'vigilante',
     // ARISTOCRAT = 'aristorat',
     // PRINCE = 'prince',
     // KING = 'king',
@@ -59,7 +60,9 @@ export type SquadPlace = 0 | 1 | 2 | 3 | 4 | 5
 export type EncounterTemplate = {
     enemies: [SquadPlace, CharKey][],
     speakerIdx?: number,
-    text: string
+    text: string,
+    isVigilante?: boolean
+    greetText?: string
 }
 
 export type Encounter = {
@@ -101,6 +104,7 @@ export type LevelReqs = {
         [CharKey.ARCHER]: number,
         [CharKey.SHIELDMAN]: number,
         [CharKey.KNIGHT]: number,
+        [CharKey.VIGILANTE]: number,
     },
     newAbilities: TrollAbility[]
 }

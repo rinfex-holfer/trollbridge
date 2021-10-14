@@ -18,7 +18,7 @@ export class CharSpeakText {
                 color: colorsCSS.WHITE,
                 fontStyle: 'italic',
                 fontSize: '18px',
-                wordWrap: {width: 200}
+                wordWrap: {width: 300}
             },
             {parent: container}
         )

@@ -9,6 +9,7 @@ import {positioner} from "../managers/game/positioner";
 import {LayerKey} from "../managers/core/layers";
 import {getGameSize} from "../utils/utils-misc";
 import {ImageKey} from "../utils/utils-types";
+import {trollConfig} from "../configs/troll-config";
 
 const X = 50
 const Y = 30
@@ -22,6 +23,7 @@ export class TrollStats {
     private hungerBar: ProgressBar
     private hpBar: ProgressBar
     private selfControl: ProgressBar
+    private fear: ProgressBar
 
     private xpMeter: XpMeter
     // private mightBar: ProgressBar
@@ -68,8 +70,20 @@ export class TrollStats {
             parent: this.container
         })
 
-        this.xpMeter = new XpMeter()
+        this.fear = new ProgressBar({
+            x: 0,
+            y: MARGIN * 3,
+            minValue: -trollConfig.TROLL_MAX_FEAR,
+            maxValue: trollConfig.TROLL_MAX_FEAR,
+            value: troll.fear,
+            width: WIDTH,
+            height: HEIGHT,
+            colorOptions: [[0, colorsNum.GREEN], [0.25, colorsNum.WHITE], [0.75, colorsNum.RED]],
+            text: 'Страшность',
+            parent: this.container
+        })
 
+        this.xpMeter = new XpMeter()
         this.xpMeter.updateVal(troll.xp, troll.getNextLvlReqs(), troll.level)
     }
 
@@ -81,6 +95,7 @@ export class TrollStats {
         this.hungerBar.setValue(this.troll.hunger, animated)
         this.hpBar.setValue(this.troll.hp, animated)
         this.selfControl.setValue(this.troll.selfControl, animated)
+        this.fear.setValue(this.troll.fear, animated)
     }
 
     public updateXp(animated: boolean, xp: number, nextLevelXp: number, level: number) {

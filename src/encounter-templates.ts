@@ -107,7 +107,25 @@ export const encounterTemplates: {[dangerLevel: number]: EncounterTemplate[]} = 
             text: 'Отряд Его Величества',
             enemies: [[0, CharKey.KNIGHT], [1, CharKey.SHIELDMAN], [2, CharKey.KNIGHT], [3, CharKey.ARCHER], [4, CharKey.KNIGHT], [5, CharKey.ARCHER]],
         },
-    ]
+    ],
 }
+
+export const vigilanteEncounters: EncounterTemplate[] = [
+    {
+        text: 'Толпа крестьян',
+        enemies: [[0, CharKey.FARMER], [1, CharKey.FARMER], [2, CharKey.FARMER], [3, CharKey.FARMER], [4, CharKey.ARCHER], [5, CharKey.FARMER]],
+        greetText: 'Ну все, тролль! Наши деревни решили, что пора тебя отсюда вытурить!'
+    },
+    {
+        text: 'Большой отряд солдат',
+        enemies: [[0, CharKey.SHIELDMAN], [1, CharKey.MILITIA], [2, CharKey.SHIELDMAN], [3, CharKey.ARCHER], [4, CharKey.ARCHER], [5, CharKey.ARCHER]],
+        greetText: 'Сегодня, тролль, ты прекратишь издеваться над путниками.'
+    },
+    {
+        text: 'Рыцарь',
+        enemies: [[1, CharKey.SHIELDMAN], [1, CharKey.VIGILANTE], [2, CharKey.SHIELDMAN]],
+        greetText: 'Именем Короля, ты приговорен к смерти за свои злодеяния!'
+    },
+]
 
 export const maxEncounterLevel = Math.max(...Object.keys(encounterTemplates).map(k => +k))

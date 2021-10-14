@@ -93,7 +93,17 @@ export class BattleManager {
     }
 
     fail() {
+        if (this.isBattle) eventBus.emit(Evt.BATTLE_DEFEAT, o_.negotiations.danger)
+
         this.onBattleEnd()
+
+        if (o_.characters.isVigilante) {
+            o_.characters.getFighters()[0].say('Настал твой конец!')
+            o_.characters.getFighters()[0].performBattleAction(1000, true).then(() => pause(1000)).then(() => {
+                o_.game.gameOver('Тролль погиб!')
+            })
+            return
+        }
 
         o_.characters.travellersTakeResourcesOnBridge().then(() => {
             o_.characters.letAllTravellersPass()
@@ -102,8 +112,7 @@ export class BattleManager {
     }
 
     win() {
-        console.log('win')
-        if (this.isBattle) eventBus.emit(Evt.BATTLE_WON)
+        if (this.isBattle) eventBus.emit(Evt.BATTLE_WON, o_.negotiations.danger)
 
         this.onBattleEnd()
 

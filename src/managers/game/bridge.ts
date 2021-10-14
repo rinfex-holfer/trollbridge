@@ -1,6 +1,6 @@
 import {positioner} from "./positioner";
 import {TrollLocation} from "../../types";
-import {O_Tiles} from "../core/render/o_Tiles";
+import {O_Tiles} from "../core/render/tiles";
 import {o_} from "../locator";
 import {Rect, rnd, sortByDistance, Vec} from "../../utils/utils-math";
 import {O_Sprite} from "../core/render/sprite";

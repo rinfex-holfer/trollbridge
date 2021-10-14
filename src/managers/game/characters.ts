@@ -1,8 +1,8 @@
-import {CharKey, EncounterDanger, EncounterTemplate, SquadPlace, TrollLocation} from "../../types";
+import {CharKey, EncounterDanger, SquadPlace, TrollLocation} from "../../types";
 import {clamp, getRndItem, rnd, rndBetween} from "../../utils/utils-math";
-import {Char} from "../../entities/char/char";
+import {Char, CharBehavior} from "../../entities/char/char";
 import {eventBus, Evt} from "../../event-bus";
-import {encounterTemplates, maxEncounterLevel} from "../../encounter-templates";
+import {encounterTemplates, maxEncounterLevel, vigilanteEncounters} from "../../encounter-templates";
 import {positioner} from "./positioner";
 import {o_} from "../locator";
 import {DmgOptions} from "../../utils/utils-types";
@@ -79,6 +79,22 @@ export class CharactersManager {
             console.log('highest possible', rndLevel)
         }
 
+        // if (o_.troll.fear >= gameConstants.FEAR_FOR_VIGILANTE && roll > 0.9) {
+        if (true) {
+            console.log('vigilante encounter!')
+            const vigilanteEncounter = vigilanteEncounters[this.nextVigilanteEncounter++]
+            if (vigilanteEncounter) {
+                this.encounterLevel = 999
+                this.isVigilante = true
+                this.createTravellers(vigilanteEncounter.enemies, CharBehavior.VIGILANTE)
+                o_.interaction.disableEverything()
+                o_.troll.goToBridge()
+                this.travellersSpeak(vigilanteEncounter.greetText || '')
+                return
+            }
+        }
+        this.isVigilante = false
+
         rndLevel = clamp(rndLevel, 0, maxEncounterLevel)
         console.log('after clamp', rndLevel)
 
@@ -89,6 +105,9 @@ export class CharactersManager {
 
         // this.dangerIndicator.setDanger(this.getDangerKey(), encounter.text);
     }
+
+    nextVigilanteEncounter = 0
+    isVigilante = false
 
     update(dt: number) {
         this.chars.forEach(t => t.update(dt));
@@ -139,7 +158,7 @@ export class CharactersManager {
         this.chars.splice(idx, 1)[0]
     }
 
-    createTravellers(keys: [SquadPlace, CharKey][]) {
+    createTravellers(keys: [SquadPlace, CharKey][], behavior?: CharBehavior) {
         const bridgePos = positioner.bridgePosition()
 
         const startY = bridgePos.height / 5 + bridgePos.y + bridgePos.height / 5
@@ -151,13 +170,17 @@ export class CharactersManager {
         const c = keys.map(([place, key]) => {
             const x = place <= 2 ? startX : startX + marginX
             const y = startY + (place % 3) * marginY
-            const char = new Char(key, x, y);
+            const char = new Char(key, x, y, behavior);
             this.chars.push(char);
 
             return [place, char]
         }) as [SquadPlace, Char][]
 
         this.squad = new Squad(c)
+
+        if (behavior === CharBehavior.VIGILANTE) {
+            this.squad.chars.forEach(c => c.goToTalk())
+        }
 
         eventBus.emit(Evt.TRAVELLERS_APPEAR);
     }
@@ -290,7 +313,7 @@ export class CharactersManager {
     }
 
     transformToFood(char: Char) {
-        char.transformToFood()
+        char.tornApart()
     }
 
     disableInteractivityAll() {

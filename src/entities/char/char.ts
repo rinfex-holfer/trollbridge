@@ -40,6 +40,11 @@ import {StatusNotifications} from "../../interface/status-notifications";
 import {positioner} from "../../managers/game/positioner";
 import {trollConfig} from "../../configs/troll-config";
 
+export enum CharBehavior {
+    COMMON = 'COMMON',
+    VIGILANTE = 'VIGILANTE',
+}
+
 export class Char {
     key: CharKey
     id: string
@@ -95,11 +100,14 @@ export class Char {
 
     statusNotifications: StatusNotifications
 
-    constructor(key: CharKey, x: number, y: number) {
+    behavior: CharBehavior
+
+    constructor(key: CharKey, x: number, y: number, behavior = CharBehavior.COMMON) {
         const charTemplate = charConfig[key]
 
         this.id = createId(key)
         this.key = key
+        this.behavior = behavior
 
         this.hp = charTemplate.hp
         this.maxHp = charTemplate.hp
@@ -138,7 +146,9 @@ export class Char {
 
         this.statusNotifications = new StatusNotifications(this.container, 0, -130)
 
-        this.state = this.getState(CharStateKey.GO_ACROSS)
+        this.state = this.behavior === CharBehavior.VIGILANTE
+            ? this.getState(CharStateKey.IDLE)
+            : this.getState(CharStateKey.GO_ACROSS)
         this.state.start();
 
         const subId = eventBus.on(Evt.ENCOUNTER_ENDED, () => {
@@ -442,6 +452,8 @@ export class Char {
     becomeDevoured() {
         if (o_.battle.isBattle) {
             eventBus.emit(Evt.CHAR_DEVOURED_IN_BATTLE, this.key)
+        } else {
+            eventBus.emit(Evt.CHAR_DEVOURED, this.key)
         }
         o_.audio.playSound(SOUND_KEY.TORN);
         o_.render.burstBlood(this.container.x, this.container.y);
@@ -626,8 +638,8 @@ export class Char {
         o_.render.directToTarget(this.sprite, {x: target.x - this.container.x, y: target.y - this.container.y});
     }
 
-    startAttack() {
-        if (o_.troll.hp > 0) {
+    startAttack(forced = false) {
+        if (o_.troll.hp > 0 || forced) {
             this.setState(CharStateKey.BATTLE_ATTACK);
         } else {
             this.endAttack();
@@ -639,16 +651,17 @@ export class Char {
         this.setState(CharStateKey.BATTLE_IDLE);
     }
 
-    transformToFood() {
+    tornApart() {
         this.dropAll()
         this.dropSelfMeat(foodConfig.FOOD_FROM_CHARACTER)
         o_.characters.removeChar(this.id)
+        eventBus.emit(Evt.CHAR_TORN_APART, this.key)
     }
 
     attackPromise = new Promise(() => {})
     onAttackEnd: any = () => {}
 
-    async performBattleAction(pauseTime = 600) {
+    async performBattleAction(pauseTime = 600, forced = false) {
         await pause(pauseTime)
 
         if (this.isRanged) {
@@ -665,7 +678,7 @@ export class Char {
             arrow.destroy()
         } else {
             this.attackPromise = new Promise(res => this.onAttackEnd = res)
-            this.startAttack();
+            this.startAttack(forced);
             await this.attackPromise;
         }
     }

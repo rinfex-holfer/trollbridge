@@ -91,6 +91,20 @@ export const charConfig: {[key: string]: CharTemplate} = {
         atlasKey: 'knight',
         isMounted: true,
     },
+    [CharKey.VIGILANTE]: {
+        name: 'chars.vigilante',
+        hp: 100,
+        morale: 300,
+        moralePrice: [100,200],
+        dmg: [10, 15],
+        counterAttack: 0.5,
+        block: 0.5,
+        evade: 0.75,
+        resources: {gold: [100, 200], food: [5, 6]},
+        isCombatant: true,
+        atlasKey: 'knight',
+        isMounted: true,
+    },
 
     //
     //

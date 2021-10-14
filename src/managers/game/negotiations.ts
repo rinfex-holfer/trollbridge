@@ -10,6 +10,7 @@ import {o_} from "../locator";
 import {onEncounterEnd, onEncounterStart} from "../../helpers";
 import {LayerKey} from "../core/layers";
 import {pause} from "../../utils/utils-async";
+import {trollConfig} from "../../configs/troll-config";
 
 export const enum NegotiationsState {
     START = 'START',
@@ -103,6 +104,12 @@ export class Negotiations {
     }
 
     startNegotiations(danger: EncounterDanger) {
+        if (o_.characters.isVigilante) {
+            this.currentStateKey = NegotiationsState.BATTLE
+            this.onStateChange()
+            return
+        }
+
         this.danger = danger;
         this.currentStateKey = NegotiationsState.START
         this.encounterState = negotiationTree[this.currentStateKey]
@@ -116,6 +123,7 @@ export class Negotiations {
                 o_.characters.stopAllTravellers();
                 break;
             case NegotiationsState.ALL_GIVEN:
+                o_.troll.changeFear(trollConfig.FEAR.ALL_GIVEN)
                 o_.characters.makeAllTravellersGiveAll();
                 pause(700).then(() => {
                     o_.troll.laughHard()
@@ -141,7 +149,7 @@ export class Negotiations {
                 o_.troll.hmm()
                 break;
         }
-        o_.characters.travellersSpeak(travellersReaction);
+        if (travellersReaction) o_.characters.travellersSpeak(travellersReaction);
         this.updateDialogButtons();
     }
 
@@ -188,6 +196,13 @@ export class Negotiations {
 
         if (!this.encounterState[message]) {
             throw Error('wrong message ' + message)
+        }
+
+        if (
+            message === NegotiationsMessage.GO_IN_PEACE
+            && (this.currentStateKey === NegotiationsState.PAY_REFUSED || this.currentStateKey === NegotiationsState.ALL_REFUSED)
+        ) {
+            o_.troll.changeFear(trollConfig.FEAR.LET_PASS_AFTER_ASKING)
         }
 
         const edges = this.encounterState[message][this.danger];
