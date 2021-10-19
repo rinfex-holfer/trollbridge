@@ -496,6 +496,23 @@ export class Troll {
         }
     }
 
+    burstBlood() {
+        o_.render.burstBlood(
+            this.container.x,
+            this.container.y - this.sprite.height / 2
+        )
+    }
+
+    getLastHit() {
+        this.burstBlood()
+        this.burstBlood()
+        this.burstBlood()
+
+        o_.audio.playSound(SOUND_KEY.TROLL_DEATH);
+
+        o_.game.gameOver('Тролль убит!')
+    }
+
     moveTowards(x: number, y: number) {
         o_.render.moveTowards(
             this.container,

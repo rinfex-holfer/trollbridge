@@ -128,7 +128,7 @@ export class CharactersManager {
 
     planVigilante(time: number) {
         this.vigilantePlanned = true
-        this.vigilanteTimeLeft = 3
+        this.vigilanteTimeLeft = time
         console.log('vigilante planned')
 
         eventBus.emit(Evt.VIGILANTE_PLANNED, this.vigilanteTimeLeft)

@@ -99,8 +99,8 @@ export class BattleManager {
 
         if (o_.characters.isVigilante) {
             o_.characters.getFighters()[0].say('Настал твой конец!')
-            o_.characters.getFighters()[0].performBattleAction(1000, true).then(() => pause(1000)).then(() => {
-                o_.game.gameOver('Тролль погиб!')
+            o_.characters.getFighters()[0].performFatality().then(() => {
+                o_.characters.letAllTravellersPass()
             })
             return
         }

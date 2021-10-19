@@ -36,7 +36,7 @@ export class GameNotifications {
 
     private show(str: string, imgKey: ImageKey, color: string = colorsCSS.GREEN) {
         const y = this.notifications.length * (NOTIFICATION_HEIGHT + PADDING)
-        const notification = o_.render.createContainer(0, y, {parent: this.container})
+        const notification = o_.render.createContainer(0, y+50, {parent: this.container})
         notification.alpha = 0.5
         o_.render.fadeIn(notification)
         o_.render.flyWithBounceTo(notification, {x: 0, y}, 100)
@@ -61,7 +61,7 @@ export class GameNotifications {
 
         this.notifications.push(notification)
 
-        this.updateDeleteTimer(5000)
+        this.updateDeleteTimer(10000)
     }
 
     private updateDeleteTimer(time: number) {
@@ -105,6 +105,6 @@ export class GameNotifications {
     }
 
     private onVigilantePlanned(time: number) {
-        this.show('Люди решили истребить жестокого тролля. К нему придут через ' + time + ' ходов', 'icon_hand_with_sword', colorsCSS.RED)
+        this.show('Люди решили истребить жестокого тролля. К нему придут через: ' + time + ' ходов', 'icon_hand_with_sword', colorsCSS.RED)
     }
 }

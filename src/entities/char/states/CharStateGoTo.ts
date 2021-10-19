@@ -10,12 +10,14 @@ export class CharStateGoTo extends CharState {
     target: Vec
     speed: number
     directToTarget: boolean = false
+    maxDistance: number | null
 
-    constructor(host: Char, options: {target: Vec, speed?: number, directToTarget?: boolean}) {
+    constructor(host: Char, options: {target: Vec, speed?: number, directToTarget?: boolean, maxDistance?: number}) {
         super(host);
         this.directToTarget = options.directToTarget || false
         this.target = options.target
         this.speed = options.speed || gameConstants.CHAR_VERY_FAST
+        this.maxDistance = options.maxDistance || null
     }
 
     onStart() {
@@ -31,10 +33,13 @@ export class CharStateGoTo extends CharState {
         const distanceLeft = getDistanceBetween(this.char.container, this.target);
         this.char.moveTowards(this.target.x, this.target.y);
 
-        if (distanceLeft <= step) {
+        if (distanceLeft <= step || (this.maxDistance && distanceLeft <= this.maxDistance)) {
             this.char.stop();
-            this.char.container.x = this.target.x
-            this.char.container.y = this.target.y
+
+            if (!this.maxDistance) {
+                this.char.container.x = this.target.x
+                this.char.container.y = this.target.y
+            }
             this.char.setState(CharStateKey.IDLE)
         }
     }

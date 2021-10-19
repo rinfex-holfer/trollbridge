@@ -683,6 +683,38 @@ export class Char {
         }
     }
 
+    async performFatality() {
+        await this.setState(CharStateKey.GO_TO, {target: o_.troll, directToTarget: true, maxDistance: 70})
+
+        const p = createPromiseAndHandlers()
+        this.setAnimation(CharAnimation.STRIKE, false, p.done)
+        await p.promise
+        o_.troll.burstBlood()
+        o_.audio.playSound(SOUND_KEY.HIT);
+        this.setAnimation(CharAnimation.IDLE)
+        await pause(500)
+
+        const p1 = createPromiseAndHandlers()
+        this.setAnimation(CharAnimation.STRIKE, false, p1.done)
+        await p1.promise
+        o_.troll.burstBlood()
+        o_.audio.playSound(SOUND_KEY.HIT);
+        this.setAnimation(CharAnimation.IDLE)
+
+        await pause(500)
+
+        const p2 = createPromiseAndHandlers()
+        this.setAnimation(CharAnimation.STRIKE, false, p2.done)
+        await p2.promise
+        o_.troll.burstBlood()
+        o_.audio.playSound(SOUND_KEY.HIT);
+        this.setAnimation(CharAnimation.IDLE)
+
+        await pause(1000)
+
+        o_.troll.getLastHit()
+    }
+
     async performCounterAttack() {
         this.statusNotifications.showCounterAttack()
         return this.performBattleAction(300)
