@@ -152,6 +152,7 @@ export class AudioManager {
 
     playingCurrently: MUSIC_KEY | undefined
     playMusic = (key: MUSIC_KEY) => {
+        // console.trace('playMusic', key)
         if (this.playingCurrently && this.music[this.playingCurrently].isPlaying)
             this.music[this.playingCurrently].stop()
 

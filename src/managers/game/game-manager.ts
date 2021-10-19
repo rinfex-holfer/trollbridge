@@ -2,6 +2,7 @@ import {o_} from "../locator";
 import {eventBus, Evt} from "../../event-bus";
 import Phaser from "phaser";
 import {MUSIC_KEY, SOUND_KEY} from "../core/audio";
+import {pause} from "../../utils/utils-async";
 
 export class GameManager {
     isGameover = false
@@ -20,8 +21,7 @@ export class GameManager {
 
         this.isGameover = true
         this.gameOverReason = reason
-        eventBus.emit(Evt.GAME_OVER)
 
-        o_.audio.playMusic(MUSIC_KEY.GAMEOVER)
+        pause(3000).then(() => eventBus.emit(Evt.GAME_OVER))
     }
 }

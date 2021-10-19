@@ -1,5 +1,6 @@
 import {TrollState, TrollStateKey} from "./troll-state";
 import {CharAnimation} from "../../../entities/char/char-constants";
+import {o_} from "../../locator";
 
 export class TrollStateUnconscious extends TrollState {
     key = TrollStateKey.UNCONSCIOUS

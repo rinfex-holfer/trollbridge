@@ -1,4 +1,5 @@
 import {CharKey, LevelReqs, TrollAbility} from "../types";
+import {TrollFearLevel} from "../managers/game/troll/types";
 
 export const trollConfig = {
     TROLL_MAX_HUNGER: 10,
@@ -11,13 +12,25 @@ export const trollConfig = {
     SELF_CONTROL_FROM_SLEEP: 1,
 
     TROLL_MAX_FEAR: 100,
-    FEAR: {
+    FEAR_CHANGES: {
         DEVOUR: 5,
         VICTORY: 2,
-        ALL_GIVEN: 1,
-        DEFEAT: -3,
+        ALL_GIVEN: 3,
+        DEFEAT: -4,
         LET_PASS_AFTER_ASKING: -2,
+        ASK_PAY_AFTER_ALL_REFUSED: -1,
+        DAY_PASSED: -1,
     },
+
+    FEAR_LEVELS: [
+        [-100, TrollFearLevel.HARMLESS],
+        [-66, TrollFearLevel.NOT_SERIOUS],
+        [-33, TrollFearLevel.UNPREDICTABLE],
+        [33, TrollFearLevel.DANGEROUS],
+        [66, TrollFearLevel.HORRIFIC],
+    ] as [number, TrollFearLevel][],
+
+    FEAR_FACTOR: 0.1,
 
     TROLL_SPEED: 500,
 
@@ -26,6 +39,7 @@ export const trollConfig = {
     TROLL_LEVELING: {
         1: {
             maxHp: 10,
+            maxHunger: 10,
             block: 0,
             dmg: [3, 6],
             xp: 10,
@@ -41,6 +55,7 @@ export const trollConfig = {
         },
         2: {
             maxHp: 20,
+            maxHunger: 15,
             block: 0,
             dmg: [5, 10],
             xp: 50,
@@ -56,6 +71,7 @@ export const trollConfig = {
         },
         3: {
             maxHp: 40,
+            maxHunger: 20,
             block: 0,
             dmg: [10, 20],
             xp: 100,
@@ -71,6 +87,7 @@ export const trollConfig = {
         },
         4: {
             maxHp: 60,
+            maxHunger: 10,
             block: 0,
             dmg: [15, 50],
             xp: 300,
@@ -86,6 +103,7 @@ export const trollConfig = {
         },
         5: {
             maxHp: 100,
+            maxHunger: 10,
             block: 0,
             dmg: [20, 40],
             xp: -1,

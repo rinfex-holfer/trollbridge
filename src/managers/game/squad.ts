@@ -9,9 +9,13 @@ export class Squad {
     placeToChar: {[key: number]: Char} = {}
     chars: Char[] = []
 
+    initialSize: number
+
     constructor(chars: [SquadPlace, Char][], speakerIdx?: number) {
         speakerIdx = speakerIdx ?? rndBetween(0, chars.length - 1)
         this.speaker = chars.length ? chars[speakerIdx][1] : null
+
+        this.initialSize = chars.length
 
         chars.forEach(([place, char]) => {
             this.placeToChar[place] = char

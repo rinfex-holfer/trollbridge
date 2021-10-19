@@ -31,7 +31,7 @@ const actionSpecs: {[action in BattleAction]: BattleActionSpec} = {
         resource: 'button_throw_rock',
         abilityKey: TrollAbility.THROW_ROCK,
         execute: char => o_.battle.trollThrowRock(char),
-        getIsActive: char => char.hp > 0 && !(char.isUnconscious && char.getIsCovered()),
+        getIsActive: char => char.hp > 0 && !(char.isUnconscious && char.getIsCovered()) && !char.isSurrender,
         getDisabledAndReason: () => o_.bridge.getHasAvailableRocks() ? false : 'нет камней, надо починить мост'
     },
 
@@ -51,7 +51,7 @@ const actionSpecs: {[action in BattleAction]: BattleActionSpec} = {
         text: 'Сожрать лежачего',
         resource: 'button_devour',
         execute: char => o_.battle.trollGoDevour(char),
-        getIsActive: char => (char.isUnconscious || char.isSurrender) && !char.getIsCovered()
+        getIsActive: char => char.isUnconscious && !char.getIsCovered()
     },
 }
 

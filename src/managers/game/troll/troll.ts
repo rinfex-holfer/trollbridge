@@ -38,7 +38,7 @@ export class Troll {
 
     xp = 0
 
-    level = 5
+    level = 1
 
     hp = 1
     maxHp = 1
@@ -119,18 +119,30 @@ export class Troll {
         this.onNewLevel(false);
 
         this.hpIndicator = new HpIndicator(this, -30, -100, 50, 10)
-        eventBus.on(Evt.BATTLE_STARTED, () => this.hpIndicator.show());
-        eventBus.on(Evt.BATTLE_END, () => this.hpIndicator.hide());
 
-        eventBus.on(Evt.BATTLE_DEFEAT, () => this.changeFear(trollConfig.FEAR.DEFEAT));
-        eventBus.on(Evt.CHARS_PASSED_AFTER_ASKING, () => this.changeFear(trollConfig.FEAR.LET_PASS_AFTER_ASKING));
+        let time = 0
+        eventBus.on(Evt.TIME_PASSED, () => {
+            time++
+            if (time > 1) {
+                if (this.fear > 0) this.changeFear(trollConfig.FEAR_CHANGES.DAY_PASSED)
+                time = 0
+            }
+        });
+
+        eventBus.on(Evt.BATTLE_STARTED, () => this.hpIndicator.show());
+        eventBus.on(Evt.BATTLE_END, () => {
+            this.hpIndicator.hide()
+            this.resetCooldownds()
+        });
+        eventBus.on(Evt.BATTLE_DEFEAT, () => this.changeFear(trollConfig.FEAR_CHANGES.DEFEAT));
         eventBus.on(Evt.BATTLE_WON, d => {
             if (d === EncounterDanger.LOW || d === EncounterDanger.NONE) return
-            this.changeFear(trollConfig.FEAR.VICTORY)
+            this.changeFear(trollConfig.FEAR_CHANGES.VICTORY)
         });
-        eventBus.on(Evt.CHAR_DEVOURED, () => this.changeFear(trollConfig.FEAR.DEVOUR));
-        eventBus.on(Evt.CHAR_DEVOURED_IN_BATTLE, () => this.changeFear(trollConfig.FEAR.DEVOUR));
-        eventBus.on(Evt.CHAR_TORN_APART, () => this.changeFear(trollConfig.FEAR.DEVOUR));
+
+        eventBus.on(Evt.CHAR_DEVOURED, () => this.changeFear(trollConfig.FEAR_CHANGES.DEVOUR));
+        eventBus.on(Evt.CHAR_DEVOURED_IN_BATTLE, () => this.changeFear(trollConfig.FEAR_CHANGES.DEVOUR));
+        eventBus.on(Evt.CHAR_TORN_APART, () => this.changeFear(trollConfig.FEAR_CHANGES.DEVOUR));
 
         onTrollCameToLair()
 
@@ -162,6 +174,15 @@ export class Troll {
                 this.stats.showNewAbility(levelConfig.newAbilities[0])
             }, 2000)
         }
+    }
+
+    getFearLevel() {
+        for (let i = 0; i < trollConfig.FEAR_LEVELS.length; i++) {
+            const level = trollConfig.FEAR_LEVELS[i]
+            if (this.fear >= level[0]) return level[1]
+        }
+        console.error('cant map fear value ' + this.fear + ' to fear levels')
+        return trollConfig.FEAR_LEVELS[trollConfig.FEAR_LEVELS.length - 1][1]
     }
 
     getNextLvlReqs() {
@@ -242,8 +263,10 @@ export class Troll {
         if (val === 0) return
 
         if (val > 0) {
+            if (this.selfControl === this.maxSelfControl) return
             this.statusNotifications.showSelfControlIncrease(val)
         } else {
+            if (this.selfControl === 0) return
             this.statusNotifications.showSelfControlReduce(val)
         }
 
@@ -277,7 +300,7 @@ export class Troll {
         if (this.hp === 0) {
             this.setState(TrollStateKey.UNCONSCIOUS)
 
-            if (this.hunger === this.maxHunger) o_.game.gameOver('Тролль умер!')
+            if (this.hunger === this.maxHunger && !o_.game.isGameover) o_.game.gameOver('Тролль умер! (голод на максимуме, здоровье на нуле)')
         }
 
         this.stats.update()
@@ -469,8 +492,8 @@ export class Troll {
         let chanceOfRage = (this.maxSelfControl - this.selfControl) / (100 * 2)
         chanceOfRage = Math.max(chanceOfRage, 0.01)
         const roll = rnd()
-        console.log('chance of rage', chanceOfRage, 'roll', roll, rnd() <= chanceOfRage)
-        if (rnd() <= chanceOfRage) this.setEnraged(true)
+        console.log('chance of rage', chanceOfRage, 'roll', roll, roll <= chanceOfRage)
+        if (roll <= chanceOfRage) this.setEnraged(true)
     }
 
     rollDmg(modifier = 1) {
@@ -480,7 +503,7 @@ export class Troll {
     }
 
     rollStun() {
-        return rndBetween(1, 3)
+        return 2
     }
 
     stop() {
@@ -580,6 +603,10 @@ export class Troll {
 
     updateCooldowns() {
         if (this.grappleCooldown > 0) this.grappleCooldown--
+    }
+
+    resetCooldownds() {
+        this.grappleCooldown = 0
     }
 
     setEnraged(val: boolean) {

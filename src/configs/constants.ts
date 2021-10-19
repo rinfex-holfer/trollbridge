@@ -12,7 +12,7 @@ export const gameConstants = {
         speed: 500,
     },
 
-    FEAR_FOR_VIGILANTE: 50,
+    FEAR_FOR_VIGILANTE: 66,
 
     BRIDGE_HOLES: [
         [3, 0],

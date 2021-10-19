@@ -78,23 +78,14 @@ export class BridgeManager {
 
     onRuined() {
         const ruined = this.getRockPlaces().filter(r => r.isRuined).length
-        if (ruined >= gameConstants.BRIDGE_HOLES[0][0]) this.shake()
+        if (ruined >= 4) this.shake()
     }
 
     checkDestruction(): boolean {
         const ruined = this.getRockPlaces().filter(r => r.isRuined).length
-        if (ruined > gameConstants.BRIDGE_HOLES[0][0]) {
-            for (let i = 1; i < gameConstants.BRIDGE_HOLES.length; i++) {
-                if (ruined === gameConstants.BRIDGE_HOLES[i][0]) {
-                    if (rnd() < gameConstants.BRIDGE_HOLES[i][1]) {
-                        this.fall()
-                        return true
-                    }
-                    return false;
-                }
-            }
-            this.fall()
-            return true
+        if (ruined === 6) {
+            // this.fall()
+            // return true
         }
 
         return false;

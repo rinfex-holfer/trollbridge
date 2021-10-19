@@ -1,7 +1,7 @@
-export const enum TrollIntention {
-    LAIR = 'LAIR',
-    BRIDGE = 'BRIDGE',
-    BED = 'BED',
-    CHAR = 'CHAR',
-    DEFENDER_OF_CHAR = 'DEFENDER_OF_CHAR',
+export const enum TrollFearLevel {
+    HARMLESS = 'HARMLESS',
+    NOT_SERIOUS = 'NOT_SERIOUS',
+    UNPREDICTABLE = 'UNPREDICTABLE',
+    DANGEROUS = 'DANGEROUS',
+    HORRIFIC = 'HORRIFIC'
 }

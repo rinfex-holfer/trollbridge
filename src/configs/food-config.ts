@@ -14,25 +14,25 @@ export const foodConfig = {
             ANIMAL: {
                 hp: 2,
                 xp: 6,
-                hunger: -3,
+                hunger: -2,
                 selfControl: -1,
             },
             ANIMAL_STALE: {
                 hp: 1,
                 xp: 1,
-                hunger: -3,
+                hunger: -2,
                 selfControl: -2,
             },
             HUMAN: {
                 hp: 4,
                 xp: 6,
-                hunger: -4,
+                hunger: -3,
                 selfControl: -5,
             },
             HUMAN_STALE: {
                 hp: 2,
                 xp: 1,
-                hunger: -4,
+                hunger: -3,
                 selfControl: -10,
             }
         },
@@ -40,14 +40,14 @@ export const foodConfig = {
             ANIMAL: {
                 hp: 10,
                 xp: 24,
-                hunger: -10,
+                hunger: -8,
                 selfControl: 0
             },
             ANIMAL_STALE: {
                 hp: 3,
                 xp: 4,
-                hunger: -8,
-                selfControl: -1
+                hunger: -6,
+                selfControl: -4
             },
             HUMAN: {
                 hp: 10,

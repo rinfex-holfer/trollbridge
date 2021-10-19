@@ -11,6 +11,8 @@ import {EntityType} from "../core/entities";
 import {Gold, GoldLocation} from "../../entities/gold";
 import {pause} from "../../utils/utils-async";
 import {MeatLocation} from "../../entities/meat";
+import {gameConstants} from "../../configs/constants";
+import {trollConfig} from "../../configs/troll-config";
 
 export class CharactersManager {
     chars: Char[] = []
@@ -79,20 +81,27 @@ export class CharactersManager {
             console.log('highest possible', rndLevel)
         }
 
-        // if (o_.troll.fear >= gameConstants.FEAR_FOR_VIGILANTE && roll > 0.9) {
-        if (true) {
-            console.log('vigilante encounter!')
-            const vigilanteEncounter = vigilanteEncounters[this.nextVigilanteEncounter++]
-            if (vigilanteEncounter) {
-                this.encounterLevel = 999
-                this.isVigilante = true
-                this.createTravellers(vigilanteEncounter.enemies, CharBehavior.VIGILANTE)
-                o_.interaction.disableEverything()
-                o_.troll.goToBridge()
-                this.travellersSpeak(vigilanteEncounter.greetText || '')
-                return
+        if (o_.troll.fear >= gameConstants.FEAR_FOR_VIGILANTE) {
+            console.log('vigilante may appear')
+            if (roll > 0.9) {
+                // if (true) {
+                console.log('vigilante rolled!')
+                const vigilanteEncounter = vigilanteEncounters[this.nextVigilanteEncounter++]
+                if (vigilanteEncounter) {
+                    this.encounterLevel = 999
+                    this.isVigilante = true
+                    this.createTravellers(vigilanteEncounter.enemies, CharBehavior.VIGILANTE)
+                    o_.interaction.disableEverything()
+                    o_.troll.goToBridge()
+                    this.travellersSpeak(vigilanteEncounter.greetText || '')
+                    return
+                } else {
+                    console.log('no vigilante encounters left')
+                }
             }
         }
+
+
         this.isVigilante = false
 
         rndLevel = clamp(rndLevel, 0, maxEncounterLevel)
@@ -255,6 +264,8 @@ export class CharactersManager {
             t.dropFood(t.food, true)
         });
         o_.lair.treasury.gatherGold(gold)
+
+        o_.troll.changeFear(trollConfig.FEAR_CHANGES.ALL_GIVEN)
     }
 
     travellersTakeResourcesOnBridge() {
@@ -287,6 +298,7 @@ export class CharactersManager {
     }
 
     makeCharGiveAll(char: Char) {
+        o_.troll.changeFear(Math.ceil(trollConfig.FEAR_CHANGES.ALL_GIVEN / this.squad.initialSize))
         char.giveAll();
     }
 
