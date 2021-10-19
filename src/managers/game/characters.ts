@@ -13,6 +13,7 @@ import {pause} from "../../utils/utils-async";
 import {MeatLocation} from "../../entities/meat";
 import {trollConfig} from "../../configs/troll-config";
 import {TrollFearLevel} from "./troll/types";
+import {debugExpose} from "../../utils/utils-misc";
 
 export class CharactersManager {
     chars: Char[] = []
@@ -22,6 +23,11 @@ export class CharactersManager {
     // dangerIndicator: DangerIndicator
 
     squad = new Squad([])
+
+    vigilanteTimeLeft = 0
+    vigilantePlanned = false
+    nextVigilanteEncounter = 0
+    isVigilante = false
 
     constructor() {
         eventBus.on(Evt.CHAR_LEFT_BRIDGE, charId => this.onCharLeftBridge(charId))
@@ -43,6 +49,8 @@ export class CharactersManager {
 
         o_.time.sub(dt => this.update(dt))
         o_.register.characters(this);
+
+        debugExpose((t: number) => this.planVigilante(t), 'planVigilante')
     }
 
     onTrollLocationChanged(location: TrollLocation) {
@@ -60,13 +68,39 @@ export class CharactersManager {
         // 41 - 80 - lower
         // 81 - 95 - 1-2 higher
         // 96-100 - 3 higher
-
-        let rndLevel: number
-
         console.log('Create random encounter');
 
         const roll = rnd()
+
+        if (this.vigilantePlanned) {
+            this.vigilanteTimeLeft--
+            console.log('time till vigilante comes:', this.vigilanteTimeLeft)
+            if (this.vigilanteTimeLeft <= 0) {
+                this.vigilantePlanned = false
+
+                const vigilanteEncounter = vigilanteEncounters[this.nextVigilanteEncounter++]
+                console.log('vigilante appears!')
+                this.encounterLevel = 999
+                this.isVigilante = true
+                this.createTravellers(vigilanteEncounter.enemies, CharBehavior.VIGILANTE)
+                o_.interaction.disableEverything()
+                o_.troll.goToBridge()
+                this.travellersSpeak(vigilanteEncounter.greetText || '')
+                return
+            }
+        } else if (o_.troll.fearLevel === TrollFearLevel.HORRIFIC && vigilanteEncounters[this.nextVigilanteEncounter+1]) {
+            console.log('check to plan vigilante')
+            if (roll > 0.9) {
+                this.planVigilante(3)
+            }
+        }
+
+        this.isVigilante = false
+
+        let rndLevel: number
+
         console.log('encounter roll', roll, ', encounter level:')
+
         if (roll <= 0.4) {
             rndLevel = o_.troll.level
             console.log('exact troll level', rndLevel)
@@ -81,29 +115,6 @@ export class CharactersManager {
             console.log('highest possible', rndLevel)
         }
 
-        if (o_.troll.fearLevel === TrollFearLevel.HORRIFIC) {
-            console.log('vigilante may appear')
-            if (roll > 0.9) {
-                // if (true) {
-                console.log('vigilante rolled!')
-                const vigilanteEncounter = vigilanteEncounters[this.nextVigilanteEncounter++]
-                if (vigilanteEncounter) {
-                    this.encounterLevel = 999
-                    this.isVigilante = true
-                    this.createTravellers(vigilanteEncounter.enemies, CharBehavior.VIGILANTE)
-                    o_.interaction.disableEverything()
-                    o_.troll.goToBridge()
-                    this.travellersSpeak(vigilanteEncounter.greetText || '')
-                    return
-                } else {
-                    console.log('no vigilante encounters left')
-                }
-            }
-        }
-
-
-        this.isVigilante = false
-
         rndLevel = clamp(rndLevel, 0, maxEncounterLevel)
         console.log('after clamp', rndLevel)
 
@@ -115,8 +126,13 @@ export class CharactersManager {
         // this.dangerIndicator.setDanger(this.getDangerKey(), encounter.text);
     }
 
-    nextVigilanteEncounter = 0
-    isVigilante = false
+    planVigilante(time: number) {
+        this.vigilantePlanned = true
+        this.vigilanteTimeLeft = 3
+        console.log('vigilante planned')
+
+        eventBus.emit(Evt.VIGILANTE_PLANNED, this.vigilanteTimeLeft)
+    }
 
     update(dt: number) {
         this.chars.forEach(t => t.update(dt));

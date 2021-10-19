@@ -22,6 +22,6 @@ export class GameManager {
         this.isGameover = true
         this.gameOverReason = reason
 
-        pause(3000).then(() => eventBus.emit(Evt.GAME_OVER))
+        pause(1500).then(() => eventBus.emit(Evt.GAME_OVER))
     }
 }

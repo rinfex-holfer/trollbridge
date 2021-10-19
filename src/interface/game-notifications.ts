@@ -11,7 +11,7 @@ const ICON_SIZE = 64
 const CONTAINER_PADDING = 10
 const PADDING = 20
 const TEXT_PADDING = 10
-const TEXT_WIDTH = 300
+const TEXT_WIDTH = 350
 const NOTIFICATION_HEIGHT = ICON_SIZE + PADDING * 2
 const NOTIFICATION_WIDTH = ICON_SIZE + PADDING * 2 + TEXT_PADDING + TEXT_WIDTH
 
@@ -31,6 +31,7 @@ export class GameNotifications {
         o_.layers.add(this.container, LayerKey.FIELD_BUTTONS)
 
         eventBus.on(Evt.FEAR_CHANGES, l => this.onFearChanges(l))
+        eventBus.on(Evt.VIGILANTE_PLANNED, t => this.onVigilantePlanned(t))
     }
 
     private show(str: string, imgKey: ImageKey, color: string = colorsCSS.GREEN) {
@@ -51,7 +52,7 @@ export class GameNotifications {
             str,
             TEXT_X,
             NOTIFICATION_HEIGHT / 2,
-            {color, fontStyle: 'bold', fontSize: '20px', wordWrap: {width: TEXT_WIDTH}},
+            {color, fontStyle: 'bold', fontSize: '20px', wordWrap: {width: TEXT_WIDTH}, stroke: colorsCSS.BLACK, strokeThickness: 3},
             {parent: notification}
         )
         text.setOrigin(0.5, 0.5)
@@ -101,5 +102,9 @@ export class GameNotifications {
         }
 
         this.show(text, icon, colorsCSS.WHITE)
+    }
+
+    private onVigilantePlanned(time: number) {
+        this.show('Люди решили истребить жестокого тролля. К нему придут через ' + time + ' ходов', 'icon_hand_with_sword', colorsCSS.RED)
     }
 }

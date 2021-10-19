@@ -32,6 +32,7 @@ export const enum Evt {
     TROLL_TURN_END = 'TROLL_TURN_END',
 
     FEAR_CHANGES = 'FEAR_CHANGES',
+    VIGILANTE_PLANNED = 'VIGILANTE_PLANNED',
 
     CHAR_DEFEATED = 'CHAR_DEFEATED',
     CHAR_DEVOURED_IN_BATTLE = 'CHAR_DEVOURED_IN_BATTLE',
@@ -65,6 +66,7 @@ export type EvtData = {
     [Evt.TROLL_TURN_END]: undefined,
 
     [Evt.FEAR_CHANGES]: TrollFearLevel,
+    [Evt.VIGILANTE_PLANNED]: number,
 
     [Evt.CHAR_DEFEATED]: CharKey,
     [Evt.CHAR_DEVOURED_IN_BATTLE]: CharKey,
