@@ -400,7 +400,7 @@ export class Char {
 
             const meat = new Meat(this.getCoords(), MeatLocation.GROUND)
             if (flyToStorage) {
-                meat.flyToStorage()
+                meat.bePlacedOrBeEaten()
             } else {
                 meat.throwTo(coord)
             }

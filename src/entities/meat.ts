@@ -85,7 +85,7 @@ export class Meat extends GameEntityBase<EntityType.MEAT> {
     }
 
    private onClickDefault() {
-        this.flyToStorage()
+        this.bePlacedOrBeEaten()
     }
 
     private onRightClick() {
@@ -102,7 +102,7 @@ export class Meat extends GameEntityBase<EntityType.MEAT> {
         o_.lair.foodStorage.updateFood()
     }
 
-    public flyToStorage() {
+    public bePlacedOrBeEaten() {
         switch (this.location) {
             case MeatLocation.GROUND:
                 if (o_.lair.foodStorage.hasFreeSpace()) {
@@ -192,6 +192,12 @@ export class Meat extends GameEntityBase<EntityType.MEAT> {
         this.setInteractive(true)
     }
 
+    setNotChoosable() {
+        this.setJumping(false)
+        this.onClick = undefined
+        // o_.layers.add(this.sprite, LayerKey.FIELD_OBJECTS)
+    }
+
     setChosen() {
         if (!this.pot) throw Error('cant choose food without pot')
         this.setJumping(false)
@@ -215,12 +221,6 @@ export class Meat extends GameEntityBase<EntityType.MEAT> {
         this.setJumping(true)
         o_.layers.add(this.sprite, LayerKey.FIELD_OBJECTS)
         this.updateEmitters()
-    }
-
-    setNotChoosable() {
-        this.setJumping(false)
-        this.onClick = undefined
-        o_.layers.add(this.sprite, LayerKey.FIELD_OBJECTS)
     }
 
     onLastAnimation() {
