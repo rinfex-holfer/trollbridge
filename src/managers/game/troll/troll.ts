@@ -27,6 +27,7 @@ import {TrollStateUnconscious} from "./troll-state-unconscious";
 import {HpIndicator} from "../../../interface/hp-indicator";
 import {debugExpose} from "../../../utils/utils-misc";
 import {battleConfig} from "../../../configs/battle-config";
+import {TrollFearLevel} from "./types";
 
 let troll: Troll
 
@@ -151,6 +152,8 @@ export class Troll {
             this.level = 5
             this.onNewLevel(false)
         }, 'maxLevel')
+
+        debugExpose((val: number) => this.changeFear(val), 'changeFear')
     }
 
     setInitialSpriteOrigin() {
@@ -282,9 +285,32 @@ export class Troll {
         this.hpIndicator.updateShowAndHide()
     }
 
+    fearLevel: TrollFearLevel = TrollFearLevel.UNPREDICTABLE
     changeFear(val: number) {
         const newFear = clamp(this.fear + val, -trollConfig.TROLL_MAX_FEAR, trollConfig.TROLL_MAX_FEAR)
         if (newFear === this.fear) return
+
+        let newFearLevel = this.fearLevel
+        console.log('newFear', newFear)
+
+        for (let i = 0; i < trollConfig.FEAR_LEVELS.length; i++) {
+            const level = trollConfig.FEAR_LEVELS[i]
+            const nextLevel = trollConfig.FEAR_LEVELS[i + 1]
+            console.log(i, 'level', level, 'nextLevel', nextLevel)
+            console.log(!nextLevel, nextLevel && (newFear >= level[0] && newFear < nextLevel[0]))
+            if (
+                !nextLevel ||
+                (newFear >= level[0] && newFear < nextLevel[0])
+            ) {
+                newFearLevel = level[1]
+                break
+            }
+        }
+
+        if (newFearLevel !== this.fearLevel) {
+            this.fearLevel = newFearLevel
+            eventBus.emit(Evt.FEAR_CHANGES, this.fearLevel)
+        }
 
         this.fear = newFear
         this.statusNotifications.showFearChange(val)

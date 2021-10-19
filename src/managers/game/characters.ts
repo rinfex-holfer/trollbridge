@@ -11,8 +11,8 @@ import {EntityType} from "../core/entities";
 import {Gold, GoldLocation} from "../../entities/gold";
 import {pause} from "../../utils/utils-async";
 import {MeatLocation} from "../../entities/meat";
-import {gameConstants} from "../../configs/constants";
 import {trollConfig} from "../../configs/troll-config";
+import {TrollFearLevel} from "./troll/types";
 
 export class CharactersManager {
     chars: Char[] = []
@@ -81,7 +81,7 @@ export class CharactersManager {
             console.log('highest possible', rndLevel)
         }
 
-        if (o_.troll.fear >= gameConstants.FEAR_FOR_VIGILANTE) {
+        if (o_.troll.fearLevel === TrollFearLevel.HORRIFIC) {
             console.log('vigilante may appear')
             if (roll > 0.9) {
                 // if (true) {

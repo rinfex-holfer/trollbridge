@@ -25,6 +25,7 @@ import {MusicManager} from "./managers/core/music";
 import {CharKey} from "./types";
 import {pause} from "./utils/utils-async";
 import {CharStateKey} from "./entities/char/char-constants";
+import {GameNotifications} from "./interface/game-notifications";
 
 const size = getGameSize()
 var config: Phaser.Types.Core.GameConfig = {
@@ -75,12 +76,14 @@ const create = (scene: Phaser.Scene) => {
     new Troll()
     new MusicManager()
 
-    new Meat({x: 160, y: 300})
-    new Meat({x: 180, y: 300})
-    new Meat({x: 200, y: 300})
-    new Meat({x: 220, y: 300})
-    new Meat({x: 240, y: 300})
-    new Meat({x: 260, y: 300})
+    new GameNotifications()
+
+    // new Meat({x: 160, y: 300})
+    // new Meat({x: 180, y: 300})
+    // new Meat({x: 200, y: 300})
+    // new Meat({x: 220, y: 300})
+    // new Meat({x: 240, y: 300})
+    // new Meat({x: 260, y: 300})
     // new Gold({x: 220, y: 300}, 1)
     // new Gold({x: 240, y: 300}, 2)
     // new Gold({x: 260, y: 300}, 3)

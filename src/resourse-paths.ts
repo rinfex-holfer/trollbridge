@@ -49,6 +49,11 @@ export const resoursePaths = {
         icon_surrender: `${imagesUrl}/icon_surrender.png`,
         icon_rage: `${imagesUrl}/icon_rage.png`,
         icon_speed: `${imagesUrl}/icon_speed.png`,
+        icon_fear_lowest: `${imagesUrl}/icon_fear_lowest.png`,
+        icon_fear_low: `${imagesUrl}/icon_fear_low.png`,
+        icon_fear_medium: `${imagesUrl}/icon_fear_medium.png`,
+        icon_fear_high: `${imagesUrl}/icon_fear_high.png`,
+        icon_fear_highest: `${imagesUrl}/icon_fear_highest.png`,
 
         empty_sprite: `${imagesUrl}/tile_empty.png`,
         particle_hit: `${imagesUrl}/particle_hit.png`,

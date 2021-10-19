@@ -1,4 +1,5 @@
 import {CharKey, EncounterDanger, TrollLocation} from "./types";
+import {TrollFearLevel} from "./managers/game/troll/types";
 
 let nextId = 0;
 
@@ -30,6 +31,8 @@ export const enum Evt {
     CHAR_READY_TO_TALK = 'CHAR_READY_TO_TALK',
     TROLL_TURN_END = 'TROLL_TURN_END',
 
+    FEAR_CHANGES = 'FEAR_CHANGES',
+
     CHAR_DEFEATED = 'CHAR_DEFEATED',
     CHAR_DEVOURED_IN_BATTLE = 'CHAR_DEVOURED_IN_BATTLE',
     CHAR_DEVOURED = 'CHAR_DEVOURED',
@@ -60,6 +63,8 @@ export type EvtData = {
     [Evt.CHAR_LEFT_BRIDGE]: string,
     [Evt.CHAR_READY_TO_TALK]: string,
     [Evt.TROLL_TURN_END]: undefined,
+
+    [Evt.FEAR_CHANGES]: TrollFearLevel,
 
     [Evt.CHAR_DEFEATED]: CharKey,
     [Evt.CHAR_DEVOURED_IN_BATTLE]: CharKey,
