@@ -154,6 +154,7 @@ export class Troll {
         }, 'maxLevel')
 
         debugExpose((val: number) => this.changeFear(val), 'changeFear')
+        debugExpose((val: number) => this.heal(val), 'heal')
     }
 
     setInitialSpriteOrigin() {
@@ -217,8 +218,6 @@ export class Troll {
         const hungerChange = foodConfig.FOOD[food][foodKey].hunger
         // @ts-ignore
         const selfControlChange = foodConfig.FOOD[food][foodKey].selfControl
-
-        console.log(food, isHuman, )
 
         this.heal(hpChange)
         this.changeHunger(hungerChange)
@@ -291,13 +290,10 @@ export class Troll {
         if (newFear === this.fear) return
 
         let newFearLevel = this.fearLevel
-        console.log('newFear', newFear)
 
         for (let i = 0; i < trollConfig.FEAR_LEVELS.length; i++) {
             const level = trollConfig.FEAR_LEVELS[i]
             const nextLevel = trollConfig.FEAR_LEVELS[i + 1]
-            console.log(i, 'level', level, 'nextLevel', nextLevel)
-            console.log(!nextLevel, nextLevel && (newFear >= level[0] && newFear < nextLevel[0]))
             if (
                 !nextLevel ||
                 (newFear >= level[0] && newFear < nextLevel[0])
@@ -533,16 +529,19 @@ export class Troll {
 
     rageStartCheck() {
         let chanceOfRage = (this.maxSelfControl - this.selfControl) / (100 * 2)
-        chanceOfRage = Math.max(chanceOfRage, 0.01)
         const roll = rnd()
         console.log('chance of rage', chanceOfRage, 'roll', roll, roll <= chanceOfRage)
         if (roll <= chanceOfRage) this.setEnraged(true)
     }
 
-    rollDmg(modifier = 1) {
+    rollDmg(grapple = false, rockThrow = false) {
         let dmg = rndBetween( this.dmg[0], this.dmg[1])
-        if (this.isEnraged) dmg *= 1.2
-        return Math.ceil(dmg * modifier)
+
+        if (this.isEnraged) dmg *= trollConfig.DMG_MODIFIER_RAGE
+        if (grapple) dmg *= trollConfig.DMG_MODIFIER_GRAPPLE
+        if (rockThrow) dmg *= trollConfig.DMG_MODIFIER_THROW_ROCK
+
+        return Math.ceil(dmg)
     }
 
     rollStun() {
@@ -620,7 +619,7 @@ export class Troll {
         await o_.render.flyTo(rock.sprite, char.getCoordsToThrowInto(), 1000)
 
         rock.destroy()
-        o_.characters.hitChar(char.id, this.rollDmg())
+        o_.characters.hitChar(char.id, this.rollDmg(false, true))
     }
 
     async throwChar(char: Char) {
@@ -637,7 +636,7 @@ export class Troll {
 
         this.setAnimation(CharAnimation.IDLE)
 
-        o_.characters.hitChar(char.id, this.rollDmg(battleConfig.GRAPPLE_DMG_MODIFIER), {grabbed: true, stun: this.rollStun()})
+        o_.characters.hitChar(char.id, this.rollDmg(true), {grabbed: true, stun: this.rollStun()})
 
         await o_.render.bounceOfGround(char.container, 50, 1000)
 

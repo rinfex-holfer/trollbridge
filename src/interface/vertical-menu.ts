@@ -6,6 +6,7 @@ import {O_Container} from "../managers/core/render/container";
 import {colorsCSS} from "../configs/constants";
 import {O_Sprite} from "../managers/core/render/sprite";
 import {O_Text} from "../managers/core/render/text";
+import {createPromiseAndHandlers} from "../utils/utils-async";
 
 type BtnTemplate<K> = {text: string, key: K, resource: keyof typeof resoursePaths.images, getDisabledAndReason?: () => false | string}
 
@@ -91,7 +92,7 @@ export class VerticalMenu<Keys extends string> {
             this.buttons[template.key] = {sprite, text, key, disabledText, getDisabledAndReason: template.getDisabledAndReason || (() => false)}
         })
 
-        this.hide();
+        this.hide(false);
     }
 
     getMenuHeight(): number {
@@ -103,6 +104,12 @@ export class VerticalMenu<Keys extends string> {
             const disabledReason = b.getDisabledAndReason()
             if (disabledReason) this.disableButton(b.key, disabledReason)
             else this.enableButton(b.key)
+        })
+    }
+
+    deactivateAllButtons() {
+        Object.values(this.buttons).forEach(b => {
+            b.sprite.setInteractive(false)
         })
     }
 
@@ -153,12 +160,34 @@ export class VerticalMenu<Keys extends string> {
         }
     }
 
-    show() {
+    show(withAnimation = true) {
         this.container.setVisibility(true)
+        if (withAnimation) {
+            this.container.x = this.container.x - 50
+            o_.render.fadeIn(this.container, 200)
+            o_.render.flyTo(this.container, {x: this.container.x + 50, y: this.container.y}, 200)
+        }
     }
 
-    hide() {
-        this.container.setVisibility(false)
-        this.selectButton(null)
+    hide(withAnimation = true): Promise<any> {
+        if (withAnimation) {
+            const p = createPromiseAndHandlers()
+            o_.render.fadeOut(this.container, 250).then(() => {
+                this.container.x = this.container.x - 50
+                this.container.setVisibility(false)
+                this.selectButton(null)
+                p.done()
+            })
+            o_.render.flyTo(this.container, {x: this.container.x + 50, y: this.container.y}, 200)
+            return p.promise
+        } else {
+            this.container.setVisibility(false)
+            this.selectButton(null)
+            return Promise.resolve()
+        }
+    }
+
+    destroy() {
+        this.container.destroy()
     }
 }

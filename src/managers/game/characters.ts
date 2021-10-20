@@ -26,7 +26,7 @@ export class CharactersManager {
 
     vigilanteTimeLeft = 0
     vigilantePlanned = false
-    nextVigilanteEncounter = 0
+    nextVigilanteEncounter = 2
     isVigilante = false
 
     constructor() {
@@ -103,16 +103,16 @@ export class CharactersManager {
 
         if (roll <= 0.4) {
             rndLevel = o_.troll.level
-            console.log('exact troll level', rndLevel)
+            console.log('======= exact troll level', rndLevel)
         } else if (roll <= 0.8) {
             rndLevel = rndBetween(0, o_.troll.level - 1)
-            console.log('lower', rndLevel)
+            console.log('======= lower', rndLevel)
         } else if (roll <= 0.95) {
             rndLevel = rndBetween(o_.troll.level + 1, o_.troll.level + 2)
-            console.log('higher', rndLevel)
+            console.log('======= higher', rndLevel)
         } else {
             rndLevel = o_.troll.level + 3
-            console.log('highest possible', rndLevel)
+            console.log('======= highest possible', rndLevel)
         }
 
         rndLevel = clamp(rndLevel, 0, maxEncounterLevel)

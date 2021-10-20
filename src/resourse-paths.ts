@@ -34,7 +34,7 @@ export const resoursePaths = {
         button_throw_rock: `${imagesUrl}/icon_rock.png`,
         button_throw_char: `${imagesUrl}/icon_throw_char.png`,
         button_devour: `${imagesUrl}/icon_devour.png`,
-        button_make_food: `${imagesUrl}/makeFood_0.png`,
+        button_make_food: `${imagesUrl}/icon_devour.png`,
         button_feed: `${imagesUrl}/makeFood.png`,
         button_upgrade: `${imagesUrl}/icon_build.png`,
         button_wait: `${imagesUrl}/icon_wait.png`,

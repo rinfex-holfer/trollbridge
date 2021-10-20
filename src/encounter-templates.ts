@@ -36,8 +36,8 @@ export const encounterTemplates: {[dangerLevel: number]: EncounterTemplate[]} = 
             enemies: [[0, CharKey.MILITIA], [1, CharKey.MILITIA]],
         },
         {
-            text: 'Патруль',
-            enemies: [[0, CharKey.MILITIA], [1, CharKey.MILITIA], [4, CharKey.ARCHER]],
+            text: 'Патруль малый c лучником',
+            enemies: [[1, CharKey.MILITIA], [4, CharKey.ARCHER]],
         },
         {
             text: 'Cолдат',
@@ -123,7 +123,7 @@ export const vigilanteEncounters: EncounterTemplate[] = [
     },
     {
         text: 'Рыцарь',
-        enemies: [[1, CharKey.SHIELDMAN], [1, CharKey.VIGILANTE], [2, CharKey.SHIELDMAN]],
+        enemies: [[0, CharKey.KNIGHT], [1, CharKey.SHIELDMAN], [3, CharKey.ARCHER]],
         greetText: 'Именем Короля, ты приговорен к смерти за свои злодеяния!'
     },
 ]

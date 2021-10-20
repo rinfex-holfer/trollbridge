@@ -100,8 +100,10 @@ export class BattleActionsMenu {
     }
 
     hide() {
-        this.verticalMenu.hide()
-        this.verticalMenu.container.destroy()
+        this.verticalMenu.deactivateAllButtons()
+        this.verticalMenu.hide().then(() => {
+            this.verticalMenu.destroy()
+        })
 
         o_.characters.getSquadChars().forEach(c => c.sprite.removeClickListener())
     }

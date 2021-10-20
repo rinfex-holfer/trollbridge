@@ -24,4 +24,8 @@ export class GameManager {
 
         pause(1500).then(() => eventBus.emit(Evt.GAME_OVER))
     }
+
+    gameWin() {
+
+    }
 }

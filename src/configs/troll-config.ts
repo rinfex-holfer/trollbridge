@@ -11,6 +11,10 @@ export const trollConfig = {
     HP_FROM_SLEEP_ON_BED: 0.25,
     SELF_CONTROL_FROM_SLEEP: 1,
 
+    DMG_MODIFIER_RAGE: 1.5,
+    DMG_MODIFIER_THROW_ROCK: 1.25,
+    DMG_MODIFIER_GRAPPLE: 1,
+
     TROLL_MAX_FEAR: 100,
     FEAR_CHANGES: {
         DEVOUR: 5,
@@ -57,7 +61,7 @@ export const trollConfig = {
             maxHp: 20,
             maxHunger: 15,
             block: 0,
-            dmg: [5, 10],
+            dmg: [7, 13],
             xp: 50,
             xpRewards: {
                 [CharKey.FARMER]: 1,

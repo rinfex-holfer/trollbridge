@@ -1,9 +1,6 @@
 import {rnd} from "../../utils/utils-math";
-import {EncounterDanger, TrollLocation} from "../../types";
+import {EncounterDanger, NegotiationsMessage, TrollLocation} from "../../types";
 import {eventBus, Evt} from "../../event-bus";
-import {BasicButton} from "../../interface/basic/basic-button";
-import {colors} from "../../configs/constants";
-import {SimpleButton} from "../../interface/basic/simple-button";
 import {positioner} from "./positioner";
 import {O_Container} from "../core/render/container";
 import {o_} from "../locator";
@@ -11,6 +8,7 @@ import {onEncounterEnd, onEncounterStart} from "../../helpers";
 import {LayerKey} from "../core/layers";
 import {pause} from "../../utils/utils-async";
 import {trollConfig} from "../../configs/troll-config";
+import {NegotiationMenu} from "../../interface/negotiation-menu";
 
 export const enum NegotiationsState {
     START = 'START',
@@ -22,15 +20,7 @@ export const enum NegotiationsState {
     END = 'END'
 }
 
-const enum NegotiationsMessage {
-    ON_START = 'ON_START',
-    DEMAND_ALL = 'DEMAND_ALL',
-    DEMAND_PAY = 'DEMAND_PAY',
-    GO_IN_PEACE = 'GO_IN_PEACE',
-    TO_BATTLE = 'TO_BATTLE',
-}
-
-const BUTTON_WIDTH = 150;
+const BUTTON_WIDTH = 200;
 const BUTTON_MARGIN = 30;
 
 const getButtonsRowWidth = (amount: number) => amount * BUTTON_WIDTH + (amount - 1) * BUTTON_MARGIN;
@@ -42,7 +32,6 @@ export class Negotiations {
     danger: EncounterDanger = EncounterDanger.NONE;
 
     container: O_Container
-    buttons: BasicButton[] = []
     travellersReadyToTalk = [] as string[];
 
     constructor() {
@@ -82,10 +71,10 @@ export class Negotiations {
 
     onEncounterEnd() {
         this.isNegotiationInProgress = false
-        this.buttons.forEach(b => b.destroy())
-        this.buttons = []
         this.encounterState = null
         this.danger = EncounterDanger.NONE
+
+        this.negotiationMenu.hide()
 
         o_.characters.letAllTravellersPass()
 
@@ -152,35 +141,44 @@ export class Negotiations {
         this.updateDialogButtons();
     }
 
+    negotiationMenu = new NegotiationMenu([], (message: NegotiationsMessage) => this.onMessage(message))
+
     updateDialogButtons() {
-        this.buttons.forEach(b => b.destroy());
+        if (!this.isNegotiationInProgress) {
+            this.negotiationMenu.hide()
+            return;
+        }
 
-        if (!this.encounterState) return;
+        this.negotiationMenu.hide().then(() => {
+            const answers = this.getDialogVariants();
+            const fullWidth = getButtonsRowWidth(answers.length)
 
-        const answers = this.getDialogVariants();
-        const fullWidth = getButtonsRowWidth(answers.length)
+            let x = - fullWidth / 2
 
-        let x = - fullWidth / 2
-        this.buttons = answers.map((text, idx) => {
-            const b = new SimpleButton({
-                text,
-                onClick: () => this.onMessage(text),
-                style: {
-                    align: 'center',
-                    fill: colors.WHITE,
-                    wordWrapWidth: BUTTON_WIDTH,
-                    fontSize: 18,
-                    wordWrap: true
-                },
-                x,
-                parent: this.container
-            })
-
-            x += (BUTTON_WIDTH + BUTTON_MARGIN);
-
-            return b;
+            this.negotiationMenu.show(answers)
         })
-        console.log(this.buttons)
+
+
+
+        // this.buttons = answers.map((text, idx) => {
+        //     const b = new SimpleButton({
+        //         text,
+        //         onClick: () => this.onMessage(text),
+        //         style: {
+        //             align: 'center',
+        //             fill: colors.WHITE,
+        //             wordWrapWidth: BUTTON_WIDTH,
+        //             fontSize: 18,
+        //             wordWrap: true
+        //         },
+        //         x,
+        //         parent: this.container
+        //     })
+        //
+        //     x += (BUTTON_WIDTH + BUTTON_MARGIN);
+        //
+        //     return b;
+        // })
     }
 
     getDialogVariants(): NegotiationsMessage[] {

@@ -656,6 +656,7 @@ export class Char {
         this.dropSelfMeat(foodConfig.FOOD_FROM_CHARACTER)
         o_.characters.removeChar(this.id)
         eventBus.emit(Evt.CHAR_TORN_APART, this.key)
+        o_.audio.playSound(SOUND_KEY.TORN);
     }
 
     attackPromise = new Promise(() => {})

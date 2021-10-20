@@ -43,7 +43,8 @@ export class BattleManager {
         this.xpForBattle = o_.troll.getXpForSquad(fighters.map(f => f.key))
 
         o_.characters.startFighting();
-        this.trollTurn();
+
+        pause(1000).then(() => this.trollTurn())
     }
 
     async trollTurn() {

@@ -116,3 +116,10 @@ export enum TrollAbility {
     MAN_EATER
 }
 
+export const enum NegotiationsMessage {
+    ON_START = 'ON_START',
+    DEMAND_ALL = 'Потребовать все',
+    DEMAND_PAY = 'Потребовать плату',
+    GO_IN_PEACE = 'Отпустить',
+    TO_BATTLE = 'Атаковать',
+}
