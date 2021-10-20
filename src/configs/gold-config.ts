@@ -4,5 +4,6 @@ export const goldConfig = {
     costs: {
         fix_bridge: 10,
         drying_rack: 25,
+        bridge_ornament: 500,
     },
 }

@@ -66,6 +66,7 @@ export const resoursePaths = {
         particle_blood: `${imagesUrl}/particle_blood.jpg`,
         particle_smoke_green: `${imagesUrl}/particle_smoke_green.png`,
         treasury: `${imagesUrl}/treasury.png`,
+        statue: `${imagesUrl}/statue.png`,
         "gold-1": `${imagesUrl}/gold-1.png`,
         "gold-2": `${imagesUrl}/gold-2.png`,
         "gold-3": `${imagesUrl}/gold-3.png`,

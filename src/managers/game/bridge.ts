@@ -16,6 +16,8 @@ export class BridgeManager {
 
     shakePosition: any
 
+    isWithStatues =false
+
     constructor() {
         this.pos = positioner.bridgePosition();
         this.sprite = o_.render.createTiles('floor', this.pos.x, this.pos.y, this.pos.width, this.pos.height);
@@ -32,6 +34,8 @@ export class BridgeManager {
 
         // @ts-ignore
         this.shakePosition = o_.game.getScene().plugins.get('rexshakepositionplugin').add(this.sprite.obj);
+
+        o_.upgrade.createUpgradeButton({x: this.pos.x + this.pos.width - 150, y: this.pos.y + 50}, 'Украсить мост', goldConfig.costs.bridge_ornament, () => this.createStatues())
     }
 
     enableInterface() {
@@ -102,6 +106,19 @@ export class BridgeManager {
         o_.render.moveTo(this.sprite, {x: 0, y: gameSize.height + 100}, 300).promise.then(() => {
             o_.game.gameOver('Мост рухнул!')
         })
+    }
+
+    createStatues() {
+        const options = {width: 100, height: 100}
+        o_.render.createSprite('statue', this.pos.x + 100, this.pos.y + 10, options)
+        o_.render.createSprite('statue', this.pos.x + 100, this.pos.y + this.pos.height - 60, options)
+
+        const right1 = o_.render.createSprite('statue', this.pos.x + this.pos.width - 100, this.pos.y + 10, options)
+        const right2 = o_.render.createSprite('statue', this.pos.x + this.pos.width - 100, this.pos.y + this.pos.height - 60, options)
+        right1.flipX()
+        right2.flipX()
+
+        this.isWithStatues = true
     }
 }
 

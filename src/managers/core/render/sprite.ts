@@ -57,6 +57,10 @@ export class O_Sprite {
         this.obj.on('pointerout', callback)
     }
 
+    flipX() {
+        this.obj.scaleX = -this.obj.scaleX
+    }
+
     get x() { return this.obj.x }
     set x(x) { this.obj.x = x }
     get y() { return this.obj.y }
