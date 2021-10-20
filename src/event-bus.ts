@@ -17,6 +17,7 @@ export const enum Evt {
 
     BYPASSED = 'BYPASSED',
     GAME_OVER = 'GAME_OVER',
+    GAME_WIN = 'GAME_WIN',
 
     TROLL_STATS_CHANGED = 'TROLL_STATS_CHANGED',
     TROLL_LOCATION_CHANGED = 'TROLL_LOCATION_CHANGED',
@@ -53,7 +54,10 @@ export type EvtData = {
 
     [Evt.BYPASSED]: undefined,
     [Evt.TIME_PASSED]: undefined,
+
     [Evt.GAME_OVER]: undefined,
+    [Evt.GAME_WIN]: string,
+
     [Evt.TROLL_STATS_CHANGED]: undefined,
     [Evt.RESOURSES_CHANGED]: undefined,
     [Evt.NEGOTIATION_STARTED]: undefined,

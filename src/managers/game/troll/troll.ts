@@ -19,7 +19,7 @@ import {onTrollCameToBridge, onTrollCameToLair, onTrollSleep} from "../../../hel
 import {Char} from "../../../entities/char/char";
 import {createPromiseAndHandlers, pause} from "../../../utils/utils-async";
 import {Rock} from "../../../entities/rock";
-import {trollConfig} from "../../../configs/troll-config";
+import {maxTrollLevel, trollConfig} from "../../../configs/troll-config";
 import {foodConfig} from "../../../configs/food-config";
 import {StatusNotifications} from "../../../interface/status-notifications";
 import {O_Container} from "../../core/render/container";
@@ -347,6 +347,10 @@ export class Troll {
             default:
                 throw Error('wrong state key ' + stateKey);
         }
+    }
+
+    getIsMaxLevelReached() {
+        return maxTrollLevel === this.level
     }
 
     setState(stateKey: TrollStateKey, options?: any): Promise<any> {

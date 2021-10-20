@@ -117,6 +117,10 @@ export class BattleManager {
 
         this.onBattleEnd()
 
+        if (o_.characters.isKing) {
+            o_.game.gameWin('Отряд самого короля побежден. Теперь никто не посмеет перечить троллю!')
+            return
+        }
         this.afterBattleMenu.show()
 
         o_.troll.addXp(this.xpForBattle)

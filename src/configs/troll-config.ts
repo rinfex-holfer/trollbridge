@@ -42,7 +42,7 @@ export const trollConfig = {
 
     TROLL_LEVELING: {
         1: {
-            maxHp: 10,
+            maxHp: 15,
             maxHunger: 10,
             block: 0,
             dmg: [3, 6],
@@ -54,11 +54,12 @@ export const trollConfig = {
                 [CharKey.SHIELDMAN]: 10,
                 [CharKey.KNIGHT]: 50,
                 [CharKey.VIGILANTE]: 100,
+                [CharKey.KING]: 100,
             },
             newAbilities: [TrollAbility.MAN_EATER],
         },
         2: {
-            maxHp: 20,
+            maxHp: 30,
             maxHunger: 15,
             block: 0,
             dmg: [7, 13],
@@ -70,11 +71,12 @@ export const trollConfig = {
                 [CharKey.SHIELDMAN]: 10,
                 [CharKey.KNIGHT]: 50,
                 [CharKey.VIGILANTE]: 100,
+                [CharKey.KING]: 100,
             },
             newAbilities: [TrollAbility.THROW_ROCK],
         },
         3: {
-            maxHp: 40,
+            maxHp: 60,
             maxHunger: 20,
             block: 0,
             dmg: [10, 20],
@@ -86,11 +88,12 @@ export const trollConfig = {
                 [CharKey.SHIELDMAN]: 10,
                 [CharKey.KNIGHT]: 50,
                 [CharKey.VIGILANTE]: 100,
+                [CharKey.KING]: 100,
             },
             newAbilities: [TrollAbility.GRAPPLE],
         },
         4: {
-            maxHp: 60,
+            maxHp: 100,
             maxHunger: 10,
             block: 0,
             dmg: [15, 50],
@@ -102,11 +105,12 @@ export const trollConfig = {
                 [CharKey.SHIELDMAN]: 10,
                 [CharKey.KNIGHT]: 50,
                 [CharKey.VIGILANTE]: 100,
+                [CharKey.KING]: 100,
             },
             newAbilities: [],
         },
         5: {
-            maxHp: 100,
+            maxHp: 150,
             maxHunger: 10,
             block: 0,
             dmg: [20, 40],
@@ -118,8 +122,12 @@ export const trollConfig = {
                 [CharKey.SHIELDMAN]: 0,
                 [CharKey.KNIGHT]: 0,
                 [CharKey.VIGILANTE]: 0,
+                [CharKey.KING]: 0,
             },
             newAbilities: [],
         },
     } as {[key: number]: LevelReqs},
 }
+
+// @ts-ignore
+export const maxTrollLevel: number = +Object.keys(trollConfig.TROLL_LEVELING).sort((a, b) => +a - +b).pop()

@@ -1,7 +1,7 @@
 import {o_} from "../locator";
 import {eventBus, Evt} from "../../event-bus";
 import Phaser from "phaser";
-import {MUSIC_KEY, SOUND_KEY} from "../core/audio";
+import {MUSIC_KEY} from "../core/audio";
 import {pause} from "../../utils/utils-async";
 
 export class GameManager {
@@ -25,7 +25,11 @@ export class GameManager {
         pause(1500).then(() => eventBus.emit(Evt.GAME_OVER))
     }
 
-    gameWin() {
-
+    gameWin(reason: string) {
+        this.isGameover = true
+        pause(1500).then(() => {
+            o_.audio.playMusic(MUSIC_KEY.MARCH)
+            eventBus.emit(Evt.GAME_WIN, reason)
+        })
     }
 }

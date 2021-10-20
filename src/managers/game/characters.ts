@@ -2,7 +2,7 @@ import {CharKey, EncounterDanger, SquadPlace, TrollLocation} from "../../types";
 import {clamp, getRndItem, rnd, rndBetween} from "../../utils/utils-math";
 import {Char, CharBehavior} from "../../entities/char/char";
 import {eventBus, Evt} from "../../event-bus";
-import {encounterTemplates, maxEncounterLevel, vigilanteEncounters} from "../../encounter-templates";
+import {encounterTemplates, kingSquad, maxEncounterLevel, vigilanteEncounters} from "../../encounter-templates";
 import {positioner} from "./positioner";
 import {o_} from "../locator";
 import {DmgOptions} from "../../utils/utils-types";
@@ -28,6 +28,7 @@ export class CharactersManager {
     vigilantePlanned = false
     nextVigilanteEncounter = 2
     isVigilante = false
+    isKing = false
 
     constructor() {
         eventBus.on(Evt.CHAR_LEFT_BRIDGE, charId => this.onCharLeftBridge(charId))
@@ -97,6 +98,7 @@ export class CharactersManager {
 
         this.isVigilante = false
 
+
         let rndLevel: number
 
         console.log('encounter roll', roll, ', encounter level:')
@@ -118,10 +120,20 @@ export class CharactersManager {
         rndLevel = clamp(rndLevel, 0, maxEncounterLevel)
         console.log('after clamp', rndLevel)
 
-        const encounter = getRndItem(encounterTemplates[rndLevel]);
+        let encounter = getRndItem(encounterTemplates[rndLevel]);
+
+        if (o_.troll.getIsMaxLevelReached() && o_.bridge.isWithStatues && roll <= 0.8 && roll >= 0.6) {
+            this.encounterLevel = 999
+            this.isKing = true
+            encounter = kingSquad
+        } else {
+            this.isKing = false
+        }
 
         this.encounterLevel = rndLevel
         this.createTravellers(encounter.enemies)
+
+        this.travellersSpeak(encounter.greetText || '')
 
         // this.dangerIndicator.setDanger(this.getDangerKey(), encounter.text);
     }

@@ -135,6 +135,7 @@ export const resoursePaths = {
         combat_started_1: `${audioUrl}/music_combat_started_1.mp3`,
         combat_won_0: `${audioUrl}/music_combat_won_0.mp3`,
         combat_won_1: `${audioUrl}/music_combat_won_1.mp3`,
+        music_march: `${audioUrl}/music_march.mp3`,
         time_passed_0: `${audioUrl}/music_time_passed_0.mp3`,
         time_passed_1: `${audioUrl}/music_time_passed_1.mp3`,
         time_passed_2: `${audioUrl}/music_time_passed_2.mp3`,

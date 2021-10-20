@@ -1,4 +1,4 @@
-import {CharKey, EncounterTemplate} from "./types";
+import {CharKey, EncounterTemplate, SQUAD_TYPE} from "./types";
 
 //  0   3
 //  1   4
@@ -102,30 +102,34 @@ export const encounterTemplates: {[dangerLevel: number]: EncounterTemplate[]} = 
             enemies: [[0, CharKey.SHIELDMAN], [1, CharKey.MILITIA], [2, CharKey.SHIELDMAN], [3, CharKey.ARCHER], [4, CharKey.KNIGHT], [5, CharKey.ARCHER]],
         },
     ],
-    7: [
-        {
-            text: 'Отряд Его Величества',
-            enemies: [[0, CharKey.KNIGHT], [1, CharKey.SHIELDMAN], [2, CharKey.KNIGHT], [3, CharKey.ARCHER], [4, CharKey.KNIGHT], [5, CharKey.ARCHER]],
-        },
-    ],
 }
 
 export const vigilanteEncounters: EncounterTemplate[] = [
     {
         text: 'Толпа крестьян',
         enemies: [[0, CharKey.FARMER], [1, CharKey.FARMER], [2, CharKey.FARMER], [3, CharKey.FARMER], [4, CharKey.ARCHER], [5, CharKey.FARMER]],
-        greetText: 'Ну все, тролль! Наши деревни решили, что пора тебя отсюда вытурить!'
+        greetText: 'Ну все, тролль! Наши деревни решили, что пора тебя отсюда вытурить!',
+        type: SQUAD_TYPE.VIGILANTE
     },
     {
         text: 'Большой отряд солдат',
         enemies: [[0, CharKey.SHIELDMAN], [1, CharKey.MILITIA], [2, CharKey.SHIELDMAN], [3, CharKey.ARCHER], [4, CharKey.ARCHER], [5, CharKey.ARCHER]],
-        greetText: 'Сегодня, тролль, ты прекратишь издеваться над путниками.'
+        greetText: 'Сегодня, тролль, ты прекратишь издеваться над путниками.',
+        type: SQUAD_TYPE.VIGILANTE
     },
     {
         text: 'Рыцарь',
-        enemies: [[0, CharKey.KNIGHT], [1, CharKey.SHIELDMAN], [3, CharKey.ARCHER]],
-        greetText: 'Именем Короля, ты приговорен к смерти за свои злодеяния!'
+        enemies: [[0, CharKey.VIGILANTE], [1, CharKey.SHIELDMAN], [3, CharKey.ARCHER]],
+        greetText: 'Именем Короля, ты приговорен к смерти за свои злодеяния!',
+        type: SQUAD_TYPE.VIGILANTE
     },
 ]
+
+export const kingSquad: EncounterTemplate = {
+    text: 'Отряд Его Величества',
+    enemies: [[0, CharKey.SHIELDMAN], [2, CharKey.SHIELDMAN], [3, CharKey.ARCHER], [4, CharKey.KING], [5, CharKey.ARCHER]],
+    greetText: 'Дорогу Его Величеству, Дорогу Королю!',
+    type: SQUAD_TYPE.KING
+}
 
 export const maxEncounterLevel = Math.max(...Object.keys(encounterTemplates).map(k => +k))

@@ -43,6 +43,7 @@ import {trollConfig} from "../../configs/troll-config";
 export enum CharBehavior {
     COMMON = 'COMMON',
     VIGILANTE = 'VIGILANTE',
+    KING = 'KING',
 }
 
 export class Char {
