@@ -127,7 +127,7 @@ export const vigilanteEncounters: EncounterTemplate[] = [
 
 export const kingSquad: EncounterTemplate = {
     text: 'Отряд Его Величества',
-    enemies: [[0, CharKey.SHIELDMAN], [2, CharKey.SHIELDMAN], [3, CharKey.ARCHER], [4, CharKey.KING], [5, CharKey.ARCHER]],
+    enemies: [[0, CharKey.SHIELDMAN], [1, CharKey.SHIELDMAN], [2, CharKey.SHIELDMAN], [3, CharKey.ARCHER], [4, CharKey.KING], [5, CharKey.ARCHER]],
     greetText: 'Дорогу Его Величеству, Дорогу Королю!',
     type: SQUAD_TYPE.KING
 }

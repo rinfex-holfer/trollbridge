@@ -17,7 +17,8 @@ export class TrollStateSleep extends TrollState {
         const hpToAdd = Math.ceil(
             (o_.lair.bed.upgraded ? trollConfig.HP_FROM_SLEEP_ON_BED : trollConfig.HP_FROM_SLEEP)
             * this.host.maxHp)
-        this.host.heal(hpToAdd)
+
+        if (this.host.hunger !== this.host.maxHunger) this.host.heal(hpToAdd)
 
         this.host.changeSelfControl(trollConfig.SELF_CONTROL_FROM_SLEEP)
         this.host.zzz.show(this.host.x - 30, this.host.y - 30)

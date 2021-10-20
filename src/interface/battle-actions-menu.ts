@@ -22,7 +22,7 @@ const actionSpecs: {[action in BattleAction]: BattleActionSpec} = {
         text: 'Ударить',
         resource: 'button_strike',
         execute: char => o_.battle.trollGoAttack(char),
-        getIsActive: char => char.hp > 0 && !char.getIsCovered()
+        getIsActive: char => char.hp > 0 && !char.getIsCovered() && !char.isSurrender,
     },
 
     [BattleAction.BATTLE_THROW_ROCK]: {
@@ -41,7 +41,7 @@ const actionSpecs: {[action in BattleAction]: BattleActionSpec} = {
         resource: 'button_throw_char',
         abilityKey: TrollAbility.GRAPPLE,
         execute: char => o_.battle.trollGoThrowChar(char),
-        getIsActive: char => char.hp > 0 && !char.getIsCovered() && !char.isMounted,
+        getIsActive: char => char.hp > 0 && !char.getIsCovered() && !char.isMounted && !char.isSurrender,
         getDisabledAndReason: () => o_.troll.grappleCooldown > 0 ? 'Cooldown: ' + o_.troll.grappleCooldown : false
     },
 

@@ -17,7 +17,7 @@ export const gameConstants = {
         [4, 0.1],
         [5, 0.33],
         [6, 1]
-    ] as [holeNumbers: number, chanceOfGameOver: number][]
+    ] as [holeNumbers: number, chanceOfGameOver: number][],
 }
 
 export const zLayers = {

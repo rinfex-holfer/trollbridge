@@ -122,7 +122,7 @@ export class CharactersManager {
 
         let encounter = getRndItem(encounterTemplates[rndLevel]);
 
-        if (o_.troll.getIsMaxLevelReached() && o_.bridge.isWithStatues && roll <= 0.8 && roll >= 0.6) {
+        if (o_.bridge.isWithStatues && roll <= 0.8 && roll >= 0.6) {
             this.encounterLevel = 999
             this.isKing = true
             encounter = kingSquad

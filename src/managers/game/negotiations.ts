@@ -101,9 +101,16 @@ export class Negotiations {
 
         this.danger = danger;
         this.currentStateKey = NegotiationsState.START
-        this.encounterState = negotiationTree[this.currentStateKey]
+
+        const tree = o_.characters.isKing ? kingNegotiationTree : negotiationTree
+        this.encounterState = tree[this.currentStateKey]
         this.onStateChange()
-        o_.characters.travellersSpeak(wordsOnStart[danger][100])
+
+        if (o_.characters.isKing) {
+            o_.characters.travellersSpeak('Прочь с пути, тролль!')
+        } else {
+            o_.characters.travellersSpeak(wordsOnStart[danger][100])
+        }
     }
 
     onStateChange(travellersReaction: string = '') {
@@ -206,6 +213,10 @@ export class Negotiations {
             o_.troll.changeFear(trollConfig.FEAR_CHANGES.ASK_PAY_AFTER_ALL_REFUSED)
         }
 
+        if (message === NegotiationsMessage.GO_IN_PEACE && this.currentStateKey === NegotiationsState.START) {
+            o_.troll.changeFear(trollConfig.FEAR_CHANGES.LET_PASS)
+        }
+
         const edges = this.encounterState[message][this.danger]
         const edgeNumericKeys = Object.keys(edges)
             .filter(key => key !== 'default')
@@ -228,7 +239,9 @@ export class Negotiations {
         console.log('new state key', edgeKey)
 
         this.currentStateKey = edges[edgeKey].nextState;
-        this.encounterState = negotiationTree[this.currentStateKey];
+
+        const tree = o_.characters.isKing ? kingNegotiationTree : negotiationTree
+        this.encounterState = tree[this.currentStateKey];
 
         this.onStateChange(edges[edgeKey].text);
     }
@@ -264,6 +277,91 @@ const wordsOnStart = {
         [EncounterDanger.NONE]:         {
             100: 'Кошмар... Это конец!'
         },
+}
+
+const kingNegotiationTree: NegotiationTree = {
+    [NegotiationsState.START]: {
+        [NegotiationsMessage.DEMAND_ALL]: {
+            [EncounterDanger.IMPOSSIBLE]:   {default: {nextState: NegotiationsState.ALL_REFUSED, text: 'Не смеши Короля, зеленый зверь.'}},
+            [EncounterDanger.VERY_HIGH]:    {default: {nextState: NegotiationsState.ALL_REFUSED, text: 'Не смеши Короля, зеленый зверь.'}},
+            [EncounterDanger.HIGH]:         {default: {nextState: NegotiationsState.ALL_REFUSED, text: 'Не смеши Короля, зеленый зверь.'}},
+            [EncounterDanger.MEDIUM]:       {default: {nextState: NegotiationsState.ALL_REFUSED, text: 'Не смеши Короля, зеленый зверь.'}},
+            [EncounterDanger.LOW]:          {default: {nextState: NegotiationsState.ALL_REFUSED, text: 'Не смеши Короля, зеленый зверь.'}},
+            [EncounterDanger.NONE]:         {default: {nextState: NegotiationsState.ALL_REFUSED, text: 'Не смеши Короля, зеленый зверь.'}},
+        },
+        [NegotiationsMessage.DEMAND_PAY]: {
+            [EncounterDanger.IMPOSSIBLE]:   {default: {nextState: NegotiationsState.PAY_REFUSED, text: 'Требуешь платы от самого Его Величества? Ты обезумел?'}},
+            [EncounterDanger.VERY_HIGH]:    {default: {nextState: NegotiationsState.PAY_REFUSED, text: 'Требуешь платы от самого Его Величества? Ты обезумел?'}},
+            [EncounterDanger.HIGH]:         {default: {nextState: NegotiationsState.PAY_REFUSED, text: 'Требуешь платы от самого Его Величества? Ты обезумел?'}},
+            [EncounterDanger.MEDIUM]:       {default: {nextState: NegotiationsState.PAY_REFUSED, text: 'Требуешь платы от самого Его Величества? Ты обезумел?'}},
+            [EncounterDanger.LOW]:          {default: {nextState: NegotiationsState.PAY_REFUSED, text: 'Требуешь платы от самого Его Величества? Ты обезумел?'}},
+            [EncounterDanger.NONE]:         {default: {nextState: NegotiationsState.PAY_REFUSED, text: 'Требуешь платы от самого Его Величества? Ты обезумел?'}},
+        },
+        [NegotiationsMessage.TO_BATTLE]:   {
+            [EncounterDanger.IMPOSSIBLE]:   {default: {nextState: NegotiationsState.BATTLE, text: 'Успокоить это злобное создание!'},},
+            [EncounterDanger.VERY_HIGH]:    {default: {nextState: NegotiationsState.BATTLE, text: 'Успокоить это злобное создание!'},},
+            [EncounterDanger.HIGH]:         {default: {nextState: NegotiationsState.BATTLE, text: 'Успокоить это злобное создание!'},},
+            [EncounterDanger.MEDIUM]:       {default: {nextState: NegotiationsState.BATTLE, text: 'Успокоить это злобное создание!'},},
+            [EncounterDanger.LOW]:          {default: {nextState: NegotiationsState.BATTLE, text: 'Успокоить это злобное создание!'},},
+            [EncounterDanger.NONE]:         {default: {nextState: NegotiationsState.BATTLE, text: 'Успокоить это злобное создание!'},},
+        },
+        [NegotiationsMessage.GO_IN_PEACE]: {
+            [EncounterDanger.IMPOSSIBLE]:   {default: {nextState: NegotiationsState.END, text: 'Прочь с дороги.'},},
+            [EncounterDanger.VERY_HIGH]:    {default: {nextState: NegotiationsState.END, text: 'Прочь с дороги.'},},
+            [EncounterDanger.HIGH]:         {default: {nextState: NegotiationsState.END, text: 'Прочь с дороги.'},},
+            [EncounterDanger.MEDIUM]:       {default: {nextState: NegotiationsState.END, text: 'Прочь с дороги.'},},
+            [EncounterDanger.LOW]:          {default: {nextState: NegotiationsState.END, text: 'Прочь с дороги.'},},
+            [EncounterDanger.NONE]:         {default: {nextState: NegotiationsState.END, text: 'Прочь с дороги.'},},
+        },
+    },
+    [NegotiationsState.ALL_REFUSED]: {
+        [NegotiationsMessage.DEMAND_PAY]: {
+            [EncounterDanger.IMPOSSIBLE]:   {default: {nextState: NegotiationsState.PAY_REFUSED, text: 'Какая невероятная наглость!'}},
+            [EncounterDanger.VERY_HIGH]:    {default: {nextState: NegotiationsState.PAY_REFUSED, text: 'Какая невероятная наглость!'}},
+            [EncounterDanger.HIGH]:         {default: {nextState: NegotiationsState.PAY_REFUSED, text: 'Какая невероятная наглость!'}},
+            [EncounterDanger.MEDIUM]:       {default: {nextState: NegotiationsState.PAY_REFUSED, text: 'Какая невероятная наглость!'}},
+            [EncounterDanger.LOW]:          {default: {nextState: NegotiationsState.PAY_REFUSED, text: 'Какая невероятная наглость!'}},
+            [EncounterDanger.NONE]:         {default: {nextState: NegotiationsState.PAY_REFUSED, text: 'Какая невероятная наглость!'}},
+        },
+        [NegotiationsMessage.TO_BATTLE]:   {
+            [EncounterDanger.IMPOSSIBLE]:   {default: {nextState: NegotiationsState.BATTLE, text: 'Успокоить это злобное создание!'},},
+            [EncounterDanger.VERY_HIGH]:    {default: {nextState: NegotiationsState.BATTLE, text: 'Успокоить это злобное создание!'},},
+            [EncounterDanger.HIGH]:         {default: {nextState: NegotiationsState.BATTLE, text: 'Успокоить это злобное создание!'},},
+            [EncounterDanger.MEDIUM]:       {default: {nextState: NegotiationsState.BATTLE, text: 'Успокоить это злобное создание!'},},
+            [EncounterDanger.LOW]:          {default: {nextState: NegotiationsState.BATTLE, text: 'Успокоить это злобное создание!'},},
+            [EncounterDanger.NONE]:         {default: {nextState: NegotiationsState.BATTLE, text: 'Успокоить это злобное создание!'},},
+        },
+        [NegotiationsMessage.GO_IN_PEACE]: {
+            [EncounterDanger.IMPOSSIBLE]:   {default: {nextState: NegotiationsState.END, text: 'Прочь с дороги.'},},
+            [EncounterDanger.VERY_HIGH]:    {default: {nextState: NegotiationsState.END, text: 'Прочь с дороги.'},},
+            [EncounterDanger.HIGH]:         {default: {nextState: NegotiationsState.END, text: 'Прочь с дороги.'},},
+            [EncounterDanger.MEDIUM]:       {default: {nextState: NegotiationsState.END, text: 'Прочь с дороги.'},},
+            [EncounterDanger.LOW]:          {default: {nextState: NegotiationsState.END, text: 'Прочь с дороги.'},},
+            [EncounterDanger.NONE]:         {default: {nextState: NegotiationsState.END, text: 'Прочь с дороги.'},},
+        },
+    },
+    [NegotiationsState.PAY_REFUSED]: {
+        [NegotiationsMessage.TO_BATTLE]:   {
+            [EncounterDanger.IMPOSSIBLE]:   {default: {nextState: NegotiationsState.BATTLE, text: 'Успокоить это злобное создание!'},},
+            [EncounterDanger.VERY_HIGH]:    {default: {nextState: NegotiationsState.BATTLE, text: 'Успокоить это злобное создание!'},},
+            [EncounterDanger.HIGH]:         {default: {nextState: NegotiationsState.BATTLE, text: 'Успокоить это злобное создание!'},},
+            [EncounterDanger.MEDIUM]:       {default: {nextState: NegotiationsState.BATTLE, text: 'Успокоить это злобное создание!'},},
+            [EncounterDanger.LOW]:          {default: {nextState: NegotiationsState.BATTLE, text: 'Успокоить это злобное создание!'},},
+            [EncounterDanger.NONE]:         {default: {nextState: NegotiationsState.BATTLE, text: 'Успокоить это злобное создание!'},},
+        },
+        [NegotiationsMessage.GO_IN_PEACE]: {
+            [EncounterDanger.IMPOSSIBLE]:   {default: {nextState: NegotiationsState.END, text: 'Прочь с дороги.'},},
+            [EncounterDanger.VERY_HIGH]:    {default: {nextState: NegotiationsState.END, text: 'Прочь с дороги.'},},
+            [EncounterDanger.HIGH]:         {default: {nextState: NegotiationsState.END, text: 'Прочь с дороги.'},},
+            [EncounterDanger.MEDIUM]:       {default: {nextState: NegotiationsState.END, text: 'Прочь с дороги.'},},
+            [EncounterDanger.LOW]:          {default: {nextState: NegotiationsState.END, text: 'Прочь с дороги.'},},
+            [EncounterDanger.NONE]:         {default: {nextState: NegotiationsState.END, text: 'Прочь с дороги.'},},
+        },
+    },
+    [NegotiationsState.ALL_GIVEN]: {},
+    [NegotiationsState.PAYMENT_GIVEN]: {},
+    [NegotiationsState.BATTLE]: {},
+    [NegotiationsState.END]: {},
 }
 
 const negotiationTree: NegotiationTree = {
