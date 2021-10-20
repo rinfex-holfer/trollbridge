@@ -26,11 +26,15 @@ export class VerticalMenu<Keys extends string> {
 
     buttons = {} as {[key: string]: {sprite: O_Sprite, text: O_Text, key: Keys, disabledText: O_Text, getDisabledAndReason: (() => false | string)}}
 
+    containerX: number
+
     constructor(private templates: BtnTemplate<Keys>[], center: Vec, private onClick: (key: Keys) => void) {
         const height = this.getMenuHeight()
         const y = center.y - height / 2
 
-        this.container = o_.render.createContainer(center.x - BUTTON_SIZE, y);
+        this.containerX = center.x - BUTTON_SIZE
+
+        this.container = o_.render.createContainer(this.containerX, y);
         o_.layers.add(this.container, LayerKey.FIELD_BUTTONS)
 
         const bg = o_.render.createSprite('tile_black', 0, 0, {width: MENU_WIDTH, height, parent: this.container})
@@ -165,7 +169,8 @@ export class VerticalMenu<Keys extends string> {
         if (withAnimation) {
             this.container.x = this.container.x - 50
             o_.render.fadeIn(this.container, 200)
-            o_.render.flyTo(this.container, {x: this.container.x + 50, y: this.container.y}, 200)
+            this.container.x = this.containerX - 50
+            o_.render.flyTo(this.container, {x: this.containerX, y: this.container.y}, 200)
         }
     }
 
@@ -173,12 +178,12 @@ export class VerticalMenu<Keys extends string> {
         if (withAnimation) {
             const p = createPromiseAndHandlers()
             o_.render.fadeOut(this.container, 250).then(() => {
-                this.container.x = this.container.x - 50
                 this.container.setVisibility(false)
+                this.container.x = this.containerX
                 this.selectButton(null)
                 p.done()
             })
-            o_.render.flyTo(this.container, {x: this.container.x + 50, y: this.container.y}, 200)
+            o_.render.flyTo(this.container, {x: this.containerX + 50, y: this.container.y}, 200)
             return p.promise
         } else {
             this.container.setVisibility(false)

@@ -14,14 +14,14 @@ const actionSpecs: {[action in NegotiationsMessage]?: NegotiationActionSpec} = {
     [NegotiationsMessage.DEMAND_PAY]: {
         key: NegotiationsMessage.DEMAND_PAY,
         text: 'Потребовать плату',
-        resource: 'button_rob',
+        resource: 'icon_pay',
         execute: () => NegotiationsMessage.DEMAND_PAY,
     },
 
     [NegotiationsMessage.DEMAND_ALL]: {
         key: NegotiationsMessage.DEMAND_ALL,
         text: 'Потребовать все!',
-        resource: 'button_rob',
+        resource: 'icon_give_all',
         execute: () => NegotiationsMessage.DEMAND_ALL,
     },
 
@@ -35,7 +35,7 @@ const actionSpecs: {[action in NegotiationsMessage]?: NegotiationActionSpec} = {
     [NegotiationsMessage.TO_BATTLE]: {
         key: NegotiationsMessage.TO_BATTLE,
         text: 'Напасть',
-        resource: 'icon_crossed_swords',
+        resource: 'icon_crossed_swords_fire',
         execute: () => NegotiationsMessage.TO_BATTLE,
     },
 }

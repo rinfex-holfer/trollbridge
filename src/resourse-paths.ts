@@ -27,7 +27,6 @@ export const resoursePaths = {
         drying_rack: `${imagesUrl}/drying_rack.png`,
 
         button_release: `${imagesUrl}/leg.png`,
-        button_rob: `${imagesUrl}/icon_pay.png`,
         button_imprison: `${imagesUrl}/prisoner.png`,
         button_strike: `${imagesUrl}/icon_claws.png`,
         button_kill: `${imagesUrl}/icon_blood.png`,
@@ -53,8 +52,14 @@ export const resoursePaths = {
         icon_fear_low: `${imagesUrl}/icon_fear_low.png`,
         icon_fear_medium: `${imagesUrl}/icon_fear_medium.png`,
         icon_fear_high: `${imagesUrl}/icon_fear_high.png`,
-        icon_fear_highest: `${imagesUrl}/icon_fear_highest.png`,
+        icon_fear_highest: `${imagesUrl}/icon_fire_fiend_smiling.png`,
         icon_hand_with_sword: `${imagesUrl}/icon_hand_with_sword.png`,
+
+        icon_angry_people: `${imagesUrl}/icon_angry_people.png`,
+        icon_crossed_swords_fire: `${imagesUrl}/icon_crossed_swords_fire.png`,
+
+        icon_pay: `${imagesUrl}/icon_pay.png`,
+        icon_give_all: `${imagesUrl}/icon_give_all.png`,
 
         empty_sprite: `${imagesUrl}/tile_empty.png`,
         particle_hit: `${imagesUrl}/particle_hit.png`,

@@ -9,17 +9,14 @@ export class CharStateGoAcross extends CharState {
     target = {x: 0, y: this.char.getCoords().y}
 
     onStart() {
-        if (this.char.isDeMounted) {
-            this.char.acquireHorse().then(() => {
-                this.char.setAnimation(CharAnimation.WALK);
-                this.char.moveTowards(this.target.x, this.target.y);
-                this.char.directToTarget(this.target)
-            })
-        } else {
-            this.char.setAnimation(CharAnimation.WALK);
-            this.char.moveTowards(this.target.x, this.target.y);
-            this.char.directToTarget(this.target)
-        }
+        if (this.char.isDeMounted) this.char.acquireHorse().then(() => this.startWalking())
+        else this.startWalking()
+    }
+
+    startWalking() {
+        this.char.setAnimation(CharAnimation.WALK);
+        this.char.moveTowards(this.target.x, this.target.y);
+        this.char.directToTarget(this.target)
     }
 
     update(dt: number) {

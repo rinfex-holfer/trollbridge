@@ -56,7 +56,7 @@ export class Char {
     name: string
     dmg = [1, 1]
 
-    speed = gameConstants.CHAR_SPEED * 3
+    speed = gameConstants.CHAR_SPEED
 
     food: number
     gold: number

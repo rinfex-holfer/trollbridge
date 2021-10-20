@@ -84,11 +84,11 @@ export class GameNotifications {
                 icon = 'icon_fear_lowest'
                 break;
             case TrollFearLevel.NOT_SERIOUS:
-                text = 'Поговаривают, что тролль не сильно опасен'
+                text = 'Поговаривают, что тролль не сильно опасен.'
                 icon = 'icon_fear_low'
                 break;
             case TrollFearLevel.UNPREDICTABLE:
-                text = 'Люди не знают, что ожидать от тролля на мосту'
+                text = 'Люди не знают, что ожидать от тролля на мосту.'
                 icon = 'icon_fear_medium'
                 break;
             case TrollFearLevel.DANGEROUS:
@@ -96,7 +96,7 @@ export class GameNotifications {
                 icon = 'icon_fear_high'
                 break;
             case TrollFearLevel.HORRIFIC:
-                text = 'Люди в ужасе от жестокости тролля. Необходимо его истребить!'
+                text = 'Люди в ужасе от жестокости тролля!'
                 icon = 'icon_fear_highest'
                 break;
         }
@@ -105,6 +105,6 @@ export class GameNotifications {
     }
 
     private onVigilantePlanned(time: number) {
-        this.show('Люди решили истребить жестокого тролля. К нему придут через: ' + time + ' ходов', 'icon_hand_with_sword', colorsCSS.RED)
+        this.show('Люди решили истребить жестокого тролля. К нему придут через: ' + time + ' ходов', 'icon_angry_people', colorsCSS.RED)
     }
 }

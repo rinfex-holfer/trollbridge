@@ -47,11 +47,11 @@ export class LairMenu {
     }
 
     show() {
-        this.verticalMenu.show()
+        this.verticalMenu.show(false)
     }
 
     hide() {
-        this.verticalMenu.hide()
+        this.verticalMenu.hide(false)
 
         o_.characters.getSquadChars().forEach(c => c.sprite.removeClickListener())
     }

@@ -26,7 +26,7 @@ const actionSpecs: {[action in AfterBattleAction]: AfterBattleActionSpec} = {
     [AfterBattleAction.ROB]: {
         key: AfterBattleAction.ROB,
         text: 'Отобрать плату',
-        resource: 'button_rob',
+        resource: 'icon_pay',
         execute: char => {
             char.dropGold(Math.ceil(char.gold * 0.33), true)
             o_.characters.releaseChar(char)
@@ -37,7 +37,7 @@ const actionSpecs: {[action in AfterBattleAction]: AfterBattleActionSpec} = {
     [AfterBattleAction.TAKE_ALL]: {
         key: AfterBattleAction.TAKE_ALL,
         text: 'Отобрать все',
-        resource: 'button_rob',
+        resource: 'icon_give_all',
         execute: char => {
             o_.characters.makeCharGiveAll(char)
             o_.characters.releaseChar(char)

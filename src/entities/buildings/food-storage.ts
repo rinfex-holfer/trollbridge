@@ -7,6 +7,8 @@ import {O_Container} from "../../managers/core/render/container";
 import {O_Sprite} from "../../managers/core/render/sprite";
 import {SOUND_KEY} from "../../managers/core/audio";
 import {dumbClone} from "../../utils/utils-misc";
+import {gameConstants} from "../../configs/constants";
+import {goldConfig} from "../../configs/gold-config";
 
 const START_X = 60
 const START_Y = -70
@@ -45,7 +47,7 @@ export class FoodStorage {
             o_.upgrade.createUpgradeButton(
                 {x: this.container.x + this.sprite.width + 30, y: this.container.y - this.sprite.height / 2},
                 'вторая сушилка для мяса',
-                50,
+                goldConfig.costs.drying_rack,
                 () => this.upgrade()
             )
         }

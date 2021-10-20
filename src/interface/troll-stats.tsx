@@ -78,7 +78,7 @@ export class TrollStats {
             value: troll.fear,
             width: WIDTH,
             height: HEIGHT,
-            colorOptions: [[0, colorsNum.GREEN], [0.25, colorsNum.WHITE], [0.75, colorsNum.RED]],
+            colorOptions: [[0, colorsNum.GREEN], [0.165, colorsNum.BLUE], [0.33, colorsNum.WHITE], [0.66, colorsNum.YELLOW], [0.825, colorsNum.RED]],
             text: 'Страшность',
             parent: this.container
         })
