@@ -14,6 +14,7 @@ type BattleActionSpec = {
     execute: (char: Char) => void
     getIsActive: (char: Char) => boolean
     getDisabledAndReason?: () => false | string
+    getText?: () => string
 }
 
 const actionSpecs: {[action in BattleAction]: BattleActionSpec} = {
@@ -23,6 +24,10 @@ const actionSpecs: {[action in BattleAction]: BattleActionSpec} = {
         resource: 'button_strike',
         execute: char => o_.battle.trollGoAttack(char),
         getIsActive: char => char.hp > 0 && !char.getIsCovered() && !char.isSurrender,
+        getText: () => {
+            const dmg = o_.troll.getDmg()
+            return `Ударить (${dmg[0]}-${dmg[1]})`
+        }
     },
 
     [BattleAction.BATTLE_THROW_ROCK]: {
@@ -32,7 +37,11 @@ const actionSpecs: {[action in BattleAction]: BattleActionSpec} = {
         abilityKey: TrollAbility.THROW_ROCK,
         execute: char => o_.battle.trollThrowRock(char),
         getIsActive: char => char.hp > 0 && !(char.isUnconscious && char.getIsCovered()) && !char.isSurrender,
-        getDisabledAndReason: () => o_.bridge.getHasAvailableRocks() ? false : 'нет камней, надо починить мост'
+        getDisabledAndReason: () => o_.bridge.getHasAvailableRocks() ? false : 'нет камней, надо починить мост',
+        getText: () => {
+            const dmg = o_.troll.getDmg(false, true)
+            return `Метнуть камень (${dmg[0]}-${dmg[1]})`
+        }
     },
 
     [BattleAction.BATTLE_THROW_CHAR]: {
@@ -42,7 +51,11 @@ const actionSpecs: {[action in BattleAction]: BattleActionSpec} = {
         abilityKey: TrollAbility.GRAPPLE,
         execute: char => o_.battle.trollGoThrowChar(char),
         getIsActive: char => char.hp > 0 && !char.getIsCovered() && !char.isMounted && !char.isSurrender,
-        getDisabledAndReason: () => o_.troll.grappleCooldown > 0 ? 'Cooldown: ' + o_.troll.grappleCooldown : false
+        getDisabledAndReason: () => o_.troll.grappleCooldown > 0 ? 'Cooldown: ' + o_.troll.grappleCooldown : false,
+        getText: () => {
+            const dmg = o_.troll.getDmg(true)
+            return `Бросить об землю (${dmg[0]}-${dmg[1]})`
+        }
     },
 
     [BattleAction.BATTLE_DEVOUR]: {

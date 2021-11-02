@@ -118,7 +118,7 @@ export const trollConfig = {
             maxHp: 100,
             maxHunger: 10,
             block: 0,
-            dmg: [15, 50],
+            dmg: [15, 30],
             xp: 300,
             xpRewards: {
                 [CharKey.FARMER]: 0,

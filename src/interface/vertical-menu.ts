@@ -8,7 +8,7 @@ import {O_Sprite} from "../managers/core/render/sprite";
 import {O_Text} from "../managers/core/render/text";
 import {createPromiseAndHandlers} from "../utils/utils-async";
 
-type BtnTemplate<K> = {text: string, key: K, resource: keyof typeof resoursePaths.images, getDisabledAndReason?: () => false | string}
+type BtnTemplate<K> = {text: string, key: K, resource: keyof typeof resoursePaths.images, getDisabledAndReason?: () => false | string, getText?: () => string}
 
 const BUTTON_SIZE = 64
 const BUTTON_MARGIN = 20
@@ -74,7 +74,7 @@ export class VerticalMenu<Keys extends string> {
             sprite.alpha = DEFAULT_ALPHA
 
             const text =  o_.render.createText(
-                template.text,
+                template.getText ? template.getText() : template.text,
                 x - 20,
                 y + BUTTON_SIZE / 2,
                 {color: colorsCSS.WHITE},

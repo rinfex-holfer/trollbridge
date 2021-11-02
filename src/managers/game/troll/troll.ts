@@ -548,6 +548,22 @@ export class Troll {
         return Math.ceil(dmg)
     }
 
+    getDmg(grapple = false, rockThrow = false): [number, number] {
+        const dmg = [this.dmg[0], this.dmg[1]] as [number, number]
+
+        if (grapple) {
+            dmg[0] = Math.ceil(dmg[0] * trollConfig.DMG_MODIFIER_GRAPPLE)
+            dmg[1] = Math.ceil(dmg[1] * trollConfig.DMG_MODIFIER_GRAPPLE)
+        }
+
+        if (rockThrow) {
+            dmg[0] = Math.ceil(dmg[0] * trollConfig.DMG_MODIFIER_THROW_ROCK)
+            dmg[1] = Math.ceil(dmg[1] * trollConfig.DMG_MODIFIER_THROW_ROCK)
+        }
+
+        return dmg
+    }
+
     rollStun() {
         return 2
     }

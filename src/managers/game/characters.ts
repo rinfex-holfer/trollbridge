@@ -26,7 +26,7 @@ export class CharactersManager {
 
     vigilanteTimeLeft = 0
     vigilantePlanned = false
-    nextVigilanteEncounter = 2
+    nextVigilanteEncounter = 0
     isVigilante = false
     isKing = false
 
@@ -73,6 +73,8 @@ export class CharactersManager {
 
         const roll = rnd()
 
+        console.log('vigilantePlanned', this.vigilantePlanned)
+        console.log('vigilante may be planned', o_.troll.fearLevel === TrollFearLevel.HORRIFIC, vigilanteEncounters[this.nextVigilanteEncounter+1])
         if (this.vigilantePlanned) {
             this.vigilanteTimeLeft--
             console.log('time till vigilante comes:', this.vigilanteTimeLeft)
@@ -89,7 +91,7 @@ export class CharactersManager {
                 this.travellersSpeak(vigilanteEncounter.greetText || '')
                 return
             }
-        } else if (o_.troll.fearLevel === TrollFearLevel.HORRIFIC && vigilanteEncounters[this.nextVigilanteEncounter+1]) {
+        } else if (o_.troll.fearLevel === TrollFearLevel.HORRIFIC && vigilanteEncounters[this.nextVigilanteEncounter]) {
             console.log('check to plan vigilante')
             if (roll > 0.9) {
                 this.planVigilante(3)
@@ -122,10 +124,11 @@ export class CharactersManager {
 
         let encounter = getRndItem(encounterTemplates[rndLevel]);
 
-        if (o_.bridge.isWithStatues && roll <= 0.8 && roll >= 0.6) {
+        if (o_.bridge.isWithStatues && roll <= 0.8 && roll >= 0.7) {
             this.encounterLevel = 999
             this.isKing = true
             encounter = kingSquad
+            console.log('King encounter')
         } else {
             this.isKing = false
         }
