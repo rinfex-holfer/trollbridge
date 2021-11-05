@@ -23,3 +23,5 @@
 //         this.char.isPrisoner = false;
 //     }
 // }
+
+export {}

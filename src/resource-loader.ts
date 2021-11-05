@@ -5,11 +5,19 @@ import {createPromiseAndHandlers} from "./utils/utils-async";
 const load = (scene: Phaser.Scene): Promise<any> => {
     const {promise, done, fail} = createPromiseAndHandlers();
 
+    const loader = document.getElementById('loading')
     scene.load.on('progress', (a: string) => {
-        // console.log(a)
+        if (loader) loader.innerText = 'loading progress:' + Math.ceil(+a * 100)+'%';
     });
-    scene.load.on('complete', done);
-    scene.load.on('loaderror', fail);
+    scene.load.on('complete', () => {
+        console.log('loading completed')
+        if (loader) loader.remove()
+        done()
+    });
+    scene.load.on('loaderror', (e: any) => {
+        console.error(e)
+        fail()
+    });
 
     const imgKeys = Object.keys(resoursePaths.images) as (keyof typeof resoursePaths.images)[];
     const atlasesKeys = Object.keys(resoursePaths.atlases) as (keyof typeof resoursePaths.atlases)[];

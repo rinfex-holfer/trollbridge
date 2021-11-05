@@ -115,3 +115,14 @@ canvas {
     width: 600px;
     max-width: 100vw;
 }
+
+#loading {
+    display: inline-block;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 999;
+    background: black;
+    color: white;
+    padding: 10px;
+}

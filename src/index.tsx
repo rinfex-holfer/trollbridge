@@ -5,6 +5,7 @@ import {newGame} from "./game";
 import translations from "./translations";
 import {GameWin} from "./interface/game-win";
 import {HowToPlay} from "./interface/how-to-play";
+import './styles.css'
 
 translations
 
