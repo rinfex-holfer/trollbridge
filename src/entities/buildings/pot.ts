@@ -78,8 +78,10 @@ export class Pot {
         // const parentX = this.sprite.obj.parentContainer?.x || 0
         // const parentY = this.sprite.obj.parentContainer?.y || 0
         this.rottenGas.setPosition(
-            {min: this.sprite.obj.x - 10, max: this.sprite.x + 10},
-            {min: this.sprite.y - 60, max: this.sprite.y - 40},
+            this.sprite.obj.x,
+            this.sprite.y - 50
+            // {min: this.sprite.obj.x - 10, max: this.sprite.x + 10},
+            // {min: this.sprite.y - 60, max: this.sprite.y - 40},
         )
     }
 

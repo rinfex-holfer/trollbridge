@@ -18,52 +18,49 @@ export class RenderManager {
 
     bloodEmitter: Phaser.GameObjects.Particles.ParticleEmitter
     yellowEmitter: Phaser.GameObjects.Particles.ParticleEmitter
-    greenSmokeParticles: Phaser.GameObjects.Particles.ParticleEmitterManager
+    greenSmokeParticles: Phaser.GameObjects.Particles.ParticleEmitter
 
     constructor(scene: Phaser.Scene) {
         this.scene = scene
 
         o_.register.render(this);
 
-        const bloodParticles = this.scene.add.particles('particle_blood');
-        this.bloodEmitter = bloodParticles.createEmitter({
-            x: {min: -5, max: 5},
-            y: {min: -5, max: 5},
-            angle: { min: 0, max: 360 },
-            speed: {min: 100, max: 300},
-            lifespan: 300,
-            frequency: -1,
-            quantity: 50,
-        });
-        o_.layers.addRaw(bloodParticles, LayerKey.PARTICLES)
+        // const bloodParticles =
+        this.bloodEmitter = this.scene.add.particles(
+            0,
+            0,
+            'particle_blood',
+            {
+                lifespan: 300,
+                frequency: -1,
+                quantity: 50,
+                angle: {min: 0, max: 360},
+                speed: {min: 100, max: 300},
+            }
+        );
+        o_.layers.addRaw(this.bloodEmitter, LayerKey.PARTICLES)
 
-        const yellowParticles = this.scene.add.particles('particle_hit');
-        this.yellowEmitter = yellowParticles.createEmitter({
-            x: {min: -15, max: 15},
-            y: {min: -15, max: 15},
-            angle: { min: 250, max: 290 },
-            speed: {min: 600, max: 800},
-            gravityY: 2400,
-            frequency: -1,
-            quantity: 50,
-            lifespan: 500,
-        })
-        o_.layers.addRaw(yellowParticles, LayerKey.PARTICLES)
+        this.yellowEmitter = this.scene.add.particles(
+            0,
+            0,
+            'particle_hit',
+            {
+                angle: {min: 250, max: 290},
+                speed: {min: 600, max: 800},
+                gravityY: 2400,
+                frequency: -1,
+                quantity: 50,
+                lifespan: 500,
+            },
+        );
+        o_.layers.addRaw(this.yellowEmitter, LayerKey.PARTICLES)
 
-        this.greenSmokeParticles = this.scene.add.particles('particle_smoke_green');
+        this.greenSmokeParticles = this.scene.add.particles(0, 0, 'particle_smoke_green');
         o_.layers.addRaw(this.greenSmokeParticles, LayerKey.PARTICLES)
     }
 
     createGreenSmokeEmitter() {
-        return this.greenSmokeParticles.createEmitter({
-            scale: {min: 1, max: 5},
-            angle: 270,
-            speed: {min: 10, max: 50},
-            frequency: 300,
-            quantity: 5,
-            lifespan: 500,
-            active: false
-        })
+        return this.greenSmokeParticles
     }
 
     burstBlood(x: number, y: number) {
@@ -106,11 +103,15 @@ export class RenderManager {
         obj.obj.scaleX = Math.sign(target.x - (obj.obj.x + (offset || 0))) || 1
     }
 
-    createContainer(x: number, y: number, options?: {parent?: O_Container}) {
+    createContainer(x: number, y: number, options?: { parent?: O_Container }) {
         return new O_Container(this.scene, x, y, options)
     }
 
-    createSprite(key: keyof typeof resoursePaths.images, x: number, y: number, options?: {width?: number, height?: number, parent?: O_Container}) {
+    createSprite(key: keyof typeof resoursePaths.images, x: number, y: number, options?: {
+        width?: number,
+        height?: number,
+        parent?: O_Container
+    }) {
         return new O_Sprite(this.scene, key, x, y, options)
     }
 
@@ -130,41 +131,46 @@ export class RenderManager {
         return new O_Tiles(this.scene, key, x, y, width, height);
     }
 
-    createText(text: string, x: number, y: number, style: Phaser.Types.GameObjects.Text.TextStyle, options?: {parent?: O_Container}) {
+    createText(text: string, x: number, y: number, style: Phaser.Types.GameObjects.Text.TextStyle, options?: {
+        parent?: O_Container
+    }) {
         return new O_Text(this.scene, text, x, y, style, options);
     }
 
-    createTimeline(config?: Phaser.Types.Tweens.TimelineBuilderConfig) {
-        return this.scene.tweens.createTimeline(config)
+    createTween(config: Phaser.Types.Tweens.TweenBuilderConfig) {
+        return this.scene.tweens.add(config)
+    }
+
+    createTweenChain(tweens: Phaser.Types.Tweens.TweenBuilderConfig[]) {
+        return this.scene.tweens.chain({
+            tweens
+        })
     }
 
     flyTo(obj: O_GameObject, pos: Vec, speed: number, maxDuration?: number): Promise<any> {
         const {promise, done} = createPromiseAndHandlers()
-        const timeline = this.createTimeline();
         const distance = getDistanceBetween(obj, pos);
         let duration = distance / (speed / 1000);
         if (maxDuration && maxDuration < duration) duration = maxDuration;
-        timeline.add({
+        const tween = this.createTween({
             targets: obj.obj,
             x: pos.x,
             y: pos.y,
             ease: 'Linear',
             duration: duration,
-            onComplete: done
+            onComplete: done,
         })
-
-        timeline.play()
+        tween.play();
 
         return promise
     }
 
     flyWithBounceTo(obj: O_GameObject, pos: Vec, speed: number, maxDuration?: number): Promise<any> {
         const {promise, done} = createPromiseAndHandlers()
-        const timeline = this.createTimeline();
         const distance = getDistanceBetween(obj, pos);
         let duration = distance / (speed / 1000);
         if (maxDuration && maxDuration < duration) duration = maxDuration;
-        timeline.add({
+        const tween = this.createTween({
             targets: obj.obj,
             x: pos.x,
             y: pos.y,
@@ -173,87 +179,90 @@ export class RenderManager {
             onComplete: done
         })
 
-        timeline.play()
+        tween.play()
 
         return promise
     }
 
     jumpTo(obj: O_GameObject, pos: Vec): Promise<any> {
         const {promise, done} = createPromiseAndHandlers()
-        const timeline = this.createTimeline();
         const distance = getDistanceBetween(obj, pos);
 
         const duration = 400
         const height = distance / 3
 
-        timeline.add({
-            targets: obj.obj,
-            x: pos.x,
-            // y: pos.y,
-            ease: 'Linear',
-            duration: duration,
-        })
-
-        timeline.add({
-            targets: obj.obj,
-            y: pos.y - height,
-            ease: 'Linear',
-            duration: duration / 2,
-            offset: 0,
-        })
-
-        timeline.add({
-            targets: obj.obj,
-            y: pos.y,
-            ease: 'Linear',
-            duration: duration / 2,
-            offset: duration / 2,
-            onComplete: done
-        })
-
-        timeline.play()
+        const tween = this.createTweenChain([
+            {
+                targets: obj.obj,
+                x: pos.x,
+                // y: pos.y,
+                ease: 'Linear',
+                duration: duration,
+            },
+            {
+                targets: obj.obj,
+                y: pos.y - height,
+                ease: 'Linear',
+                duration: duration / 2,
+                offset: 0,
+            },
+            {
+                targets: obj.obj,
+                y: pos.y - height,
+                ease: 'Linear',
+                duration: duration / 2,
+                offset: 0,
+            },
+            {
+                targets: obj.obj,
+                y: pos.y,
+                ease: 'Linear',
+                duration: duration / 2,
+                offset: duration / 2,
+                onComplete: done
+            }
+        ])
+        tween.play()
 
         return promise
     }
 
     thrownTo(obj: O_GameObject, pos: Vec, duration: number): Promise<any> {
         const {promise, done} = createPromiseAndHandlers()
-        const timeline = this.createTimeline();
         const distance = getDistanceBetween(obj, pos);
 
-        timeline.add({
-            targets: obj.obj,
-            x: pos.x,
-            // y: pos.y,
-            ease: 'Linear',
-            duration: duration,
-            onComplete: done
-        })
+        const tween = this.createTweenChain([
+            {
+                targets: obj.obj,
+                x: pos.x,
+                // y: pos.y,
+                ease: 'Linear',
+                duration: duration,
+                onComplete: done
+            },
+            {
+                targets: obj.obj,
+                y: Math.min(obj.y, pos.y) - distance / 2,
+                ease: 'Quad.easeOut',
+                duration: duration / 3,
+                offset: 0,
+            },
+            {
+                targets: obj.obj,
+                y: pos.y,
+                ease: 'Bounce.easeOut',
+                duration: duration * 2 / 3,
+                offset: duration / 3,
+            }
+        ]);
 
-        timeline.add({
-            targets: obj.obj,
-            y: Math.min(obj.y, pos.y) - distance / 2,
-            ease: 'Quad.easeOut',
-            duration: duration / 3,
-            offset: 0,
-        })
-
-        timeline.add({
-            targets: obj.obj,
-            y: pos.y,
-            ease: 'Bounce.easeOut',
-            duration: duration * 2 / 3,
-            offset: duration / 3,
-        })
-
-        timeline.play()
+        tween.play()
 
         return promise
     }
 
-    createPulseTimeline(targets: O_GameObject | O_GameObject[]) {
-        const timeline = this.createTimeline()
-        timeline.add({
+    createPulseTween(targets: O_GameObject | O_GameObject[]) {
+        const tween = this.createTween({
             targets: Array.isArray(targets) ? targets.map(t => t.obj) : targets.obj,
             ease: 'Power2.easeInOut',
             yoyo: true,
@@ -261,38 +270,36 @@ export class RenderManager {
             duration: 300,
             scale: 1.4
         })
-        return timeline
+        return tween
     }
 
     bounceOfGround(obj: O_GameObject, height: number, duration: number) {
         const {promise, done} = createPromiseAndHandlers()
-        const timeline = this.createTimeline();
+        const tween = this.createTweenChain([
+            {
+                targets: obj.obj,
+                y: obj.y - height,
+                ease: 'Quad.easeOut',
+                duration: duration / 3,
+                offset: 0,
+            },
+            {
+                targets: obj.obj,
+                y: obj.y,
+                ease: 'Bounce.easeOut',
+                duration: duration * 2 / 3,
+                offset: duration / 3,
+                onComplete: done
+            }
+        ]);
 
-        timeline.add({
-            targets: obj.obj,
-            y: obj.y - height,
-            ease: 'Quad.easeOut',
-            duration: duration / 3,
-            offset: 0,
-        })
-
-        timeline.add({
-            targets: obj.obj,
-            y: obj.y,
-            ease: 'Bounce.easeOut',
-            duration: duration * 2 / 3,
-            offset: duration / 3,
-            onComplete: done
-        })
-
-        timeline.play()
+        tween.play()
 
         return promise
     }
 
     createJumpingTimeline(targets: O_GameObject | O_GameObject[], height = 10, repeat = -1) {
-        const timeline = this.createTimeline()
-        timeline.add({
+        const tween = this.createTween({
             targets: Array.isArray(targets) ? targets.map(t => t.obj) : targets.obj,
             ease: 'Power2.easeInOut',
             yoyo: true,
@@ -300,33 +307,65 @@ export class RenderManager {
             duration: 200,
             y: '-=' + height
         })
-        return timeline
+        return tween
+    }
+
+    createZzzTween(targets: O_GameObject[], x: number, y: number) {
+        const getConfig = (i: number) => (
+            {
+                targets: targets[i],
+                ease: 'Linear',
+                alpha: 0,
+                y,
+                duration: 6000,
+                repeat: -1,
+                offset: i * 2000,
+                onStart: () => targets[i].setVisibility(true)
+            });
+        const getYoyoConfig = (i: number) => ({
+            targets: targets[i],
+            ease: 'Sine.easeInOut',
+            yoyo: true,
+            x,
+            duration: 1500,
+            repeat: -1,
+            offset: i * 2000
+        })
+
+        const tweenChain = this.createTweenChain([
+            getConfig(0),
+            getYoyoConfig(0),
+            getConfig(1),
+            getYoyoConfig(1),
+            getConfig(2),
+            getYoyoConfig(2),
+        ])
+        return tweenChain;
     }
 
     fadeIn(targets: O_GameObject | O_GameObject[], duration = 500) {
         const {promise, done} = createPromiseAndHandlers()
-        const timeline = this.createTimeline()
-        timeline.add({
+        const tween = this.createTween({
             targets: Array.isArray(targets) ? targets.map(t => t.obj) : targets.obj,
             ease: 'Power2.easeOut',
             duration,
             alpha: 1,
             onComplete: done
         })
-        timeline.play()
+        tween.play()
         return promise
     }
+
     fadeOut(targets: O_GameObject | O_GameObject[], duration = 500) {
         const {promise, done} = createPromiseAndHandlers()
-        const timeline = this.createTimeline()
-        timeline.add({
+        const tween = this.createTween({
             targets: Array.isArray(targets) ? targets.map(t => t.obj) : targets.obj,
             ease: 'Power2.easeOut',
             duration,
             alpha: 0,
             onComplete: done
         })
-        timeline.play()
+        tween.play()
         return promise
     }
 }

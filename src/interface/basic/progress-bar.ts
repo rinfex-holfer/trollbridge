@@ -102,7 +102,7 @@ export class ProgressBar {
 
         for (let i = 0; i < this.colorOptions.length; i++) {
             const borderRatio = this.colorOptions[i][0];
-            const nextBorderRatio = this.colorOptions[i+1]?.[0];
+            const nextBorderRatio = this.colorOptions[i + 1]?.[0];
 
             if (currentRatio >= borderRatio && (nextBorderRatio === undefined || currentRatio < nextBorderRatio)) {
                 this.color = this.colorOptions[i][1]
@@ -133,9 +133,7 @@ export class ProgressBar {
             return
         }
 
-        const timeline = o_.render.createTimeline()
-
-        timeline.add({
+        const timeline = o_.render.createTween({
             targets: this,
             value: val,
             duration: 1000,

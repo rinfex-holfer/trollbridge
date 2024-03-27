@@ -6,7 +6,11 @@ import Pointer = Phaser.Input.Pointer;
 export class O_Sprite {
     obj: Phaser.GameObjects.Sprite
 
-    constructor(private scene: Phaser.Scene, key: keyof typeof resoursePaths.images, x: number, y: number, options?: {width?: number, height?: number, parent?: O_Container}) {
+    constructor(private scene: Phaser.Scene, key: keyof typeof resoursePaths.images, x: number, y: number, options?: {
+        width?: number,
+        height?: number,
+        parent?: O_Container
+    }) {
         this.obj = new Phaser.GameObjects.Sprite(this.scene, x, y, key);
 
         if (options?.parent) {
@@ -22,7 +26,13 @@ export class O_Sprite {
 
     setInteractive(val: boolean, options?: any) {
         if (val) this.obj.setInteractive(options)
-        else this.obj.disableInteractive()
+        else {
+            try {
+                this.obj.disableInteractive()
+            } catch (e) {
+                console.error(e)
+            }
+        }
     }
 
     setOrigin(x: number, y: number) {
@@ -61,18 +71,37 @@ export class O_Sprite {
         this.obj.scaleX = -this.obj.scaleX
     }
 
-    get x() { return this.obj.x }
-    set x(x) { this.obj.x = x }
-    get y() { return this.obj.y }
-    set y(y) { this.obj.y = y }
-    get height() {return this.obj.displayHeight }
-    get width() {return this.obj.displayWidth }
+    get x() {
+        return this.obj.x
+    }
+
+    set x(x) {
+        this.obj.x = x
+    }
+
+    get y() {
+        return this.obj.y
+    }
+
+    set y(y) {
+        this.obj.y = y
+    }
+
+    get height() {
+        return this.obj.displayHeight
+    }
+
+    get width() {
+        return this.obj.displayWidth
+    }
+
     setHeight(height: number, dontSaveProportions?: boolean) {
         this.obj.displayHeight = height
         if (!dontSaveProportions) {
             this.obj.displayWidth = this.obj.displayHeight * this.obj.width / this.obj.height
         }
     }
+
     setWidth(width: number, dontSaveProportions?: boolean) {
         this.obj.displayWidth = width
         if (!dontSaveProportions) {
@@ -80,12 +109,32 @@ export class O_Sprite {
         }
     }
 
-    get alpha() { return this.obj.alpha }
-    set alpha(val: number) { this.obj.alpha = val }
-    setVisibility(val: boolean) { this.obj.visible = val }
-    destroy() { this.obj.destroy() }
-    addPhysics() { this.scene.physics.add.existing(this.obj) }
-    // @ts-ignore
-    stop() { this.obj.body.stop() }
-    depthToY() { this.obj.depth = this.y }
+    get alpha() {
+        return this.obj.alpha
+    }
+
+    set alpha(val: number) {
+        this.obj.alpha = val
+    }
+
+    setVisibility(val: boolean) {
+        this.obj.visible = val
+    }
+
+    destroy() {
+        this.obj.destroy()
+    }
+
+    addPhysics() {
+        this.scene.physics.add.existing(this.obj)
+    }
+
+    stop() {
+        throw Error("WTF I am doing here");
+        // this.obj.body.stop()
+    }
+
+    depthToY() {
+        this.obj.depth = this.y
+    }
 }

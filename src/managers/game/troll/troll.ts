@@ -82,7 +82,7 @@ export class Troll {
 
         this.sprite = o_.render.createAnimatedSprite({
             atlasKey: 'troll',
-            animations:  [
+            animations: [
                 {framesPrefix: CharAnimation.WALK, repeat: -1, frameRate: 8},
                 {framesPrefix: CharAnimation.FALL, repeat: -1, frameRate: 4},
                 {framesPrefix: CharAnimation.IDLE, repeat: -1, frameRate: 8},
@@ -99,6 +99,7 @@ export class Troll {
             y: 0,
             parent: this.container
         })
+        console.log(this.container, this.sprite);
         this.setInitialSpriteOrigin()
 
         // o_.layers.add(this.sprite, LayerKey.FIELD_OBJECTS)
@@ -161,8 +162,13 @@ export class Troll {
         this.sprite.setOrigin(0.5, 1);
     }
 
-    get x() { return this.container.x }
-    get y() { return this.container.y }
+    get x() {
+        return this.container.x
+    }
+
+    get y() {
+        return this.container.y
+    }
 
     onNewLevel(animated = true) {
         const levelConfig = trollConfig.TROLL_LEVELING[this.level]
@@ -255,8 +261,7 @@ export class Troll {
             this.notificationTimer = window.setTimeout(() => {
                 this.showNextNotification()
             }, 700)
-        }
-        else {
+        } else {
             this.notificationTimer = null
         }
     }
@@ -285,6 +290,7 @@ export class Troll {
     }
 
     fearLevel: TrollFearLevel = TrollFearLevel.UNPREDICTABLE
+
     changeFear(val: number) {
         const newFear = clamp(this.fear + val, -trollConfig.TROLL_MAX_FEAR, trollConfig.TROLL_MAX_FEAR)
         if (newFear === this.fear) return
@@ -366,7 +372,7 @@ export class Troll {
         target.x = bridgePos.x + bridgePos.width / 2
         target.y = bridgePos.y + bridgePos.height / 2
 
-        return this.setState(TrollStateKey.GO_TO, { target, onStart: onTrollCameToBridge, onEnd: onTrollCameToBridge })
+        return this.setState(TrollStateKey.GO_TO, {target, onStart: onTrollCameToBridge, onEnd: onTrollCameToBridge})
     }
 
     goToLair() {
@@ -375,7 +381,7 @@ export class Troll {
         target.x = lairPos.x + lairPos.width / 2
         target.y = lairPos.y + lairPos.height / 2
 
-        this.setState(TrollStateKey.GO_TO, { target, onStart: onTrollCameToLair, onEnd: onTrollCameToLair })
+        this.setState(TrollStateKey.GO_TO, {target, onStart: onTrollCameToLair, onEnd: onTrollCameToLair})
     }
 
     goToBed() {
@@ -385,7 +391,7 @@ export class Troll {
         target.y = bedPos.y
 
         onTrollSleep()
-        return this.setState(TrollStateKey.GO_TO, { target} ).then(() => this.goSleep())
+        return this.setState(TrollStateKey.GO_TO, {target}).then(() => this.goSleep())
     }
 
     goToChar(charId: string) {
@@ -394,7 +400,7 @@ export class Troll {
 
         if (this.isEnraged) return this.jumpToChar(char)
 
-        return  this.setState(TrollStateKey.GO_TO, { target: char.container, minDistance: 50 })
+        return this.setState(TrollStateKey.GO_TO, {target: char.container, minDistance: 50})
     }
 
     async jumpToChar(char: Char) {
@@ -417,7 +423,7 @@ export class Troll {
         target.x = defenderPos.x
         target.y = defenderPos.y
 
-        return this.isEnraged ? this.jumpTo(target) : this.setState(TrollStateKey.GO_TO, { target })
+        return this.isEnraged ? this.jumpTo(target) : this.setState(TrollStateKey.GO_TO, {target})
     }
 
     getBattlePosition(): Vec {
@@ -435,18 +441,22 @@ export class Troll {
 
     async goToBattlePosition() {
         if (this.isEnraged) await this.jumpToBattlePosition()
-        await this.setState(TrollStateKey.GO_TO, { target: this.getBattlePosition() })
+        await this.setState(TrollStateKey.GO_TO, {target: this.getBattlePosition()})
 
         const fighters = o_.characters.getFighters()
         if (fighters.length) this.directToTarget(fighters[0].container)
     }
 
-    goIdle() { this.setState(TrollStateKey.IDLE) }
+    goIdle() {
+        this.setState(TrollStateKey.IDLE)
+    }
 
-    goSleep() { this.setState(TrollStateKey.SLEEP) }
+    goSleep() {
+        this.setState(TrollStateKey.SLEEP)
+    }
 
     goTo(target: Vec, minDistance?: number) {
-        return this.setState(TrollStateKey.GO_TO, { target, minDistance })
+        return this.setState(TrollStateKey.GO_TO, {target, minDistance})
     }
 
     async devour(id: string) {
@@ -539,7 +549,7 @@ export class Troll {
     }
 
     rollDmg(grapple = false, rockThrow = false) {
-        let dmg = rndBetween( this.dmg[0], this.dmg[1])
+        let dmg = rndBetween(this.dmg[0], this.dmg[1])
 
         if (this.isEnraged) dmg *= trollConfig.DMG_MODIFIER_RAGE
         if (grapple) dmg *= trollConfig.DMG_MODIFIER_GRAPPLE

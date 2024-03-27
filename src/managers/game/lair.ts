@@ -26,6 +26,7 @@ export class Lair {
         this.sprite.setOrigin(0, 0);
 
         this.sprite.onClick(() => o_.troll.goToLair())
+        // this.sprite.obj.alpha = 0
 
         this.treasury = new Treasury(positioner.getTreasuryPosition())
         this.foodStorage = new FoodStorage(positioner.getFoodStoragePosition())

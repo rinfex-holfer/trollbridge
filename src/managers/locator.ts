@@ -13,6 +13,7 @@ import {InteractionManager} from "./core/interaction";
 import {UpgradeManager} from "./game/upgrade";
 import {Negotiations} from "./game/negotiations";
 import {MusicManager} from "./core/music";
+import {HtmlInterfaceManager} from "./core/interface";
 
 class Locator {
     #_render: RenderManager | undefined
@@ -29,6 +30,7 @@ class Locator {
     #_layers: LayersManager | undefined
     #_entities: EntityManager | undefined
     #_interaction: InteractionManager | undefined
+    #_htmlInterface: HtmlInterfaceManager | undefined
     #_upgrade: UpgradeManager | undefined
 
     static crashStr(m: string) {
@@ -49,6 +51,7 @@ class Locator {
         layers: (layers: LayersManager) => { this.#_layers = layers },
         entities: (entities: EntityManager) => { this.#_entities = entities },
         interaction: (interaction: InteractionManager) => { this.#_interaction = interaction },
+        htmlInterface: (htmlInterface: HtmlInterfaceManager) => { this.#_htmlInterface = htmlInterface },
         upgrade: (upgrade: UpgradeManager) => { this.#_upgrade = upgrade },
         negotiations: (negotiations: Negotiations) => { this.#_negotiations = negotiations },
     }
@@ -116,6 +119,11 @@ class Locator {
     get interaction() {
         if (!this.#_interaction) throw Error(Locator.crashStr('interaction'))
         return this.#_interaction
+    }
+
+    get htmlInterface() {
+        if (!this.#_htmlInterface) throw Error(Locator.crashStr('htmlInterface'))
+        return this.#_htmlInterface
     }
 
     get upgrade() {

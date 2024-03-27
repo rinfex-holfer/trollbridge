@@ -16,13 +16,14 @@ export class BridgeManager {
 
     shakePosition: any
 
-    isWithStatues =false
+    isWithStatues = false
 
     constructor() {
         this.pos = positioner.bridgePosition();
         this.sprite = o_.render.createTiles('floor', this.pos.x, this.pos.y, this.pos.width, this.pos.height);
         this.sprite.setOrigin(0, 0);
         this.sprite.addPhysics()
+        // this.sprite.obj.alpha = 0;
 
         this.enableInterface();
         this.sprite.onClick(() => o_.troll.goToBridge())
@@ -35,7 +36,10 @@ export class BridgeManager {
         // @ts-ignore
         this.shakePosition = o_.game.getScene().plugins.get('rexshakepositionplugin').add(this.sprite.obj);
 
-        o_.upgrade.createUpgradeButton({x: this.pos.x + this.pos.width - 150, y: this.pos.y + 50}, 'Украсить мост', goldConfig.costs.bridge_ornament, () => this.createStatues())
+        o_.upgrade.createUpgradeButton({
+            x: this.pos.x + this.pos.width - 150,
+            y: this.pos.y + 50
+        }, 'Украсить мост', goldConfig.costs.bridge_ornament, () => this.createStatues())
     }
 
     enableInterface() {
@@ -52,7 +56,7 @@ export class BridgeManager {
     }
 
     private rockPlaces: RockPlace[] = []
-    
+
     createRockPlaces() {
         const coords = [
             [this.pos.x + this.pos.width / 2 + 50, this.pos.y + 50],
@@ -126,7 +130,7 @@ class RockPlace {
     x: number
     y: number
     crackSprite: O_Sprite
-    
+
     isRuined = false
 
     btn: UpgradeButton | undefined

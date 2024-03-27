@@ -34,7 +34,11 @@ function createAnimations(
 
         const animConfig = {
             key: animationKey,
-            frames: scene.anims.generateFrameNames(options.atlasKey, {prefix: animationKey + '_', suffix: '.png', end: framesNumber-1}),
+            frames: scene.anims.generateFrameNames(options.atlasKey, {
+                prefix: animationKey + '_',
+                suffix: '.png',
+                end: framesNumber - 1
+            }),
             frameRate: animation.frameRate,
             repeat: animation.repeat
         };
@@ -69,12 +73,12 @@ export class O_AnimatedSprite {
         this.obj = new Phaser.GameObjects.Sprite(this.scene, options.x, options.y, options.atlasKey);
         if (options?.parent) {
             options.parent.add(this);
+        } else {
+            this.scene.add.existing(this.obj)
         }
-        // TODO put to ELSE branch when https://github.com/photonstorm/phaser/issues/5803 will be resolved
-        this.scene.add.existing(this.obj)
     }
 
-    play(anim: string, options?: {onComplete?: () => void}) {
+    play(anim: string, options?: { onComplete?: () => void }) {
         if (options?.onComplete) {
             this.obj.once('animationcomplete', () => {
                 options?.onComplete && options.onComplete()
@@ -97,6 +101,7 @@ export class O_AnimatedSprite {
     }
 
     leftClickCb: ((pointer: Pointer) => void) | null = null
+
     onClick(callback: () => void) {
         if (this.leftClickCb) this.obj.removeListener('pointerdown', this.leftClickCb)
 
@@ -106,9 +111,13 @@ export class O_AnimatedSprite {
 
         this.obj.on('pointerdown', this.leftClickCb)
     }
-    removeClickListener() { this.obj.removeListener('pointerdown') }
+
+    removeClickListener() {
+        this.obj.removeListener('pointerdown')
+    }
 
     rightClickCb: ((pointer: Pointer) => void) | null = null
+
     onRightClick(callback: () => void) {
         if (this.rightClickCb) this.obj.removeListener('pointerdown', this.rightClickCb)
 
@@ -129,19 +138,61 @@ export class O_AnimatedSprite {
         this.obj.on('pointerout', callback)
     }
 
-    setOrigin(x: number, y: number) { this.obj.setOrigin(x, y)}
-    get x() { return this.obj.x }
-    set x(x) { this.obj.x = x }
-    get y() { return this.obj.y }
-    set y(y) { this.obj.y = y }
-    get height() { return this.obj.height }
-    get width() { return this.obj.width }
-    get alpha() { return this.obj.alpha }
-    set alpha(val: number) { this.obj.alpha = val }
-    setVisibility(val: boolean) { this.obj.visible = val }
-    destroy() { this.obj.destroy() }
-    addPhysics() { this.scene.physics.add.existing(this.obj) }
+    setOrigin(x: number, y: number) {
+        this.obj.setOrigin(x, y)
+    }
+
+    get x() {
+        return this.obj.x
+    }
+
+    set x(x) {
+        this.obj.x = x
+    }
+
+    get y() {
+        return this.obj.y
+    }
+
+    set y(y) {
+        this.obj.y = y
+    }
+
+    get height() {
+        return this.obj.height
+    }
+
+    get width() {
+        return this.obj.width
+    }
+
+    get alpha() {
+        return this.obj.alpha
+    }
+
+    set alpha(val: number) {
+        this.obj.alpha = val
+    }
+
+    setVisibility(val: boolean) {
+        this.obj.visible = val
+    }
+
+    destroy() {
+        this.obj.destroy()
+    }
+
+    addPhysics() {
+        this.scene.physics.add.existing(this.obj)
+    }
+
     // @ts-ignore
-    stop() { this.obj.body.stop() }
-    depthToY() { this.obj.depth = this.y }
+    stop() {
+        throw Error("WTF I am trying to do here")
+        // this.obj.body.stop()
+    }
+
+    depthToY() {
+        this.obj.depth = this.y
+    }
 }

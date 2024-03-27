@@ -40,7 +40,7 @@ export class Meat extends GameEntityBase<EntityType.MEAT> {
 
     subs = subscriptions()
 
-    jumpTimeline: Phaser.Tweens.Timeline
+    jumpTimeline: Phaser.Tweens.Tween
     jumpTimelineDirty = false
 
     pot: Pot | undefined
@@ -82,9 +82,10 @@ export class Meat extends GameEntityBase<EntityType.MEAT> {
         // this.subs.on(Evt.ENCOUNTER_ENDED, () => this.updateInteractive())
 
         this.updateInteractive()
+        console.log("new meat", this);
     }
 
-   private onClickDefault() {
+    private onClickDefault() {
         this.bePlacedOrBeEaten()
     }
 
@@ -135,8 +136,7 @@ export class Meat extends GameEntityBase<EntityType.MEAT> {
     private setJumping(val: boolean) {
         if (val) {
             this.jumpTimeline.play()
-        }
-        else {
+        } else {
             this.jumpTimeline.stop()
             this.jumpTimeline.destroy()
             this.jumpTimeline = o_.render.createJumpingTimeline(this.sprite)
@@ -158,8 +158,10 @@ export class Meat extends GameEntityBase<EntityType.MEAT> {
         const parentX = this.sprite.obj.parentContainer?.x || 0
         const parentY = this.sprite.obj.parentContainer?.y || 0
         this.rottenGas.setPosition(
-            {min: this.sprite.obj.x - 10 + parentX, max: this.sprite.x + 10 + parentX},
-            {min: this.sprite.y - 10 + parentY, max: this.sprite.y + 10 + parentY},
+            this.sprite.obj.x + parentX,
+            this.sprite.y + parentY
+            // {min: this.sprite.obj.x - 10 + parentX, max: this.sprite.x + 10 + parentX},
+            // {min: this.sprite.y - 10 + parentY, max: this.sprite.y + 10 + parentY},
         )
     }
 
@@ -252,6 +254,7 @@ export class Meat extends GameEntityBase<EntityType.MEAT> {
             this.sprite.y += o_.lair.foodStorage.container.y
         }
         return o_.render.flyTo(this.sprite, pos, speed, maxDuration).then(() => {
+            console.log("finish", this)
             this.updateEmitters()
             if (this.props.isStale && !this.rottenGas.active) this.rottenGas.resume()
         });
@@ -265,7 +268,7 @@ export class Meat extends GameEntityBase<EntityType.MEAT> {
     destroy() {
         this.deregister()
         this.destroyed = true
-        this.rottenGas.remove()
+        // this.rottenGas.remove()
         this.subs.clear()
         this.sprite.destroy()
         o_.lair.foodStorage.updateFood()

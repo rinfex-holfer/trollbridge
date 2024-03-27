@@ -36,21 +36,21 @@ var config: Phaser.Types.Core.GameConfig = {
     physics: {
         default: 'arcade',
         arcade: {
-            gravity: { y: 0 }
+            gravity: {y: 0}
         }
     },
     scene: {
-        preload: function() {
+        preload: function () {
             this.load.plugin('rexshakepositionplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexshakepositionplugin.min.js', true);
             resourseLoader.load(this)
             preload(this);
         },
-        create: function() {
+        create: function () {
             create(this);
         }
     },
     // @ts-ignore
-    pipeline: { 'Gray': GrayScalePipeline }
+    pipeline: {'Gray': GrayScalePipeline}
 };
 
 const preload = (scene: Phaser.Scene) => {
@@ -78,19 +78,19 @@ const create = (scene: Phaser.Scene) => {
 
     new GameNotifications()
 
-    // new Meat({x: 160, y: 300})
-    // new Meat({x: 180, y: 300})
-    // new Meat({x: 200, y: 300})
-    // new Meat({x: 220, y: 300})
-    // new Meat({x: 240, y: 300})
-    // new Meat({x: 260, y: 300})
-    // new Gold({x: 220, y: 300}, 1)
-    // new Gold({x: 240, y: 300}, 2)
-    // new Gold({x: 260, y: 300}, 3)
-    // new Gold({x: 280, y: 300}, 4)
-    // new Gold({x: 300, y: 300}, 100)
+    new Meat({x: 160, y: 300})
+    new Meat({x: 180, y: 300})
+    new Meat({x: 200, y: 300})
+    new Meat({x: 220, y: 300})
+    new Meat({x: 240, y: 300})
+    new Meat({x: 260, y: 300})
+    new Gold({x: 220, y: 300}, 1)
+    new Gold({x: 240, y: 300}, 2)
+    new Gold({x: 260, y: 300}, 3)
+    new Gold({x: 280, y: 300}, 4)
+    new Gold({x: 300, y: 300}, 100)
 
-    scene.update = function(time, delta) {
+    scene.update = function (time, delta) {
         timeManager.onUpdate(delta);
     }
 }

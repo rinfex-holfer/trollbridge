@@ -20,9 +20,7 @@ const layersConfig = [
 ] as [LayerKey, number][]
 
 export class LayersManager {
-    private layers = {
-
-    } as Record<LayerKey, Phaser.GameObjects.Layer>
+    private layers = {} as Record<LayerKey, Phaser.GameObjects.Layer>
 
     constructor(private scene: Phaser.Scene) {
         layersConfig.forEach(layerConfig => this.createLayer(layerConfig[0], layerConfig[1]))
@@ -51,7 +49,7 @@ export class LayersManager {
     update() {
         this.layers.FIELD_OBJECTS.getChildren().forEach(obj => {
             // @ts-ignore
-            obj.depth = obj.y
+            obj.setDepth(obj.y)
         })
     }
 }

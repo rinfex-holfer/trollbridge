@@ -7,7 +7,8 @@ export class Environment {
 
     constructor() {
         const size = getGameSize();
-        this.bg = o_.render.createSprite('background', 0, 0, { width: size.width, height: size.height } )
+        this.bg = o_.render.createSprite('background', 0, 0, {width: size.width, height: size.height})
         this.bg.setOrigin(0, 0);
+        // this.bg.obj.alpha = 0;
     }
 }

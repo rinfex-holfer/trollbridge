@@ -35,7 +35,7 @@ export class FoodStorage {
     constructor(pos: Vec) {
         this.position = pos
 
-        this.container =  o_.render.createContainer(pos.x, pos.y)
+        this.container = o_.render.createContainer(pos.x, pos.y)
         o_.layers.add(this.container, LayerKey.FIELD_OBJECTS)
 
         this.sprite = o_.render.createSprite('drying_rack', 0, 0, {parent: this.container})
@@ -75,13 +75,17 @@ export class FoodStorage {
         o_.audio.playSound(SOUND_KEY.PICK)
         place[1] = food
         food.setLocation(MeatLocation.STORAGE)
-        food.flyTo({x: this.container.x + coord.x, y: this.container.y + coord.y})
-            .then(() => {
-                this.container.add(food.sprite);
-                food.sprite.move(coord.x, coord.y)
-                food.updateRealPosition()
-                o_.audio.playSound(SOUND_KEY.PICK_BIG)
-            })
+
+        this.container.add(food.sprite);
+        food.sprite.move(0, 0)
+
+        // food.flyTo({x: this.container.x + coord.x, y: this.container.y + coord.y})
+        //     .then(() => {
+        //         this.container.add(food.sprite);
+        //         food.sprite.move(coord.x, coord.y)
+        //         food.updateRealPosition()
+        //         o_.audio.playSound(SOUND_KEY.PICK_BIG)
+        //     })
     }
 
     hasFreeSpace() {

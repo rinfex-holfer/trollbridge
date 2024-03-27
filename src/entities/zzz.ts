@@ -3,14 +3,14 @@ import {o_} from "../managers/locator";
 import {colorsCSS} from "../configs/constants";
 import {O_Container} from "../managers/core/render/container";
 import {LayerKey} from "../managers/core/layers";
-import Timeline = Phaser.Tweens.Timeline;
+import TweenChain = Phaser.Tweens.TweenChain;
 
 const MARGIN = 10;
 
 export class Zzz {
     container: O_Container
     letters: O_Text[]
-    timeline: Timeline
+    tween: TweenChain
 
     constructor(private x: number, private y: number) {
         this.container = o_.render.createContainer(x, y);
@@ -51,28 +51,22 @@ export class Zzz {
             offset: i * 2000
         })
 
-        this.timeline = o_.render.createTimeline()
-        this.timeline.add(getConfig(0))
-        this.timeline.add(getYoyoConfig(0))
-        this.timeline.add(getConfig(1))
-        this.timeline.add(getYoyoConfig(1))
-        this.timeline.add(getConfig(2))
-        this.timeline.add(getYoyoConfig(2))
-        this.timeline.play();
+        this.tween = o_.render.createZzzTween(this.letters, this.x, this.y)
+        this.tween.play();
         // don't know why, but without setTimeout can't start the timeline in future
-        setTimeout(() => this.timeline.pause())
+        setTimeout(() => this.tween.pause())
         this.container.setVisibility(false)
     }
 
     show(x: number, y: number) {
         this.container.move(x, y)
         this.container.setVisibility(true)
-        this.timeline.resume();
+        this.tween.resume();
     }
 
     hide() {
         this.container.setVisibility(false)
-        this.timeline.pause();
+        this.tween.pause();
     }
 
     destroy() {
