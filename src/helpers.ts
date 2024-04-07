@@ -32,6 +32,7 @@ export function onEncounterEnd() {
 }
 
 export function onTrollCameToBridge() {
+    console.log("======== onTrollCameToBridge")
     o_.troll.location = TrollLocation.BRIDGE;
     o_.lair.mayButtonsBeClicked(false)
     o_.lair.mayBeMovedInto(true)
@@ -40,7 +41,24 @@ export function onTrollCameToBridge() {
     eventBus.emit(Evt.TROLL_LOCATION_CHANGED, TrollLocation.BRIDGE);
 }
 
+export function onTrollGoesToBridge() {
+    console.log("======== onTrollGoesToBridge")
+    o_.lair.mayButtonsBeClicked(false)
+    o_.lair.mayBeMovedInto(false)
+    o_.lair.menu.hide()
+    o_.bridge.disableInterface()
+    o_.camera.panToBridge()
+}
+
+export function onTrollGoesToLair() {
+    console.log("======== onTrollGoesToLair")
+    o_.lair.mayButtonsBeClicked(false)
+    o_.lair.mayBeMovedInto(false)
+    o_.camera.panToLair()
+}
+
 export function onTrollCameToLair() {
+    console.log("======== onTrollCameToLair")
     o_.troll.location = TrollLocation.LAIR;
     o_.lair.mayButtonsBeClicked(true)
     o_.lair.mayBeMovedInto(false)
@@ -56,7 +74,7 @@ export function onTrollSleep() {
     o_.bridge.enableInterface();
 }
 
-export function destroyInteractiveObjWithJump(obj: {destroy: Function, sprite?: O_Sprite, container?: O_Container}) {
+export function destroyInteractiveObjWithJump(obj: { destroy: Function, sprite?: O_Sprite, container?: O_Container }) {
     const a = obj.sprite || obj.container
     if (!a) return
 
@@ -67,7 +85,7 @@ export function destroyInteractiveObjWithJump(obj: {destroy: Function, sprite?: 
     o_.audio.playSound(SOUND_KEY.BONK)
 }
 
-export function destroyInteractiveObjWithFade(obj: {destroy: Function, sprite?: O_Sprite, container?: O_Container}) {
+export function destroyInteractiveObjWithFade(obj: { destroy: Function, sprite?: O_Sprite, container?: O_Container }) {
     const a = obj.sprite || obj.container
     if (!a) return
 

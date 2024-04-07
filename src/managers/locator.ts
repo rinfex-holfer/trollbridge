@@ -14,6 +14,7 @@ import {UpgradeManager} from "./game/upgrade";
 import {Negotiations} from "./game/negotiations";
 import {MusicManager} from "./core/music";
 import {HtmlInterfaceManager} from "./core/interface";
+import {CameraManager} from "./core/camera";
 
 class Locator {
     #_render: RenderManager | undefined
@@ -32,28 +33,64 @@ class Locator {
     #_interaction: InteractionManager | undefined
     #_htmlInterface: HtmlInterfaceManager | undefined
     #_upgrade: UpgradeManager | undefined
+    #_camera: CameraManager | undefined;
 
     static crashStr(m: string) {
         return 'trying access ' + m + ' before it was created';
     }
 
     register = {
-        render: (render: RenderManager) => { this.#_render = render },
-        characters: (characters: CharactersManager) => { this.#_characters = characters },
-        bridge: (bridge: BridgeManager) => { this.#_bridge = bridge },
-        lair: (lair: Lair) => { this.#_lair = lair },
-        troll: (troll: Troll) => { this.#_troll = troll },
-        audio: (audio: AudioManager) => { this.#_audio = audio },
-        music: (music: MusicManager) => { this.#_music = music },
-        time: (time: TimeManager) => { this.#_time = time },
-        game: (game: GameManager) => { this.#_game = game },
-        battle: (battle: BattleManager) => { this.#_battle = battle },
-        layers: (layers: LayersManager) => { this.#_layers = layers },
-        entities: (entities: EntityManager) => { this.#_entities = entities },
-        interaction: (interaction: InteractionManager) => { this.#_interaction = interaction },
-        htmlInterface: (htmlInterface: HtmlInterfaceManager) => { this.#_htmlInterface = htmlInterface },
-        upgrade: (upgrade: UpgradeManager) => { this.#_upgrade = upgrade },
-        negotiations: (negotiations: Negotiations) => { this.#_negotiations = negotiations },
+        render: (render: RenderManager) => {
+            this.#_render = render
+        },
+        characters: (characters: CharactersManager) => {
+            this.#_characters = characters
+        },
+        bridge: (bridge: BridgeManager) => {
+            this.#_bridge = bridge
+        },
+        lair: (lair: Lair) => {
+            this.#_lair = lair
+        },
+        troll: (troll: Troll) => {
+            this.#_troll = troll
+        },
+        audio: (audio: AudioManager) => {
+            this.#_audio = audio
+        },
+        music: (music: MusicManager) => {
+            this.#_music = music
+        },
+        time: (time: TimeManager) => {
+            this.#_time = time
+        },
+        game: (game: GameManager) => {
+            this.#_game = game
+        },
+        battle: (battle: BattleManager) => {
+            this.#_battle = battle
+        },
+        layers: (layers: LayersManager) => {
+            this.#_layers = layers
+        },
+        entities: (entities: EntityManager) => {
+            this.#_entities = entities
+        },
+        interaction: (interaction: InteractionManager) => {
+            this.#_interaction = interaction
+        },
+        htmlInterface: (htmlInterface: HtmlInterfaceManager) => {
+            this.#_htmlInterface = htmlInterface
+        },
+        upgrade: (upgrade: UpgradeManager) => {
+            this.#_upgrade = upgrade
+        },
+        negotiations: (negotiations: Negotiations) => {
+            this.#_negotiations = negotiations
+        },
+        camera: (camera: CameraManager) => {
+            this.#_camera = camera
+        },
     }
 
     get render() {
@@ -135,6 +172,11 @@ class Locator {
         if (!this.#_negotiations) throw Error(Locator.crashStr('negotiations'))
         return this.#_negotiations
     }
+
+    get camera() {
+        if (!this.#_camera) throw Error(Locator.crashStr('camera'))
+        return this.#_camera
+    }
 }
 
 const o_ = new Locator();
@@ -142,4 +184,4 @@ const o_ = new Locator();
 // @ts-ignore
 window.o_ = o_
 
-export { o_ }
+export {o_}

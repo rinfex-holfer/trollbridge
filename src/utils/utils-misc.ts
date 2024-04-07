@@ -12,7 +12,8 @@ export const getGameSize = () => {
     return {height: GAME_HEIGHT, width: GAME_WIDTH};
 };
 
-const ids = {} as {[entityType: string]: number};
+const ids = {} as { [entityType: string]: number };
+
 export function createId(key: string): string {
     if (ids[key] === undefined) ids[key] = -1;
 
@@ -58,5 +59,10 @@ export function createMessageEmitter<Message>() {
 
 export function debugExpose(fn: Function, key: string) {
     // @ts-ignore
-    window[key] = fn
+    if (!window.gameDebug) {
+        // @ts-ignore
+        window.gameDebug = {}
+    }
+    // @ts-ignore
+    window.gameDebug[key] = fn
 }

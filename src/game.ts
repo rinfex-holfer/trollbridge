@@ -26,6 +26,7 @@ import {CharKey} from "./types";
 import {pause} from "./utils/utils-async";
 import {CharStateKey} from "./entities/char/char-constants";
 import {GameNotifications} from "./interface/game-notifications";
+import {CameraManager} from "./managers/core/camera";
 
 const size = getGameSize()
 var config: Phaser.Types.Core.GameConfig = {
@@ -36,7 +37,7 @@ var config: Phaser.Types.Core.GameConfig = {
     physics: {
         default: 'arcade',
         arcade: {
-            gravity: {y: 0}
+            gravity: {x: 0, y: 0}
         }
     },
     scene: {
@@ -63,6 +64,7 @@ const create = (scene: Phaser.Scene) => {
     const timeManager = new TimeManager()
     new LayersManager(scene)
     new RenderManager(scene)
+    new CameraManager(scene)
     new InteractionManager(scene)
     new EntityManager()
     new AudioManager(scene)

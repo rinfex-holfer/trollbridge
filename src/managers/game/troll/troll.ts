@@ -15,7 +15,13 @@ import {LayerKey} from "../../core/layers";
 import {Zzz} from "../../../entities/zzz";
 import {TrollStats} from "../../../interface/troll-stats";
 import {TrollStateBattleAttack} from "./troll-state-battle-attack";
-import {onTrollCameToBridge, onTrollCameToLair, onTrollSleep} from "../../../helpers";
+import {
+    onTrollCameToBridge,
+    onTrollCameToLair,
+    onTrollGoesToBridge,
+    onTrollGoesToLair,
+    onTrollSleep
+} from "../../../helpers";
 import {Char} from "../../../entities/char/char";
 import {createPromiseAndHandlers, pause} from "../../../utils/utils-async";
 import {Rock} from "../../../entities/rock";
@@ -360,28 +366,30 @@ export class Troll {
     }
 
     setState(stateKey: TrollStateKey, options?: any): Promise<any> {
-        console.log('new troll state:', stateKey);
+        console.trace('new troll state:', stateKey, options);
         this.state.end();
         this.state = this.getState(stateKey, options)
         return this.state.start();
     }
 
     goToBridge() {
+        console.log("goToBridge");
         const target = {x: 0, y: 0}
         const bridgePos = positioner.bridgePosition();
         target.x = bridgePos.x + bridgePos.width / 2
         target.y = bridgePos.y + bridgePos.height / 2
 
-        return this.setState(TrollStateKey.GO_TO, {target, onStart: onTrollCameToBridge, onEnd: onTrollCameToBridge})
+        return this.setState(TrollStateKey.GO_TO, {target, onStart: onTrollGoesToBridge, onEnd: onTrollCameToBridge})
     }
 
     goToLair() {
+        console.log("goToLair");
         const target = {x: 0, y: 0}
         const lairPos = positioner.getLairPosition();
         target.x = lairPos.x + lairPos.width / 2
         target.y = lairPos.y + lairPos.height / 2
 
-        this.setState(TrollStateKey.GO_TO, {target, onStart: onTrollCameToLair, onEnd: onTrollCameToLair})
+        this.setState(TrollStateKey.GO_TO, {target, onStart: onTrollGoesToLair, onEnd: onTrollCameToLair})
     }
 
     goToBed() {

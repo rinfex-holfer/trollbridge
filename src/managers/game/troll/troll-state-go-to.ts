@@ -35,6 +35,10 @@ export class TrollStateGoTo extends TrollState {
         this.checkDistance()
     }
 
+    onEnd() {
+        this.options.onEnd?.()
+    }
+
     checkDistance() {
         const distanceLeft = getDistanceBetween(this.host.container, this.options.target);
 

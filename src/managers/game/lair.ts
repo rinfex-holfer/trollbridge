@@ -41,6 +41,7 @@ export class Lair {
     }
 
     mayBeMovedInto(val: boolean) {
+        console.log("lair mayBeMovedInto", val);
         if (val) {
             this.sprite.setInteractive(true, {cursor: 'pointer'})
         } else {
