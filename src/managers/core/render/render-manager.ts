@@ -138,7 +138,13 @@ export class RenderManager {
     }
 
     createTween(config: Phaser.Types.Tweens.TweenBuilderConfig) {
-        return this.scene.tweens.add(config)
+        const defaults = {
+            paused: true
+        }
+        return this.scene.tweens.add({
+            ...defaults,
+            ...config
+        })
     }
 
     createTweenChain(tweens: Phaser.Types.Tweens.TweenBuilderConfig[]) {
@@ -298,14 +304,14 @@ export class RenderManager {
         return promise
     }
 
-    createJumpingTimeline(targets: O_GameObject | O_GameObject[], height = 10, repeat = -1) {
+    createJumpingTween(targets: O_GameObject | O_GameObject[], height = 10, repeat = -1) {
         const tween = this.createTween({
             targets: Array.isArray(targets) ? targets.map(t => t.obj) : targets.obj,
             ease: 'Power2.easeInOut',
             yoyo: true,
             repeat,
             duration: 200,
-            y: '-=' + height
+            y: '-=' + height,
         })
         return tween
     }

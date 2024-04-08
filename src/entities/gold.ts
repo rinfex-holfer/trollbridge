@@ -47,6 +47,8 @@ export class Gold extends GameEntityBase<EntityType.GOLD> {
         // this.subs.on(Evt.ENCOUNTER_STARTED, () => this.updateInteractive())
         // this.subs.on(Evt.ENCOUNTER_ENDED, () => this.updateInteractive())
 
+        console.log("new gold", this);
+
         this.updateInteractive()
     }
 
@@ -104,7 +106,7 @@ export class Gold extends GameEntityBase<EntityType.GOLD> {
             return 'gold-some'
         } else if (this.props.amount < 50) {
             return 'gold-many'
-        } else  if (this.props.amount < goldConfig.MAX_GOLD_IN_SPRITE) {
+        } else if (this.props.amount < goldConfig.MAX_GOLD_IN_SPRITE) {
             return 'gold-almost'
         } else if (this.props.amount === goldConfig.MAX_GOLD_IN_SPRITE) {
             return 'gold-chest'

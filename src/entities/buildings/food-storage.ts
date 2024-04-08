@@ -51,6 +51,8 @@ export class FoodStorage {
                 () => this.upgrade()
             )
         }
+
+        console.log(this);
     }
 
     upgrade() {
@@ -71,21 +73,18 @@ export class FoodStorage {
         if (!place) return;
 
         const coord = place[0];
+        console.log("coord ", coord);
 
         o_.audio.playSound(SOUND_KEY.PICK)
         place[1] = food
         food.setLocation(MeatLocation.STORAGE)
-
-        this.container.add(food.sprite);
-        food.sprite.move(0, 0)
-
-        // food.flyTo({x: this.container.x + coord.x, y: this.container.y + coord.y})
-        //     .then(() => {
-        //         this.container.add(food.sprite);
-        //         food.sprite.move(coord.x, coord.y)
-        //         food.updateRealPosition()
-        //         o_.audio.playSound(SOUND_KEY.PICK_BIG)
-        //     })
+        food.flyTo({x: this.container.x + coord.x, y: this.container.y + coord.y})
+            .then(() => {
+                this.container.add(food.sprite)
+                food.sprite.move(coord.x, coord.y)
+                food.updateRealPosition()
+                o_.audio.playSound(SOUND_KEY.PICK_BIG)
+            })
     }
 
     hasFreeSpace() {

@@ -667,7 +667,7 @@ export class Troll {
         char.setAnimation(CharAnimation.UNCONSCIOUS)
 
         const p0 = createPromiseAndHandlers()
-        const jumpTimeline = o_.render.createJumpingTimeline([this.container, char.container], 100, 0)
+        const jumpTimeline = o_.render.createJumpingTween([this.container, char.container], 100, 0)
         jumpTimeline.once('complete', p0.done)
         jumpTimeline.play()
         await p0.promise

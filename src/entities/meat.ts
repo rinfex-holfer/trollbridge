@@ -40,8 +40,8 @@ export class Meat extends GameEntityBase<EntityType.MEAT> {
 
     subs = subscriptions()
 
-    jumpTimeline: Phaser.Tweens.Tween
-    jumpTimelineDirty = false
+    jumpTween: Phaser.Tweens.Tween
+    jumpTweenDirty = false
 
     pot: Pot | undefined
 
@@ -73,13 +73,13 @@ export class Meat extends GameEntityBase<EntityType.MEAT> {
         })
         this.realPosition = this.updateRealPosition()
 
-        this.jumpTimeline = o_.render.createJumpingTimeline(this.sprite)
+        this.jumpTween = o_.render.createJumpingTween(this.sprite)
 
         this.rottenGas = o_.render.createGreenSmokeEmitter()
         this.subs.on(Evt.TIME_PASSED, () => this.onTimePassed())
 
-        // this.subs.on(Evt.ENCOUNTER_STARTED, () => this.updateInteractive())
-        // this.subs.on(Evt.ENCOUNTER_ENDED, () => this.updateInteractive())
+        this.subs.on(Evt.ENCOUNTER_STARTED, () => this.updateInteractive())
+        this.subs.on(Evt.ENCOUNTER_ENDED, () => this.updateInteractive())
 
         this.updateInteractive()
         console.log("new meat", this);
@@ -135,11 +135,12 @@ export class Meat extends GameEntityBase<EntityType.MEAT> {
 
     private setJumping(val: boolean) {
         if (val) {
-            this.jumpTimeline.play()
+            this.jumpTween.play()
         } else {
-            this.jumpTimeline.stop()
-            this.jumpTimeline.destroy()
-            this.jumpTimeline = o_.render.createJumpingTimeline(this.sprite)
+            this.jumpTween.stop()
+            this.jumpTween.destroy()
+            this.jumpTween = o_.render.createJumpingTween(this.sprite)
+            this.jumpTween.play()
             this.sprite.move(this.realPosition.x, this.realPosition.y)
         }
     }
@@ -247,12 +248,14 @@ export class Meat extends GameEntityBase<EntityType.MEAT> {
     }
 
     public flyTo(pos: Vec, speed = 1000, maxDuration = 500): Promise<any> {
+        this.setJumping(false);
         if (this.rottenGas.active) this.rottenGas.pause()
         if (this.location === MeatLocation.STORAGE && this.sprite.obj.parentContainer === o_.lair.foodStorage.container.obj) {
             o_.lair.foodStorage.container.remove(this.sprite)
             this.sprite.x += o_.lair.foodStorage.container.x
             this.sprite.y += o_.lair.foodStorage.container.y
         }
+
         return o_.render.flyTo(this.sprite, pos, speed, maxDuration).then(() => {
             console.log("finish", this)
             this.updateEmitters()
