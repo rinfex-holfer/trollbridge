@@ -237,32 +237,31 @@ export class RenderManager {
         const {promise, done} = createPromiseAndHandlers()
         const distance = getDistanceBetween(obj, pos);
 
-        const tween = this.createTweenChain([
-            {
-                targets: obj.obj,
-                x: pos.x,
-                // y: pos.y,
-                ease: 'Linear',
-                duration: duration,
-                onComplete: done
-            },
+        const tweenX = this.createTween({
+            targets: obj.obj,
+            x: pos.x,
+            // y: pos.y,
+            ease: 'Linear',
+            duration: duration,
+            onComplete: done
+        });
+        const tweenY = this.createTweenChain([
             {
                 targets: obj.obj,
                 y: Math.min(obj.y, pos.y) - distance / 2,
                 ease: 'Quad.easeOut',
                 duration: duration / 3,
-                offset: 0,
             },
             {
                 targets: obj.obj,
                 y: pos.y,
                 ease: 'Bounce.easeOut',
                 duration: duration * 2 / 3,
-                offset: duration / 3,
             }
         ]);
 
-        tween.play()
+        tweenX.play();
+        tweenY.play();
 
         return promise
     }

@@ -14,7 +14,7 @@ export class BridgeManager {
 
     pos: Rect
 
-    shakePosition: any
+    // shakePosition: any
 
     isWithStatues = false
 
@@ -34,7 +34,7 @@ export class BridgeManager {
         // this.rockPlaces.forEach(p => p.ruin(false))
 
         // @ts-ignore
-        this.shakePosition = o_.game.getScene().plugins.get('rexshakepositionplugin').add(this.sprite.obj);
+        // this.shakePosition = o_.game.getScene().plugins.get('rexshakepositionplugin').add(this.sprite.obj);
 
         o_.upgrade.createUpgradeButton({
             x: this.pos.x + this.pos.width - 150,
@@ -100,7 +100,8 @@ export class BridgeManager {
     }
 
     shake() {
-        this.shakePosition.shake()
+        // TODO
+        // this.shakePosition.shake()
     }
 
     fall() {

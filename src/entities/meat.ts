@@ -73,6 +73,7 @@ export class Meat extends GameEntityBase<EntityType.MEAT> {
         })
         this.realPosition = this.updateRealPosition()
 
+        // this shit still ruins y coord in flyTo method somehow
         this.jumpTween = o_.render.createJumpingTween(this.sprite)
 
         this.rottenGas = o_.render.createGreenSmokeEmitter()
@@ -140,7 +141,6 @@ export class Meat extends GameEntityBase<EntityType.MEAT> {
             this.jumpTween.stop()
             this.jumpTween.destroy()
             this.jumpTween = o_.render.createJumpingTween(this.sprite)
-            this.jumpTween.play()
             this.sprite.move(this.realPosition.x, this.realPosition.y)
         }
     }
