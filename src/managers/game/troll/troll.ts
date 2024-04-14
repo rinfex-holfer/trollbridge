@@ -162,6 +162,8 @@ export class Troll {
 
         debugExpose((val: number) => this.changeFear(val), 'changeFear')
         debugExpose((val: number) => this.heal(val), 'heal')
+
+        o_.camera.followTroll(true);
     }
 
     setInitialSpriteOrigin() {

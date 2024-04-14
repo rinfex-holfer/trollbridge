@@ -27,32 +27,8 @@ import {pause} from "./utils/utils-async";
 import {CharStateKey} from "./entities/char/char-constants";
 import {GameNotifications} from "./interface/game-notifications";
 import {CameraManager} from "./managers/core/camera";
-
-const size = getGameSize()
-var config: Phaser.Types.Core.GameConfig = {
-    type: Phaser.WEBGL,
-    width: size.width,
-    height: size.height,
-    pixelArt: true,
-    physics: {
-        default: 'arcade',
-        arcade: {
-            gravity: {x: 0, y: 0}
-        }
-    },
-    scene: {
-        preload: function () {
-            // this.load.plugin('rexshakepositionplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexshakepositionplugin.min.js', true);
-            resourseLoader.load(this)
-            preload(this);
-        },
-        create: function () {
-            create(this);
-        }
-    },
-    // @ts-ignore
-    pipeline: {'Gray': GrayScalePipeline}
-};
+import {Ladder} from "./entities/buildings/ladder";
+import {SettingsManager} from "./managers/core/settings";
 
 const preload = (scene: Phaser.Scene) => {
     const imgKeys = Object.keys(resoursePaths.images) as (keyof typeof resoursePaths.images)[];
@@ -73,6 +49,7 @@ const create = (scene: Phaser.Scene) => {
     new CharactersManager()
     new Lair()
     new BridgeManager()
+    new Ladder()
     new Negotiations()
     new BattleManager()
     new Troll()
@@ -97,6 +74,41 @@ const create = (scene: Phaser.Scene) => {
     }
 }
 
-export const newGame = () => new Phaser.Game(config)
+export const newGame = () => {
+    new SettingsManager();
+
+    const size = getGameSize()
+
+    const config: Phaser.Types.Core.GameConfig = {
+        type: Phaser.WEBGL,
+        pixelArt: true,
+        parent: document.getElementById('game')!,
+        scale: {
+            mode: Phaser.Scale.FIT,
+            width: size.width,
+            height: size.height,
+        },
+        physics: {
+            default: 'arcade',
+            arcade: {
+                gravity: {x: 0, y: 0}
+            }
+        },
+        scene: {
+            preload: function () {
+                // this.load.plugin('rexshakepositionplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexshakepositionplugin.min.js', true);
+                resourseLoader.load(this)
+                preload(this);
+            },
+            create: function () {
+                create(this);
+            }
+        },
+        // @ts-ignore
+        pipeline: {'Gray': GrayScalePipeline}
+    };
+
+    return new Phaser.Game(config)
+}
 
 

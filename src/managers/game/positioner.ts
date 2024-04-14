@@ -29,6 +29,14 @@ export const positioner = {
         }
     },
 
+    getLadderBottomPosition() {
+        const pos = positioner.getLairPosition();
+        return {
+            x: pos.x + 300,
+            y: pos.y
+        }
+    },
+
     getFoodStoragePosition() {
         const pos = positioner.getLairPosition();
         return {

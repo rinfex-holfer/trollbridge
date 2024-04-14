@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <data version="1.0">
-    <struct type="Settings">
+    <struct type="SettingsMenu">
         <key>fileFormatVersion</key>
         <int>4</int>
         <key>texturePackerVersion</key>

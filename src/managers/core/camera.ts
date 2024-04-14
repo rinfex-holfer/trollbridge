@@ -31,6 +31,10 @@ export class CameraManager {
         this.camera.startFollow(gameObject.obj)
     }
 
+    stopFollow() {
+        this.camera.stopFollow()
+    }
+
     zoomTo(zoom: number, duration?: number, ease?: string) {
         this.camera.zoomTo(zoom, duration, ease)
     }
@@ -51,5 +55,15 @@ export class CameraManager {
         const h = o_.lair.sprite.height
 
         this.panTo(x + w / 2, y + h / 2, 2000, undefined, true)
+    }
+
+    followTroll(val: boolean) {
+        this.isFollowingTroll = val
+
+        if (val) {
+            this.follow(o_.troll.container)
+        } else {
+            this.camera.stopFollow()
+        }
     }
 }

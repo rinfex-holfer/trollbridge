@@ -15,6 +15,7 @@ import {Negotiations} from "./game/negotiations";
 import {MusicManager} from "./core/music";
 import {HtmlInterfaceManager} from "./core/interface";
 import {CameraManager} from "./core/camera";
+import {SettingsManager} from "./core/settings";
 
 class Locator {
     #_render: RenderManager | undefined
@@ -34,6 +35,7 @@ class Locator {
     #_htmlInterface: HtmlInterfaceManager | undefined
     #_upgrade: UpgradeManager | undefined
     #_camera: CameraManager | undefined;
+    #_settings: SettingsManager | undefined;
 
     static crashStr(m: string) {
         return 'trying access ' + m + ' before it was created';
@@ -90,6 +92,9 @@ class Locator {
         },
         camera: (camera: CameraManager) => {
             this.#_camera = camera
+        },
+        settings: (settings: SettingsManager) => {
+            this.#_settings = settings
         },
     }
 
@@ -176,6 +181,11 @@ class Locator {
     get camera() {
         if (!this.#_camera) throw Error(Locator.crashStr('camera'))
         return this.#_camera
+    }
+
+    get settings() {
+        if (!this.#_settings) throw Error(Locator.crashStr('settings'))
+        return this.#_settings
     }
 }
 

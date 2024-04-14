@@ -11,3 +11,6 @@
 - InteractionManager должен настраиваться снаружи - создание групп интерактивных объектов и активация/деактивация их по ключам
 
 - спрайты должны сами обращаться к методам типа o_.render.moveTo
+
+npm uninstall --save @types/react @types/react-dom @types/react-router-dom @vitejs/plugin-react i18next react react-dom react-redux react-router-dom redux redux-thunk reselect typescript typescript-plugin-css-modules
+npm install --save @types/react @types/react-dom @types/react-router-dom @vitejs/plugin-react i18next react react-dom react-router-dom typescript typescript-plugin-css-modules

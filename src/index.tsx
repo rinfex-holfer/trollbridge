@@ -6,9 +6,10 @@ import translations from "./translations";
 import {GameWin} from "./interface/game-win";
 import {HowToPlay} from "./interface/how-to-play";
 import './styles.css'
+import {SettingsMenu} from "./interface/settings-menu";
+import {createRoot} from "react-dom/client";
 
 translations
-
 
 
 declare global {
@@ -25,16 +26,15 @@ document.body.appendChild(appElement);
 
 const App = () => {
     return <div id='temp-interface'>
-        <GameOver />
-        <GameWin />
-        <HowToPlay />
+        <GameOver/>
+        <GameWin/>
+        <HowToPlay/>
+        <SettingsMenu/>
         {/*<DateTime />*/}
     </div>;
 };
 
 setTimeout(() => {
-    ReactDOM.render(
-        <App />,
-        appElement
-    );
+    const root = createRoot(appElement);
+    root.render(<App/>);
 }, 2000)

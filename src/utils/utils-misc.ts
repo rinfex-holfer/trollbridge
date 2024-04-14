@@ -1,15 +1,12 @@
-let GAME_WIDTH = 0;
-let GAME_HEIGHT = 0;
+import {o_} from "../managers/locator";
+
 export const getGameSize = () => {
-    if (!GAME_WIDTH) {
-        GAME_WIDTH = window.innerWidth * window.devicePixelRatio;
-    }
+    const [width, height] = o_.settings.getResolution()
 
-    if (!GAME_HEIGHT) {
-        GAME_HEIGHT = window.innerHeight * window.devicePixelRatio;
-    }
-
-    return {height: GAME_HEIGHT, width: GAME_WIDTH};
+    return {
+        height,
+        width
+    };
 };
 
 const ids = {} as { [entityType: string]: number };

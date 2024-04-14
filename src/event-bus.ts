@@ -1,9 +1,12 @@
 import {CharKey, EncounterDanger, TrollLocation} from "./types";
 import {TrollFearLevel} from "./managers/game/troll/types";
+import {Settings} from "./managers/core/settings";
 
 let nextId = 0;
 
 export const enum Evt {
+    SETTINGS_CHANGED = 'SETTINGS_CHANGED',
+
     TIME_PASSED = 'TIME_PASSED',
     ALL_GIVEN = 'ALL_GIVEN',
     PAYMENT_GIVEN = 'PAYMENT_GIVEN',
@@ -42,6 +45,8 @@ export const enum Evt {
 }
 
 export type EvtData = {
+    [Evt.SETTINGS_CHANGED]: Settings,
+
     [Evt.ALL_GIVEN]: undefined,
     [Evt.PAYMENT_GIVEN]: undefined,
 
@@ -116,7 +121,7 @@ export const eventBus = {
         if (!!subscriber) delete this.subs[eventType][id]
     },
 
-    emit: function<E extends Evt>(eventType: E, data?: EvtData[E]) {
+    emit: function <E extends Evt>(eventType: E, data?: EvtData[E]) {
         console.log('emit', eventType, this.subs[eventType]);
 
         if (!this.subs[eventType]) return;
