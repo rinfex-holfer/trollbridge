@@ -19,12 +19,8 @@ import {EntityManager} from "./managers/core/entities";
 import {InteractionManager} from "./managers/core/interaction";
 import {Gold} from "./entities/gold";
 import {UpgradeManager} from "./managers/game/upgrade";
-import {o_} from "./managers/locator";
 import {GameManager} from "./managers/game/game-manager";
 import {MusicManager} from "./managers/core/music";
-import {CharKey} from "./types";
-import {pause} from "./utils/utils-async";
-import {CharStateKey} from "./entities/char/char-constants";
 import {GameNotifications} from "./interface/game-notifications";
 import {CameraManager} from "./managers/core/camera";
 import {Ladder} from "./entities/buildings/ladder";
@@ -57,17 +53,21 @@ const create = (scene: Phaser.Scene) => {
 
     new GameNotifications()
 
-    new Meat({x: 160, y: 300})
-    new Meat({x: 180, y: 300})
-    new Meat({x: 200, y: 300})
-    new Meat({x: 220, y: 300})
-    new Meat({x: 240, y: 300})
-    new Meat({x: 260, y: 300})
-    new Gold({x: 220, y: 300}, 1)
-    new Gold({x: 240, y: 300}, 2)
-    new Gold({x: 260, y: 300}, 3)
-    new Gold({x: 280, y: 300}, 4)
-    new Gold({x: 300, y: 300}, 100)
+    new Meat({x: 660, y: 1200})
+    new Meat({x: 680, y: 1200})
+    new Meat({x: 600, y: 1200})
+    new Meat({x: 620, y: 1200})
+    new Meat({x: 640, y: 1200})
+    new Meat({x: 660, y: 1200})
+    new Meat({x: 670, y: 1200})
+    new Meat({x: 680, y: 1200})
+    new Meat({x: 690, y: 1200})
+    new Gold({x: 720, y: 1200}, 1)
+    new Gold({x: 740, y: 1200}, 2)
+    new Gold({x: 760, y: 1200}, 3)
+    new Gold({x: 780, y: 1200}, 4)
+    new Gold({x: 700, y: 1200}, 100)
+    new Gold({x: 800, y: 1200}, 100)
 
     scene.update = function (time, delta) {
         timeManager.onUpdate(delta);
@@ -84,7 +84,7 @@ export const newGame = () => {
         pixelArt: true,
         parent: document.getElementById('game')!,
         scale: {
-            mode: Phaser.Scale.FIT,
+            // mode: Phaser.Scale.ENVELOP,
             width: size.width,
             height: size.height,
         },

@@ -28,6 +28,8 @@ export const meatSprite = {
     HUMAN_LEG: 'meat_human_leg' as ImageKey,
 }
 
+export const MEAT_WIDTH = 50;
+
 export class Meat extends GameEntityBase<EntityType.MEAT> {
     type: EntityType.MEAT = EntityType.MEAT
     id: string
@@ -62,6 +64,7 @@ export class Meat extends GameEntityBase<EntityType.MEAT> {
         this.props.isHuman = isHuman
 
         this.sprite = o_.render.createSprite(key, pos.x, pos.y)
+        this.sprite.setWidth(MEAT_WIDTH)
         this.sprite.setOrigin(0.5, 0.5)
         o_.layers.add(this.sprite, LayerKey.FIELD_OBJECTS)
         this.sprite.onClick(() => {
@@ -83,7 +86,6 @@ export class Meat extends GameEntityBase<EntityType.MEAT> {
         this.subs.on(Evt.ENCOUNTER_ENDED, () => this.updateInteractive())
 
         this.updateInteractive()
-        console.log("new meat", this);
     }
 
     private onClickDefault() {

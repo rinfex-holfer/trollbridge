@@ -3,6 +3,23 @@ import {o_} from "../locator";
 import {rndBetween} from "../../utils/utils-math";
 import {Meat} from "../../entities/meat";
 
+//
+const scenePositions = {
+    bridge: {
+        x: 400,
+        y: 950,
+        width: 1400,
+        height: 400,
+    },
+    lairPosition: {
+        x: 400,
+        y: 1400,
+        width: 1400,
+        height: 400,
+    },
+
+}
+
 export const positioner = {
     negotiationX() {
         const bridgePos = positioner.bridgePosition();
@@ -10,72 +27,64 @@ export const positioner = {
     },
 
     bridgePosition() {
-        const gameSize = getGameSize();
         return {
-            x: 0,
-            y: gameSize.height / 6,
-            width: gameSize.width,
-            height: gameSize.height / 2,
+            ...scenePositions.bridge
         }
     },
 
     getLairPosition() {
-        const gameSize = getGameSize();
         return {
-            x: gameSize.width / 4,
-            y: gameSize.height * 2 / 3,
-            width: gameSize.width / 2,
-            height: gameSize.height / 3,
+            ...scenePositions.lairPosition
         }
     },
 
     getLadderBottomPosition() {
         const pos = positioner.getLairPosition();
         return {
-            x: pos.x + 300,
+            x: pos.x + pos.width / 2,
             y: pos.y
-        }
-    },
-
-    getFoodStoragePosition() {
-        const pos = positioner.getLairPosition();
-        return {
-            x: pos.x + 150,
-            y: pos.y + pos.height * 4 / 4
         }
     },
 
     getBedPosition() {
         const pos = positioner.getLairPosition();
         return {
-            x: pos.x + 100,
-            y: pos.y + pos.height * 1 / 4,
+            x: pos.x + pos.width - 200,
+            y: pos.y + pos.height - 150,
         }
     },
 
     getPotPosition() {
         const pos = positioner.getLairPosition();
         return {
-            x: pos.x + 100,
-            y: pos.y + pos.height * 2.5 / 4,
+            x: pos.x + 180,
+            y: pos.y + pos.height * 0.9
+        }
+    },
+
+    getFoodStoragePosition() {
+        const pos = positioner.getLairPosition();
+        return {
+            x: pos.x + 170,
+            y: pos.y + pos.height * 1.5 / 4,
         }
     },
 
     getTreasuryPosition() {
         const pos = positioner.getLairPosition();
         return {
-            x: pos.x + pos.width - 300,
-            y: pos.y + pos.height * 1 / 4,
+            x: pos.x + pos.width - 350,
+            y: pos.y + 100,
         }
     },
 
     getRandomPlaceForMeat(meat: Meat) {
         const foodStoragePos = this.getFoodStoragePosition()
-        let xRand = rndBetween(-20, 20)
-        let yRand = rndBetween(-20, 20)
+        let xRand = rndBetween(-30, 30)
+        let yRand = rndBetween(-30, 30)
 
-        if (meat.props.isStale) xRand += 100
-        if (meat.props.isHuman) yRand -= 50
+        if (meat.props.isStale) xRand += 150
+        if (meat.props.isHuman) yRand -= 100
         return {x: foodStoragePos.x - 100 + xRand, y: foodStoragePos.y - 50 + yRand}
     },
 
@@ -93,6 +102,14 @@ export const positioner = {
         return {
             x: pos.x - 100,
             y: pos.y + 100
+        }
+    },
+
+    getTrollLairIdlePosition() {
+        const pos = positioner.getLairPosition();
+        return {
+            x: pos.x + pos.width / 2,
+            y: pos.y + pos.height / 2 + 100
         }
     }
 }

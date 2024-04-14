@@ -5,7 +5,7 @@ import {o_} from "../../managers/locator";
 import {LayerKey} from "../../managers/core/layers";
 import {colorsCSS, gameConstants} from "../../configs/constants";
 import {O_Sprite} from "../../managers/core/render/sprite";
-import {Gold, GoldLocation} from "../gold";
+import {Gold, GOLD_WIDTH, GoldLocation} from "../gold";
 import {flyingStatusChange} from "../../interface/basic/flying-status-change";
 import {SOUND_KEY} from "../../managers/core/audio";
 import {goldConfig} from "../../configs/gold-config";
@@ -24,6 +24,8 @@ export class Treasury {
     constructor(position: Vec) {
         this.sprite = o_.render.createSprite('treasury', position.x, position.y)
         this.sprite.setOrigin(0, 0.5)
+        this.sprite.setWidth(300, false)
+        this.sprite.setHeight(100, false)
 
         this.sprite.setInteractive(true)
         // this.sprite.onClick(() => this.addGold(10))
@@ -46,6 +48,7 @@ export class Treasury {
     }
 
     textShowTimeout: any
+
     showText() {
         this.text.setVisibility(true)
         // clearTimeout(this.textShowTimeout)
@@ -94,9 +97,9 @@ export class Treasury {
     getNextPosition() {
         const newCoord = {x: this.sprite.x, y: this.sprite.y}
 
-        const lastSprite =  this.gold[this.gold.length - 1]?.sprite
+        const lastSprite = this.gold[this.gold.length - 1]?.sprite
         if (lastSprite) {
-            newCoord.x = lastSprite.x + 32 + 10
+            newCoord.x = lastSprite.x + GOLD_WIDTH + 10
         }
         return newCoord
     }
@@ -122,6 +125,7 @@ export class Treasury {
     }
 
     numbersQueue: string[] = []
+
     private flyingNumbers(val: string) {
 
 
@@ -132,6 +136,7 @@ export class Treasury {
     }
 
     timer: any
+
     nextNumbers() {
         const p = this.numbersQueue.shift()
         if (!p) {

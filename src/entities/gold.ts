@@ -14,6 +14,8 @@ export const enum GoldLocation {
     TREASURY = 'TREASURY',
 }
 
+export const GOLD_WIDTH = 50
+
 export class Gold extends GameEntityBase<EntityType.GOLD> {
     type: EntityType.GOLD = EntityType.GOLD
     id: string
@@ -36,7 +38,7 @@ export class Gold extends GameEntityBase<EntityType.GOLD> {
 
         this.sprite = o_.render.createSprite(this.getSpriteKey(), pos.x, pos.y)
         this.sprite.setOrigin(0, 0.5)
-        this.sprite.setWidth(32)
+        this.sprite.setWidth(GOLD_WIDTH)
         this.updateLayer()
 
         if (location === GoldLocation.GROUND) {
@@ -47,7 +49,6 @@ export class Gold extends GameEntityBase<EntityType.GOLD> {
         // this.subs.on(Evt.ENCOUNTER_STARTED, () => this.updateInteractive())
         // this.subs.on(Evt.ENCOUNTER_ENDED, () => this.updateInteractive())
 
-        console.log("new gold", this);
 
         this.updateInteractive()
     }

@@ -81,9 +81,8 @@ export class Troll {
         o_.register.troll(this)
 
         troll = this;
-        const lairPos = positioner.getLairPosition();
-
-        this.container = o_.render.createContainer(lairPos.x + lairPos.width / 2, lairPos.y + lairPos.height / 2)
+        const pos = positioner.getTrollLairIdlePosition()
+        this.container = o_.render.createContainer(pos.x, pos.y)
         this.container.addPhysics();
 
         this.sprite = o_.render.createAnimatedSprite({
@@ -103,9 +102,10 @@ export class Troll {
             ],
             x: 0,
             y: 0,
-            parent: this.container
+            parent: this.container,
         })
-        console.log(this.container, this.sprite);
+        this.sprite.setHeight(170, true)
+
         this.setInitialSpriteOrigin()
 
         // o_.layers.add(this.sprite, LayerKey.FIELD_OBJECTS)
@@ -163,7 +163,7 @@ export class Troll {
         debugExpose((val: number) => this.changeFear(val), 'changeFear')
         debugExpose((val: number) => this.heal(val), 'heal')
 
-        o_.camera.followTroll(true);
+        // o_.camera.followTroll(true);
     }
 
     setInitialSpriteOrigin() {
@@ -386,10 +386,7 @@ export class Troll {
 
     goToLair() {
         console.log("goToLair");
-        const target = {x: 0, y: 0}
-        const lairPos = positioner.getLairPosition();
-        target.x = lairPos.x + lairPos.width / 2
-        target.y = lairPos.y + lairPos.height / 2
+        const target = positioner.getTrollLairIdlePosition();
 
         this.setState(TrollStateKey.GO_TO, {target, onStart: onTrollGoesToLair, onEnd: onTrollCameToLair})
     }

@@ -14,7 +14,8 @@ export class Bed {
         // this.sprite.setOrigin(0, 0)
         // o_.layers.add(this.sprite, LayerKey.BACKGROUND)
         this.sprite.setInteractive(true, {cursor: 'pointer'})
-        this.sprite.setWidth(100)
+        this.sprite.setWidth(200, false)
+        this.sprite.setHeight(100, false)
         this.sprite.onClick(() => this.onClick())
 
         o_.upgrade.createUpgradeButton({x: this.sprite.x, y: this.sprite.y}, 'кровать', 50, () => this.upgrade())

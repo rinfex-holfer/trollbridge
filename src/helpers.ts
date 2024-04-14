@@ -47,14 +47,14 @@ export function onTrollGoesToBridge() {
     o_.lair.mayBeMovedInto(false)
     o_.lair.menu.hide()
     o_.bridge.disableInterface()
-    // o_.camera.panToBridge()
+    o_.camera.panToBridge()
 }
 
 export function onTrollGoesToLair() {
     console.log("======== onTrollGoesToLair")
     o_.lair.mayButtonsBeClicked(false)
     o_.lair.mayBeMovedInto(false)
-    // o_.camera.panToLair()
+    o_.camera.panToLair()
 }
 
 export function onTrollCameToLair() {

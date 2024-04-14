@@ -2,7 +2,7 @@ import {subscriptions} from "../../event-bus";
 import {Vec} from "../../utils/utils-math";
 import {o_} from "../../managers/locator";
 import {LayerKey} from "../../managers/core/layers";
-import {Meat, MeatLocation} from "../meat";
+import {Meat, MEAT_WIDTH, MeatLocation} from "../meat";
 import {O_Container} from "../../managers/core/render/container";
 import {O_Sprite} from "../../managers/core/render/sprite";
 import {SOUND_KEY} from "../../managers/core/audio";
@@ -12,8 +12,9 @@ import {goldConfig} from "../../configs/gold-config";
 
 const START_X = 60
 const START_Y = -70
-const MARGIN_X = 25
+const MARGIN_X = MEAT_WIDTH
 const MARGIN_Y = 40
+const RACK_WIDTH = 250
 
 export class FoodStorage {
     position: Vec = {x: 0, y: 0}
@@ -40,6 +41,7 @@ export class FoodStorage {
 
         this.sprite = o_.render.createSprite('drying_rack', 0, 0, {parent: this.container})
         this.sprite.setOrigin(0, 1)
+        this.sprite.setWidth(RACK_WIDTH)
 
         if (this.upgraded) {
             this.upgrade()
@@ -59,6 +61,7 @@ export class FoodStorage {
         if (this.upgraded) return;
         const sprite2 = o_.render.createSprite('drying_rack', this.sprite.width - 30, 0, {parent: this.container})
         sprite2.setOrigin(0, 1)
+        sprite2.setWidth(RACK_WIDTH)
         this.places = this.places.concat([
             // [{x: START_X + MARGIN_X * 4, y: START_Y}, null],
             // [{x: START_X + MARGIN_X * 5, y: START_Y}, null],

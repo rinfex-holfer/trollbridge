@@ -63,7 +63,7 @@ export class O_AnimatedSprite {
             animations: { framesPrefix: string, frameRate?: number, repeat?: number }[],
             x: number,
             y: number,
-            parent?: O_Container
+            parent?: O_Container,
         }
     ) {
         this.atlasKey = options.atlasKey;
@@ -159,11 +159,35 @@ export class O_AnimatedSprite {
     }
 
     get height() {
-        return this.obj.height
+        return this.obj.displayHeight
+    }
+
+    setHeight(height: number, preserveProportions = true) {
+        this.obj.displayHeight = height
+
+        if (preserveProportions) {
+            this.obj.scaleX = Math.sign(this.obj.scaleX) * Math.abs(this.obj.scaleY)
+        }
     }
 
     get width() {
-        return this.obj.width
+        return this.obj.displayWidth
+    }
+
+    setWidth(width: number, preserveProportions = true) {
+        this.obj.displayWidth = width
+
+        if (preserveProportions) {
+            this.obj.scaleY = Math.sign(this.obj.scaleY) * Math.abs(this.obj.scaleX)
+        }
+    }
+
+    get scale() {
+        return this.obj.scale
+    }
+
+    setScale(x?: number, y?: number) {
+        this.obj.setScale(x, y)
     }
 
     get alpha() {

@@ -40,11 +40,12 @@ export class Pot {
             atlasKey: 'pot',
             x: position.x,
             y: position.y,
-            animations:  [
+            animations: [
                 {framesPrefix: 'empty', repeat: -1, frameRate: 6},
                 {framesPrefix: 'full', repeat: -1, frameRate: 6},
             ]
         })
+        this.sprite.setWidth(200, true);
         this.sprite.setOrigin(0.5, 1)
         o_.layers.add(this.sprite, LayerKey.FIELD_OBJECTS)
         this.sprite.setInteractive(true, {cursor: 'pointer'})
@@ -106,6 +107,7 @@ export class Pot {
     }
 
     textShowTimeout: any
+
     showText() {
         this.text.setVisibility(true)
         clearTimeout(this.textShowTimeout)

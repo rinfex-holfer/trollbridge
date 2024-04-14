@@ -15,7 +15,7 @@ const TEXT_WIDTH = 350
 const NOTIFICATION_HEIGHT = ICON_SIZE + PADDING * 2
 const NOTIFICATION_WIDTH = ICON_SIZE + PADDING * 2 + TEXT_PADDING + TEXT_WIDTH
 
-const getNotificationWidth = (textWidth: number) =>  ICON_SIZE + PADDING * 2 + TEXT_PADDING + textWidth
+const getNotificationWidth = (textWidth: number) => ICON_SIZE + PADDING * 2 + TEXT_PADDING + textWidth
 
 const TEXT_X = -(PADDING + ICON_SIZE + TEXT_PADDING)
 
@@ -36,28 +36,43 @@ export class GameNotifications {
 
     private show(str: string, imgKey: ImageKey, color: string = colorsCSS.GREEN) {
         const y = this.notifications.length * (NOTIFICATION_HEIGHT + PADDING)
-        const notification = o_.render.createContainer(0, y+50, {parent: this.container})
+        const notification = o_.render.createContainer(0, y + 50, {parent: this.container})
         notification.alpha = 0.5
         o_.render.fadeIn(notification)
         o_.render.flyWithBounceTo(notification, {x: 0, y}, 100)
 
-        const bg = o_.render.createSprite('tile_black', 0, 0, {width: NOTIFICATION_WIDTH, height: NOTIFICATION_HEIGHT, parent: notification})
+        const bg = o_.render.createSprite('tile_black', 0, 0, {
+            width: NOTIFICATION_WIDTH,
+            height: NOTIFICATION_HEIGHT,
+            parent: notification
+        })
         bg.alpha = 0.3
         bg.setOrigin(1, 0)
 
-        const icon = o_.render.createSprite(imgKey, -PADDING, NOTIFICATION_HEIGHT / 2, {width: ICON_SIZE, height: ICON_SIZE, parent: notification})
+        const icon = o_.render.createSprite(imgKey, -PADDING, NOTIFICATION_HEIGHT / 2, {
+            width: ICON_SIZE,
+            height: ICON_SIZE,
+            parent: notification
+        })
         icon.setOrigin(1, 0.5)
 
         const text = o_.render.createText(
             str,
             TEXT_X,
             NOTIFICATION_HEIGHT / 2,
-            {color, fontStyle: 'bold', fontSize: '20px', wordWrap: {width: TEXT_WIDTH}, stroke: colorsCSS.BLACK, strokeThickness: 3},
+            {
+                color,
+                fontStyle: 'bold',
+                fontSize: '20px',
+                wordWrap: {width: TEXT_WIDTH},
+                stroke: colorsCSS.BLACK,
+                strokeThickness: 3
+            },
             {parent: notification}
         )
         text.setOrigin(0.5, 0.5)
         text.x = -(PADDING + ICON_SIZE + TEXT_PADDING + TEXT_WIDTH / 2)
-        bg.setWidth(NOTIFICATION_WIDTH, true)
+        bg.setWidth(NOTIFICATION_WIDTH, false)
 
         this.notifications.push(notification)
 

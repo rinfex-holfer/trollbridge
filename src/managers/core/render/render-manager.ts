@@ -100,7 +100,9 @@ export class RenderManager {
     }
 
     directToTarget(obj: O_GameObject, target: Vec, offset?: number) {
-        obj.obj.scaleX = Math.sign(target.x - (obj.obj.x + (offset || 0))) || 1
+        const currentXScaleModule = Math.abs(obj.obj.scaleX)
+        const diff = target.x - (obj.obj.x + (offset || 0))
+        obj.obj.scaleX = Math.sign(diff) * currentXScaleModule || currentXScaleModule
     }
 
     createContainer(x: number, y: number, options?: { parent?: O_Container }) {

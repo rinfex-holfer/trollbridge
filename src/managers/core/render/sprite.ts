@@ -95,17 +95,17 @@ export class O_Sprite {
         return this.obj.displayWidth
     }
 
-    setHeight(height: number, dontSaveProportions?: boolean) {
+    setHeight(height: number, preserveProportions = true) {
         this.obj.displayHeight = height
-        if (!dontSaveProportions) {
-            this.obj.displayWidth = this.obj.displayHeight * this.obj.width / this.obj.height
+        if (preserveProportions) {
+            this.obj.scaleX = Math.sign(this.obj.scaleX) * Math.abs(this.obj.scaleY)
         }
     }
 
-    setWidth(width: number, dontSaveProportions?: boolean) {
+    setWidth(width: number, preserveProportions = true) {
         this.obj.displayWidth = width
-        if (!dontSaveProportions) {
-            this.obj.displayHeight = this.obj.displayWidth * this.obj.height / this.obj.width
+        if (preserveProportions) {
+            this.obj.scaleY = Math.sign(this.obj.scaleY) * Math.abs(this.obj.scaleX)
         }
     }
 
