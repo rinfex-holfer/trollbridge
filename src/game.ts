@@ -45,7 +45,7 @@ const create = (scene: Phaser.Scene) => {
     new CharactersManager()
     new Lair()
     new BridgeManager()
-    new Ladder()
+    // new Ladder()
     new Negotiations()
     new BattleManager()
     new Troll()

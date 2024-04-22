@@ -127,8 +127,8 @@ export class AudioManager {
     soundVolume = 1;
     musicVolume = 1;
 
-    sounds: {[soundKey: string]: Phaser.Sound.BaseSound} = {};
-    music: {[musicKey: string]: Phaser.Sound.BaseSound} = {};
+    sounds: { [soundKey: string]: Phaser.Sound.BaseSound } = {};
+    music: { [musicKey: string]: Phaser.Sound.BaseSound } = {};
 
     scene: Phaser.Scene
 

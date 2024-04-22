@@ -13,9 +13,9 @@ const scenePositions = {
     },
     lairPosition: {
         x: 400,
-        y: 1400,
+        y: 1500,
         width: 1400,
-        height: 400,
+        height: 600,
     },
 
 }

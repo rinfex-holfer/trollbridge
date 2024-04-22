@@ -24,7 +24,11 @@ export class CameraManager {
     }
 
     private getLairCameraPoint() {
-        return positioner.getLadderBottomPosition()
+        const {x, y, height, width} = positioner.getLairPosition()
+        return {
+            x: x + width / 2,
+            y: y + height / 6,
+        }
     }
 
     private getBridgeCameraPoint() {
