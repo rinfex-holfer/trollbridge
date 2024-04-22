@@ -22,11 +22,11 @@ const scenePositions = {
 
 export const positioner = {
     negotiationX() {
-        const bridgePos = positioner.bridgePosition();
+        const bridgePos = positioner.getBridgePosition();
         return bridgePos.x + bridgePos.width * 0.7;
     },
 
-    bridgePosition() {
+    getBridgePosition() {
         return {
             ...scenePositions.bridge
         }
@@ -38,12 +38,24 @@ export const positioner = {
         }
     },
 
-    getLadderBottomPosition() {
-        const pos = positioner.getLairPosition();
-        return {
-            x: pos.x + pos.width / 2,
-            y: pos.y
-        }
+    getLadderBounds() {
+        const lairPos = positioner.getLairPosition();
+        const width = 150
+        const height = 300
+        return [
+            {
+                x: lairPos.x,
+                y: lairPos.y,
+                width,
+                height,
+            },
+            {
+                x: lairPos.x + lairPos.width - width,
+                y: lairPos.y,
+                width,
+                height,
+            }
+        ]
     },
 
     getBedPosition() {

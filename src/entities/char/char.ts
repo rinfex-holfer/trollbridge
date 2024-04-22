@@ -167,10 +167,21 @@ export class Char {
         // window.changeMp = (a) => this.changeMp(a)
     }
 
-    getIsNewTraveller() { return !this.isMetTroll }
-    getIsTraveller() { return this.isAlive && !this.isPrisoner }
-    getIsAbleToFight() { return this.getIsTraveller() && !this.isSurrender && !this.isUnconscious }
-    getIsPrisoner() { return this.isAlive && this.isPrisoner }
+    getIsNewTraveller() {
+        return !this.isMetTroll
+    }
+
+    getIsTraveller() {
+        return this.isAlive && !this.isPrisoner
+    }
+
+    getIsAbleToFight() {
+        return this.getIsTraveller() && !this.isSurrender && !this.isUnconscious
+    }
+
+    getIsPrisoner() {
+        return this.isAlive && this.isPrisoner
+    }
 
     onCharDefeated(key: CharKey) {
         if (this.getIsAbleToFight()) {
@@ -242,7 +253,7 @@ export class Char {
         const sprite = o_.render.createAnimatedSprite({
             // @ts-ignore
             atlasKey,
-            animations:  [
+            animations: [
                 {framesPrefix: CharAnimation.WALK, repeat: -1, frameRate: 8},
                 {framesPrefix: CharAnimation.IDLE, repeat: -1, frameRate: 8},
                 {framesPrefix: CharAnimation.DEAD, repeat: -1, frameRate: 8},
@@ -390,6 +401,7 @@ export class Char {
     payFood() {
         this.dropFood(Math.ceil(this.food * trollConfig.PASS_COST), true)
     }
+
     dropFood(amount: number, flyToStorage?: boolean) {
         this.changeResources(ResourceKey.FOOD, -amount);
 
@@ -537,7 +549,7 @@ export class Char {
     }
 
     changeMp(val: number) {
-        this.morale = clamp(this.morale+val, 0, this.maxMorale);
+        this.morale = clamp(this.morale + val, 0, this.maxMorale);
         this.mpIndicator.update();
 
         if (val < 0) {
@@ -550,7 +562,7 @@ export class Char {
     }
 
     changeHp(val: number) {
-        this.hp = clamp(this.hp+val, 0, this.maxHp);
+        this.hp = clamp(this.hp + val, 0, this.maxHp);
         this.hpIndicator.update();
     }
 
@@ -574,7 +586,7 @@ export class Char {
 
         this.changeHp(-dmg);
 
-        this.statusNotifications.showDmg(dmg,'right')
+        this.statusNotifications.showDmg(dmg, 'right')
 
         if (this.hp > 0) {
             if (this.isMounted && this.checkLooseHorse()) {
@@ -616,7 +628,7 @@ export class Char {
 
     async acquireHorse() {
         this.setAnimation(CharAnimation.IDLE);
-        const horse = new Horse(positioner.bridgePosition().width + 200, this.container.y)
+        const horse = new Horse(positioner.getBridgePosition().width + 200, this.container.y)
         await horse.runToChar(this)
         this.isDeMounted = false
         this.isMounted = true
@@ -660,8 +672,10 @@ export class Char {
         o_.audio.playSound(SOUND_KEY.TORN);
     }
 
-    attackPromise = new Promise(() => {})
-    onAttackEnd: any = () => {}
+    attackPromise = new Promise(() => {
+    })
+    onAttackEnd: any = () => {
+    }
 
     async performBattleAction(pauseTime = 600, forced = false) {
         await pause(pauseTime)
@@ -726,7 +740,11 @@ export class Char {
         this.statusNotifications.showEvade()
         const oldSpeed = this.speed
         this.speed = this.speed * 3
-        await this.setState(CharStateKey.GO_TO, {target: {x: this.container.x + 200, y: this.container.y}, speed: this.speed, directToTarget: true})
+        await this.setState(CharStateKey.GO_TO, {
+            target: {x: this.container.x + 200, y: this.container.y},
+            speed: this.speed,
+            directToTarget: true
+        })
         this.speed = oldSpeed
     }
 

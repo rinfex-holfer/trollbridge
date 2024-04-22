@@ -10,7 +10,7 @@ type NegotiationActionSpec = {
     execute: () => NegotiationsMessage
 }
 
-const actionSpecs: {[action in NegotiationsMessage]?: NegotiationActionSpec} = {
+const actionSpecs: { [action in NegotiationsMessage]?: NegotiationActionSpec } = {
     [NegotiationsMessage.DEMAND_PAY]: {
         key: NegotiationsMessage.DEMAND_PAY,
         text: 'Потребовать плату',
@@ -50,7 +50,7 @@ export class NegotiationMenu {
     }
 
     createVerticalMenu(availableMessages: NegotiationsMessage[]) {
-        const bridgePos = positioner.bridgePosition()
+        const bridgePos = positioner.getBridgePosition()
         const y = bridgePos.y + bridgePos.height / 2
         const x = bridgePos.x + bridgePos.width / 4
 

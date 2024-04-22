@@ -78,6 +78,10 @@ export class O_AnimatedSprite {
         }
     }
 
+    getBounds() {
+        return this.obj.getBounds()
+    }
+
     play(anim: string, options?: { onComplete?: () => void }) {
         if (options?.onComplete) {
             this.obj.once('animationcomplete', () => {

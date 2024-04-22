@@ -2,7 +2,6 @@ import {o_} from "../locator";
 import GameObject = Phaser.GameObjects.GameObject;
 import {O_GameObject} from "./render/types";
 import {positioner} from "../game/positioner";
-import {LADDER_HEIGHT} from "../../entities/buildings/ladder";
 
 export class CameraManager {
     scene: Phaser.Scene
@@ -32,10 +31,10 @@ export class CameraManager {
     }
 
     private getBridgeCameraPoint() {
-        const pos = positioner.getLadderBottomPosition()
+        const pos = positioner.getBridgePosition()
         return {
-            x: pos.x,
-            y: pos.y - LADDER_HEIGHT
+            x: pos.x + pos.width / 2,
+            y: pos.y + pos.height
         }
     }
 

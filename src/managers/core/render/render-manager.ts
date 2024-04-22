@@ -59,6 +59,38 @@ export class RenderManager {
         o_.layers.addRaw(this.greenSmokeParticles, LayerKey.PARTICLES)
     }
 
+    // for debugging purposes
+    createOutline(obj: O_Sprite | O_AnimatedSprite) {
+        let graphics = this.scene.add.graphics({lineStyle: {width: 2, color: 0xaa0000}, fillStyle: {color: 0x0000aa}});
+        const rect = new Phaser.Geom.Rectangle();
+
+        let bounds = obj.getBounds();
+        rect.x = bounds.x
+        rect.y = bounds.y
+        rect.width = bounds.width
+        rect.height = bounds.height
+        // graphics.strokeRect(bounds.x - 10, bounds.y - 10, bounds.width + 20, bounds.height + 20);
+        // graphics.fill()
+        graphics.strokeRectShape(rect);
+        console.log(bounds);
+
+        let subId = -1;
+        const onUpdate = () => {
+            graphics.clear();
+            const bounds = obj.getBounds();
+            rect.width = bounds.width;
+            rect.height = bounds.height;
+            rect.y = bounds.y
+            rect.x = bounds.x
+            graphics.strokeRectShape(rect);
+            if (!obj.obj.active) {
+                graphics.clear();
+                o_.time.unsub(subId)
+            }
+        }
+        subId = o_.time.sub(onUpdate)
+    }
+
     createGreenSmokeEmitter() {
         return this.greenSmokeParticles
     }

@@ -19,7 +19,7 @@ export class BridgeManager {
     isWithStatues = false
 
     constructor() {
-        this.pos = positioner.bridgePosition();
+        this.pos = positioner.getBridgePosition();
         this.sprite = o_.render.createTiles('floor', this.pos.x, this.pos.y, this.pos.width, this.pos.height);
         this.sprite.setOrigin(0, 0);
         this.sprite.addPhysics()

@@ -45,7 +45,7 @@ const create = (scene: Phaser.Scene) => {
     new CharactersManager()
     new Lair()
     new BridgeManager()
-    // new Ladder()
+    new Ladder()
     new Negotiations()
     new BattleManager()
     new Troll()
@@ -82,7 +82,7 @@ export const newGame = () => {
     const config: Phaser.Types.Core.GameConfig = {
         type: Phaser.WEBGL,
         pixelArt: true,
-        parent: document.getElementById('game')!,
+        parent: document.getElementById('game-container')!,
         scale: {
             // mode: Phaser.Scale.ENVELOP,
             width: size.width,

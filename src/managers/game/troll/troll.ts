@@ -377,7 +377,7 @@ export class Troll {
     goToBridge() {
         console.log("goToBridge");
         const target = {x: 0, y: 0}
-        const bridgePos = positioner.bridgePosition();
+        const bridgePos = positioner.getBridgePosition();
         target.x = bridgePos.x + bridgePos.width / 2
         target.y = bridgePos.y + bridgePos.height / 2
 
@@ -434,7 +434,7 @@ export class Troll {
     }
 
     getBattlePosition(): Vec {
-        const bridgePos = positioner.bridgePosition();
+        const bridgePos = positioner.getBridgePosition();
 
         return {
             x: bridgePos.x + bridgePos.width / 2,

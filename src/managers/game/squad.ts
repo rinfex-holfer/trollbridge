@@ -6,7 +6,7 @@ import {positioner} from "./positioner";
 export class Squad {
     speaker: Char | null
 
-    placeToChar: {[key: number]: Char} = {}
+    placeToChar: { [key: number]: Char } = {}
     chars: Char[] = []
 
     initialSize: number
@@ -30,7 +30,7 @@ export class Squad {
     }
 
     getStartCoordForPlace(place: SquadPlace): Vec {
-        const bridgePos = positioner.bridgePosition()
+        const bridgePos = positioner.getBridgePosition()
         const startY = bridgePos.height / 5 + bridgePos.y + bridgePos.height / 5
         const marginY = bridgePos.height / 5;
         const startX = bridgePos.x + bridgePos.width - 50
@@ -43,7 +43,7 @@ export class Squad {
     }
 
     getBattleCoordsForPlace(place: SquadPlace): Vec {
-        const bridgePos = positioner.bridgePosition()
+        const bridgePos = positioner.getBridgePosition()
         const startY = bridgePos.height / 5 + bridgePos.y + bridgePos.height / 5
         const marginY = bridgePos.height / 5;
         const startX = bridgePos.x + bridgePos.width * 0.7
@@ -56,7 +56,7 @@ export class Squad {
     }
 
     getSurrenderPositionForPlace(place: SquadPlace): Vec {
-        const bridgePos = positioner.bridgePosition()
+        const bridgePos = positioner.getBridgePosition()
         const startY = bridgePos.height / 5 + bridgePos.y + bridgePos.height / 5
         const marginY = bridgePos.height / 5;
         const startX = bridgePos.x + bridgePos.width * 0.7 + 150

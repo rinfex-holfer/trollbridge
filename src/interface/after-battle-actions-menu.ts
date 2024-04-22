@@ -14,7 +14,7 @@ type AfterBattleActionSpec = {
     getIsActive: (char: Char) => boolean
 }
 
-const actionSpecs: {[action in AfterBattleAction]: AfterBattleActionSpec} = {
+const actionSpecs: { [action in AfterBattleAction]: AfterBattleActionSpec } = {
     [AfterBattleAction.RELEASE]: {
         key: AfterBattleAction.RELEASE,
         text: 'Отпустить',
@@ -49,7 +49,7 @@ const actionSpecs: {[action in AfterBattleAction]: AfterBattleActionSpec} = {
         key: AfterBattleAction.MAKE_FOOD,
         text: 'Разорвать',
         resource: 'button_make_food',
-        execute: char => o_.characters.transformToFood(char) ,
+        execute: char => o_.characters.transformToFood(char),
         getIsActive: char => true
     },
 }
@@ -58,7 +58,7 @@ export class AfterBattleActionsMenu {
     verticalMenu: VerticalMenu<AfterBattleAction>
 
     constructor() {
-        const bridgePos = positioner.bridgePosition()
+        const bridgePos = positioner.getBridgePosition()
 
         const y = bridgePos.y + bridgePos.height / 2
         const x = bridgePos.x + bridgePos.width / 4

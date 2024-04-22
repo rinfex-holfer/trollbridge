@@ -24,6 +24,10 @@ export class O_Sprite {
         if (options?.height) this.obj.displayHeight = options.height;
     }
 
+    getBounds() {
+        return this.obj.getBounds()
+    }
+
     setInteractive(val: boolean, options?: any) {
         if (val) this.obj.setInteractive(options)
         else {

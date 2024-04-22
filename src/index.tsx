@@ -18,6 +18,10 @@ declare global {
     }
 }
 
+if (window.game) {
+    // console.log(window.game)
+    window.game.destroy(true)
+}
 window.game = newGame();
 
 const appElement = document.createElement('app');

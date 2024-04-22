@@ -43,7 +43,7 @@ export class CharactersManager {
         });
         eventBus.on(Evt.TROLL_LOCATION_CHANGED, l => this.onTrollLocationChanged(l));
 
-        const bridgePos = positioner.bridgePosition();
+        const bridgePos = positioner.getBridgePosition();
         const x = bridgePos.x + bridgePos.width;
         const y = 0;
         // this.dangerIndicator = new DangerIndicator(x, y)
@@ -74,7 +74,7 @@ export class CharactersManager {
         const roll = rnd()
 
         console.log('vigilantePlanned', this.vigilantePlanned)
-        console.log('vigilante may be planned', o_.troll.fearLevel === TrollFearLevel.HORRIFIC, vigilanteEncounters[this.nextVigilanteEncounter+1])
+        console.log('vigilante may be planned', o_.troll.fearLevel === TrollFearLevel.HORRIFIC, vigilanteEncounters[this.nextVigilanteEncounter + 1])
         if (this.vigilantePlanned) {
             this.vigilanteTimeLeft--
             console.log('time till vigilante comes:', this.vigilanteTimeLeft)
@@ -199,7 +199,7 @@ export class CharactersManager {
     }
 
     createTravellers(keys: [SquadPlace, CharKey][], behavior?: CharBehavior) {
-        const bridgePos = positioner.bridgePosition()
+        const bridgePos = positioner.getBridgePosition()
 
         const startY = bridgePos.height / 5 + bridgePos.y + bridgePos.height / 5
         const marginY = bridgePos.height / 5;
@@ -245,11 +245,25 @@ export class CharactersManager {
         return this.getTravellers()[0].speak(text);
     }
 
-    getNewTravellers() { return this.chars.filter(c => c.getIsNewTraveller())}
-    getTravellers() { return this.chars.filter(c => c.getIsTraveller())}
-    getTravellersAfterBattle() { return this.chars.filter(c => c.getIsTraveller() && !c.isReleased)}
-    getFighters() { return this.chars.filter(c => c.getIsAbleToFight())}
-    getPrisoners() { return this.chars.filter(c => c.getIsPrisoner())}
+    getNewTravellers() {
+        return this.chars.filter(c => c.getIsNewTraveller())
+    }
+
+    getTravellers() {
+        return this.chars.filter(c => c.getIsTraveller())
+    }
+
+    getTravellersAfterBattle() {
+        return this.chars.filter(c => c.getIsTraveller() && !c.isReleased)
+    }
+
+    getFighters() {
+        return this.chars.filter(c => c.getIsAbleToFight())
+    }
+
+    getPrisoners() {
+        return this.chars.filter(c => c.getIsPrisoner())
+    }
 
     getTraveller(id: string) {
         const char = this.chars.find(t => t.id === id)

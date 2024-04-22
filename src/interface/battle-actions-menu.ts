@@ -17,7 +17,7 @@ type BattleActionSpec = {
     getText?: () => string
 }
 
-const actionSpecs: {[action in BattleAction]: BattleActionSpec} = {
+const actionSpecs: { [action in BattleAction]: BattleActionSpec } = {
     [BattleAction.BATTLE_HIT]: {
         key: BattleAction.BATTLE_HIT,
         text: 'Ударить',
@@ -78,7 +78,7 @@ export class BattleActionsMenu {
     }
 
     createVerticalMenu() {
-        const bridgePos = positioner.bridgePosition()
+        const bridgePos = positioner.getBridgePosition()
         const y = bridgePos.y + bridgePos.height / 2
         const x = bridgePos.x + bridgePos.width / 4
 
