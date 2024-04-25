@@ -34,7 +34,7 @@ export function onEncounterEnd() {
 export function onTrollCameToBridge() {
     console.log("======== onTrollCameToBridge")
     o_.troll.location = TrollLocation.BRIDGE;
-    o_.lair.mayButtonsBeClicked(false)
+    o_.lair.setObjectsActive(false)
     o_.lair.mayBeMovedInto(true)
     o_.lair.menu.hide()
     o_.bridge.disableInterface()
@@ -43,35 +43,11 @@ export function onTrollCameToBridge() {
 
 export function onTrollGoesToBridge() {
     console.log("======== onTrollGoesToBridge")
-    o_.lair.mayButtonsBeClicked(false)
+    o_.lair.setObjectsActive(false)
     o_.lair.mayBeMovedInto(false)
     o_.lair.menu.hide()
     o_.bridge.disableInterface()
     o_.camera.panToBridge()
-}
-
-export function onTrollGoesToLair() {
-    console.log("======== onTrollGoesToLair")
-    o_.lair.mayButtonsBeClicked(false)
-    o_.lair.mayBeMovedInto(false)
-    o_.camera.panToLair()
-}
-
-export function onTrollCameToLair() {
-    console.log("======== onTrollCameToLair")
-    o_.troll.location = TrollLocation.LAIR;
-    o_.lair.mayButtonsBeClicked(true)
-    o_.lair.mayBeMovedInto(false)
-    o_.lair.menu.show()
-    o_.bridge.enableInterface()
-    eventBus.emit(Evt.TROLL_LOCATION_CHANGED, TrollLocation.LAIR);
-}
-
-export function onTrollSleep() {
-    o_.troll.location = TrollLocation.LAIR;
-    // o_.lair.mayButtonsBeClicked(true)
-    o_.lair.mayBeMovedInto(true)
-    o_.bridge.enableInterface();
 }
 
 export function destroyInteractiveObjWithJump(obj: { destroy: Function, sprite?: O_Sprite, container?: O_Container }) {

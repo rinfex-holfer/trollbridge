@@ -123,5 +123,15 @@ export const positioner = {
             x: pos.x + pos.width / 2,
             y: pos.y + pos.height / 2 + 100
         }
-    }
+    },
+
+    getTrollBridgePosition() {
+        const bridgePos = scenePositions.bridge
+        const y = bridgePos.y + bridgePos.height / 2
+        const marginX = 200
+        return [
+            {x: bridgePos.x + marginX, y},
+            {x: bridgePos.x - bridgePos.width - marginX, y}
+        ]
+    },
 }

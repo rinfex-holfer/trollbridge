@@ -2,6 +2,7 @@ import {o_} from "../../managers/locator";
 import {O_Sprite} from "../../managers/core/render/sprite";
 import {LayerKey} from "../../managers/core/layers";
 import {Vec} from "../../utils/utils-math";
+import {eventBus, Evt} from "../../event-bus";
 
 export class Bed {
     sprite: O_Sprite
@@ -31,6 +32,6 @@ export class Bed {
     }
 
     onClick() {
-        o_.troll.goToBed();
+        eventBus.emit(Evt.INTERFACE_BED_CLICKED)
     }
 }

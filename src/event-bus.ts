@@ -5,6 +5,10 @@ import {Settings} from "./managers/core/settings";
 let nextId = 0;
 
 export const enum Evt {
+    INTERFACE_LAIR_CLICKED = 'INTERFACE_LAIR_CLICKED',
+    INTERFACE_BRIDGE_CLICKED = 'INTERFACE_BRIDGE_CLICKED',
+    INTERFACE_BED_CLICKED = 'INTERFACE_BED_CLICKED',
+
     SETTINGS_CHANGED = 'SETTINGS_CHANGED',
 
     TIME_PASSED = 'TIME_PASSED',
@@ -45,6 +49,10 @@ export const enum Evt {
 }
 
 export type EvtData = {
+    [Evt.INTERFACE_LAIR_CLICKED]: undefined,
+    [Evt.INTERFACE_BRIDGE_CLICKED]: undefined,
+    [Evt.INTERFACE_BED_CLICKED]: undefined,
+
     [Evt.SETTINGS_CHANGED]: Settings,
 
     [Evt.ALL_GIVEN]: undefined,

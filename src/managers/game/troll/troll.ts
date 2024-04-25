@@ -17,10 +17,7 @@ import {TrollStats} from "../../../interface/troll-stats";
 import {TrollStateBattleAttack} from "./troll-state-battle-attack";
 import {
     onTrollCameToBridge,
-    onTrollCameToLair,
     onTrollGoesToBridge,
-    onTrollGoesToLair,
-    onTrollSleep
 } from "../../../helpers";
 import {Char} from "../../../entities/char/char";
 import {createPromiseAndHandlers, pause} from "../../../utils/utils-async";
@@ -34,8 +31,6 @@ import {HpIndicator} from "../../../interface/hp-indicator";
 import {debugExpose} from "../../../utils/utils-misc";
 import {battleConfig} from "../../../configs/battle-config";
 import {TrollFearLevel} from "./types";
-
-let troll: Troll
 
 export class Troll {
 
@@ -80,7 +75,6 @@ export class Troll {
     constructor() {
         o_.register.troll(this)
 
-        troll = this;
         const pos = positioner.getTrollLairIdlePosition()
         this.container = o_.render.createContainer(pos.x, pos.y)
         this.container.addPhysics();
@@ -151,8 +145,6 @@ export class Troll {
         eventBus.on(Evt.CHAR_DEVOURED, () => this.changeFear(trollConfig.FEAR_CHANGES.DEVOUR));
         eventBus.on(Evt.CHAR_DEVOURED_IN_BATTLE, () => this.changeFear(trollConfig.FEAR_CHANGES.DEVOUR));
         eventBus.on(Evt.CHAR_TORN_APART, () => this.changeFear(trollConfig.FEAR_CHANGES.DEVOUR));
-
-        onTrollCameToLair()
 
         debugExpose((val: number) => this.addXp(val), 'addXp')
         debugExpose(() => {
@@ -374,21 +366,33 @@ export class Troll {
         return this.state.start();
     }
 
+    setLocation(location: TrollLocation) {
+        this.location = location;
+        eventBus.emit(Evt.TROLL_LOCATION_CHANGED, location)
+    }
+
     goToBridge() {
         console.log("goToBridge");
         const target = {x: 0, y: 0}
-        const bridgePos = positioner.getBridgePosition();
+        const bridgePos = positioner.getBridgePosition()
         target.x = bridgePos.x + bridgePos.width / 2
         target.y = bridgePos.y + bridgePos.height / 2
 
         return this.setState(TrollStateKey.GO_TO, {target, onStart: onTrollGoesToBridge, onEnd: onTrollCameToBridge})
     }
 
-    goToLair() {
-        console.log("goToLair");
+    goToLadderBottom() {
+        const ladderPos = positioner.getLadderBounds()[0]
+        return this.setState(TrollStateKey.GO_TO, {
+            x: ladderPos.x + ladderPos.width / 2,
+            y: ladderPos.y
+        })
+    }
+
+    goToLairChillZone() {
         const target = positioner.getTrollLairIdlePosition();
 
-        this.setState(TrollStateKey.GO_TO, {target, onStart: onTrollGoesToLair, onEnd: onTrollCameToLair})
+        return this.setState(TrollStateKey.GO_TO, {target})
     }
 
     goToBed() {
@@ -397,8 +401,7 @@ export class Troll {
         target.x = bedPos.x
         target.y = bedPos.y
 
-        onTrollSleep()
-        return this.setState(TrollStateKey.GO_TO, {target}).then(() => this.goSleep())
+        return this.setState(TrollStateKey.GO_TO, {target});
     }
 
     goToChar(charId: string) {

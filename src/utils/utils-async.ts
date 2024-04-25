@@ -6,13 +6,18 @@ export function pause(time: number) {
     })
 }
 
-export function createPromiseAndHandlers() {
-    let done: (a?: any) => void = stub
+export function createPromiseAndHandlers<T>() {
+    let done: (a: T) => void = stub
     let fail: (a?: any) => void = stub
-    const promise = new Promise((res, rej) => {
+    const promise = new Promise<T>((res, rej) => {
         done = res
         fail = rej
     })
 
     return {promise, done, fail}
 }
+
+export function createCancellablePromise<T>() {
+    const {} = createPromiseAndHandlers<T>()
+}
+

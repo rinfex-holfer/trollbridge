@@ -25,7 +25,10 @@ export class Lair {
         this.sprite = o_.render.createTiles('grass', pos.x, pos.y, pos.width, pos.height);
         this.sprite.setOrigin(0, 0);
 
-        this.sprite.onClick(() => o_.troll.goToLair())
+        this.sprite.onClick(() => {
+            eventBus.emit(Evt.INTERFACE_LAIR_CLICKED)
+        })
+
         // this.sprite.obj.alpha = 0
 
         this.treasury = new Treasury(positioner.getTreasuryPosition())
@@ -37,11 +40,12 @@ export class Lair {
     }
 
     updateMayBeMovedInto() {
-        if (o_.troll.location !== TrollLocation.LAIR) this.mayBeMovedInto(true)
+        throw Error("TODO phase-lair")
     }
 
-    mayBeMovedInto(val: boolean) {
+    setClickable(val: boolean) {
         console.log("lair mayBeMovedInto", val);
+
         if (val) {
             this.sprite.setInteractive(true, {cursor: 'pointer'})
         } else {
@@ -49,10 +53,18 @@ export class Lair {
         }
     }
 
-    mayButtonsBeClicked(val: boolean) {
+    setObjectsActive(val: boolean) {
         this.bed.setEnabled(val)
         this.foodStorage.setEnabled(val)
         this.pot.setInteractive(val)
+    }
+
+    setMenuShown(val: boolean) {
+        if (val) {
+            this.menu.show()
+        } else {
+            this.menu.hide()
+        }
     }
 
     changeResource(key: ResourceKey, val: number) {

@@ -12,7 +12,7 @@ export class InteractionManager {
 
     constructor(private scene: Phaser.Scene) {
         o_.register.interaction(this)
-        window.addEventListener('contextmenu', e => e. preventDefault())
+        window.addEventListener('contextmenu', e => e.preventDefault())
         scene.input.on('pointerdown', this.onClick)
 
         // create layer to close buttons
@@ -59,7 +59,7 @@ export class InteractionManager {
     }
 
     disableEverything() {
-        o_.lair.mayButtonsBeClicked(false)
+        o_.lair.setObjectsActive(false)
         o_.lair.mayBeMovedInto(false)
         o_.bridge.disableInterface()
         o_.lair.menu.hide()
@@ -74,7 +74,7 @@ export class InteractionManager {
 
     enableEverything() {
         console.log('enableEverything')
-        o_.lair.mayButtonsBeClicked(o_.troll.location === TrollLocation.LAIR)
+        o_.lair.setObjectsActive(o_.troll.location === TrollLocation.LAIR)
         o_.lair.mayBeMovedInto(o_.troll.location !== TrollLocation.LAIR)
         if (o_.troll.location === TrollLocation.BRIDGE) {
             o_.bridge.disableInterface()

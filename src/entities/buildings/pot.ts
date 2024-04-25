@@ -198,7 +198,7 @@ export class Pot {
         this.isChoosingFood = true
 
         o_.lair.mayBeMovedInto(false)
-        o_.lair.mayButtonsBeClicked(false)
+        o_.lair.setObjectsActive(false)
         this.setInteractive(true)
         o_.bridge.disableInterface()
 
@@ -245,7 +245,7 @@ export class Pot {
         o_.audio.playSound(SOUND_KEY.CANCEL)
         this.unsubFromRightClick()
         o_.lair.updateMayBeMovedInto()
-        o_.lair.mayButtonsBeClicked(true)
+        o_.lair.setObjectsActive(true)
         o_.bridge.updateMayBeMovedInto()
 
         o_.entities.get(EntityType.MEAT).forEach(meat => {
