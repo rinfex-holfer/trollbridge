@@ -17,17 +17,13 @@ export class UpgradeManager {
         o_.register.upgrade(this)
     }
 
-    onClose?: ((() => void) | null) = null
-    public showButtons(onClose?: () => void) {
+    public showButtons(onCloseClicked: () => void) {
         o_.audio.playSound(SOUND_KEY.BONK)
 
-        this.onClose = onClose
+        // not a cool UX?
+        // o_.interaction.setLayerUnderButtonsActive(onCloseClicked)
 
-        const close = () => this.hideButtons()
-        o_.interaction.setLayerUnderButtonsActive(close)
-        this.unsubFromRClick = o_.interaction.onRightClick(close)
-        o_.interaction.disableEverything()
-
+        this.unsubFromRClick = o_.interaction.onRightClick(onCloseClicked)
         this.setButtonsShown(true)
     }
 
@@ -35,11 +31,9 @@ export class UpgradeManager {
         if (!this.upgradeButtonsShown) return
 
         o_.audio.playSound(SOUND_KEY.BONK)
-        this.onClose?.()
-        this.onClose = null
 
         o_.interaction.setLayerUnderButtonsUnactive()
-        o_.interaction.enableEverything()
+        // o_.interaction.enableEverything()
         this.unsubFromRClick?.()
         this.unsubFromRClick = stub
 
@@ -59,7 +53,6 @@ export class UpgradeManager {
         o_.lair.treasury.removeGold(btn.cost)
         btn.destroy()
         findAndSplice(this.buttons, btn)
-        this.hideButtons()
     }
 
     public createUpgradeButton(pos: Vec, text: string, cost: number, upgradeFn: () => void) {

@@ -58,33 +58,33 @@ export class InteractionManager {
         return (() => this.leftClickEmitter.unsub(id)) as () => void
     }
 
-    disableEverything() {
-        o_.lair.setObjectsActive(false)
-        o_.lair.mayBeMovedInto(false)
-        o_.bridge.disableInterface()
-        o_.lair.menu.hide()
-
-        this.disableEntities()
-        console.log('disableEverything')
-    }
+    // disableEverything() {
+    //     o_.lair.setObjectsActive(false)
+    //     o_.lair.mayBeMovedInto(false)
+    //     o_.bridge.disableInterface()
+    //     o_.lair.menu.hide()
+    //
+    //     this.disableEntities()
+    //     console.log('disableEverything')
+    // }
 
     disableEntities() {
         o_.entities.getAll().forEach(o => o.setInteractive(false))
     }
 
-    enableEverything() {
-        console.log('enableEverything')
-        o_.lair.setObjectsActive(o_.troll.location === TrollLocation.LAIR)
-        o_.lair.mayBeMovedInto(o_.troll.location !== TrollLocation.LAIR)
-        if (o_.troll.location === TrollLocation.BRIDGE) {
-            o_.bridge.disableInterface()
-        } else {
-            o_.bridge.enableInterface()
-        }
-
-        if (o_.troll.location === TrollLocation.LAIR) {
-            o_.lair.menu.show()
-        }
-        o_.entities.getAll().forEach(o => o.updateInteractive())
-    }
+    // enableEverything() {
+    //     console.log('enableEverything')
+    //     o_.lair.setObjectsActive(o_.troll.location === TrollLocation.LAIR)
+    //     o_.lair.mayBeMovedInto(o_.troll.location !== TrollLocation.LAIR)
+    //     if (o_.troll.location === TrollLocation.BRIDGE) {
+    //         o_.bridge.disableInterface()
+    //     } else {
+    //         o_.bridge.enableInterface()
+    //     }
+    //
+    //     if (o_.troll.location === TrollLocation.LAIR) {
+    //         o_.lair.menu.show()
+    //     }
+    //     o_.entities.getAll().forEach(o => o.updateInteractive())
+    // }
 }

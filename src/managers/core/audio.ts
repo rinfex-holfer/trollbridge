@@ -1,5 +1,6 @@
 import {resoursePaths} from "../../resourse-paths";
 import {o_} from "../locator";
+import {debugExpose} from "../../utils/utils-misc";
 
 type AudioType = 'sound' | 'music';
 
@@ -144,6 +145,8 @@ export class AudioManager {
 
         o_.register.audio(this);
         // this.playMusic(MUSIC_KEY.GAMEPLAY_MUSIC);
+
+        debugExpose(() => this, 'audioManager')
     }
 
     playSound = (key: SOUND_KEY) => {

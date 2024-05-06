@@ -360,7 +360,7 @@ export class Troll {
     }
 
     setState(stateKey: TrollStateKey, options?: any): Promise<any> {
-        console.trace('new troll state:', stateKey, options);
+        console.log('new troll state:', stateKey, options);
         this.state.end();
         this.state = this.getState(stateKey, options)
         return this.state.start();

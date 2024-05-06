@@ -1,20 +1,20 @@
 import {o_} from "../../managers/locator";
 import {O_Sprite} from "../../managers/core/render/sprite";
 import {LayerKey} from "../../managers/core/layers";
-import {rnd, Vec} from "../../utils/utils-math";
+import {Vec} from "../../utils/utils-math";
 import {O_AnimatedSprite} from "../../managers/core/render/animated-sprite";
-import {colorsCSS, colorsNum, gameConstants} from "../../configs/constants";
-import {Evt, subscriptions} from "../../event-bus";
+import {colorsCSS, colorsNum} from "../../configs/constants";
+import {eventBus, Evt, subscriptions} from "../../event-bus";
 import {FoodType} from "../../types";
-import {Meat, MeatLocation} from "../meat";
+import {Meat} from "../meat";
 import {EntityType} from "../../managers/core/entities";
 import {findAndSplice, stub} from "../../utils/utils-misc";
 import {O_Text} from "../../managers/core/render/text";
 import {SOUND_KEY} from "../../managers/core/audio";
-import ParticleEmitter = Phaser.GameObjects.Particles.ParticleEmitter;
 import {foodConfig} from "../../configs/food-config";
+import ParticleEmitter = Phaser.GameObjects.Particles.ParticleEmitter;
 
-const enum PotState {
+export const enum PotState {
     NOT_EXIST = 'NOT_EXIST',
     EMPTY = 'EMPTY',
     PREPARING = 'PREPARING',
@@ -169,11 +169,12 @@ export class Pot {
         }
     }
 
-    private eat() {
-        console.log(this.isDishHuman)
+    eat() {
         o_.troll.eat(FoodType.DISH, this.isDishStale, this.isDishHuman)
         this.setState(PotState.EMPTY)
     }
+
+    chosenFood: Meat[] = []
 
     public getFreePlaceForChosenFood(): Vec {
         return {
@@ -182,53 +183,27 @@ export class Pot {
         }
     }
 
-    isChoosingFood = false
-    unsubFromRightClick = stub as () => void
-
-    private startChoosingFood() {
-        const freshMeet = o_.entities.get(EntityType.MEAT);
-        if (freshMeet.length < foodConfig.FOOD_FOR_DISH) {
-            o_.audio.playSound(SOUND_KEY.CANCEL)
-            this.showText();
-            return
-        }
-
-        o_.audio.playSound(SOUND_KEY.BONK)
-
-        this.isChoosingFood = true
-
-        o_.lair.mayBeMovedInto(false)
-        o_.lair.setObjectsActive(false)
-        this.setInteractive(true)
-        o_.bridge.disableInterface()
-
-        freshMeet.forEach(meat => {
-            meat.setChoosable(this)
-        })
-
-        this.unsubFromRightClick = o_.interaction.onRightClick(() => {
-            this.stopChoosingFood()
-        })
-    }
-
     public choseThisFood(food: Meat) {
+        food.moveToPreparationPlace(this.getFreePlaceForChosenFood())
+
         o_.audio.playSound(SOUND_KEY.PICK)
         this.chosenFood.push(food)
         if (this.chosenFood.length === foodConfig.FOOD_FOR_DISH) {
-            const chosenFood = [...this.chosenFood];
-            chosenFood.forEach(f => f.updateRealPosition())
+            this.chosenFood.forEach(f => f.updateRealPosition())
             this.stopChoosingFood()
-            this.prepare(chosenFood)
+            this.startPreparingChosenFood()
+        } else {
+            food.setOnClick(this.unchooseFood)
         }
     }
 
-    private prepare(meat: Meat[]) {
+    private startPreparingChosenFood() {
         this.setInteractive(false)
         const promises = [] as Promise<any>[];
 
         o_.audio.playSound(SOUND_KEY.COLLECT)
 
-        meat.forEach(m => {
+        this.chosenFood.forEach(m => {
             if (m.props.isStale) this.becomeRotten()
             if (m.props.isHuman) this.isDishHuman = true
             m.onLastAnimation()
@@ -241,48 +216,46 @@ export class Pot {
         })
     }
 
-    private stopChoosingFood() {
-        o_.audio.playSound(SOUND_KEY.CANCEL)
-        this.unsubFromRightClick()
-        o_.lair.updateMayBeMovedInto()
-        o_.lair.setObjectsActive(true)
-        o_.bridge.updateMayBeMovedInto()
+    startChoosingFood() {
+        o_.entities.get(EntityType.MEAT).forEach(this.makeFoodChoosable)
+    }
 
-        o_.entities.get(EntityType.MEAT).forEach(meat => {
-            meat.setNotChoosable()
+    makeFoodChoosable = (food: Meat) => {
+        food.setOnClick(() => {
+            this.choseThisFood(food)
         })
+        food.setJumping(true)
+        food.setInteractive(true)
+    }
 
-        this.isChoosingFood = false
+    makeFoodUnchoosable = (food: Meat) => {
+        food.setOnClick(undefined)
+        food.setInteractive(false)
+        food.setJumping(false)
+    }
+
+    stopChoosingFood() {
+        o_.entities.get(EntityType.MEAT).forEach(this.makeFoodUnchoosable)
+        this.chosenFood.forEach(food => food.moveBackToPlaceFromWhereItWasChosen())
         this.chosenFood = [];
     }
 
-    chosenFood: Meat[] = []
-
-    removeChosen(food: Meat) {
+    unchooseFood = (food: Meat) => {
         o_.audio.playSound(SOUND_KEY.CANCEL)
         findAndSplice(this.chosenFood, food)
+        food.moveBackToPlaceFromWhereItWasChosen()
     }
 
     setInteractive(val: boolean) {
         this.sprite.setInteractive(val);
     }
 
-    interruptChoosing() {
-        [...this.chosenFood].forEach(f => f.unchoose())
-        this.stopChoosingFood();
+    unchooseAllFood() {
+        [...this.chosenFood].forEach(f => f.moveBackToPlaceFromWhereItWasChosen())
+        this.chosenFood = []
     }
 
     onClick() {
-        switch (this.state) {
-            case PotState.EMPTY:
-                if (this.isChoosingFood) this.interruptChoosing()
-                else this.startChoosingFood()
-                break;
-            case PotState.PREPARING:
-                break;
-            case PotState.READY:
-                this.eat()
-                break;
-        }
+        eventBus.emit(Evt.INTERFACE_POT_CLICKED, this.state)
     }
 }

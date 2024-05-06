@@ -2,6 +2,10 @@ import {o_} from "../managers/locator";
 import {TrollLocation} from "../types";
 import {eventBus, Evt} from "../event-bus";
 import {createPromiseAndHandlers} from "../utils/utils-async";
+import {GamePhase} from "./game-phase";
+import {PotState} from "../entities/buildings/pot";
+import {PhaseMakeFood} from "./phase-make-food";
+import {PhaseBuild} from "./phase-build";
 
 const Activity = {
     GO_TO_BED: "GO_TO_BED",
@@ -11,7 +15,7 @@ const Activity = {
 } as const
 type TrollActivityInLair = typeof Activity[keyof typeof Activity]
 
-export class PhaseLair {
+export class PhaseLair extends GamePhase {
 
     activity?: {
         promise: Promise<TrollActivityInLair>,
@@ -19,19 +23,17 @@ export class PhaseLair {
         done: (activity: TrollActivityInLair) => void
     }
 
-    constructor() {
+    onStart() {
         this.onTrollCameToLair()
-
-        const {promise, done, fail} = createPromiseAndHandlers<TrollActivityInLair>();
-        this.activity = {
-            promise,
-            done,
-            cancel: fail
-        }
-
-        eventBus.on(Evt.INTERFACE_BED_CLICKED, this.onBedClicked)
+        this.registerListener(Evt.INTERFACE_BED_CLICKED, this.onBedClicked)
+        this.registerListener(Evt.INTERFACE_POT_CLICKED, this.onPotClicked)
+        this.registerListener(Evt.INTERFACE_OPEN_BUILD_MENU_BUTTON_CLICKED, this.onBuildMenuClicked)
     }
 
+    onEnd() {
+        o_.lair.setObjectsActive(false)
+        o_.lair.setMenuShown(false)
+    }
 
     setCurrentTrollActivity(activityPromise: Promise<any>, activityType: TrollActivityInLair) {
         if (this.activity) {
@@ -69,17 +71,31 @@ export class PhaseLair {
         this.trollGoesToChillZone()
     }
 
-    onEnd() {
-        o_.lair.setObjectsActive(false)
-        o_.lair.setMenuShown(false)
-    }
-
     onBedClicked = async () => {
         this.trollGoesToBed()
     }
 
     onBridgeClicked = () => {
         this.trollGoesToBridge()
+    }
+
+    onBuildMenuClicked = () => {
+        this.goToNextPhase(new PhaseBuild())
+    }
+
+    onPotClicked = (potState: PotState) => {
+        switch (potState) {
+            case PotState.EMPTY:
+                if (PhaseMakeFood.checkCanBeStarted()) {
+                    this.goToNextPhase(new PhaseMakeFood())
+                }
+                break;
+            case PotState.PREPARING:
+                break;
+            case PotState.READY:
+                o_.lair.pot.eat()
+                break;
+        }
     }
 
     async trollGoesToChillZone() {

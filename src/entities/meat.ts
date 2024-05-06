@@ -45,8 +45,6 @@ export class Meat extends GameEntityBase<EntityType.MEAT> {
     jumpTween: Phaser.Tweens.Tween
     jumpTweenDirty = false
 
-    pot: Pot | undefined
-
     realPosition: Vec
 
     rottenGas: ParticleEmitter
@@ -136,7 +134,7 @@ export class Meat extends GameEntityBase<EntityType.MEAT> {
 
     private onClick: (() => void) | undefined
 
-    private setJumping(val: boolean) {
+    setJumping(val: boolean) {
         if (val) {
             this.jumpTween.play()
         } else {
@@ -189,41 +187,22 @@ export class Meat extends GameEntityBase<EntityType.MEAT> {
         return this.realPosition
     }
 
-    setChoosable(pot: Pot) {
-        this.updateRealPosition()
-        this.pot = pot;
-        this.onClick = () => this.setChosen()
-        this.setJumping(true)
-        this.setInteractive(true)
+    setOnClick(callback: undefined | ((meat: Meat) => void)) {
+        this.onClick = !callback ? undefined : () => callback(this)
     }
 
-    setNotChoosable() {
-        this.setJumping(false)
-        this.onClick = undefined
-        // o_.layers.add(this.sprite, LayerKey.FIELD_OBJECTS)
-    }
-
-    setChosen() {
-        if (!this.pot) throw Error('cant choose food without pot')
+    moveToPreparationPlace(coord: Vec) {
         this.setJumping(false)
         if (this.location === MeatLocation.STORAGE) o_.lair.foodStorage.container.remove(this.sprite)
 
         o_.layers.add(this.sprite, LayerKey.FIELD_BUTTONS)
-        const newCoord = this.pot.getFreePlaceForChosenFood();
-        this.sprite.move(newCoord.x, newCoord.y)
-        this.pot.choseThisFood(this)
-
-        this.onClick = () => this.unchoose()
+        this.sprite.move(coord.x, coord.y)
         this.updateEmitters()
     }
 
-    unchoose() {
-        if (!this.pot) throw Error('cant un-choose food without pot')
-        this.pot.removeChosen(this)
+    moveBackToPlaceFromWhereItWasChosen() {
         if (this.location === MeatLocation.STORAGE) o_.lair.foodStorage.container.add(this.sprite)
         this.sprite.move(this.realPosition.x, this.realPosition.y)
-        this.onClick = () => this.setChosen()
-        this.setJumping(true)
         o_.layers.add(this.sprite, LayerKey.FIELD_OBJECTS)
         this.updateEmitters()
     }

@@ -25,6 +25,8 @@ import {GameNotifications} from "./interface/game-notifications";
 import {CameraManager} from "./managers/core/camera";
 import {Ladder} from "./entities/buildings/ladder";
 import {SettingsManager} from "./managers/core/settings";
+import {gamePhaseCycle} from "./phases/game-phase-cycle";
+import {PhaseLair} from "./phases/phase-lair";
 
 const preload = (scene: Phaser.Scene) => {
     const imgKeys = Object.keys(resoursePaths.images) as (keyof typeof resoursePaths.images)[];
@@ -72,6 +74,8 @@ const create = (scene: Phaser.Scene) => {
     scene.update = function (time, delta) {
         timeManager.onUpdate(delta);
     }
+
+    gamePhaseCycle(new PhaseLair())
 }
 
 export const newGame = () => {

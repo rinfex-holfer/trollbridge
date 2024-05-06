@@ -18,9 +18,11 @@ export const SettingsMenu = () => {
     const [isHidden, setHidden] = useState(true);
     useEffect(() => {
         if (!isHidden) {
-            o_.interaction.disableEverything()
+            // TODO
+            // o_.interaction.disableEverything()
         } else {
-            o_.interaction.enableEverything()
+            // TODO
+            // o_.interaction.enableEverything()
         }
     }, [isHidden]);
 

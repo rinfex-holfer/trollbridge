@@ -1,6 +1,7 @@
 import {VerticalMenu} from "./vertical-menu";
 import {positioner} from "../managers/game/positioner";
 import {o_} from "../managers/locator";
+import {eventBus, Evt} from "../event-bus";
 
 enum ButtonsKeys {
     WAIT = 'WAIT',
@@ -33,11 +34,12 @@ export class LairMenu {
     onClick(action: ButtonsKeys) {
         switch (action) {
             case ButtonsKeys.WAIT:
+                eventBus.emit(Evt.INTERFACE_WAIT_BUTTON_CLICKED)
                 o_.upgrade.hideButtons()
                 o_.time.wait();
                 break;
             case ButtonsKeys.UPGRADE:
-                o_.upgrade.showButtons()
+                eventBus.emit(Evt.INTERFACE_OPEN_BUILD_MENU_BUTTON_CLICKED)
                 break;
         }
     }

@@ -1,6 +1,7 @@
 import {CharKey, EncounterDanger, TrollLocation} from "./types";
 import {TrollFearLevel} from "./managers/game/troll/types";
 import {Settings} from "./managers/core/settings";
+import {PotState} from "./entities/buildings/pot";
 
 let nextId = 0;
 
@@ -8,6 +9,12 @@ export const enum Evt {
     INTERFACE_LAIR_CLICKED = 'INTERFACE_LAIR_CLICKED',
     INTERFACE_BRIDGE_CLICKED = 'INTERFACE_BRIDGE_CLICKED',
     INTERFACE_BED_CLICKED = 'INTERFACE_BED_CLICKED',
+    INTERFACE_POT_CLICKED = 'INTERFACE_POT_CLICKED',
+
+    INTERFACE_OPEN_BUILD_MENU_BUTTON_CLICKED = 'INTERFACE_OPEN_BUILD_MENU_BUTTON_CLICKED',
+    INTERFACE_WAIT_BUTTON_CLICKED = 'INTERFACE_WAIT_BUTTON_CLICKED',
+
+    BUILDING_COMPLETED = 'BUILDING_COMPLETED',
 
     SETTINGS_CHANGED = 'SETTINGS_CHANGED',
 
@@ -52,6 +59,11 @@ export type EvtData = {
     [Evt.INTERFACE_LAIR_CLICKED]: undefined,
     [Evt.INTERFACE_BRIDGE_CLICKED]: undefined,
     [Evt.INTERFACE_BED_CLICKED]: undefined,
+    [Evt.INTERFACE_POT_CLICKED]: PotState,
+    [Evt.INTERFACE_OPEN_BUILD_MENU_BUTTON_CLICKED]: undefined,
+    [Evt.INTERFACE_WAIT_BUTTON_CLICKED]: undefined,
+
+    [Evt.BUILDING_COMPLETED]: undefined,
 
     [Evt.SETTINGS_CHANGED]: Settings,
 
