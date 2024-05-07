@@ -54,7 +54,7 @@ export class FoodStorage {
             )
         }
 
-        console.log(this);
+        // console.log(this);
     }
 
     upgrade() {
@@ -76,7 +76,6 @@ export class FoodStorage {
         if (!place) return;
 
         const coord = place[0];
-        console.log("coord ", coord);
 
         o_.audio.playSound(SOUND_KEY.PICK)
         place[1] = food
@@ -95,7 +94,6 @@ export class FoodStorage {
     }
 
     getNextPlace() {
-        console.log('getNextPlace', this.places.findIndex(p => p[1] === null), this.places.map(p => p[1]))
         return this.places.find(p => p[1] === null)
     }
 

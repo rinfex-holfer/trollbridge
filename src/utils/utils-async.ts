@@ -6,7 +6,7 @@ export function pause(time: number) {
     })
 }
 
-export function createPromiseAndHandlers<T>() {
+export function createPromiseAndHandlers<T = void>() {
     let done: (a: T) => void = stub
     let fail: (a?: any) => void = stub
     const promise = new Promise<T>((res, rej) => {
@@ -17,7 +17,16 @@ export function createPromiseAndHandlers<T>() {
     return {promise, done, fail}
 }
 
-export function createCancellablePromise<T>() {
-    const {} = createPromiseAndHandlers<T>()
+export const CANCELLED = "CANCELLED"
+
+export function createCancellablePromise<T = void>() {
+    const {promise, done, fail} = createPromiseAndHandlers<T | typeof CANCELLED>()
+
+    const cancel = () => {
+        done(CANCELLED);
+    };
+
+    return {promise, cancel, done, fail};
 }
 
+export type CancellablePromise<T = void> = Promise<T | typeof CANCELLED>

@@ -72,7 +72,7 @@ export class RenderManager {
         // graphics.strokeRect(bounds.x - 10, bounds.y - 10, bounds.width + 20, bounds.height + 20);
         // graphics.fill()
         graphics.strokeRectShape(rect);
-        console.log(bounds);
+        // console.log(bounds);
 
         let subId = -1;
         const onUpdate = () => {

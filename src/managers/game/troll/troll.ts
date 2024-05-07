@@ -360,7 +360,7 @@ export class Troll {
     }
 
     setState(stateKey: TrollStateKey, options?: any): Promise<any> {
-        console.log('new troll state:', stateKey, options);
+        // console.log('new troll state:', stateKey, options);
         this.state.end();
         this.state = this.getState(stateKey, options)
         return this.state.start();
@@ -372,7 +372,7 @@ export class Troll {
     }
 
     goToBridge() {
-        console.log("goToBridge");
+        // console.log("goToBridge");
         const target = {x: 0, y: 0}
         const bridgePos = positioner.getBridgePosition()
         target.x = bridgePos.x + bridgePos.width / 2
@@ -381,7 +381,7 @@ export class Troll {
         return this.setState(TrollStateKey.GO_TO, {target, onStart: onTrollGoesToBridge, onEnd: onTrollCameToBridge})
     }
 
-    goToLadderBottom() {
+    goToLadderBottom = () => {
         const ladderPos = positioner.getLadderBounds()[0]
         return this.setState(TrollStateKey.GO_TO, {
             x: ladderPos.x + ladderPos.width / 2,
@@ -389,13 +389,13 @@ export class Troll {
         })
     }
 
-    goToLairChillZone() {
+    goToLairChillZone = () => {
         const target = positioner.getTrollLairIdlePosition();
 
         return this.setState(TrollStateKey.GO_TO, {target})
     }
 
-    goToBed() {
+    goToBed = () => {
         const target = {x: 0, y: 0}
         const bedPos = positioner.getBedPosition();
         target.x = bedPos.x
@@ -404,7 +404,7 @@ export class Troll {
         return this.setState(TrollStateKey.GO_TO, {target});
     }
 
-    goToChar(charId: string) {
+    goToChar = (charId: string) => {
         var char = o_.characters.getTraveller(charId)
         if (!char) throw Error('WTF')
 

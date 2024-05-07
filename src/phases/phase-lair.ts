@@ -1,7 +1,7 @@
 import {o_} from "../managers/locator";
 import {TrollLocation} from "../types";
 import {eventBus, Evt} from "../event-bus";
-import {createPromiseAndHandlers} from "../utils/utils-async";
+import {CancellablePromise, CANCELLED, createCancellablePromise, createPromiseAndHandlers} from "../utils/utils-async";
 import {GamePhase} from "./game-phase";
 import {PotState} from "../entities/buildings/pot";
 import {PhaseMakeFood} from "./phase-make-food";
@@ -15,72 +15,97 @@ const Activity = {
 } as const
 type TrollActivityInLair = typeof Activity[keyof typeof Activity]
 
+enum ActivityResult {
+    FINISHED = 'FINISHED',
+    CANCELED = 'CANCELED',
+}
+
 export class PhaseLair extends GamePhase {
 
     activity?: {
-        promise: Promise<TrollActivityInLair>,
-        cancel: (canceledWithActivity: TrollActivityInLair) => void,
-        done: (activity: TrollActivityInLair) => void
+        promise: CancellablePromise,
+        cancel: () => void,
     }
 
     onStart() {
-        this.onTrollCameToLair()
-        this.registerListener(Evt.INTERFACE_BED_CLICKED, this.onBedClicked)
+        this.registerListener(Evt.INTERFACE_BED_CLICKED, this.trollGoesToBed)
         this.registerListener(Evt.INTERFACE_POT_CLICKED, this.onPotClicked)
         this.registerListener(Evt.INTERFACE_OPEN_BUILD_MENU_BUTTON_CLICKED, this.onBuildMenuClicked)
+        this.registerListener(Evt.INTERFACE_LAIR_CLICKED, this.onLairClicked)
+        this.registerListener(Evt.INTERFACE_BRIDGE_CLICKED, this.trollGoesToBridge)
+
+        o_.troll.setLocation(TrollLocation.LAIR);
+        o_.camera.panToLair()
+        this.interfaceFor.idleInLair()
+        this.trollGoesToChillZone()
     }
 
     onEnd() {
-        o_.lair.setObjectsActive(false)
-        o_.lair.setMenuShown(false)
+        this.interfaceFor.cleanup()
     }
 
-    setCurrentTrollActivity(activityPromise: Promise<any>, activityType: TrollActivityInLair) {
+    setCurrentTrollActivity(runActivity: () => Promise<any>): CancellablePromise<void> {
         if (this.activity) {
-            this.activity.cancel(activityType)
+            this.activity.cancel()
         }
 
-        const {promise, fail, done} = createPromiseAndHandlers<TrollActivityInLair>()
+        const {promise, done, cancel} = createCancellablePromise()
 
-        activityPromise.then(() => {
-            done(activityType)
+        runActivity().then(() => {
+            done()
         })
 
         this.activity = {
             promise,
-            cancel: fail,
-            done
+            cancel,
         }
 
-        return activityPromise;
+        return promise;
     }
 
-    onTrollCameToLair() {
-        console.log("======== onTrollCameToLair")
-        o_.troll.setLocation(TrollLocation.LAIR);
-
-        o_.lair.setObjectsActive(true)
-        o_.lair.setClickable(false)
-        o_.lair.setMenuShown(true)
-        o_.bridge.enableInterface()
-
-        eventBus.once(Evt.INTERFACE_BRIDGE_CLICKED, this.onBridgeClicked)
-
-        o_.camera.panToLair()
-
-        this.trollGoesToChillZone()
-    }
-
-    onBedClicked = async () => {
-        this.trollGoesToBed()
-    }
-
-    onBridgeClicked = () => {
-        this.trollGoesToBridge()
+    interfaceFor = {
+        idleInLair: () => {
+            o_.lair.setObjectsActive(true)
+            o_.lair.setClickable(false)
+            o_.lair.setMenuShown(true)
+            o_.bridge.enableInterface()
+        },
+        goesToBed: () => {
+            o_.lair.setClickable(true)
+            o_.lair.setObjectsActive(false)
+            o_.lair.setMenuShown(false)
+            o_.bridge.enableInterface();
+        },
+        sleepOnBed: () => {
+            o_.lair.setClickable(true)
+            o_.lair.setObjectsActive(false)
+            o_.lair.bed.setEnabled(true)
+            o_.lair.setMenuShown(false)
+            o_.bridge.disableInterface();
+        },
+        cleanup: () => {
+            o_.lair.setObjectsActive(false)
+            o_.lair.setClickable(false)
+            o_.lair.setMenuShown(false)
+            o_.bridge.disableInterface()
+        },
+        goesToBridge: () => {
+            o_.lair.setObjectsActive(false)
+            o_.lair.setMenuShown(false)
+            o_.lair.setClickable(true)
+            o_.bridge.disableInterface()
+        }
     }
 
     onBuildMenuClicked = () => {
         this.goToNextPhase(new PhaseBuild())
+    }
+
+    onLairClicked = async () => {
+        const resPromise = this.setCurrentTrollActivity(o_.troll.goToLairChillZone)
+        this.interfaceFor.idleInLair()
+        const res = await resPromise
+        if (res === CANCELLED) return
     }
 
     onPotClicked = (potState: PotState) => {
@@ -98,33 +123,31 @@ export class PhaseLair extends GamePhase {
         }
     }
 
-    async trollGoesToChillZone() {
-        return this.setCurrentTrollActivity(o_.troll.goToLairChillZone(), Activity.GO_TO_CHILL_ZONE);
+    trollGoesToChillZone = async () => {
+        this.setCurrentTrollActivity(o_.troll.goToLairChillZone);
     }
 
-    async trollGoesToBridge() {
-        o_.lair.setObjectsActive(false)
-        o_.lair.setMenuShown(false)
-        o_.bridge.disableInterface()
+    trollGoesToBridge = async () => {
+        this.interfaceFor.goesToBridge();
         o_.camera.panToBridge()
 
-        o_.lair.setClickable(true)
+        const res = await this.setCurrentTrollActivity(o_.troll.goToLadderBottom);
 
-        // const {promise: lairClickedPromise, done: onLairClicked} = createPromiseAndHandlers<typeof BACK_TO_LAIR>()
-        const evtId = eventBus.once(Evt.INTERFACE_LAIR_CLICKED, () => {
-            this.onTrollCameToLair();
-        })
-
-        await this.setCurrentTrollActivity(o_.troll.goToLadderBottom(), Activity.GO_TO_STAIRS);
-        eventBus.unsubscribe(Evt.INTERFACE_LAIR_CLICKED, evtId)
+        if (res === "CANCELLED") {
+            o_.camera.panToLair()
+            return
+        }
 
         // TODO climb stairs
     }
 
-    async trollGoesToBed() {
-        o_.lair.setClickable(false)
-        o_.bridge.enableInterface();
-        await this.setCurrentTrollActivity(await o_.troll.goToBed(), Activity.GO_TO_BED)
+    trollGoesToBed = async () => {
+        this.interfaceFor.goesToBed()
+
+        const res = await this.setCurrentTrollActivity(o_.troll.goToBed)
+        if (res === CANCELLED) return
+
+        this.interfaceFor.sleepOnBed()
         o_.troll.goSleep()
     }
 }

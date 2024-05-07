@@ -64,25 +64,29 @@ export class CharactersManager {
         return this.squad.chars
     }
 
+    log(...args: any) {
+        // console.log(...args)
+    }
+
     createRandomEncounter() {
         // 0 - 40 troll level
         // 41 - 80 - lower
         // 81 - 95 - 1-2 higher
         // 96-100 - 3 higher
-        console.log('Create random encounter');
+        // this.log('Create random encounter');
 
         const roll = rnd()
 
-        console.log('vigilantePlanned', this.vigilantePlanned)
-        console.log('vigilante may be planned', o_.troll.fearLevel === TrollFearLevel.HORRIFIC, vigilanteEncounters[this.nextVigilanteEncounter + 1])
+        this.log('vigilantePlanned', this.vigilantePlanned)
+        this.log('vigilante may be planned', o_.troll.fearLevel === TrollFearLevel.HORRIFIC, vigilanteEncounters[this.nextVigilanteEncounter + 1])
         if (this.vigilantePlanned) {
             this.vigilanteTimeLeft--
-            console.log('time till vigilante comes:', this.vigilanteTimeLeft)
+            this.log('time till vigilante comes:', this.vigilanteTimeLeft)
             if (this.vigilanteTimeLeft <= 0) {
                 this.vigilantePlanned = false
 
                 const vigilanteEncounter = vigilanteEncounters[this.nextVigilanteEncounter++]
-                console.log('vigilante appears!')
+                this.log('vigilante appears!')
                 this.encounterLevel = 999
                 this.isVigilante = true
                 this.createTravellers(vigilanteEncounter.enemies, CharBehavior.VIGILANTE)
@@ -92,7 +96,7 @@ export class CharactersManager {
                 return
             }
         } else if (o_.troll.fearLevel === TrollFearLevel.HORRIFIC && vigilanteEncounters[this.nextVigilanteEncounter]) {
-            console.log('check to plan vigilante')
+            this.log('check to plan vigilante')
             if (roll > 0.9) {
                 this.planVigilante(3)
             }
@@ -103,24 +107,24 @@ export class CharactersManager {
 
         let rndLevel: number
 
-        console.log('encounter roll', roll, ', encounter level:')
+        this.log('encounter roll', roll, ', encounter level:')
 
         if (roll <= 0.4) {
             rndLevel = o_.troll.level
-            console.log('======= exact troll level', rndLevel)
+            this.log('======= exact troll level', rndLevel)
         } else if (roll <= 0.8) {
             rndLevel = rndBetween(0, o_.troll.level - 1)
-            console.log('======= lower', rndLevel)
+            this.log('======= lower', rndLevel)
         } else if (roll <= 0.95) {
             rndLevel = rndBetween(o_.troll.level + 1, o_.troll.level + 2)
-            console.log('======= higher', rndLevel)
+            this.log('======= higher', rndLevel)
         } else {
             rndLevel = o_.troll.level + 3
-            console.log('======= highest possible', rndLevel)
+            this.log('======= highest possible', rndLevel)
         }
 
         rndLevel = clamp(rndLevel, 0, maxEncounterLevel)
-        console.log('after clamp', rndLevel)
+        this.log('after clamp', rndLevel)
 
         let encounter = getRndItem(encounterTemplates[rndLevel]);
 
@@ -128,7 +132,7 @@ export class CharactersManager {
             this.encounterLevel = 999
             this.isKing = true
             encounter = kingSquad
-            console.log('King encounter')
+            this.log('King encounter')
         } else {
             this.isKing = false
         }
@@ -144,7 +148,7 @@ export class CharactersManager {
     planVigilante(time: number) {
         this.vigilantePlanned = true
         this.vigilanteTimeLeft = time
-        console.log('vigilante planned')
+        this.log('vigilante planned')
 
         eventBus.emit(Evt.VIGILANTE_PLANNED, this.vigilanteTimeLeft)
     }

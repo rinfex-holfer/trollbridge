@@ -49,7 +49,7 @@ const buttonsTemplate: CharActionButtonTemplate[] = [
 export const actionButtonsMap = buttonsTemplate.reduce((acc, next) => {
     acc[next.key] = next
     return acc
-}, {} as {[key: string]: CharActionButtonTemplate})
+}, {} as { [key: string]: CharActionButtonTemplate })
 
 const BUTTON_WIDTH = 32;
 const BUTTON_MARGIN = 10;
@@ -57,7 +57,7 @@ const BUTTON_MARGIN = 10;
 const getButtonsRowWidth = (amount: number) => amount * BUTTON_WIDTH + (amount - 1) * BUTTON_MARGIN;
 
 export class CharActionsMenu {
-    buttons: {action: CharAction, sprite: O_Sprite, active: boolean, checkActive?: (char: Char) => boolean}[] = []
+    buttons: { action: CharAction, sprite: O_Sprite, active: boolean, checkActive?: (char: Char) => boolean }[] = []
     activeButtons: CharAction[] = []
     container: O_Container
     isShown = true;
@@ -68,11 +68,15 @@ export class CharActionsMenu {
         this.container = o_.render.createContainer(50, -25, {parent: this.char.container});
         // this.container.zIndex = zLayers.GAME_OBJECTS_MIN
 
-        this.text =  o_.render.createText('', 0, 0, {color: colorsCSS.WHITE}, {parent: this.container})
+        this.text = o_.render.createText('', 0, 0, {color: colorsCSS.WHITE}, {parent: this.container})
         this.text.setOrigin(0.5, 1);
 
         buttonsTemplate.forEach((template, idx) => {
-            const sprite =  o_.render.createSprite(template.resource, 0, -this.text.height-10, {width: BUTTON_WIDTH, height: BUTTON_WIDTH, parent: this.container})
+            const sprite = o_.render.createSprite(template.resource, 0, -this.text.height - 10, {
+                width: BUTTON_WIDTH,
+                height: BUTTON_WIDTH,
+                parent: this.container
+            })
             sprite.setInteractive(true, {cursor: 'pointer'})
             sprite.onPointerOver(() => {
                 this.showText(template.text)
@@ -103,7 +107,7 @@ export class CharActionsMenu {
     }
 
     changeActiveButtons(activeButtons: CharAction[]) {
-        console.log('changeActiveButtons', activeButtons)
+        // console.log('changeActiveButtons', activeButtons)
         this.activeButtons = activeButtons
         this.updateButtons()
     }

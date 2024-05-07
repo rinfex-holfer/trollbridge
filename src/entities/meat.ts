@@ -238,7 +238,7 @@ export class Meat extends GameEntityBase<EntityType.MEAT> {
         }
 
         return o_.render.flyTo(this.sprite, pos, speed, maxDuration).then(() => {
-            console.log("finish", this)
+            // console.log("finish", this)
             this.updateEmitters()
             if (this.props.isStale && !this.rottenGas.active) this.rottenGas.resume()
         });
