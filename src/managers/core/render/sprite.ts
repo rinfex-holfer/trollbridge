@@ -2,6 +2,8 @@ import Phaser from "phaser";
 import {resoursePaths} from "../../../resourse-paths";
 import {O_Container} from "./container";
 import Pointer = Phaser.Input.Pointer;
+import Rectangle = Phaser.Geom.Rectangle;
+import Vector2 = Phaser.Math.Vector2;
 
 export class O_Sprite {
     obj: Phaser.GameObjects.Sprite
@@ -24,8 +26,16 @@ export class O_Sprite {
         if (options?.height) this.obj.displayHeight = options.height;
     }
 
+    private bounds = new Rectangle()
+
     getBounds() {
-        return this.obj.getBounds()
+        return this.obj.getBounds(this.bounds)
+    }
+
+    private center = new Vector2()
+
+    getCenter(includeParent?: boolean): Vector2 {
+        return this.obj.getCenter(this.center, includeParent)
     }
 
     setInteractive(val: boolean, options?: any) {

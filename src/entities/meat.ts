@@ -15,6 +15,7 @@ import {GoldLocation} from "./gold";
 import {foodConfig} from "../configs/food-config";
 import {destroyInteractiveObjWithFade, destroyInteractiveObjWithJump} from "../helpers";
 import {debugExpose} from "../utils/utils-misc";
+import {EffectRotten} from "../effects/rotten";
 
 export const enum MeatLocation {
     GROUND = 'GROUND',
@@ -47,12 +48,12 @@ export class Meat extends GameEntityBase<EntityType.MEAT> {
 
     realPosition: Vec
 
-    rottenGas: ParticleEmitter
-
     props = {
         isHuman: false,
         isStale: false,
     }
+
+    effectRotten?: EffectRotten
 
     constructor(pos: Vec, location: MeatLocation = MeatLocation.GROUND, isHuman = false, key: ImageKey = meatSprite.ANIMAL) {
         super()
@@ -77,7 +78,6 @@ export class Meat extends GameEntityBase<EntityType.MEAT> {
         // this shit still ruins y coord in flyTo method somehow
         this.jumpTween = o_.render.createJumpingTween(this.sprite)
 
-        this.rottenGas = o_.render.createGreenSmokeEmitter()
         this.subs.on(Evt.TIME_PASSED, () => this.onTimePassed())
 
         this.subs.on(Evt.ENCOUNTER_STARTED, () => this.updateInteractive())
@@ -99,7 +99,10 @@ export class Meat extends GameEntityBase<EntityType.MEAT> {
     }
 
     private flyOnLairGround() {
-        this.flyTo(positioner.getRandomPlaceForMeat(this)).then(() => o_.audio.playSound(SOUND_KEY.BONK))
+        this.flyTo(positioner.getRandomPlaceForMeat(this)).then(() => {
+            o_.audio.playSound(SOUND_KEY.BONK);
+            this.updateRealPosition()
+        })
         this.setLocation(MeatLocation.LAIR)
         o_.lair.foodStorage.updateFood()
     }
@@ -145,25 +148,22 @@ export class Meat extends GameEntityBase<EntityType.MEAT> {
         }
     }
 
-    private becomeRotten() {
+    becomeRotten() {
+        this.effectRotten = new EffectRotten(this)
+        this.effectRotten.setActive(true)
         this.props.isStale = true
         this.timePassed = 0
-        this.updateEmitters()
-        this.rottenGas.active = true
-        this.sprite.obj.setTint(colorsNum.ROTTEN)
-        if (this.location === MeatLocation.LAIR) this.flyOnLairGround()
-        // this.rottenGas.start()
     }
 
     private updateEmitters() {
-        const parentX = this.sprite.obj.parentContainer?.x || 0
-        const parentY = this.sprite.obj.parentContainer?.y || 0
-        this.rottenGas.setPosition(
-            this.sprite.obj.x + parentX,
-            this.sprite.y + parentY
-            // {min: this.sprite.obj.x - 10 + parentX, max: this.sprite.x + 10 + parentX},
-            // {min: this.sprite.y - 10 + parentY, max: this.sprite.y + 10 + parentY},
-        )
+        // const parentX = this.sprite.obj.parentContainer?.x || 0
+        // const parentY = this.sprite.obj.parentContainer?.y || 0
+        // this.rottenGas.setPosition(
+        //     this.sprite.obj.x + parentX,
+        //     this.sprite.y + parentY
+        //     // {min: this.sprite.obj.x - 10 + parentX, max: this.sprite.x + 10 + parentX},
+        //     // {min: this.sprite.y - 10 + parentY, max: this.sprite.y + 10 + parentY},
+        // )
     }
 
     private onTimePassed() {
@@ -230,7 +230,7 @@ export class Meat extends GameEntityBase<EntityType.MEAT> {
 
     public flyTo(pos: Vec, speed = 1000, maxDuration = 500): Promise<any> {
         this.setJumping(false);
-        if (this.rottenGas.active) this.rottenGas.pause()
+        if (this.props.isStale && !!this.effectRotten) this.effectRotten.stopGas()
         if (this.location === MeatLocation.STORAGE && this.sprite.obj.parentContainer === o_.lair.foodStorage.container.obj) {
             o_.lair.foodStorage.container.remove(this.sprite)
             this.sprite.x += o_.lair.foodStorage.container.x
@@ -239,8 +239,8 @@ export class Meat extends GameEntityBase<EntityType.MEAT> {
 
         return o_.render.flyTo(this.sprite, pos, speed, maxDuration).then(() => {
             // console.log("finish", this)
-            this.updateEmitters()
-            if (this.props.isStale && !this.rottenGas.active) this.rottenGas.resume()
+            // this.updateEmitters()
+            if (this.props.isStale && !!this.effectRotten) this.effectRotten.startGas()
         });
     }
 
@@ -262,16 +262,20 @@ export class Meat extends GameEntityBase<EntityType.MEAT> {
 
 debugExpose((amount = 1) => {
     for (let i = 0; i < amount; i++) {
-        const x = rndBetween(200, 250)
-        const y = rndBetween(200, 250)
-        new Meat({x, y}, MeatLocation.GROUND, true, rnd2(meatSprite.HUMAN_LEG, meatSprite.HUMAN_HAND))
+        const x = rndBetween(600, 700)
+        const y = rndBetween(1100, 1300)
+        const meat = new Meat({x, y}, MeatLocation.GROUND, true, rnd2(meatSprite.HUMAN_LEG, meatSprite.HUMAN_HAND))
+        console.log(meat)
+        return meat
     }
 }, 'spawnHumanMeat')
 
 debugExpose((amount = 1) => {
     for (let i = 0; i < amount; i++) {
-        const x = rndBetween(200, 250)
-        const y = rndBetween(200, 250)
-        new Meat({x, y}, MeatLocation.GROUND, false)
+        const x = rndBetween(600, 700)
+        const y = rndBetween(1100, 1300)
+        const meat = new Meat({x, y}, MeatLocation.GROUND, false)
+        console.log(meat)
+        return meat
     }
 }, 'spawnMeat')
