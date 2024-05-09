@@ -13,7 +13,7 @@ import {AudioManager} from "./managers/core/audio";
 import {TimeManager} from "./managers/core/time";
 import {BattleManager} from "./managers/game/battle";
 import {LayersManager} from "./managers/core/layers";
-import {Meat} from "./entities/meat";
+import {Meat} from "./entities/meat/meat";
 import {GrayScalePipeline} from "./shaders";
 import {EntityManager} from "./managers/core/entities";
 import {InteractionManager} from "./managers/core/interaction";

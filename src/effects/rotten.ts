@@ -1,17 +1,22 @@
 import {o_} from "../managers/locator";
-import {Meat} from "../entities/meat";
+import {Meat} from "../entities/meat/meat";
 import {LayerKey} from "../managers/core/layers";
-import ParticleEmitter = Phaser.GameObjects.Particles.ParticleEmitter;
 import {colorsNum} from "../configs/constants";
+import {Dish} from "../entities/dish/dish";
+import {EffectType} from "./types";
+import ParticleEmitter = Phaser.GameObjects.Particles.ParticleEmitter;
+import {EnityEffect} from "./entity-effect";
 
 
-type RottenEntity = Meat
+type RottenEntity = Meat | Dish
 
-export class EffectRotten {
+export class EffectRotten extends EnityEffect {
+    type = EffectType.ROTTEN
     entity: RottenEntity
     gasEmitter: ParticleEmitter
 
     constructor(entity: RottenEntity) {
+        super()
         this.entity = entity
         const center = this.entity.sprite.getCenter(true)
         this.gasEmitter = o_.game.getScene().add.particles(center.x, center.y, 'particle_smoke_green', {
@@ -24,7 +29,7 @@ export class EffectRotten {
             frequency: 300,
             quantity: 5,
             lifespan: 500,
-            emitting: false,
+            // emitting: false,
             // follow: this.entity.sprite.obj // this shit does not work with min-max coords
         })
         o_.layers.addRaw(this.gasEmitter, LayerKey.PARTICLES)
@@ -39,6 +44,7 @@ export class EffectRotten {
 
     destroy() {
         o_.time.unsub(this.subId)
+        this.gasEmitter.destroy()
     }
 
     stopGas() {

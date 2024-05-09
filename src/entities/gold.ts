@@ -1,13 +1,14 @@
-import {EntityType, GameEntityBase} from "../managers/core/entities";
 import {O_Sprite} from "../managers/core/render/sprite";
 import {Vec} from "../utils/utils-math";
 import {o_} from "../managers/locator";
 import {LayerKey} from "../managers/core/layers";
-import {Evt, subscriptions} from "../event-bus";
+import {Evt, eventBusSubscriptions} from "../event-bus";
 import {gameConstants} from "../configs/constants";
 import {resoursePaths} from "../resourse-paths";
 import {SOUND_KEY} from "../managers/core/audio";
 import {goldConfig} from "../configs/gold-config";
+import {GameEntityBase} from "./base-entity";
+import {EntityType} from "./types";
 
 export const enum GoldLocation {
     GROUND = 'GROUND',
@@ -22,8 +23,6 @@ export class Gold extends GameEntityBase<EntityType.GOLD> {
 
     location: GoldLocation
     sprite: O_Sprite
-
-    subs = subscriptions()
 
     props = {
         amount: 0
@@ -45,7 +44,7 @@ export class Gold extends GameEntityBase<EntityType.GOLD> {
             this.sprite.setInteractive(true, {cursor: 'pointer'})
             this.sprite.onClick(() => this.onClick())
         }
-        this.subs.on(Evt.TIME_PASSED, () => this.onTimePassed())
+        this.globalEventsSubscripions.on(Evt.TIME_PASSED, () => this.onTimePassed())
         // this.subs.on(Evt.ENCOUNTER_STARTED, () => this.updateInteractive())
         // this.subs.on(Evt.ENCOUNTER_ENDED, () => this.updateInteractive())
 
@@ -120,10 +119,7 @@ export class Gold extends GameEntityBase<EntityType.GOLD> {
         // if (this.location === GoldLocation.GROUND) this.destroy()
     }
 
-    destroy() {
-        this.deregister()
-        this.subs.clear()
-        this.sprite.destroy()
+    onDestroyed() {
     }
 
     public setAmount(amount: number) {

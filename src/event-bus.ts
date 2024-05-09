@@ -150,7 +150,7 @@ export const eventBus = {
     }
 }
 
-export function subscriptions() {
+export function eventBusSubscriptions() {
     const subs = [] as [number, Evt][]
 
     return {

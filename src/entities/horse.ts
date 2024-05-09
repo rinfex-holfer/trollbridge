@@ -5,14 +5,13 @@ import {gameConstants} from "../configs/constants";
 import {Vec} from "../utils/utils-math";
 import {Char} from "./char/char";
 
-
 export class Horse {
     sprite: O_AnimatedSprite
 
     constructor(x: number, y: number) {
         const sprite = o_.render.createAnimatedSprite({
             atlasKey: 'horse',
-            animations:  [
+            animations: [
                 {framesPrefix: CharAnimation.WALK, repeat: -1, frameRate: 8},
             ],
             x,
@@ -27,7 +26,7 @@ export class Horse {
     public runAway() {
         this.sprite.play(CharAnimation.WALK);
 
-        this.runTo({x :o_.bridge.pos.x + o_.bridge.pos.width, y: this.sprite.y})
+        this.runTo({x: o_.bridge.pos.x + o_.bridge.pos.width, y: this.sprite.y})
             .then(() => this.sprite.destroy())
     }
 

@@ -1,7 +1,7 @@
 import {getGameSize} from "../../utils/utils-misc";
 import {o_} from "../locator";
 import {rndBetween} from "../../utils/utils-math";
-import {Meat} from "../../entities/meat";
+import {Meat} from "../../entities/meat/meat";
 
 //
 const scenePositions = {

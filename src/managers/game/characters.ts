@@ -7,13 +7,14 @@ import {positioner} from "./positioner";
 import {o_} from "../locator";
 import {DmgOptions} from "../../utils/utils-types";
 import {Squad} from "./squad";
-import {EntityType} from "../core/entities";
 import {Gold, GoldLocation} from "../../entities/gold";
 import {pause} from "../../utils/utils-async";
-import {MeatLocation} from "../../entities/meat";
+import {MeatLocation} from "../../entities/meat/meat";
 import {trollConfig} from "../../configs/troll-config";
 import {TrollFearLevel} from "./troll/types";
 import {debugExpose} from "../../utils/utils-misc";
+
+import {EntityType} from "../../entities/types";
 
 export class CharactersManager {
     chars: Char[] = []

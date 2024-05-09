@@ -1,5 +1,5 @@
 import {O_Text} from "../../managers/core/render/text";
-import {Evt, subscriptions} from "../../event-bus";
+import {Evt, eventBusSubscriptions} from "../../event-bus";
 import {Vec} from "../../utils/utils-math";
 import {o_} from "../../managers/locator";
 import {LayerKey} from "../../managers/core/layers";
@@ -15,7 +15,7 @@ export class Treasury {
     text: O_Text
     sprite: O_Sprite
 
-    subs = subscriptions()
+    subs = eventBusSubscriptions()
 
     amount = 0
 

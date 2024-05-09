@@ -1,12 +1,13 @@
 import {GamePhase} from "./game-phase";
 import {o_} from "../managers/locator";
-import {EntityType} from "../managers/core/entities";
 import {foodConfig} from "../configs/food-config";
 import {SOUND_KEY} from "../managers/core/audio";
 import {PhaseLair} from "./phase-lair";
 import {PotState} from "../entities/buildings/pot";
 import {Evt} from "../event-bus";
-import {Meat} from "../entities/meat";
+import {Meat} from "../entities/meat/meat";
+
+import {EntityType} from "../entities/types";
 
 
 export class PhaseMakeFood extends GamePhase {

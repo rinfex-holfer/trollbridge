@@ -1,7 +1,7 @@
 import {Char} from "../char";
 import {CharStateKey} from "../char-constants";
 import {createPromiseAndHandlers} from "../../../utils/utils-async";
-import {subscriptions} from "../../../event-bus";
+import {eventBusSubscriptions} from "../../../event-bus";
 import {CharAction} from "../../../interface/char-actions-menu";
 
 export abstract class CharState {
@@ -11,7 +11,7 @@ export abstract class CharState {
     onEndPromise: Promise<any>
     onEndCallback: () => void
 
-    subs = subscriptions()
+    subs = eventBusSubscriptions()
 
     constructor(char: Char) {
         this.char = char
@@ -25,14 +25,18 @@ export abstract class CharState {
         this.onStart()
         return this.onEndPromise
     }
-    protected onStart() {}
+
+    protected onStart() {
+    }
 
     end() {
         this.subs.clear()
         this.onEnd()
         this.onEndCallback()
     }
-    protected onEnd() {}
+
+    protected onEnd() {
+    }
 
     update(dt: number) {
 

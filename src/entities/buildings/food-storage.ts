@@ -1,8 +1,8 @@
-import {subscriptions} from "../../event-bus";
+import {eventBusSubscriptions} from "../../event-bus";
 import {Vec} from "../../utils/utils-math";
 import {o_} from "../../managers/locator";
 import {LayerKey} from "../../managers/core/layers";
-import {Meat, MEAT_WIDTH, MeatLocation} from "../meat";
+import {Meat, MEAT_WIDTH, MeatLocation} from "../meat/meat";
 import {O_Container} from "../../managers/core/render/container";
 import {O_Sprite} from "../../managers/core/render/sprite";
 import {SOUND_KEY} from "../../managers/core/audio";
@@ -22,7 +22,7 @@ export class FoodStorage {
     sprite: O_Sprite
     container: O_Container;
 
-    subscriptions = subscriptions()
+    subscriptions = eventBusSubscriptions()
 
     upgraded = false
 

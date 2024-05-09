@@ -4,15 +4,16 @@ import {LayerKey} from "../../managers/core/layers";
 import {Vec} from "../../utils/utils-math";
 import {O_AnimatedSprite} from "../../managers/core/render/animated-sprite";
 import {colorsCSS, colorsNum} from "../../configs/constants";
-import {eventBus, Evt, subscriptions} from "../../event-bus";
+import {eventBus, Evt, eventBusSubscriptions} from "../../event-bus";
 import {FoodType} from "../../types";
-import {Meat} from "../meat";
-import {EntityType} from "../../managers/core/entities";
+import {Meat} from "../meat/meat";
 import {findAndSplice, stub} from "../../utils/utils-misc";
 import {O_Text} from "../../managers/core/render/text";
 import {SOUND_KEY} from "../../managers/core/audio";
 import {foodConfig} from "../../configs/food-config";
 import ParticleEmitter = Phaser.GameObjects.Particles.ParticleEmitter;
+
+import {EntityType} from "../types";
 
 export const enum PotState {
     NOT_EXIST = 'NOT_EXIST',
@@ -28,7 +29,7 @@ export class Pot {
 
     state: PotState = PotState.EMPTY
 
-    subs = subscriptions()
+    subs = eventBusSubscriptions()
 
     isDishStale = false
     isDishHuman = false

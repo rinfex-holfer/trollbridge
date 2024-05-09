@@ -3,6 +3,8 @@ import {FoodType} from "../types";
 export const foodConfig = {
     RAW_MEAT_TIME_LIMIT: 6,
     STALE_MEAT_TIME_LIMIT: 6,
+    FRESH_DISH_TIME_LIMIT: 6,
+    STALE_DISH_TIME_LIMIT: 6,
 
     FOOD_FOR_DISH: 3,
 

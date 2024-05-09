@@ -1,13 +1,13 @@
-import {EntityType, GameEntityBase} from "../managers/core/entities";
 import {O_Sprite} from "../managers/core/render/sprite";
 import {Vec} from "../utils/utils-math";
 import {o_} from "../managers/locator";
 import {LayerKey} from "../managers/core/layers";
-import {Evt, subscriptions} from "../event-bus";
+import {Evt, eventBusSubscriptions} from "../event-bus";
 import {gameConstants} from "../configs/constants";
 import {resoursePaths} from "../resourse-paths";
 import {SOUND_KEY} from "../managers/core/audio";
-
+import {GameEntityBase} from "./base-entity";
+import {EntityType} from "./types";
 
 
 export class Rock extends GameEntityBase<EntityType.ROCK> {
@@ -15,8 +15,6 @@ export class Rock extends GameEntityBase<EntityType.ROCK> {
     id: string
 
     sprite: O_Sprite
-
-    subs = subscriptions()
 
     props = {}
 
@@ -38,10 +36,7 @@ export class Rock extends GameEntityBase<EntityType.ROCK> {
 
     }
 
-    destroy() {
-        this.deregister()
-        this.subs.clear()
-        this.sprite.destroy()
+    onDestroyed() {
     }
 
     public throwTo(pos: Vec) {

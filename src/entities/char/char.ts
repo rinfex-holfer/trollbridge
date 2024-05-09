@@ -26,7 +26,7 @@ import {O_Container} from "../../managers/core/render/container";
 import {o_} from "../../managers/locator";
 import {LayerKey} from "../../managers/core/layers";
 import {Gold} from "../gold";
-import {Meat, MeatLocation, meatSprite} from "../meat";
+import {Meat, MeatLocation, meatSprite} from "../meat/meat";
 import {CharStateBattleGoDefend} from "./states/CharStateBattleGoDefend";
 import {CharStateGoToBattlePosition} from "./states/CharStateGoToBattlePosition";
 import {CharStateGoTo} from "./states/CharStateGoTo";

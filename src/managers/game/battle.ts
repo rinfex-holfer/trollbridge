@@ -6,11 +6,12 @@ import {Char} from "../../entities/char/char";
 import {getRndItem, rndBetween} from "../../utils/utils-math";
 import {BattleActionsMenu} from "../../interface/battle-actions-menu";
 import {AfterBattleActionsMenu} from "../../interface/after-battle-actions-menu";
-import {EntityType} from "../core/entities";
 import {battleConfig} from "../../configs/battle-config";
 import {getGameSize} from "../../utils/utils-misc";
-import {MeatLocation} from "../../entities/meat";
+import {MeatLocation} from "../../entities/meat/meat";
 import {GoldLocation} from "../../entities/gold";
+
+import {EntityType} from "../../entities/types";
 
 export class BattleManager {
     unsub: any[] = []
@@ -27,6 +28,7 @@ export class BattleManager {
     }
 
     xpForBattle = 0
+
     startBattle() {
         this.isBattle = true;
 
@@ -141,7 +143,10 @@ export class BattleManager {
         this.actionsMenu.hide()
         o_.render.moveTo(o_.troll.container, {x: o_.troll.container.x, y: gameSize.height + 100}, rndBetween(400, 600))
 
-        o_.characters.getTravellers().forEach(t => o_.render.moveTo(t.container, {x: t.container.x, y: gameSize.height + 100}, rndBetween(400, 600)))
+        o_.characters.getTravellers().forEach(t => o_.render.moveTo(t.container, {
+            x: t.container.x,
+            y: gameSize.height + 100
+        }, rndBetween(400, 600)))
         o_.entities.get(EntityType.MEAT).filter(m => m.location === MeatLocation.GROUND).forEach(m => m.destroy())
         o_.entities.get(EntityType.GOLD).filter(m => m.location === GoldLocation.GROUND).forEach(m => m.destroy())
     }
@@ -188,12 +193,12 @@ export class BattleManager {
             )
             .map(btn => {
 
-            travellers.forEach(t => {
-                if (btn.getIsActive(t)) {
-                    possibleActions.push(() => btn.execute(t))
-                }
+                travellers.forEach(t => {
+                    if (btn.getIsActive(t)) {
+                        possibleActions.push(() => btn.execute(t))
+                    }
+                })
             })
-        })
 
         return getRndItem(possibleActions)()
     }

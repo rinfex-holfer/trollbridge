@@ -1,21 +1,20 @@
-import {rnd, rnd2, rndBetween, Vec} from "../utils/utils-math";
-import {O_Sprite} from "../managers/core/render/sprite";
-import {o_} from "../managers/locator";
-import {colorsNum, gameConstants} from "../configs/constants";
-import {Evt, subscriptions} from "../event-bus";
-import {positioner} from "../managers/game/positioner";
-import {EntityType, GameEntityBase} from "../managers/core/entities";
-import {Pot} from "./buildings/pot";
-import {LayerKey} from "../managers/core/layers";
-import {SOUND_KEY} from "../managers/core/audio";
-import {ImageKey} from "../utils/utils-types";
-import {FoodType} from "../types";
-import ParticleEmitter = Phaser.GameObjects.Particles.ParticleEmitter;
-import {GoldLocation} from "./gold";
-import {foodConfig} from "../configs/food-config";
-import {destroyInteractiveObjWithFade, destroyInteractiveObjWithJump} from "../helpers";
-import {debugExpose} from "../utils/utils-misc";
-import {EffectRotten} from "../effects/rotten";
+import {rnd, rnd2, rndBetween, Vec} from "../../utils/utils-math";
+import {O_Sprite} from "../../managers/core/render/sprite";
+import {o_} from "../../managers/locator";
+import {Evt} from "../../event-bus";
+import {positioner} from "../../managers/game/positioner";
+import {LayerKey} from "../../managers/core/layers";
+import {SOUND_KEY} from "../../managers/core/audio";
+import {ImageKey} from "../../utils/utils-types";
+import {FoodType} from "../../types";
+import {foodConfig} from "../../configs/food-config";
+import {destroyInteractiveObjWithFade, destroyInteractiveObjWithJump} from "../../helpers";
+import {debugExpose} from "../../utils/utils-misc";
+import {EffectRotten} from "../../effects/rotten";
+import {EffectType} from "../../effects/types";
+import {GameEntityBase} from "../base-entity";
+import {EntityType} from "../types";
+import {MeatEvent} from "./meat-events";
 
 export const enum MeatLocation {
     GROUND = 'GROUND',
@@ -37,11 +36,8 @@ export class Meat extends GameEntityBase<EntityType.MEAT> {
 
     sprite: O_Sprite
     location: MeatLocation
-    destroyed = false
 
     timePassed = 0
-
-    subs = subscriptions()
 
     jumpTween: Phaser.Tweens.Tween
     jumpTweenDirty = false
@@ -52,8 +48,6 @@ export class Meat extends GameEntityBase<EntityType.MEAT> {
         isHuman: false,
         isStale: false,
     }
-
-    effectRotten?: EffectRotten
 
     constructor(pos: Vec, location: MeatLocation = MeatLocation.GROUND, isHuman = false, key: ImageKey = meatSprite.ANIMAL) {
         super()
@@ -78,10 +72,10 @@ export class Meat extends GameEntityBase<EntityType.MEAT> {
         // this shit still ruins y coord in flyTo method somehow
         this.jumpTween = o_.render.createJumpingTween(this.sprite)
 
-        this.subs.on(Evt.TIME_PASSED, () => this.onTimePassed())
+        this.globalEventsSubscripions.on(Evt.TIME_PASSED, () => this.onTimePassed())
 
-        this.subs.on(Evt.ENCOUNTER_STARTED, () => this.updateInteractive())
-        this.subs.on(Evt.ENCOUNTER_ENDED, () => this.updateInteractive())
+        this.globalEventsSubscripions.on(Evt.ENCOUNTER_STARTED, () => this.updateInteractive())
+        this.globalEventsSubscripions.on(Evt.ENCOUNTER_ENDED, () => this.updateInteractive())
 
         this.updateInteractive()
     }
@@ -149,21 +143,10 @@ export class Meat extends GameEntityBase<EntityType.MEAT> {
     }
 
     becomeRotten() {
-        this.effectRotten = new EffectRotten(this)
-        this.effectRotten.setActive(true)
+        this.eventEmitter.emit(MeatEvent.WENT_STALE)
+        this.addEffect(new EffectRotten(this))
         this.props.isStale = true
         this.timePassed = 0
-    }
-
-    private updateEmitters() {
-        // const parentX = this.sprite.obj.parentContainer?.x || 0
-        // const parentY = this.sprite.obj.parentContainer?.y || 0
-        // this.rottenGas.setPosition(
-        //     this.sprite.obj.x + parentX,
-        //     this.sprite.y + parentY
-        //     // {min: this.sprite.obj.x - 10 + parentX, max: this.sprite.x + 10 + parentX},
-        //     // {min: this.sprite.y - 10 + parentY, max: this.sprite.y + 10 + parentY},
-        // )
     }
 
     private onTimePassed() {
@@ -197,14 +180,12 @@ export class Meat extends GameEntityBase<EntityType.MEAT> {
 
         o_.layers.add(this.sprite, LayerKey.FIELD_BUTTONS)
         this.sprite.move(coord.x, coord.y)
-        this.updateEmitters()
     }
 
     moveBackToPlaceFromWhereItWasChosen() {
         if (this.location === MeatLocation.STORAGE) o_.lair.foodStorage.container.add(this.sprite)
         this.sprite.move(this.realPosition.x, this.realPosition.y)
         o_.layers.add(this.sprite, LayerKey.FIELD_OBJECTS)
-        this.updateEmitters()
     }
 
     onLastAnimation() {
@@ -230,7 +211,9 @@ export class Meat extends GameEntityBase<EntityType.MEAT> {
 
     public flyTo(pos: Vec, speed = 1000, maxDuration = 500): Promise<any> {
         this.setJumping(false);
-        if (this.props.isStale && !!this.effectRotten) this.effectRotten.stopGas()
+
+        const effectRotten = this.getEffect(EffectType.ROTTEN)
+        if (this.props.isStale && !!effectRotten) effectRotten.stopGas()
         if (this.location === MeatLocation.STORAGE && this.sprite.obj.parentContainer === o_.lair.foodStorage.container.obj) {
             o_.lair.foodStorage.container.remove(this.sprite)
             this.sprite.x += o_.lair.foodStorage.container.x
@@ -240,7 +223,7 @@ export class Meat extends GameEntityBase<EntityType.MEAT> {
         return o_.render.flyTo(this.sprite, pos, speed, maxDuration).then(() => {
             // console.log("finish", this)
             // this.updateEmitters()
-            if (this.props.isStale && !!this.effectRotten) this.effectRotten.startGas()
+            if (this.props.isStale && !!effectRotten) effectRotten.startGas()
         });
     }
 
@@ -250,12 +233,7 @@ export class Meat extends GameEntityBase<EntityType.MEAT> {
     }
 
 
-    destroy() {
-        this.deregister()
-        this.destroyed = true
-        // this.rottenGas.remove()
-        this.subs.clear()
-        this.sprite.destroy()
+    onDestroyed() {
         o_.lair.foodStorage.updateFood()
     }
 }
