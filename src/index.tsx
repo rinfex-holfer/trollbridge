@@ -1,12 +1,12 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import {GameOver} from "./interface/game-over";
+import {GameOver} from "./interface/html/game-over";
 import {newGame} from "./game";
 import translations from "./translations";
-import {GameWin} from "./interface/game-win";
-import {HowToPlay} from "./interface/how-to-play";
+import {GameWin} from "./interface/html/game-win";
+import {HowToPlay} from "./interface/html/how-to-play";
 import './styles.css'
-import {SettingsMenu} from "./interface/settings-menu";
+import {SettingsMenu} from "./interface/html/settings-menu";
 import {createRoot} from "react-dom/client";
 
 translations

@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
-import {eventBus, Evt} from "../event-bus";
-import {o_} from "../managers/locator";
+import {eventBus, Evt} from "../../event-bus";
+import {o_} from "../../managers/locator";
 
 export const GameOver = () => {
     const [state, setState] = useState('');

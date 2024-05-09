@@ -1,19 +1,19 @@
 import {o_} from "../../managers/locator";
-import {O_Sprite} from "../../managers/core/render/sprite";
 import {LayerKey} from "../../managers/core/layers";
 import {Vec} from "../../utils/utils-math";
 import {O_AnimatedSprite} from "../../managers/core/render/animated-sprite";
-import {colorsCSS, colorsNum} from "../../configs/constants";
-import {eventBus, Evt, eventBusSubscriptions} from "../../event-bus";
-import {FoodType} from "../../types";
+import {colorsCSS} from "../../configs/constants";
+import {eventBus, eventBusSubscriptions, Evt} from "../../event-bus";
 import {Meat} from "../meat/meat";
-import {findAndSplice, stub} from "../../utils/utils-misc";
+import {findAndSplice} from "../../utils/utils-misc";
 import {O_Text} from "../../managers/core/render/text";
 import {SOUND_KEY} from "../../managers/core/audio";
 import {foodConfig} from "../../configs/food-config";
-import ParticleEmitter = Phaser.GameObjects.Particles.ParticleEmitter;
 
 import {EntityType} from "../types";
+import {Dish} from "../dish/dish";
+import {positioner} from "../../managers/game/positioner";
+import {BaseEvent} from "../base-entity";
 
 export const enum PotState {
     NOT_EXIST = 'NOT_EXIST',
@@ -22,25 +22,46 @@ export const enum PotState {
     READY = 'READY',
 }
 
+export type PotProps = {
+    position: Vec,
+    state: PotState,
+    timePassed: number,
+    ingridientsContainHumanMeat: boolean,
+    ingridientsAreStale: boolean,
+}
+
+const defaultProps: PotProps = {
+    position: positioner.getPotPosition(),
+    state: PotState.NOT_EXIST,
+    timePassed: 0,
+    ingridientsContainHumanMeat: false,
+    ingridientsAreStale: false,
+}
+
 export class Pot {
     text: O_Text
     sprite: O_AnimatedSprite
-    dishSprite: O_Sprite
-
-    state: PotState = PotState.EMPTY
 
     subs = eventBusSubscriptions()
 
-    isDishStale = false
-    isDishHuman = false
-    timePassed = 0
-    rottenGas: ParticleEmitter
+    dish?: Dish
 
-    constructor(position: Vec) {
+    textShowTimeout: any
+    chosenFood: Meat[] = []
+
+    props: PotProps
+
+    constructor(props: Partial<PotProps> = {}) {
+        const initialProps: PotProps = {
+            ...defaultProps,
+            ...props,
+        }
+        this.props = initialProps
+
         this.sprite = o_.render.createAnimatedSprite({
             atlasKey: 'pot',
-            x: position.x,
-            y: position.y,
+            x: initialProps.position.x,
+            y: initialProps.position.y,
             animations: [
                 {framesPrefix: 'empty', repeat: -1, frameRate: 6},
                 {framesPrefix: 'full', repeat: -1, frameRate: 6},
@@ -54,60 +75,27 @@ export class Pot {
         this.sprite.onPointerOver(() => this.onPointerOver())
         this.sprite.onPointerOut(() => this.onPointerOut())
 
-        this.dishSprite = o_.render.createSprite('dish', position.x, position.y - 50)
-        o_.layers.add(this.dishSprite, LayerKey.FIELD_BUTTONS)
-
         this.text = o_.render.createText('На блюдо нужно 3 единицы мяса', this.sprite.x, this.sprite.y - 60, {color: colorsCSS.WHITE})
         this.text.setOrigin(0.5, 1)
         this.text.setVisibility(false)
         o_.layers.add(this.text, LayerKey.FIELD_OBJECTS)
 
-        this.rottenGas = o_.render.createGreenSmokeEmitter()
-        this.updateEmitters()
-
-        this.setState(PotState.NOT_EXIST);
-
         o_.upgrade.createUpgradeButton({x: this.sprite.x, y: this.sprite.y}, 'Котел', 50, () => this.upgrade())
 
         this.subs.on(Evt.TIME_PASSED, () => this.onTimePassed())
+
+        this.setState(initialProps.state);
     }
 
     private upgrade() {
         this.setState(PotState.EMPTY)
     }
 
-    private updateEmitters() {
-        // const parentX = this.sprite.obj.parentContainer?.x || 0
-        // const parentY = this.sprite.obj.parentContainer?.y || 0
-        this.rottenGas.setPosition(
-            this.sprite.obj.x,
-            this.sprite.y - 50
-            // {min: this.sprite.obj.x - 10, max: this.sprite.x + 10},
-            // {min: this.sprite.y - 60, max: this.sprite.y - 40},
-        )
-    }
-
     private onTimePassed() {
-        if (this.state === PotState.READY) {
-            this.timePassed++
-
-            if (!this.isDishStale && this.timePassed > foodConfig.RAW_MEAT_TIME_LIMIT) {
-                this.becomeRotten()
-            } else if (this.isDishStale && this.timePassed > foodConfig.STALE_MEAT_TIME_LIMIT) {
-                this.timePassed = 0
-                this.setState(PotState.EMPTY)
-                return
-            }
-        } else {
-            this.timePassed = 0
-        }
-
-        if (this.state === PotState.PREPARING) {
+        if (this.props.state === PotState.PREPARING) {
             this.setState(PotState.READY);
         }
     }
-
-    textShowTimeout: any
 
     showText() {
         this.text.setVisibility(true)
@@ -123,59 +111,63 @@ export class Pot {
 
     }
 
-    private becomeRotten() {
-        this.isDishStale = true
-        this.timePassed = 0
-        this.rottenGas.active = true
-        this.rottenGas.setVisible(true)
-        this.dishSprite.obj.setTint(colorsNum.ROTTEN)
-        // this.rottenGas.start()
-    }
-
-    private becomeFresh() {
-        this.isDishStale = false
-        this.timePassed = 0
-        this.rottenGas.active = false
-        this.rottenGas.setVisible(false)
-        this.dishSprite.obj.clearTint()
-    }
-
     private setState(state: PotState) {
-        this.state = state;
+        this.props.state = state;
         switch (state) {
             case PotState.NOT_EXIST:
                 this.sprite.setVisibility(false)
-                this.dishSprite.setVisibility(false)
+                this.removeDish()
+                this.props.ingridientsContainHumanMeat = false
+                this.props.ingridientsAreStale = false
                 break;
             case PotState.EMPTY:
                 this.sprite.setVisibility(true)
                 this.sprite.play('empty')
-                this.dishSprite.setVisibility(false)
-                this.becomeFresh()
-                this.isDishHuman = false
+                this.removeDish()
+                this.props.ingridientsContainHumanMeat = false
+                this.props.ingridientsAreStale = false
                 break;
             case PotState.PREPARING:
+                this.sprite.setVisibility(true)
                 this.sprite.play('full')
-                this.dishSprite.setVisibility(false)
-                this.setInteractive(false)
+                this.removeDish()
                 break;
             case PotState.READY:
+                this.sprite.setVisibility(true)
                 o_.render.burstYellow(this.sprite.x, this.sprite.y)
                 this.sprite.play('empty')
-                this.dishSprite.setVisibility(true)
-                this.setInteractive(true)
+                this.createDish()
                 break;
             default:
                 throw Error('wrong pot state ' + state)
         }
     }
 
-    eat() {
-        o_.troll.eat(FoodType.DISH, this.isDishStale, this.isDishHuman)
-        this.setState(PotState.EMPTY)
+    createDish() {
+        this.dish = new Dish({
+            x: this.sprite.x,
+            y: this.sprite.y - 10
+        }, this.props.ingridientsContainHumanMeat, this.props.ingridientsAreStale)
+        this.props.ingridientsContainHumanMeat = false
+        this.props.ingridientsAreStale = false
+        this.dish.eventEmitter.once(BaseEvent.DESTROYED, () => {
+            this.removeDish()
+        })
     }
 
-    chosenFood: Meat[] = []
+    removeDish() {
+        if (this.dish) {
+            if (!this.dish.destroyed) {
+                this.dish.destroy()
+            }
+            this.dish = undefined
+        }
+    }
+
+    eat() {
+        this.dish?.eat()
+        this.setState(PotState.EMPTY)
+    }
 
     public getFreePlaceForChosenFood(): Vec {
         return {
@@ -204,12 +196,12 @@ export class Pot {
 
         o_.audio.playSound(SOUND_KEY.COLLECT)
 
-        this.chosenFood.forEach(m => {
-            if (m.props.isStale) this.becomeRotten()
-            if (m.props.isHuman) this.isDishHuman = true
-            m.onLastAnimation()
+        this.chosenFood.forEach(food => {
+            if (food.props.isStale) this.props.ingridientsAreStale = true
+            if (food.props.isHuman) this.props.ingridientsContainHumanMeat = true
+            food.onLastAnimation()
             const flyTarget = {x: this.sprite.x, y: this.sprite.y - 30}
-            promises.push(m.flyTo(flyTarget, 50, 500).then(() => m.destroy()))
+            promises.push(food.flyTo(flyTarget, 50, 500).then(() => food.destroy()))
         })
         Promise.all(promises).then(() => {
             o_.audio.playSound(SOUND_KEY.BUBBLE)
@@ -257,6 +249,6 @@ export class Pot {
     }
 
     onClick() {
-        eventBus.emit(Evt.INTERFACE_POT_CLICKED, this.state)
+        eventBus.emit(Evt.INTERFACE_POT_CLICKED, this.props.state)
     }
 }

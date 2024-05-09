@@ -1,7 +1,7 @@
 import React, {useEffect, useState, useSyncExternalStore} from "react";
-import {eventBus, Evt} from "../event-bus";
-import {o_} from "../managers/locator";
-import {Resolution, resolutionMap, Settings} from "../managers/core/settings";
+import {eventBus, Evt} from "../../event-bus";
+import {o_} from "../../managers/locator";
+import {Resolution, resolutionMap, Settings} from "../../managers/core/settings";
 
 const subscribe = (callback: VoidFunction) => {
     const id = eventBus.on(Evt.SETTINGS_CHANGED, callback)

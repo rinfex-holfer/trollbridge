@@ -34,11 +34,12 @@ export class Dish extends GameEntityBase<EntityType.DISH> {
         isStale: false,
     }
 
-    constructor(pos: Vec, isHuman = false) {
+    constructor(pos: Vec, isHuman = false, isStale = false) {
         super()
         this.id = this.register()
 
         this.props.isHuman = isHuman
+        this.props.isStale = isStale
 
         this.sprite = o_.render.createSprite('dish', pos.x, pos.y)
         // o_.layers.add(this.sprite, LayerKey.FIELD_BUTTONS)

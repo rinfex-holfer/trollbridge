@@ -57,6 +57,9 @@ export abstract class GameEntityBase<T extends EntityType> implements GameEntity
     }
 
     private _destroy = () => {
+        if (this.destroyed) {
+            return
+        }
         this.deregister()
         this.destroyed = true
         this.globalEventsSubscripions.clear()
