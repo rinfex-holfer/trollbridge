@@ -27,6 +27,7 @@ import {Ladder} from "./entities/buildings/ladder";
 import {SettingsManager} from "./managers/core/settings";
 import {gamePhaseCycle} from "./phases/game-phase-cycle";
 import {PhaseLair} from "./phases/phase-lair";
+import {InputManager} from "./managers/core/input";
 
 const preload = (scene: Phaser.Scene) => {
     const imgKeys = Object.keys(resoursePaths.images) as (keyof typeof resoursePaths.images)[];
@@ -54,6 +55,8 @@ const create = (scene: Phaser.Scene) => {
     new MusicManager()
 
     new GameNotifications()
+
+    new InputManager(scene)
 
     // new Meat({x: 660, y: 1200})
     // new Meat({x: 680, y: 1200})

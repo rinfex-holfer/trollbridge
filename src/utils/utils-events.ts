@@ -29,13 +29,13 @@ export class O_EventEmitter<Events extends string, EventsPayloadMap extends obje
     once = <E extends Events>(eventType: E, callback: (data: PayloadOrUndefined<Events, EventsPayloadMap>) => void) => {
         let id = -1;
         id = this.on(eventType, (...args) => {
-            this.unsubscribe(eventType, id);
+            this.off(eventType, id);
             callback(...args);
         })
         return id;
     }
 
-    unsubscribe = (eventType: Events, id: number) => {
+    off = (eventType: Events, id: number) => {
         const subscriber = this.subs[eventType][id];
         if (!!subscriber) delete this.subs[eventType][id]
     }

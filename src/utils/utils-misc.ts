@@ -31,6 +31,7 @@ export function findAndSplice<T>(arr: T[], item: T): boolean {
     return true
 }
 
+/** @deprecated */
 export function createMessageEmitter<Message>() {
     type Handler = (message: Message) => void
     const subscribers = [] as [number, Handler][];
