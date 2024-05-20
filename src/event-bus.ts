@@ -7,6 +7,10 @@ import {MenuScreen} from "./managers/core/menu";
 let nextId = 0;
 
 export const enum Evt {
+    GAME_LOADING_STARTED = 'GAME_LOADING_STARTED',
+    GAME_LOADING_PROGRESS = 'GAME_LOADING_PROGRESS',
+    GAME_LOADING_FINISHED = 'GAME_LOADING_FINISHED',
+
     INTERFACE_LAIR_CLICKED = 'INTERFACE_LAIR_CLICKED',
     INTERFACE_BRIDGE_CLICKED = 'INTERFACE_BRIDGE_CLICKED',
     INTERFACE_BED_CLICKED = 'INTERFACE_BED_CLICKED',
@@ -61,6 +65,10 @@ export const enum Evt {
 }
 
 export type EvtData = {
+    [Evt.GAME_LOADING_STARTED]: undefined,
+    [Evt.GAME_LOADING_PROGRESS]: number,
+    [Evt.GAME_LOADING_FINISHED]: undefined,
+
     [Evt.INTERFACE_LAIR_CLICKED]: undefined,
     [Evt.INTERFACE_BRIDGE_CLICKED]: undefined,
     [Evt.INTERFACE_BED_CLICKED]: undefined,

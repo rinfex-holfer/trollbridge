@@ -45,7 +45,6 @@ export class KeyboardController extends GameInputEventEmitter {
     }
 
     private onKeyboardEvent = (event: KeyboardEvent) => {
-        console.log('manager onKeyboardEvent', event.code)
         const signal = this.config[event.code]
         if (signal) {
             this.emit(GAME_INPUT_EVENT, signal)

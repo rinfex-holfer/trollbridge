@@ -1,6 +1,5 @@
 import Phaser from "phaser";
 import {resoursePaths} from "./resourse-paths";
-import {resourseLoader} from "./resource-loader";
 import {RenderManager} from "./managers/core/render/render-manager";
 import {Troll} from "./managers/game/troll/troll";
 import {getGameSize} from "./utils/utils-misc";
@@ -28,18 +27,18 @@ import {SettingsManager} from "./managers/core/settings";
 import {gamePhaseCycle} from "./phases/game-phase-cycle";
 import {PhaseLair} from "./phases/phase-lair";
 import {InputManager} from "./managers/core/input";
-import {Menu} from "./interface/html/menu";
 import {MenuManager} from "./managers/core/menu";
+import {GameLoader} from "./game-loader";
 
 const preload = (scene: Phaser.Scene) => {
-    const imgKeys = Object.keys(resoursePaths.images) as (keyof typeof resoursePaths.images)[];
-    imgKeys.forEach(key => scene.load.image(key, resoursePaths.images[key]))
+    const gameLoader = new GameLoader(scene)
+    gameLoader.load()
 }
 
 const create = (scene: Phaser.Scene) => {
+    new GameManager(scene)
     new InputManager(scene)
     new MenuManager()
-    new GameManager(scene)
     const timeManager = new TimeManager()
     new LayersManager(scene)
     new RenderManager(scene)
@@ -93,7 +92,6 @@ export const newGame = () => {
         pixelArt: true,
         parent: document.getElementById('game-container')!,
         scale: {
-            // mode: Phaser.Scale.ENVELOP,
             width: size.width,
             height: size.height,
         },
@@ -105,8 +103,6 @@ export const newGame = () => {
         },
         scene: {
             preload: function () {
-                // this.load.plugin('rexshakepositionplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexshakepositionplugin.min.js', true);
-                resourseLoader.load(this)
                 preload(this);
             },
             create: function () {

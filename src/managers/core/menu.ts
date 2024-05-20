@@ -2,6 +2,7 @@ import {eventBus, Evt} from "../../event-bus";
 import {GameInputEvent} from "./input/domain";
 import {o_} from "../locator";
 import {GAME_INPUT_EVENT} from "./input/types";
+import {reactUiRef} from "../../interface/html/react-ui";
 
 export enum MenuScreen {
     MAIN = "MAIN",
@@ -18,6 +19,8 @@ export class MenuManager {
     constructor() {
         o_.input.on(GAME_INPUT_EVENT, this.onGameInputEvent)
         o_.register.menu(this)
+
+        reactUiRef.setIsReady(true)
     }
 
     onGameInputEvent = (e: GameInputEvent) => {

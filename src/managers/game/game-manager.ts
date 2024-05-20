@@ -11,8 +11,8 @@ export class GameManager {
     constructor(private scene: Phaser.Scene) {
         o_.register.game(this)
 
-        eventBus.on(Evt.INTERFACE_MENU_OPENED, () => this.pause())
-        eventBus.on(Evt.INTERFACE_MENU_CLOSED, () => this.resume())
+        eventBus.on(Evt.INTERFACE_MENU_OPENED, this.pause)
+        eventBus.on(Evt.INTERFACE_MENU_CLOSED, this.resume)
     }
 
     pause = () => {

@@ -55,10 +55,6 @@ canvas {
     text-align: center;
 }
 
-#temp-interface {
-
-}
-
 #gameover {
     position: absolute;
     top: 50%;
@@ -178,17 +174,22 @@ canvas {
     gap: 10px;
 }
 
-#loading {
-    display: inline-block;
+.loading-screen {
     position: absolute;
-    top: 10px;
-    left: 10px;
-    z-index: 999;
-    background: black;
-    color: white;
-    padding: 10px;
-}
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: var(--INTERFACE_Z);
 
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    color: white;
+}
 
 /* ========= MENU ====== */
 
