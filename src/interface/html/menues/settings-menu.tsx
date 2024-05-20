@@ -4,6 +4,7 @@ import {o_} from "../../../managers/locator";
 import {Resolution, resolutionMap, Settings} from "../../../managers/core/settings";
 import {MenuTemplate} from "../components/menu-template";
 import {MenuButtonBack} from "../components/menu-button-back";
+import {Txt} from "../../../managers/core/texts";
 
 const subscribe = (callback: VoidFunction) => {
     const id = eventBus.on(Evt.SETTINGS_CHANGED, callback)
@@ -38,7 +39,7 @@ export const SettingsMenu = () => {
         });
     }
 
-    return <MenuTemplate title="Settings">
+    return <MenuTemplate title={o_.texts.t(Txt.Settings)}>
         <MenuButtonBack/>
         <select
             value={settings.resolution}

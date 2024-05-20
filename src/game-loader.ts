@@ -13,7 +13,6 @@ export class GameLoader {
 
         const {promise, done, fail} = createPromiseAndHandlers();
 
-        
         this.scene.load.on('progress', (a: string) => {
             eventBus.emit(Evt.GAME_LOADING_PROGRESS, +a * 100)
         });

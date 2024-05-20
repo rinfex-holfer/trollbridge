@@ -29,6 +29,7 @@ import {PhaseLair} from "./phases/phase-lair";
 import {InputManager} from "./managers/core/input";
 import {MenuManager} from "./managers/core/menu";
 import {GameLoader} from "./game-loader";
+import {TextsManager} from "./managers/core/texts";
 
 const preload = (scene: Phaser.Scene) => {
     const gameLoader = new GameLoader(scene)
@@ -83,7 +84,8 @@ const create = (scene: Phaser.Scene) => {
 }
 
 export const newGame = () => {
-    new SettingsManager();
+    new SettingsManager()
+    new TextsManager()
 
     const size = getGameSize()
 

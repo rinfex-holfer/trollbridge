@@ -1,5 +1,7 @@
 import {FC, useEffect, useState} from "react";
 import {eventBus, Evt} from "../../event-bus";
+import {o_} from "../../managers/locator";
+import {Txt} from "../../managers/core/texts";
 
 
 export const LoadingScreen: FC = () => {
@@ -15,6 +17,6 @@ export const LoadingScreen: FC = () => {
     if (!isVisible) return null;
 
     return <div className='loading-screen'>
-        loading... {progress}%
+        {o_.texts.t(Txt.Loading)}... {progress}%
     </div>
 }

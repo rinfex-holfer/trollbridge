@@ -17,6 +17,7 @@ import {CameraManager} from "./core/camera";
 import {SettingsManager} from "./core/settings";
 import {InputManager} from "./core/input";
 import {MenuManager} from "./core/menu";
+import {TextsManager} from "./core/texts";
 
 class Locator {
     #_render: RenderManager | undefined
@@ -38,6 +39,7 @@ class Locator {
     #_upgrade: UpgradeManager | undefined
     #_camera: CameraManager | undefined;
     #_settings: SettingsManager | undefined;
+    #_texts: TextsManager | undefined;
 
     static crashStr(m: string) {
         return 'trying access ' + m + ' before it was created';
@@ -101,6 +103,9 @@ class Locator {
         settings: (settings: SettingsManager) => {
             this.#_settings = settings
         },
+        text: (textsManager: TextsManager) => {
+            this.#_texts = textsManager
+        }
     }
 
     get render() {
@@ -196,6 +201,11 @@ class Locator {
     get settings() {
         if (!this.#_settings) throw Error(Locator.crashStr('settings'))
         return this.#_settings
+    }
+
+    get texts() {
+        if (!this.#_texts) throw Error(Locator.crashStr('texts'))
+        return this.#_texts
     }
 }
 
