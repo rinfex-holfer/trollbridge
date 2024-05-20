@@ -46,3 +46,26 @@ export class O_EventEmitter<Events extends string, EventsPayloadMap extends obje
         Object.values(this.subs[eventType]).forEach(sub => sub(data))
     }
 }
+
+export function createMessageEmitter<Message>() {
+    type Handler = (message: Message) => void
+    const subscribers = [] as [number, Handler][];
+    let nextId = 0;
+
+    return {
+        sub: (handler: Handler) => {
+            const id = nextId;
+            subscribers.push([id, handler])
+            nextId++
+            return id;
+        },
+        unsub: (id: number) => {
+            const idx = subscribers.findIndex(([subId, _]) => subId === id)
+            if (idx > -1) subscribers.splice(idx, 1)
+            else console.warn('no subscriber with id', id)
+        },
+        emit: (message: Message) => {
+            subscribers.forEach(s => s[1](message))
+        }
+    }
+}

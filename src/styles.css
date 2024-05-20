@@ -1,6 +1,11 @@
 :root {
     --menu-min-width: 500px;
     --button-font-size: 1.5rem;
+
+    --TITLE_WIDTH: 300px; /* Arbitrary value for title width */
+    --BUTTON_HIDE_TIME: 0.5s; /* Arbitrary value for button hide animation duration */
+
+    --INTERFACE_Z: 99
 }
 
 * {
@@ -182,4 +187,92 @@ canvas {
     background: black;
     color: white;
     padding: 10px;
+}
+
+
+/* ========= MENU ====== */
+
+.title {
+    font-size: 3rem;
+    margin: 2vh 0 10vh;
+    text-align: center;
+    z-index: 1;
+    color: #fff;
+    overflow: hidden;
+}
+
+.title .menuHorizontal {
+    width: 100%;
+    flex-grow: 1;
+}
+
+.menu-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: var(--INTERFACE_Z);
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.menu {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-direction: column;
+    text-align: center;
+    margin: 8vh auto 0;
+    padding: 0 5vh;
+    width: 100%;
+}
+
+.menu.menuHorizontal {
+    flex-direction: row;
+    flex-wrap: wrap;
+    min-height: 200px;
+    align-items: center;
+    justify-content: center;
+}
+
+.menu-button {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    text-transform: uppercase;
+    font-size: 2rem;
+    border: none;
+    background: rgba(255, 255, 255, 0);
+    box-shadow: 0 0 10px 0 rgba(255, 255, 255, 1), inset 0 0 10px 0 rgba(255, 255, 255, 1);
+    font-weight: normal;
+    margin: 0 15px 30px;
+    outline: 1px solid white;
+    padding: 8px 10px;
+    width: 100%;
+    min-width: 70px;
+    max-width: var(--TITLE_WIDTH);
+    min-height: 40px;
+}
+
+.menuHorizontal .menu-button {
+    min-width: 250px;
+    width: auto;
+    margin: 2.5% 2.5%;
+}
+
+.menu-button:focus,
+.menu-button:active {
+    border: none;
+    outline: 1px solid white;
+}
+
+.menu-button.focused {
+    color: #000;
+    background: rgba(255, 255, 255, 0.8);
 }

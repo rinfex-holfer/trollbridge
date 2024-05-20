@@ -1,9 +1,10 @@
 import Phaser from "phaser";
-import {createMessageEmitter, getGameSize} from "../../utils/utils-misc";
+import {getGameSize} from "../../utils/utils-misc";
 import {o_} from "../locator";
 import {TrollLocation} from "../../types";
 import {LayerKey} from "./layers";
 import {O_Sprite} from "./render/sprite";
+import {createMessageEmitter} from "../../utils/utils-events";
 
 export type ClickHandler = (pointer: Phaser.Input.Pointer) => void
 

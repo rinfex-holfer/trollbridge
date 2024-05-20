@@ -2,6 +2,7 @@ import {CharKey, EncounterDanger, TrollLocation} from "./types";
 import {TrollFearLevel} from "./managers/game/troll/types";
 import {Settings} from "./managers/core/settings";
 import {PotState} from "./entities/buildings/pot";
+import {MenuScreen} from "./managers/core/menu";
 
 let nextId = 0;
 
@@ -13,6 +14,10 @@ export const enum Evt {
 
     INTERFACE_OPEN_BUILD_MENU_BUTTON_CLICKED = 'INTERFACE_OPEN_BUILD_MENU_BUTTON_CLICKED',
     INTERFACE_WAIT_BUTTON_CLICKED = 'INTERFACE_WAIT_BUTTON_CLICKED',
+
+    INTERFACE_MENU_OPENED = 'INTERFACE_MENU_OPENED',
+    INTERFACE_MENU_CLOSED = 'INTERFACE_MENU_CLOSED',
+    INTERFACE_MENU_SCREEN_CHANGED = 'INTERFACE_MENU_SCREEN_CHANGED',
 
     BUILDING_COMPLETED = 'BUILDING_COMPLETED',
 
@@ -62,6 +67,10 @@ export type EvtData = {
     [Evt.INTERFACE_POT_CLICKED]: PotState,
     [Evt.INTERFACE_OPEN_BUILD_MENU_BUTTON_CLICKED]: undefined,
     [Evt.INTERFACE_WAIT_BUTTON_CLICKED]: undefined,
+
+    [Evt.INTERFACE_MENU_OPENED]: undefined,
+    [Evt.INTERFACE_MENU_CLOSED]: undefined,
+    [Evt.INTERFACE_MENU_SCREEN_CHANGED]: MenuScreen,
 
     [Evt.BUILDING_COMPLETED]: undefined,
 
@@ -142,7 +151,11 @@ export const eventBus = {
     },
 
     emit: function <E extends Evt>(eventType: E, data?: EvtData[E]) {
-        console.log('emit', eventType, this.subs[eventType]);
+        if (this.subs[eventType]) {
+            // console.log('emit', eventType, "subs:", Object.keys(this.subs[eventType]).length);
+        } else {
+            // console.log('emit', eventType, "no subs");
+        }
 
         if (!this.subs[eventType]) return;
 

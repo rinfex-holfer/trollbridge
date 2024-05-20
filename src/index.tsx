@@ -4,10 +4,11 @@ import {GameOver} from "./interface/html/game-over";
 import {newGame} from "./game";
 import translations from "./translations";
 import {GameWin} from "./interface/html/game-win";
-import {HowToPlay} from "./interface/html/how-to-play";
+import {HowToPlayMenu} from "./interface/html/menues/how-to-play-menu";
 import './styles.css'
-import {SettingsMenu} from "./interface/html/settings-menu";
+import {SettingsMenu} from "./interface/html/menues/settings-menu";
 import {createRoot} from "react-dom/client";
+import {Menu} from "./interface/html/menu";
 
 translations
 
@@ -30,11 +31,7 @@ document.body.appendChild(appElement);
 
 const App = () => {
     return <div id='temp-interface'>
-        <GameOver/>
-        <GameWin/>
-        <HowToPlay/>
-        <SettingsMenu/>
-        {/*<DateTime />*/}
+        <Menu/>
     </div>;
 };
 

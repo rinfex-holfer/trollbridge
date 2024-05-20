@@ -14,6 +14,14 @@ export abstract class GamePhase {
         this.goToNextPhase = done
     }
 
+    pause = () => {
+
+    }
+
+    unpause = () => {
+
+    }
+
     protected registerListener<E extends Evt>(eventType: E, callback: (data: EvtData[E]) => void) {
         const id = eventBus.on(eventType, callback)
         this.listeners.push([eventType, id])

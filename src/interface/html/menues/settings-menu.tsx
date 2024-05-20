@@ -1,7 +1,9 @@
 import React, {useEffect, useState, useSyncExternalStore} from "react";
-import {eventBus, Evt} from "../../event-bus";
-import {o_} from "../../managers/locator";
-import {Resolution, resolutionMap, Settings} from "../../managers/core/settings";
+import {eventBus, Evt} from "../../../event-bus";
+import {o_} from "../../../managers/locator";
+import {Resolution, resolutionMap, Settings} from "../../../managers/core/settings";
+import {MenuTemplate} from "../components/menu-template";
+import {MenuButtonBack} from "../components/menu-button-back";
 
 const subscribe = (callback: VoidFunction) => {
     const id = eventBus.on(Evt.SETTINGS_CHANGED, callback)
@@ -36,26 +38,19 @@ export const SettingsMenu = () => {
         });
     }
 
-    return <div className='settings'>
-        <button className='settings__open' onClick={(e) => {
-            setHidden(!isHidden)
-        }}>{isHidden ? '⚙️' : 'X'}</button>
-
-        {!isHidden && <div className='settings__overlay'>
-            <div className='settings__menu'>
-                <select
-                    value={settings.resolution}
-                    name="resolution"
-                    id="resolution-select"
-                    onChange={e => {
-                        onNewResolutionSet(e.target.value as Resolution)
-                    }}
-                >
-                    {Object.keys(resolutionMap).map(rKey =>
-                        <option value={rKey} key={rKey}>{rKey}</option>
-                    )}
-                </select>
-            </div>
-        </div>}
-    </div>
+    return <MenuTemplate title="Settings">
+        <MenuButtonBack/>
+        <select
+            value={settings.resolution}
+            name="resolution"
+            id="resolution-select"
+            onChange={e => {
+                onNewResolutionSet(e.target.value as Resolution)
+            }}
+        >
+            {Object.keys(resolutionMap).map(rKey =>
+                <option value={rKey} key={rKey}>{rKey}</option>
+            )}
+        </select>
+    </MenuTemplate>
 }

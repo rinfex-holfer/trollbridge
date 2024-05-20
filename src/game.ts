@@ -28,6 +28,8 @@ import {SettingsManager} from "./managers/core/settings";
 import {gamePhaseCycle} from "./phases/game-phase-cycle";
 import {PhaseLair} from "./phases/phase-lair";
 import {InputManager} from "./managers/core/input";
+import {Menu} from "./interface/html/menu";
+import {MenuManager} from "./managers/core/menu";
 
 const preload = (scene: Phaser.Scene) => {
     const imgKeys = Object.keys(resoursePaths.images) as (keyof typeof resoursePaths.images)[];
@@ -35,6 +37,8 @@ const preload = (scene: Phaser.Scene) => {
 }
 
 const create = (scene: Phaser.Scene) => {
+    new InputManager(scene)
+    new MenuManager()
     new GameManager(scene)
     const timeManager = new TimeManager()
     new LayersManager(scene)
@@ -55,8 +59,6 @@ const create = (scene: Phaser.Scene) => {
     new MusicManager()
 
     new GameNotifications()
-
-    new InputManager(scene)
 
     // new Meat({x: 660, y: 1200})
     // new Meat({x: 680, y: 1200})

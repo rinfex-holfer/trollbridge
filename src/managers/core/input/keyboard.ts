@@ -37,10 +37,15 @@ export class KeyboardController extends GameInputEventEmitter {
         if (!this.scene.input.keyboard) {
             return
         }
-        this.scene.input.keyboard.on('keydown', this.onKeyboardEvent);
+
+        // phaser input.keyboard.on('keydown') method breaks when game is paused:
+        // this.scene.input.keyboard.on('keydown', this.onKeyboardEvent);
+        // so using native API:
+        window.document.addEventListener('keydown', this.onKeyboardEvent)
     }
 
     private onKeyboardEvent = (event: KeyboardEvent) => {
+        console.log('manager onKeyboardEvent', event.code)
         const signal = this.config[event.code]
         if (signal) {
             this.emit(GAME_INPUT_EVENT, signal)

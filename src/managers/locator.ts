@@ -13,9 +13,10 @@ import {InteractionManager} from "./core/interaction";
 import {UpgradeManager} from "./game/upgrade";
 import {Negotiations} from "./game/negotiations";
 import {MusicManager} from "./core/music";
-import {HtmlInterfaceManager} from "./core/interface";
 import {CameraManager} from "./core/camera";
 import {SettingsManager} from "./core/settings";
+import {InputManager} from "./core/input";
+import {MenuManager} from "./core/menu";
 
 class Locator {
     #_render: RenderManager | undefined
@@ -32,7 +33,8 @@ class Locator {
     #_layers: LayersManager | undefined
     #_entities: EntityManager | undefined
     #_interaction: InteractionManager | undefined
-    #_htmlInterface: HtmlInterfaceManager | undefined
+    #_input: InputManager | undefined
+    #_menu: MenuManager | undefined
     #_upgrade: UpgradeManager | undefined
     #_camera: CameraManager | undefined;
     #_settings: SettingsManager | undefined;
@@ -81,8 +83,11 @@ class Locator {
         interaction: (interaction: InteractionManager) => {
             this.#_interaction = interaction
         },
-        htmlInterface: (htmlInterface: HtmlInterfaceManager) => {
-            this.#_htmlInterface = htmlInterface
+        input: (inputManager: InputManager) => {
+            this.#_input = inputManager
+        },
+        menu: (menuManager: MenuManager) => {
+            this.#_menu = menuManager
         },
         upgrade: (upgrade: UpgradeManager) => {
             this.#_upgrade = upgrade
@@ -163,9 +168,14 @@ class Locator {
         return this.#_interaction
     }
 
-    get htmlInterface() {
-        if (!this.#_htmlInterface) throw Error(Locator.crashStr('htmlInterface'))
-        return this.#_htmlInterface
+    get input() {
+        if (!this.#_input) throw Error(Locator.crashStr('input'))
+        return this.#_input
+    }
+
+    get menu() {
+        if (!this.#_menu) throw Error(Locator.crashStr('menu'))
+        return this.#_menu
     }
 
     get upgrade() {
