@@ -1,7 +1,9 @@
 import {Language} from "../../translations";
+import {o_} from "../locator";
 
 export class TextsManager {
     constructor() {
+        o_.register.texts(this)
     }
 
     t(textKey: string): string {

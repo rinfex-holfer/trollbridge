@@ -84,8 +84,8 @@ const create = (scene: Phaser.Scene) => {
 }
 
 export const newGame = () => {
-    new SettingsManager()
     new TextsManager()
+    new SettingsManager()
 
     const size = getGameSize()
 

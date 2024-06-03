@@ -103,7 +103,7 @@ class Locator {
         settings: (settings: SettingsManager) => {
             this.#_settings = settings
         },
-        text: (textsManager: TextsManager) => {
+        texts: (textsManager: TextsManager) => {
             this.#_texts = textsManager
         }
     }

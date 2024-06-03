@@ -24,6 +24,7 @@ export class MenuManager {
     }
 
     onGameInputEvent = (e: GameInputEvent) => {
+        console.log("onGameInputEvent", e)
         if (e === GameInputEvent.CANCEL) {
             if (this.isOpened) {
                 this.closeMenu()

@@ -4,7 +4,6 @@ import {MenuTemplate} from "../components/menu-template";
 import {o_} from "../../../managers/locator";
 import {Txt} from "../../../managers/core/texts";
 
-
 export const SaveMenu: FC = () => {
     return <MenuTemplate title={o_.texts.t(Txt.SaveMenu)}>
         <div></div>
