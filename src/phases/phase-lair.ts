@@ -6,21 +6,11 @@ import {GamePhase} from "./game-phase";
 import {PotState} from "../entities/buildings/pot";
 import {PhaseMakeFood} from "./phase-make-food";
 import {PhaseBuild} from "./phase-build";
-
-const Activity = {
-    GO_TO_BED: "GO_TO_BED",
-    GO_TO_BRIDGE: "GO_TO_BRIDGE",
-    GO_TO_STAIRS: "GO_TO_STAIRS",
-    GO_TO_CHILL_ZONE: "GO_TO_CHILL_ZONE"
-} as const
-type TrollActivityInLair = typeof Activity[keyof typeof Activity]
-
-enum ActivityResult {
-    FINISHED = 'FINISHED',
-    CANCELED = 'CANCELED',
-}
+import {PhaseBridge} from "./phase-bridge";
 
 export class PhaseLair extends GamePhase {
+
+    name = "lair"
 
     activity?: {
         promise: CancellablePromise,
@@ -68,32 +58,32 @@ export class PhaseLair extends GamePhase {
             o_.lair.setObjectsActive(true)
             o_.lair.setClickable(false)
             o_.lair.setMenuShown(true)
-            o_.bridge.enableInterface()
+            o_.bridge.setInteractive.all(true)
         },
         goesToBed: () => {
             o_.lair.setClickable(true)
             o_.lair.setObjectsActive(false)
             o_.lair.setMenuShown(false)
-            o_.bridge.enableInterface();
+            o_.bridge.setInteractive.all(true);
         },
         sleepOnBed: () => {
             o_.lair.setClickable(true)
             o_.lair.setObjectsActive(false)
             o_.lair.bed.setEnabled(true)
             o_.lair.setMenuShown(false)
-            o_.bridge.disableInterface();
+            o_.bridge.setInteractive.all(false);
         },
         cleanup: () => {
             o_.lair.setObjectsActive(false)
             o_.lair.setClickable(false)
             o_.lair.setMenuShown(false)
-            o_.bridge.disableInterface()
+            o_.bridge.setInteractive.all(false)
         },
         goesToBridge: () => {
             o_.lair.setObjectsActive(false)
             o_.lair.setMenuShown(false)
             o_.lair.setClickable(true)
-            o_.bridge.disableInterface()
+            o_.bridge.setInteractive.all(false)
         }
     }
 
@@ -139,6 +129,7 @@ export class PhaseLair extends GamePhase {
         }
 
         // TODO climb stairs
+        this.goToNextPhase(new PhaseBridge())
     }
 
     trollGoesToBed = async () => {

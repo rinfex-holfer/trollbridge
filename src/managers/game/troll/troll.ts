@@ -366,12 +366,12 @@ export class Troll {
         return this.state.start();
     }
 
-    setLocation(location: TrollLocation) {
+    setLocation = (location: TrollLocation) => {
         this.location = location;
         eventBus.emit(Evt.TROLL_LOCATION_CHANGED, location)
     }
 
-    goToBridge() {
+    goToBridge = () => {
         // console.log("goToBridge");
         const target = {x: 0, y: 0}
         const bridgePos = positioner.getBridgePosition()
@@ -384,8 +384,10 @@ export class Troll {
     goToLadderBottom = () => {
         const ladderPos = positioner.getLadderBounds()[0]
         return this.setState(TrollStateKey.GO_TO, {
-            x: ladderPos.x + ladderPos.width / 2,
-            y: ladderPos.y
+            target: {
+                x: ladderPos.x + ladderPos.width / 2,
+                y: ladderPos.y
+            }
         })
     }
 

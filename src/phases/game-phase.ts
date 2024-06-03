@@ -8,6 +8,8 @@ export abstract class GamePhase {
     private finishPhasePromise: Promise<GamePhase>
     protected goToNextPhase: (nextPhase: GamePhase) => void
 
+    abstract readonly name: string
+
     constructor() {
         const {promise, done} = createPromiseAndHandlers<GamePhase>()
         this.finishPhasePromise = promise

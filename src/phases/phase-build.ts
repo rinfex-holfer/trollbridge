@@ -3,7 +3,14 @@ import {PhaseLair} from "./phase-lair";
 import {eventBus, Evt} from "../event-bus";
 import {o_} from "../managers/locator";
 
+
+// TODO ============== строить можно и в логове, и на мосту
+
+
 export class PhaseBuild extends GamePhase {
+
+    name = "build"
+
     onStart() {
         o_.upgrade.showButtons(this.goToLairPhase)
 

@@ -8,6 +8,7 @@ import {UpgradeButton} from "../../interface/upgrade-button";
 import {goldConfig} from "../../configs/gold-config";
 import {gameConstants} from "../../configs/constants";
 import {getGameSize} from "../../utils/utils-misc";
+import {eventBus, Evt} from "../../event-bus";
 
 export class BridgeManager {
     sprite: O_Tiles
@@ -25,8 +26,10 @@ export class BridgeManager {
         this.sprite.addPhysics()
         // this.sprite.obj.alpha = 0;
 
-        this.enableInterface();
-        this.sprite.onClick(() => o_.troll.goToBridge())
+        this.setInteractive.all(true);
+        this.sprite.onClick(() => {
+            eventBus.emit(Evt.INTERFACE_BRIDGE_CLICKED)
+        })
 
         o_.register.bridge(this);
 
@@ -42,17 +45,17 @@ export class BridgeManager {
         }, 'Украсить мост', goldConfig.costs.bridge_ornament, () => this.createStatues())
     }
 
-    enableInterface() {
-        this.sprite.setInteractive(true, {cursor: 'pointer'});
-    }
-
-    disableInterface() {
-        this.sprite.setInteractive(false);
-    }
-
-    updateMayBeMovedInto() {
-        if (o_.troll.location === TrollLocation.BRIDGE) this.disableInterface()
-        else this.enableInterface()
+    setInteractive = {
+        all: (val: boolean) => {
+            this.setInteractive.surface(val)
+        },
+        surface: (val: boolean) => {
+            if (val) {
+                this.sprite.setInteractive(true, {cursor: 'pointer'});
+            } else {
+                this.sprite.setInteractive(false);
+            }
+        },
     }
 
     private rockPlaces: RockPlace[] = []

@@ -33,21 +33,21 @@ export function onEncounterEnd() {
 
 export function onTrollCameToBridge() {
     console.log("======== onTrollCameToBridge")
-    o_.troll.location = TrollLocation.BRIDGE;
-    o_.lair.setObjectsActive(false)
-    // o_.lair.mayBeMovedInto(true)
-    o_.lair.menu.hide()
-    o_.bridge.disableInterface()
-    eventBus.emit(Evt.TROLL_LOCATION_CHANGED, TrollLocation.BRIDGE);
+    // o_.troll.location = TrollLocation.BRIDGE;
+    // o_.lair.setObjectsActive(false)
+    // // o_.lair.mayBeMovedInto(true)
+    // o_.lair.menu.hide()
+    // o_.bridge.setInteractive.all(false)
+    // eventBus.emit(Evt.TROLL_LOCATION_CHANGED, TrollLocation.BRIDGE);
 }
 
 export function onTrollGoesToBridge() {
     console.log("======== onTrollGoesToBridge")
-    o_.lair.setObjectsActive(false)
-    // o_.lair.mayBeMovedInto(false)
-    o_.lair.menu.hide()
-    o_.bridge.disableInterface()
-    o_.camera.panToBridge()
+    // o_.lair.setObjectsActive(false)
+    // // o_.lair.mayBeMovedInto(false)
+    // o_.lair.menu.hide()
+    // o_.bridge.setInteractive.all(false)
+    // o_.camera.panToBridge()
 }
 
 export function destroyInteractiveObjWithJump(obj: { destroy: Function, sprite?: O_Sprite, container?: O_Container }) {

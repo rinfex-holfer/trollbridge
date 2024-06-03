@@ -11,7 +11,7 @@ import {EntityType} from "../entities/types";
 
 
 export class PhaseMakeFood extends GamePhase {
-
+    name = "cook"
     unsubFromRightClick = () => {
     }
 
