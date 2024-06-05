@@ -6,13 +6,14 @@ export class TextsManager {
         o_.register.texts(this)
     }
 
-    t(textKey: string): string {
+    t(textKey: TextKey): string {
         return translations[Language.RU].translation[textKey] || textKey
     }
 }
 
-export const Txt = {
+export type TextKey = typeof Txt[keyof typeof Txt]
 
+export const Txt = {
     Pause: "Pause",
     StartGame: "Start Game",
     Resume: "Resume",
@@ -29,6 +30,10 @@ export const Txt = {
     Settings: "Settings",
     SaveMenu: "Save game",
     HowToPlay: "How to play",
+
+    // buildings
+    UpgradeBridge: "Decorate the bridge",
+    BuildGoblinsLair: "Build the goblin's lair",
 }
 
 export const translations = {

@@ -4,6 +4,7 @@ import {UpgradeButton} from "../../interface/upgrade-button";
 import {findAndSplice, stub} from "../../utils/utils-misc";
 import {LayerKey} from "../core/layers";
 import {SOUND_KEY} from "../core/audio";
+import {TextKey} from "../core/texts";
 
 export class UpgradeManager {
     buttons: UpgradeButton[] = []
@@ -55,8 +56,8 @@ export class UpgradeManager {
         findAndSplice(this.buttons, btn)
     }
 
-    public createUpgradeButton(pos: Vec, text: string, cost: number, upgradeFn: () => void) {
-        const btn = new UpgradeButton(pos, cost, text, (b: UpgradeButton) => {
+    public createUpgradeButton(pos: Vec, textKey: TextKey, cost: number, upgradeFn: () => void) {
+        const btn = new UpgradeButton(pos, cost, textKey, (b: UpgradeButton) => {
             o_.audio.playSound(SOUND_KEY.UPGRADE)
             upgradeFn()
             this.onUpgraded(b)

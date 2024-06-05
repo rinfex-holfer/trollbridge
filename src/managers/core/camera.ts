@@ -2,6 +2,7 @@ import {o_} from "../locator";
 import GameObject = Phaser.GameObjects.GameObject;
 import {O_GameObject} from "./render/types";
 import {positioner} from "../game/positioner";
+import {dotInRect, Vec} from "../../utils/utils-math";
 
 export class CameraManager {
     scene: Phaser.Scene
@@ -34,7 +35,7 @@ export class CameraManager {
         const pos = positioner.getBridgePosition()
         return {
             x: pos.x + pos.width / 2,
-            y: pos.y + pos.height
+            y: pos.y + pos.height / 2
         }
     }
 
@@ -101,5 +102,10 @@ export class CameraManager {
         } else {
             this.camera.stopFollow()
         }
+    }
+
+    checkIsInBounds(dot: Vec) {
+        const bounds = this.camera.getBounds()
+        return dotInRect(dot, bounds)
     }
 }

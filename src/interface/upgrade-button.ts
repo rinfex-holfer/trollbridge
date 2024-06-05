@@ -1,6 +1,7 @@
 import {Vec} from "../utils/utils-math";
 import {ImgButton} from "./basic/img-button";
 import {o_} from "../managers/locator";
+import {TextKey} from "../managers/core/texts";
 
 export class UpgradeButton {
     button: ImgButton
@@ -8,7 +9,7 @@ export class UpgradeButton {
 
     isEnabled: boolean = true
 
-    constructor(pos: Vec, cost: number, text: string, private onClickCb: (btn: UpgradeButton) => void) {
+    constructor(pos: Vec, cost: number, textKey: TextKey, private onClickCb: (btn: UpgradeButton) => void) {
         this.cost = cost
 
         this.button = new ImgButton({
@@ -17,7 +18,8 @@ export class UpgradeButton {
             y: pos.y,
             width: 32,
             height: 32,
-            text: text + ', стоимость: ' + cost + ' золота',
+            // TODO fix second part + language change
+            text: o_.texts.t(textKey) + ', стоимость: ' + cost + ' золота',
             onClick: () => this.onClick()
         })
         this.button.text.obj.setWordWrapWidth(200)

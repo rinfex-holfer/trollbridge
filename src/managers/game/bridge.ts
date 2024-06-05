@@ -1,14 +1,13 @@
 import {positioner} from "./positioner";
-import {TrollLocation} from "../../types";
 import {O_Tiles} from "../core/render/tiles";
 import {o_} from "../locator";
 import {Rect, rnd, sortByDistance, Vec} from "../../utils/utils-math";
 import {O_Sprite} from "../core/render/sprite";
 import {UpgradeButton} from "../../interface/upgrade-button";
 import {goldConfig} from "../../configs/gold-config";
-import {gameConstants} from "../../configs/constants";
 import {getGameSize} from "../../utils/utils-misc";
 import {eventBus, Evt} from "../../event-bus";
+import {Txt} from "../core/texts";
 
 export class BridgeManager {
     sprite: O_Tiles
@@ -40,9 +39,15 @@ export class BridgeManager {
         // this.shakePosition = o_.game.getScene().plugins.get('rexshakepositionplugin').add(this.sprite.obj);
 
         o_.upgrade.createUpgradeButton({
-            x: this.pos.x + this.pos.width - 150,
-            y: this.pos.y + 50
-        }, 'Украсить мост', goldConfig.costs.bridge_ornament, () => this.createStatues())
+            x: this.pos.x - 100,
+            y: this.pos.y + 350
+        }, o_.texts.t(Txt.BuildGoblinsLair), goldConfig.costs.goblins_lair, () => {
+        })
+
+        o_.upgrade.createUpgradeButton({
+            x: this.pos.x + this.pos.width - 100,
+            y: this.pos.y + 350
+        }, o_.texts.t(Txt.UpgradeBridge), goldConfig.costs.bridge_ornament, () => this.createStatues())
     }
 
     setInteractive = {
@@ -109,7 +114,6 @@ export class BridgeManager {
 
     fall() {
         this.shake()
-        o_.interaction.disableEverything()
         const gameSize = getGameSize()
         o_.render.moveTo(this.sprite, {x: 0, y: gameSize.height + 100}, 300).promise.then(() => {
             o_.game.gameOver('Мост рухнул!')
