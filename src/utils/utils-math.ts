@@ -90,7 +90,11 @@ export const ceilTo = (a: number, charsAfterPoint: number) => {
     return Math.ceil(a * 10 * charsAfterPoint) / (10 * charsAfterPoint);
 }
 
-export const sortByDistance = <T extends Vec, T2  extends Vec>(arr: T[], item: T2): T[] => arr.sort(
+export const getClosest = <T1 extends Vec, T2 extends Vec, T3 extends Vec>(from: T1, to1: T2, to2: T3): T2 | T3 => {
+    return getDistanceBetween(from, to1) < getDistanceBetween(from, to2) ? to1 : to2;
+}
+
+export const sortByDistance = <T extends Vec, T2 extends Vec>(arr: T[], item: T2): T[] => arr.sort(
     (a1, a2) => getDistanceBetween(a1, item) < getDistanceBetween(a2, item) ? -1 : 1
 )
 
@@ -108,7 +112,7 @@ export const getMax = (arr: number[]): number[] => {
     }, arr)
 }
 
-export const getMaxBy = <T>(arr: T[], key: keyof T): T[] => {
+export const getMaxBy = <T extends object>(arr: T[], key: keyof T): T[] => {
     return arr.reduce((acc, next) => {
         if (acc[0] === undefined || next[key] > acc[0][key]) {
             return [next];

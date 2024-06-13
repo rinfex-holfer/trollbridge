@@ -70,7 +70,7 @@ export type EvtData = {
     [Evt.GAME_LOADING_FINISHED]: undefined,
 
     [Evt.INTERFACE_LAIR_CLICKED]: undefined,
-    [Evt.INTERFACE_BRIDGE_CLICKED]: undefined,
+    [Evt.INTERFACE_BRIDGE_CLICKED]: "left" | "right",
     [Evt.INTERFACE_BED_CLICKED]: undefined,
     [Evt.INTERFACE_POT_CLICKED]: PotState,
     [Evt.INTERFACE_OPEN_BUILD_MENU_BUTTON_CLICKED]: undefined,

@@ -82,7 +82,7 @@ export class PhaseBridge extends GamePhase {
         this.interfaceFor.goesToLair();
         o_.camera.panToLair()
 
-        const res = await this.setCurrentTrollActivity(o_.troll.goToLadderBottom);
+        const res = await this.setCurrentTrollActivity(o_.troll.goToLadder);
 
         if (res === "CANCELLED") {
             o_.camera.panToBridge()

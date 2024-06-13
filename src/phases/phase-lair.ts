@@ -1,12 +1,13 @@
 import {o_} from "../managers/locator";
 import {TrollLocation} from "../types";
-import {eventBus, Evt} from "../event-bus";
-import {CancellablePromise, CANCELLED, createCancellablePromise, createPromiseAndHandlers} from "../utils/utils-async";
+import {Evt} from "../event-bus";
+import {CancellablePromise, CANCELLED, createCancellablePromise} from "../utils/utils-async";
 import {GamePhase} from "./game-phase";
 import {PotState} from "../entities/buildings/pot";
 import {PhaseMakeFood} from "./phase-make-food";
 import {PhaseBuild} from "./phase-build";
 import {PhaseBridge} from "./phase-bridge";
+import {TrollStateKey} from "../managers/game/troll/troll-state";
 
 export class PhaseLair extends GamePhase {
 
@@ -84,6 +85,19 @@ export class PhaseLair extends GamePhase {
             o_.lair.setMenuShown(false)
             o_.lair.setClickable(true)
             o_.bridge.setInteractive.all(false)
+        },
+        climbsToBridge: () => {
+            o_.lair.setObjectsActive(false)
+            o_.lair.setMenuShown(false)
+            o_.lair.setClickable(true)
+            o_.bridge.setInteractive.all(false)
+        },
+        climbsFromBridge: () => {
+            o_.lair.setObjectsActive(false)
+            o_.lair.setMenuShown(false)
+            o_.lair.setClickable(false)
+            o_.bridge.setInteractive.all(false)
+            o_.bridge.setInteractive.surface(true)
         }
     }
 
@@ -92,7 +106,13 @@ export class PhaseLair extends GamePhase {
     }
 
     onLairClicked = async () => {
-        const resPromise = this.setCurrentTrollActivity(o_.troll.goToLairChillZone)
+        if (o_.troll.currentStateKey === TrollStateKey.CLIMB) {
+            let resPromise = this.setCurrentTrollActivity(() => o_.troll.climbLadder('down'))
+            this.interfaceFor.climbsFromBridge()
+            const res = await resPromise
+            if (res === CANCELLED) return
+        }
+        let resPromise = this.setCurrentTrollActivity(o_.troll.goToLairChillZone)
         this.interfaceFor.idleInLair()
         const res = await resPromise
         if (res === CANCELLED) return
@@ -117,13 +137,27 @@ export class PhaseLair extends GamePhase {
         this.setCurrentTrollActivity(o_.troll.goToLairChillZone);
     }
 
-    trollGoesToBridge = async () => {
-        this.interfaceFor.goesToBridge();
+    trollGoesToBridge = async (part: "left" | "right") => {
+
+        // TODO - back from bridge + fix дерганье на мосту
+
+        console.log("part", part);
         o_.camera.panToBridge()
 
-        const res = await this.setCurrentTrollActivity(o_.troll.goToLadderBottom);
+        if (o_.troll.currentStateKey !== TrollStateKey.CLIMB) {
+            this.interfaceFor.goesToBridge();
 
-        if (res === "CANCELLED") {
+            const res = await this.setCurrentTrollActivity(() => o_.troll.goToLadder(part));
+            if (res === "CANCELLED") {
+                o_.camera.panToLair()
+                return
+            }
+        }
+
+        let resPromise = this.setCurrentTrollActivity(() => o_.troll.climbLadder('up'))
+        this.interfaceFor.climbsToBridge()
+        const res = await resPromise
+        if (res === CANCELLED) {
             o_.camera.panToLair()
             return
         }

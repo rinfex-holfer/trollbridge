@@ -12,6 +12,9 @@ import {Txt} from "../core/texts";
 export class BridgeManager {
     sprite: O_Tiles
 
+    leftPart: O_Sprite
+    rightPart: O_Sprite
+
     pos: Rect
 
     // shakePosition: any
@@ -22,12 +25,29 @@ export class BridgeManager {
         this.pos = positioner.getBridgePosition();
         this.sprite = o_.render.createTiles('floor', this.pos.x, this.pos.y, this.pos.width, this.pos.height);
         this.sprite.setOrigin(0, 0);
-        this.sprite.addPhysics()
         // this.sprite.obj.alpha = 0;
 
+        this.leftPart = o_.render.createSprite('empty_sprite', this.pos.x, this.pos.y, {
+            width: this.pos.width / 2,
+            height: this.pos.height
+        });
+        this.leftPart.setOrigin(0, 0);
+        this.leftPart.addPhysics()
+
+        this.rightPart = o_.render.createSprite('empty_sprite', this.pos.x + this.pos.width / 2, this.pos.y, {
+            width: this.pos.width / 2,
+            height: this.pos.height
+        });
+        this.rightPart.setOrigin(0, 0);
+        this.rightPart.addPhysics()
+
         this.setInteractive.all(true);
-        this.sprite.onClick(() => {
-            eventBus.emit(Evt.INTERFACE_BRIDGE_CLICKED)
+
+        this.leftPart.onClick(() => {
+            eventBus.emit(Evt.INTERFACE_BRIDGE_CLICKED, "left")
+        })
+        this.rightPart.onClick(() => {
+            eventBus.emit(Evt.INTERFACE_BRIDGE_CLICKED, "right")
         })
 
         o_.register.bridge(this);
@@ -56,9 +76,11 @@ export class BridgeManager {
         },
         surface: (val: boolean) => {
             if (val) {
-                this.sprite.setInteractive(true, {cursor: 'pointer'});
+                this.leftPart.setInteractive(true, {cursor: 'pointer'});
+                this.rightPart.setInteractive(true, {cursor: 'pointer'});
             } else {
-                this.sprite.setInteractive(false);
+                this.leftPart.setInteractive(false);
+                this.rightPart.setInteractive(false);
             }
         },
     }

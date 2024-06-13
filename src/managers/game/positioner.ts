@@ -1,9 +1,9 @@
 import {getGameSize} from "../../utils/utils-misc";
 import {o_} from "../locator";
-import {rndBetween} from "../../utils/utils-math";
+import {Rect, rndBetween, Vec} from "../../utils/utils-math";
 import {Meat} from "../../entities/meat/meat";
 
-//
+// TODO переделать мокап, чтобы логово было глубже под мостом
 const scenePositions = {
     bridge: {
         x: 400,
@@ -13,9 +13,9 @@ const scenePositions = {
     },
     lairPosition: {
         x: 400,
-        y: 1500,
+        y: 1400,
         width: 1400,
-        height: 600,
+        height: 500,
     },
 
 }
@@ -38,20 +38,21 @@ export const positioner = {
         }
     },
 
-    getLadderBounds() {
+    getLadderBounds(): [left: Rect, right: Rect] {
         const lairPos = positioner.getLairPosition();
         const width = 150
         const height = 300
+        const marginFromLairTop = height / 2
         return [
             {
-                x: lairPos.x,
-                y: lairPos.y,
+                x: lairPos.x + width / 2,
+                y: lairPos.y - marginFromLairTop,
                 width,
                 height,
             },
             {
-                x: lairPos.x + lairPos.width - width,
-                y: lairPos.y,
+                x: lairPos.x + lairPos.width - width / 2,
+                y: lairPos.y - marginFromLairTop,
                 width,
                 height,
             }
@@ -77,7 +78,7 @@ export const positioner = {
     getFoodStoragePosition() {
         const pos = positioner.getLairPosition();
         return {
-            x: pos.x + 170,
+            x: pos.x + pos.width / 3,
             y: pos.y + pos.height * 1.5 / 4,
         }
     },

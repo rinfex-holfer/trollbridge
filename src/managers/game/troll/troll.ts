@@ -2,7 +2,7 @@ import {eventBus, Evt} from "../../../event-bus";
 import {CharKey, EncounterDanger, FoodType, TrollAbility, TrollLocation} from "../../../types";
 import {positioner} from "../positioner";
 import {CharAnimation} from "../../../entities/char/char-constants";
-import {clamp, getRndItem, getRndSign, rnd, rndBetween, Vec} from "../../../utils/utils-math";
+import {clamp, getClosest, getRndItem, getRndSign, Rect, rnd, rndBetween, Vec} from "../../../utils/utils-math";
 import {flyingStatusChange} from "../../../interface/basic/flying-status-change";
 import {O_AnimatedSprite} from "../../core/render/animated-sprite";
 import {o_} from "../../locator";
@@ -15,10 +15,7 @@ import {LayerKey} from "../../core/layers";
 import {Zzz} from "../../../entities/zzz";
 import {TrollStats} from "../../../interface/troll-stats";
 import {TrollStateBattleAttack} from "./troll-state-battle-attack";
-import {
-    onTrollCameToBridge,
-    onTrollGoesToBridge,
-} from "../../../helpers";
+import {onTrollCameToBridge, onTrollGoesToBridge,} from "../../../helpers";
 import {Char} from "../../../entities/char/char";
 import {createPromiseAndHandlers, pause} from "../../../utils/utils-async";
 import {Rock} from "../../../entities/rock";
@@ -31,6 +28,7 @@ import {HpIndicator} from "../../../interface/hp-indicator";
 import {debugExpose} from "../../../utils/utils-misc";
 import {battleConfig} from "../../../configs/battle-config";
 import {TrollFearLevel} from "./types";
+import {TrollStateClimb} from "./troll-state-climb";
 
 export class Troll {
 
@@ -113,7 +111,7 @@ export class Troll {
 
         o_.time.sub(dt => this.update(dt))
 
-        this.state = this.getState(TrollStateKey.IDLE)
+        this.state = this.createState(TrollStateKey.IDLE)
         this.state.onStart();
 
         this.stats = new TrollStats(this)
@@ -168,6 +166,14 @@ export class Troll {
 
     get y() {
         return this.container.y
+    }
+
+    get currentStateKey() {
+        return this.state.key
+    }
+
+    getCoords() {
+        return this.container.getCoords()
     }
 
     onNewLevel(animated = true) {
@@ -338,7 +344,7 @@ export class Troll {
         this.sprite.play(key, {onComplete});
     }
 
-    getState(stateKey: TrollStateKey, options?: any): TrollState {
+    private createState(stateKey: TrollStateKey, options?: any): TrollState {
         switch (stateKey) {
             case TrollStateKey.IDLE:
                 return new TrollStateIdle(this);
@@ -350,6 +356,8 @@ export class Troll {
                 return new TrollStateBattleAttack(this, options);
             case TrollStateKey.UNCONSCIOUS:
                 return new TrollStateUnconscious(this);
+            case TrollStateKey.CLIMB:
+                return new TrollStateClimb(this, options);
             default:
                 throw Error('wrong state key ' + stateKey);
         }
@@ -360,9 +368,8 @@ export class Troll {
     }
 
     setState(stateKey: TrollStateKey, options?: any): Promise<any> {
-        // console.log('new troll state:', stateKey, options);
         this.state.end();
-        this.state = this.getState(stateKey, options)
+        this.state = this.createState(stateKey, options)
         return this.state.start();
     }
 
@@ -381,14 +388,52 @@ export class Troll {
         return this.setState(TrollStateKey.GO_TO, {target, onStart: onTrollGoesToBridge, onEnd: onTrollCameToBridge})
     }
 
-    goToLadderBottom = () => {
-        const ladderPos = positioner.getLadderBounds()[0]
+    goToLadder = (whichLadder: 'left' | 'right' | 'closest' = 'closest') => {
+        const [leftLadderPos, rightLadderPos] = positioner.getLadderBounds()
+
+        let target: Rect
+        switch (whichLadder) {
+            case "left":
+                target = leftLadderPos
+                break;
+            case "right":
+                target = rightLadderPos
+                break;
+            case "closest":
+                target = getClosest(this.getCoords(), leftLadderPos, rightLadderPos)
+                break;
+        }
+
+        if (this.location === TrollLocation.LAIR) {
+            // go to bottom of ladder
+            target.y += leftLadderPos.height
+        }
+
         return this.setState(TrollStateKey.GO_TO, {
-            target: {
-                x: ladderPos.x + ladderPos.width / 2,
-                y: ladderPos.y
-            }
+            target
         })
+    }
+
+    climbLadder = (direction: 'up' | 'down', whichLadder: 'left' | 'right' | 'closest' = 'closest') => {
+        const [leftLadderPos, rightLadderPos] = positioner.getLadderBounds()
+
+        let target: Rect
+        switch (whichLadder) {
+            case "left":
+                target = leftLadderPos
+                break;
+            case "right":
+                target = rightLadderPos
+                break;
+            case "closest":
+                target = getClosest(this.getCoords(), leftLadderPos, rightLadderPos)
+                break;
+        }
+
+        if (direction === 'down') {
+            target.y += leftLadderPos.height
+        }
+        return this.setState(TrollStateKey.CLIMB, {target})
     }
 
     goToLairChillZone = () => {
@@ -535,14 +580,17 @@ export class Troll {
         o_.game.gameOver('Тролль убит!')
     }
 
-    moveTowards(x: number, y: number) {
+    moveTowards(x: number, y: number, directToTarget = true) {
         o_.render.moveTowards(
             this.container,
             x,
             y,
             this.speed,
         )
-        this.directToTarget({x, y})
+
+        if (directToTarget) {
+            this.directToTarget({x, y})
+        }
     }
 
     directToTarget(target: Vec) {

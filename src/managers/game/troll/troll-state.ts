@@ -4,6 +4,7 @@ import {createPromiseAndHandlers} from "../../../utils/utils-async";
 export const enum TrollStateKey {
     IDLE = 'IDLE',
     GO_TO = 'GO_TO',
+    CLIMB = 'CLIMB',
     SLEEP = 'SLEEP',
     UNCONSCIOUS = 'UNCONSCIOUS',
     BATTLE_ATTACK = 'BATTLE_ATTACK',
