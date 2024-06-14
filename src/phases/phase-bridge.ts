@@ -7,6 +7,7 @@ import {PotState} from "../entities/buildings/pot";
 import {PhaseMakeFood} from "./phase-make-food";
 import {PhaseBuild} from "./phase-build";
 import {PhaseLair} from "./phase-lair";
+import {TrollStateKey} from "../managers/game/troll/troll-state";
 
 export class PhaseBridge extends GamePhase {
 
@@ -51,45 +52,68 @@ export class PhaseBridge extends GamePhase {
 
     interfaceFor = {
         idleOnBridge: () => {
-            console.log("interfaceFor idleOnBridge")
             o_.lair.setClickable(true)
 
             o_.bridge.setInteractive.all(true)
             o_.bridge.setInteractive.surface(false)
         },
         goesToLair: () => {
-            console.log("interfaceFor goesToLair")
-            o_.lair.setClickable(false)
+            o_.lair.setClickable(true)
 
             o_.bridge.setInteractive.all(false)
             o_.bridge.setInteractive.surface(true)
         },
         cleanup: () => {
-            console.log("interfaceFor cleanup")
             o_.lair.setClickable(false)
+            o_.bridge.setInteractive.all(false)
+        },
+        climbToLair: () => {
+            o_.lair.setClickable(false)
+            o_.bridge.setInteractive.all(false)
+            o_.bridge.setInteractive.surface(true)
+        },
+        climbsFromLair: () => {
+            o_.lair.setClickable(true)
             o_.bridge.setInteractive.all(false)
         },
     }
 
     trollGoesToBridge = async () => {
+        if (o_.troll.currentStateKey === TrollStateKey.CLIMB) {
+            let resPromise = this.setCurrentTrollActivity(() => o_.troll.climbLadder('up'))
+            this.interfaceFor.climbsFromLair()
+            const res = await resPromise
+            if (res === CANCELLED) return
+        }
+
         const resPromise = this.setCurrentTrollActivity(o_.troll.goToBridge)
         this.interfaceFor.idleOnBridge()
         const res = await resPromise
         if (res === CANCELLED) return
     }
 
-    trollGoesToLair = async () => {
-        this.interfaceFor.goesToLair();
+    trollGoesToLair = async (part: "left" | "right") => {
         o_.camera.panToLair()
 
-        const res = await this.setCurrentTrollActivity(o_.troll.goToLadder);
+        if (o_.troll.currentStateKey !== TrollStateKey.CLIMB) {
+            this.interfaceFor.goesToLair();
 
-        if (res === "CANCELLED") {
+            const res = await this.setCurrentTrollActivity(() => o_.troll.goToLadder(part));
+
+            if (res === CANCELLED) {
+                o_.camera.panToBridge()
+                return
+            }
+        }
+
+        let resPromise = this.setCurrentTrollActivity(() => o_.troll.climbLadder('down'))
+        this.interfaceFor.climbToLair()
+        const res = await resPromise
+        if (res === CANCELLED) {
             o_.camera.panToBridge()
             return
         }
 
-        // TODO climb stairs
         this.goToNextPhase(new PhaseLair())
     }
 }

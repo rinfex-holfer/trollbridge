@@ -69,7 +69,7 @@ export type EvtData = {
     [Evt.GAME_LOADING_PROGRESS]: number,
     [Evt.GAME_LOADING_FINISHED]: undefined,
 
-    [Evt.INTERFACE_LAIR_CLICKED]: undefined,
+    [Evt.INTERFACE_LAIR_CLICKED]: "left" | "right",
     [Evt.INTERFACE_BRIDGE_CLICKED]: "left" | "right",
     [Evt.INTERFACE_BED_CLICKED]: undefined,
     [Evt.INTERFACE_POT_CLICKED]: PotState,

@@ -85,6 +85,7 @@ export class PhaseLair extends GamePhase {
             o_.lair.setMenuShown(false)
             o_.lair.setClickable(true)
             o_.bridge.setInteractive.all(false)
+            o_.bridge.setInteractive.surface(true)
         },
         climbsToBridge: () => {
             o_.lair.setObjectsActive(false)
@@ -141,7 +142,6 @@ export class PhaseLair extends GamePhase {
 
         // TODO - back from bridge + fix дерганье на мосту
 
-        console.log("part", part);
         o_.camera.panToBridge()
 
         if (o_.troll.currentStateKey !== TrollStateKey.CLIMB) {
@@ -162,7 +162,6 @@ export class PhaseLair extends GamePhase {
             return
         }
 
-        // TODO climb stairs
         this.goToNextPhase(new PhaseBridge())
     }
 

@@ -32,14 +32,12 @@ export class BridgeManager {
             height: this.pos.height
         });
         this.leftPart.setOrigin(0, 0);
-        this.leftPart.addPhysics()
 
         this.rightPart = o_.render.createSprite('empty_sprite', this.pos.x + this.pos.width / 2, this.pos.y, {
             width: this.pos.width / 2,
             height: this.pos.height
         });
         this.rightPart.setOrigin(0, 0);
-        this.rightPart.addPhysics()
 
         this.setInteractive.all(true);
 
