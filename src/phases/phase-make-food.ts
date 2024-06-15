@@ -5,9 +5,9 @@ import {SOUND_KEY} from "../managers/core/audio";
 import {PhaseLair} from "./phase-lair";
 import {PotState} from "../entities/buildings/pot";
 import {Evt} from "../event-bus";
-import {Meat} from "../entities/meat/meat";
+import {Meat} from "../entities/items/meat/meat";
 
-import {EntityType} from "../entities/types";
+import {ItemType} from "../entities/items/types";
 
 
 export class PhaseMakeFood extends GamePhase {
@@ -16,7 +16,7 @@ export class PhaseMakeFood extends GamePhase {
     }
 
     static checkCanBeStarted() {
-        const freshMeet = o_.entities.get(EntityType.MEAT);
+        const freshMeet = o_.entities.get(ItemType.MEAT);
 
         if (freshMeet.length < foodConfig.FOOD_FOR_DISH) {
             o_.audio.playSound(SOUND_KEY.CANCEL)
@@ -63,7 +63,7 @@ export class PhaseMakeFood extends GamePhase {
     onEnd() {
         this.unsubFromRightClick()
         o_.lair.pot.stopChoosingFood()
-        o_.entities.get(EntityType.MEAT).forEach(meat => {
+        o_.entities.get(ItemType.MEAT).forEach(meat => {
             meat.setJumping(false)
             meat.setOnClick(undefined)
         })

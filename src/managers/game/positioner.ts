@@ -1,7 +1,7 @@
 import {getGameSize} from "../../utils/utils-misc";
 import {o_} from "../locator";
 import {Rect, rndBetween, Vec} from "../../utils/utils-math";
-import {Meat} from "../../entities/meat/meat";
+import {Meat} from "../../entities/items/meat/meat";
 
 // TODO переделать мокап, чтобы логово было глубже под мостом
 const scenePositions = {
@@ -67,6 +67,14 @@ export const positioner = {
         }
     },
 
+    getChairPosition() {
+        const pos = positioner.getLairPosition();
+        return {
+            x: pos.x + pos.width / 2,
+            y: pos.y + pos.height / 2 + 100,
+        }
+    },
+
     getPotPosition() {
         const pos = positioner.getLairPosition();
         return {
@@ -121,7 +129,7 @@ export const positioner = {
     getTrollLairIdlePosition() {
         const pos = positioner.getLairPosition();
         return {
-            x: pos.x + pos.width / 2,
+            x: pos.x + pos.width / 2 + 150,
             y: pos.y + pos.height / 2 + 100
         }
     },

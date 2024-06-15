@@ -4,16 +4,16 @@ import {Vec} from "../../utils/utils-math";
 import {O_AnimatedSprite} from "../../managers/core/render/animated-sprite";
 import {colorsCSS} from "../../configs/constants";
 import {eventBus, eventBusSubscriptions, Evt} from "../../event-bus";
-import {Meat} from "../meat/meat";
+import {Meat} from "../items/meat/meat";
 import {findAndSplice} from "../../utils/utils-misc";
 import {O_Text} from "../../managers/core/render/text";
 import {SOUND_KEY} from "../../managers/core/audio";
 import {foodConfig} from "../../configs/food-config";
 
-import {EntityType} from "../types";
-import {Dish} from "../dish/dish";
+import {ItemType} from "../items/types";
+import {Dish} from "../items/dish/dish";
 import {positioner} from "../../managers/game/positioner";
-import {BaseEvent} from "../base-entity";
+import {BaseItemEvent} from "../items/base-item/types";
 
 export const enum PotState {
     NOT_EXIST = 'NOT_EXIST',
@@ -78,7 +78,7 @@ export class Pot {
         this.text = o_.render.createText('На блюдо нужно 3 единицы мяса', this.sprite.x, this.sprite.y - 60, {color: colorsCSS.WHITE})
         this.text.setOrigin(0.5, 1)
         this.text.setVisibility(false)
-        o_.layers.add(this.text, LayerKey.FIELD_OBJECTS)
+        o_.layers.add(this.text, LayerKey.FIELD_BUTTONS)
 
         o_.upgrade.createUpgradeButton({x: this.sprite.x, y: this.sprite.y}, 'Котел', 50, () => this.upgrade())
 
@@ -150,7 +150,7 @@ export class Pot {
         }, this.props.ingridientsContainHumanMeat, this.props.ingridientsAreStale)
         this.props.ingridientsContainHumanMeat = false
         this.props.ingridientsAreStale = false
-        this.dish.eventEmitter.once(BaseEvent.DESTROYED, () => {
+        this.dish.eventEmitter.once(BaseItemEvent.DESTROYED, () => {
             this.removeDish()
         })
     }
@@ -210,7 +210,7 @@ export class Pot {
     }
 
     startChoosingFood() {
-        o_.entities.get(EntityType.MEAT).forEach(this.makeFoodChoosable)
+        o_.entities.get(ItemType.MEAT).forEach(this.makeFoodChoosable)
     }
 
     makeFoodChoosable = (food: Meat) => {
@@ -228,7 +228,7 @@ export class Pot {
     }
 
     stopChoosingFood() {
-        o_.entities.get(EntityType.MEAT).forEach(this.makeFoodUnchoosable)
+        o_.entities.get(ItemType.MEAT).forEach(this.makeFoodUnchoosable)
         this.chosenFood.forEach(food => food.moveBackToPlaceFromWhereItWasChosen())
         this.chosenFood = [];
     }

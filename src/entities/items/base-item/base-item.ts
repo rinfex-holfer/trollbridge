@@ -1,24 +1,17 @@
-import {O_Sprite} from "../managers/core/render/sprite";
-import {EffectToTypeMap, EffectType} from "../effects/types";
-import {EnityEffect} from "../effects/entity-effect";
-import {eventBusSubscriptions} from "../event-bus";
-import {O_EventEmitter} from "../utils/utils-events";
-import {o_} from "../managers/locator";
-import {EntityEventPayload, EntityEvents, EntityType, GameEntity, GameEntityPropsMap} from "./types";
+import {O_Sprite} from "../../../managers/core/render/sprite";
+import {EffectToTypeMap, EffectType} from "../../../effects/types";
+import {EnityEffect} from "../../../effects/entity-effect";
+import {eventBusSubscriptions} from "../../../event-bus";
+import {O_EventEmitter} from "../../../utils/utils-events";
+import {o_} from "../../../managers/locator";
+import {Item, ItemEventPayload, ItemEvents, ItemPropsMap, ItemType} from "../types";
+import {BaseItemEvent, BaseItemEventPayload} from "./types";
 
-export enum BaseEvent {
-    DESTROYED = "DESTROYED",
-}
-
-export type BaseEventPayload = {
-    [BaseEvent.DESTROYED]: undefined,
-}
-
-export abstract class GameEntityBase<T extends EntityType> implements GameEntity<T> {
+export abstract class BaseItem<T extends ItemType> implements Item<T> {
     abstract type: T
     abstract id: string
 
-    abstract props: GameEntityPropsMap[T]
+    abstract props: ItemPropsMap[T]
 
     sprite?: O_Sprite
 
@@ -28,7 +21,7 @@ export abstract class GameEntityBase<T extends EntityType> implements GameEntity
 
     globalEventsSubscripions = eventBusSubscriptions()
 
-    eventEmitter = new O_EventEmitter<EntityEvents[T] | BaseEvent, EntityEventPayload[T] & BaseEventPayload>()
+    eventEmitter = new O_EventEmitter<ItemEvents[T] | BaseItemEvent, ItemEventPayload[T] & BaseItemEventPayload>()
 
     register(): string {
         // @ts-ignore
@@ -71,7 +64,7 @@ export abstract class GameEntityBase<T extends EntityType> implements GameEntity
 
         this.onDestroyed()
 
-        this.eventEmitter.emit(BaseEvent.DESTROYED)
+        this.eventEmitter.emit(BaseItemEvent.DESTROYED)
     }
     get destroy() {
         return this._destroy

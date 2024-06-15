@@ -70,7 +70,7 @@ export class PhaseLair extends GamePhase {
         sleepOnBed: () => {
             o_.lair.setClickable(true)
             o_.lair.setObjectsActive(false)
-            o_.lair.bed.setEnabled(true)
+            o_.lair.bed.setInteractive(true)
             o_.lair.setMenuShown(false)
             o_.bridge.setInteractive.all(false);
         },

@@ -33,6 +33,7 @@ export const Txt = {
 
     // buildings
     UpgradeBridge: "Decorate the bridge",
+    UpgradeChair: "Upgrade the chair",
     BuildGoblinsLair: "Build the goblin's lair",
 }
 
@@ -60,6 +61,9 @@ export const translations = {
 
             // chars
             [Txt.CharsFarmer]: "peasant",
+
+            // buildings
+            [Txt.UpgradeChair]: "Upgrade chair",
         }
     },
     [Language.RU]: {
@@ -86,6 +90,9 @@ export const translations = {
 
             // chars
             [Txt.CharsFarmer]: "крестьянин",
+
+            // buildings
+            [Txt.UpgradeChair]: "Улучшить сидение",
         }
     }
 }

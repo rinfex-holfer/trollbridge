@@ -22,8 +22,8 @@ export class Ladder {
         this.spriteRight.setHeight(rightBounds.height, false)
         this.spriteRight.setWidth(rightBounds.width, false)
 
-        o_.render.createOutline(this.spriteLeft);
-        o_.render.createOutline(this.spriteRight);
+        // o_.render.createOutline(this.spriteLeft);
+        // o_.render.createOutline(this.spriteRight);
 
         this.spriteLeft.onClick(() => this.onClick())
     }

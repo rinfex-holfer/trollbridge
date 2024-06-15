@@ -4,16 +4,19 @@ import {positioner} from "./positioner";
 import {o_} from "../locator";
 import {O_Tiles} from "../core/render/tiles";
 import {FoodStorage} from "../../entities/buildings/food-storage";
-import {Bed} from "../../entities/buildings/bed";
+import {Bed} from "../../entities/buildings/bed/bed";
 import {Pot} from "../../entities/buildings/pot";
 import {Treasury} from "../../entities/buildings/treasury";
 import {LairMenu} from "../../interface/lair-menu";
 import {O_Sprite} from "../core/render/sprite";
+import {Chair} from "../../entities/buildings/chair/chair";
 
 export class Lair {
     foodStorage: FoodStorage
     bed: Bed
     pot: Pot
+    chair: Chair
+
     treasury: Treasury
 
     sprite: O_Tiles
@@ -54,6 +57,7 @@ export class Lair {
         this.foodStorage = new FoodStorage(positioner.getFoodStoragePosition())
         this.bed = new Bed(positioner.getBedPosition())
         this.pot = new Pot();
+        this.chair = new Chair()
 
         this.menu = new LairMenu()
     }
@@ -73,9 +77,10 @@ export class Lair {
     }
 
     setObjectsActive(val: boolean) {
-        this.bed.setEnabled(val)
+        this.bed.setInteractive(val)
         this.foodStorage.setEnabled(val)
         this.pot.setInteractive(val)
+        this.chair.setInteractive(val)
     }
 
     setMenuShown(val: boolean) {

@@ -1,14 +1,14 @@
-import {O_Sprite} from "../managers/core/render/sprite";
-import {Vec} from "../utils/utils-math";
-import {o_} from "../managers/locator";
-import {LayerKey} from "../managers/core/layers";
-import {Evt, eventBusSubscriptions} from "../event-bus";
-import {gameConstants} from "../configs/constants";
-import {resoursePaths} from "../resourse-paths";
-import {SOUND_KEY} from "../managers/core/audio";
-import {goldConfig} from "../configs/gold-config";
-import {GameEntityBase} from "./base-entity";
-import {EntityType} from "./types";
+import {O_Sprite} from "../../managers/core/render/sprite";
+import {Vec} from "../../utils/utils-math";
+import {o_} from "../../managers/locator";
+import {LayerKey} from "../../managers/core/layers";
+import {Evt, eventBusSubscriptions} from "../../event-bus";
+import {gameConstants} from "../../configs/constants";
+import {resoursePaths} from "../../resourse-paths";
+import {SOUND_KEY} from "../../managers/core/audio";
+import {goldConfig} from "../../configs/gold-config";
+import {BaseItem} from "./base-item/base-item";
+import {ItemType} from "./types";
 
 export const enum GoldLocation {
     GROUND = 'GROUND',
@@ -17,8 +17,8 @@ export const enum GoldLocation {
 
 export const GOLD_WIDTH = 50
 
-export class Gold extends GameEntityBase<EntityType.GOLD> {
-    type: EntityType.GOLD = EntityType.GOLD
+export class Gold extends BaseItem<ItemType.GOLD> {
+    type: ItemType.GOLD = ItemType.GOLD
     id: string
 
     location: GoldLocation

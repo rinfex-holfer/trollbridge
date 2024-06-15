@@ -8,10 +8,10 @@ import {BattleActionsMenu} from "../../interface/battle-actions-menu";
 import {AfterBattleActionsMenu} from "../../interface/after-battle-actions-menu";
 import {battleConfig} from "../../configs/battle-config";
 import {getGameSize} from "../../utils/utils-misc";
-import {MeatLocation} from "../../entities/meat/meat";
-import {GoldLocation} from "../../entities/gold";
+import {MeatLocation} from "../../entities/items/meat/meat";
+import {GoldLocation} from "../../entities/items/gold";
 
-import {EntityType} from "../../entities/types";
+import {ItemType} from "../../entities/items/types";
 
 export class BattleManager {
     unsub: any[] = []
@@ -147,8 +147,8 @@ export class BattleManager {
             x: t.container.x,
             y: gameSize.height + 100
         }, rndBetween(400, 600)))
-        o_.entities.get(EntityType.MEAT).filter(m => m.location === MeatLocation.GROUND).forEach(m => m.destroy())
-        o_.entities.get(EntityType.GOLD).filter(m => m.location === GoldLocation.GROUND).forEach(m => m.destroy())
+        o_.entities.get(ItemType.MEAT).filter(m => m.location === MeatLocation.GROUND).forEach(m => m.destroy())
+        o_.entities.get(ItemType.GOLD).filter(m => m.location === GoldLocation.GROUND).forEach(m => m.destroy())
     }
 
     async trollThrowRock(char: Char) {

@@ -1,19 +1,19 @@
-import {rnd, rnd2, rndBetween, Vec} from "../../utils/utils-math";
-import {O_Sprite} from "../../managers/core/render/sprite";
-import {o_} from "../../managers/locator";
-import {Evt} from "../../event-bus";
-import {positioner} from "../../managers/game/positioner";
-import {LayerKey} from "../../managers/core/layers";
-import {SOUND_KEY} from "../../managers/core/audio";
-import {ImageKey} from "../../utils/utils-types";
-import {FoodType} from "../../types";
-import {foodConfig} from "../../configs/food-config";
-import {destroyInteractiveObjWithFade, destroyInteractiveObjWithJump} from "../../helpers";
-import {debugExpose} from "../../utils/utils-misc";
-import {EffectRotten} from "../../effects/rotten";
-import {EffectType} from "../../effects/types";
-import {GameEntityBase} from "../base-entity";
-import {EntityType} from "../types";
+import {rnd, rnd2, rndBetween, Vec} from "../../../utils/utils-math";
+import {O_Sprite} from "../../../managers/core/render/sprite";
+import {o_} from "../../../managers/locator";
+import {Evt} from "../../../event-bus";
+import {positioner} from "../../../managers/game/positioner";
+import {LayerKey} from "../../../managers/core/layers";
+import {SOUND_KEY} from "../../../managers/core/audio";
+import {ImageKey} from "../../../utils/utils-types";
+import {FoodType} from "../../../types";
+import {foodConfig} from "../../../configs/food-config";
+import {destroyInteractiveObjWithFade, destroyInteractiveObjWithJump} from "../../../helpers";
+import {debugExpose} from "../../../utils/utils-misc";
+import {EffectRotten} from "../../../effects/rotten";
+import {EffectType} from "../../../effects/types";
+import {BaseItem} from "../base-item/base-item";
+import {ItemType} from "../types";
 import {MeatEvent} from "./meat-events";
 
 export const enum MeatLocation {
@@ -30,8 +30,8 @@ export const meatSprite = {
 
 export const MEAT_WIDTH = 50;
 
-export class Meat extends GameEntityBase<EntityType.MEAT> {
-    type: EntityType.MEAT = EntityType.MEAT
+export class Meat extends BaseItem<ItemType.MEAT> {
+    type: ItemType.MEAT = ItemType.MEAT
     id: string
 
     sprite: O_Sprite

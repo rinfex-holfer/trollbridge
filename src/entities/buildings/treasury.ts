@@ -5,7 +5,7 @@ import {o_} from "../../managers/locator";
 import {LayerKey} from "../../managers/core/layers";
 import {colorsCSS, gameConstants} from "../../configs/constants";
 import {O_Sprite} from "../../managers/core/render/sprite";
-import {Gold, GOLD_WIDTH, GoldLocation} from "../gold";
+import {Gold, GOLD_WIDTH, GoldLocation} from "../items/gold";
 import {flyingStatusChange} from "../../interface/basic/flying-status-change";
 import {SOUND_KEY} from "../../managers/core/audio";
 import {goldConfig} from "../../configs/gold-config";

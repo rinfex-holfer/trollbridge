@@ -49,18 +49,23 @@ export class UpgradeManager {
         this.buttons.forEach(b => b.setVisible(val))
     }
 
-    private onUpgraded(btn: UpgradeButton) {
-        o_.audio.playSound(SOUND_KEY.COLLECT)
-        o_.lair.treasury.removeGold(btn.cost)
-        btn.destroy()
-        findAndSplice(this.buttons, btn)
-    }
-
-    public createUpgradeButton(pos: Vec, textKey: TextKey, cost: number, upgradeFn: () => void) {
+    public createUpgradeButton(
+        pos: Vec,
+        textKey: TextKey,
+        cost: number,
+        upgradeFn: () => void,
+        checkIsLastUpgrade: () => boolean = () => true
+    ) {
         const btn = new UpgradeButton(pos, cost, textKey, (b: UpgradeButton) => {
             o_.audio.playSound(SOUND_KEY.UPGRADE)
             upgradeFn()
-            this.onUpgraded(b)
+
+            o_.audio.playSound(SOUND_KEY.COLLECT)
+            o_.lair.treasury.removeGold(btn.cost)
+            if (checkIsLastUpgrade()) {
+                btn.destroy()
+                findAndSplice(this.buttons, btn)
+            }
         })
         btn.setVisible(false)
         o_.layers.add(btn.button.container, LayerKey.FIELD_BUTTONS)

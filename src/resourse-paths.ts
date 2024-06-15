@@ -26,6 +26,10 @@ export const resoursePaths = {
         bridge_crack: `${imagesUrl}/bridge_crack.png`,
         bed_upgraded: `${imagesUrl}/bed-upgraded.png`,
         drying_rack: `${imagesUrl}/drying_rack.png`,
+        chair_0: `${imagesUrl}/chair_0.png`,
+        chair_1: `${imagesUrl}/chair_1.png`,
+        chair_2: `${imagesUrl}/chair_2.png`,
+        chair_3: `${imagesUrl}/chair_3.png`,
 
         button_release: `${imagesUrl}/leg.png`,
         button_imprison: `${imagesUrl}/prisoner.png`,
@@ -141,7 +145,9 @@ export const resoursePaths = {
         time_passed_1: `${audioUrl}/music_time_passed_1.mp3`,
         time_passed_2: `${audioUrl}/music_time_passed_2.mp3`,
     }
-};
+} as const;
+
+export type SpriteKey = keyof typeof resoursePaths.images
 
 const cursorImages = {
     [CursorType.DEFAULT]: resoursePaths.images.cursor_default,

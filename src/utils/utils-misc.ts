@@ -1,4 +1,5 @@
 import {o_} from "../managers/locator";
+import {getMax} from "./utils-math";
 
 export const getGameSize = () => {
     const [width, height] = o_.settings.getResolution()

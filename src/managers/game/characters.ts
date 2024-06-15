@@ -7,14 +7,14 @@ import {positioner} from "./positioner";
 import {o_} from "../locator";
 import {DmgOptions} from "../../utils/utils-types";
 import {Squad} from "./squad";
-import {Gold, GoldLocation} from "../../entities/gold";
+import {Gold, GoldLocation} from "../../entities/items/gold";
 import {pause} from "../../utils/utils-async";
-import {MeatLocation} from "../../entities/meat/meat";
+import {MeatLocation} from "../../entities/items/meat/meat";
 import {trollConfig} from "../../configs/troll-config";
 import {TrollFearLevel} from "./troll/types";
 import {debugExpose} from "../../utils/utils-misc";
 
-import {EntityType} from "../../entities/types";
+import {ItemType} from "../../entities/items/types";
 
 export class CharactersManager {
     chars: Char[] = []
@@ -323,14 +323,14 @@ export class CharactersManager {
 
         const travellers = o_.characters.getTravellers()
         const promises = o_.entities
-            .get(EntityType.GOLD)
+            .get(ItemType.GOLD)
             .filter(g => g.location === GoldLocation.GROUND)
             .map(g => {
                 return pause((start++) * 50).then(() => getRndItem(travellers).takeGold(g))
             })
 
         o_.entities
-            .get(EntityType.MEAT)
+            .get(ItemType.MEAT)
             .filter(m => m.location === MeatLocation.GROUND && !m.props.isStale && !m.props.isHuman)
             .forEach(m => {
                 promises.push(pause((start++) * 50).then(() => getRndItem(travellers).takeMeat(m)))

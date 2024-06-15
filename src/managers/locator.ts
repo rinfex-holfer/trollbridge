@@ -8,7 +8,7 @@ import {TimeManager} from "./core/time";
 import {GameManager} from "./game/game-manager";
 import {BattleManager} from "./game/battle";
 import {LayersManager} from "./core/layers";
-import {EntityManager} from "./core/entities";
+import {ItemManager} from "./core/entities/items";
 import {InteractionManager} from "./core/interaction";
 import {UpgradeManager} from "./game/upgrade";
 import {Negotiations} from "./game/negotiations";
@@ -32,7 +32,7 @@ class Locator {
     #_battle: BattleManager | undefined
     #_negotiations: Negotiations | undefined
     #_layers: LayersManager | undefined
-    #_entities: EntityManager | undefined
+    #_entities: ItemManager | undefined
     #_interaction: InteractionManager | undefined
     #_input: InputManager | undefined
     #_menu: MenuManager | undefined
@@ -79,7 +79,7 @@ class Locator {
         layers: (layers: LayersManager) => {
             this.#_layers = layers
         },
-        entities: (entities: EntityManager) => {
+        entities: (entities: ItemManager) => {
             this.#_entities = entities
         },
         interaction: (interaction: InteractionManager) => {

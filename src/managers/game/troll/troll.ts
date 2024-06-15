@@ -18,7 +18,7 @@ import {TrollStateBattleAttack} from "./troll-state-battle-attack";
 import {onTrollCameToBridge, onTrollGoesToBridge,} from "../../../helpers";
 import {Char} from "../../../entities/char/char";
 import {createPromiseAndHandlers, pause} from "../../../utils/utils-async";
-import {Rock} from "../../../entities/rock";
+import {Rock} from "../../../entities/items/rock";
 import {maxTrollLevel, trollConfig} from "../../../configs/troll-config";
 import {foodConfig} from "../../../configs/food-config";
 import {StatusNotifications} from "../../../interface/status-notifications";

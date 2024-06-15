@@ -12,11 +12,11 @@ import {AudioManager} from "./managers/core/audio";
 import {TimeManager} from "./managers/core/time";
 import {BattleManager} from "./managers/game/battle";
 import {LayersManager} from "./managers/core/layers";
-import {Meat} from "./entities/meat/meat";
+import {Meat} from "./entities/items/meat/meat";
 import {GrayScalePipeline} from "./shaders";
-import {EntityManager} from "./managers/core/entities";
+import {ItemManager} from "./managers/core/entities/items";
 import {InteractionManager} from "./managers/core/interaction";
-import {Gold} from "./entities/gold";
+import {Gold} from "./entities/items/gold";
 import {UpgradeManager} from "./managers/game/upgrade";
 import {GameManager} from "./managers/game/game-manager";
 import {MusicManager} from "./managers/core/music";
@@ -45,7 +45,7 @@ const create = (scene: Phaser.Scene) => {
     new RenderManager(scene)
     new CameraManager(scene)
     new InteractionManager(scene)
-    new EntityManager()
+    new ItemManager()
     new AudioManager(scene)
     new UpgradeManager()
     new Environment()
