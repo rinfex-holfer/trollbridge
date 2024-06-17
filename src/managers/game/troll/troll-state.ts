@@ -5,6 +5,7 @@ export const enum TrollStateKey {
     IDLE = 'IDLE',
     GO_TO = 'GO_TO',
     CLIMB = 'CLIMB',
+    SIT = 'SIT',
     SLEEP = 'SLEEP',
     UNCONSCIOUS = 'UNCONSCIOUS',
     BATTLE_ATTACK = 'BATTLE_ATTACK',

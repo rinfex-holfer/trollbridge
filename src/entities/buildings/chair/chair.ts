@@ -11,6 +11,8 @@ import {createId} from "../../../utils/utils-misc";
 import {o_logger} from "../../../utils/logger";
 import {Txt} from "../../../managers/core/texts";
 import {positioner} from "../../../managers/game/positioner";
+import {EffectHighlight} from "../../../effects/highlight";
+import {EffectType} from "../../../effects/types";
 
 const defaultProps: ChairProps = {
     level: 1
@@ -37,12 +39,18 @@ export class Chair extends BaseBuilding<BuildingType.CHAIR> {
             this.upgrade,
             this.getIsMaxLevel
         )
+
+        this.addEffect(new EffectHighlight(this)) as EffectHighlight
+        this.sprite.onHover(
+            () => this.getEffect(EffectType.HIGHLIGHTED)?.setActive(true),
+            () => this.getEffect(EffectType.HIGHLIGHTED)?.setActive(false)
+        )
     }
 
     createSprite(props: Props) {
         const position = positioner.getChairPosition()
         const sprite = o_.render.createSprite(this.getSpriteKey(), position.x, position.y)
-        // o_.layers.add(this.sprite, LayerKey.BACKGROUND)
+        o_.layers.add(sprite, LayerKey.FIELD_OBJECTS)
         sprite.setInteractive(true, {cursor: 'pointer'})
         sprite.setWidth(CHAIR_WIDTH)
         sprite.setOrigin(0.5, 1)

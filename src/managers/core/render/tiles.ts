@@ -2,6 +2,7 @@ import Phaser from "phaser";
 import {resoursePaths} from "../../../resourse-paths";
 import Pointer = Phaser.Input.Pointer;
 import {Vec} from "../../../utils/utils-math";
+import {GamePointerEvent} from "../input/types";
 
 export class O_Tiles {
     obj: Phaser.GameObjects.TileSprite
@@ -15,15 +16,21 @@ export class O_Tiles {
         else this.obj.disableInteractive()
     }
 
-    onClick(callback: () => void) {
+    onClick(callback: (event: GamePointerEvent) => void) {
         this.obj.on('pointerdown', (pointer: Pointer) => {
-            if (!pointer.rightButtonDown()) callback()
+            if (!pointer.rightButtonDown()) callback({
+                x: pointer.worldX,
+                y: pointer.worldY
+            })
         })
     }
 
-    onRightClick(callback: () => void) {
+    onRightClick(callback: (event: GamePointerEvent) => void) {
         this.obj.on('pointerdown', (pointer: Pointer) => {
-            if (pointer.rightButtonDown()) callback()
+            if (pointer.rightButtonDown()) callback({
+                x: pointer.worldX,
+                y: pointer.worldY
+            })
         })
     }
 

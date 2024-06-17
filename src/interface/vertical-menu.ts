@@ -7,8 +7,15 @@ import {colorsCSS} from "../configs/constants";
 import {O_Sprite} from "../managers/core/render/sprite";
 import {O_Text} from "../managers/core/render/text";
 import {createPromiseAndHandlers} from "../utils/utils-async";
+import {CursorType} from "../managers/core/input/cursor";
 
-type BtnTemplate<K> = {text: string, key: K, resource: keyof typeof resoursePaths.images, getDisabledAndReason?: () => false | string, getText?: () => string}
+type BtnTemplate<K> = {
+    text: string,
+    key: K,
+    resource: keyof typeof resoursePaths.images,
+    getDisabledAndReason?: () => false | string,
+    getText?: () => string
+}
 
 const BUTTON_SIZE = 64
 const BUTTON_MARGIN = 20
@@ -24,7 +31,15 @@ export class VerticalMenu<Keys extends string> {
     container: O_Container
     selectedKey: Keys | null = null
 
-    buttons = {} as {[key: string]: {sprite: O_Sprite, text: O_Text, key: Keys, disabledText: O_Text, getDisabledAndReason: (() => false | string)}}
+    buttons = {} as {
+        [key: string]: {
+            sprite: O_Sprite,
+            text: O_Text,
+            key: Keys,
+            disabledText: O_Text,
+            getDisabledAndReason: (() => false | string)
+        }
+    }
 
     containerX: number
 
@@ -46,7 +61,7 @@ export class VerticalMenu<Keys extends string> {
             const x = MENU_PADDING
             const y = MENU_PADDING + idx * (BUTTON_MARGIN + BUTTON_SIZE)
 
-            const sprite =  o_.render.createSprite(
+            const sprite = o_.render.createSprite(
                 template.resource,
                 x,
                 y,
@@ -73,7 +88,7 @@ export class VerticalMenu<Keys extends string> {
             sprite.setOrigin(0, 0)
             sprite.alpha = DEFAULT_ALPHA
 
-            const text =  o_.render.createText(
+            const text = o_.render.createText(
                 template.getText ? template.getText() : template.text,
                 x - 20,
                 y + BUTTON_SIZE / 2,
@@ -93,7 +108,13 @@ export class VerticalMenu<Keys extends string> {
             disabledText.setOrigin(0.5, 0.5);
             disabledText.setVisibility(false)
 
-            this.buttons[template.key] = {sprite, text, key, disabledText, getDisabledAndReason: template.getDisabledAndReason || (() => false)}
+            this.buttons[template.key] = {
+                sprite,
+                text,
+                key,
+                disabledText,
+                getDisabledAndReason: template.getDisabledAndReason || (() => false)
+            }
         })
 
         this.hide(false);
@@ -121,7 +142,7 @@ export class VerticalMenu<Keys extends string> {
         this.deselectButton(action)
         const btn = this.buttons[action]
         const sprite = btn.sprite
-        sprite.alpha =DISABLED_ALPHA
+        sprite.alpha = DISABLED_ALPHA
         sprite.setInteractive(false)
         btn.disabledText.setText(text)
         btn.disabledText.setVisibility(true)
@@ -156,7 +177,7 @@ export class VerticalMenu<Keys extends string> {
             const sprite = btn.sprite
             sprite.alpha = SELECTED_ALPHA
             sprite.setInteractive(false)
-            o_.game.getScene().input.setDefaultCursor('default')
+            o_.input.setCursor(CursorType.DEFAULT)
 
             o_.render.flyTo(sprite, {x: MENU_PADDING + 30, y: sprite.y}, 500)
 

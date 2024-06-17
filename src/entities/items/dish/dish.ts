@@ -17,6 +17,8 @@ import {debugExpose} from "../../../utils/utils-misc";
 import {EffectRotten} from "../../../effects/rotten";
 import {ItemType} from "../types";
 import {BaseItem} from "../base-item/base-item";
+import {EffectHighlight} from "../../../effects/highlight";
+import {EffectType} from "../../../effects/types";
 
 
 export const MEAT_WIDTH = 50;
@@ -42,6 +44,13 @@ export class Dish extends BaseItem<ItemType.DISH> {
         this.props.isStale = isStale
 
         this.sprite = o_.render.createSprite('dish', pos.x, pos.y)
+
+        this.addEffect(new EffectHighlight(this)) as EffectHighlight
+        this.sprite.onHover(
+            () => this.getEffect(EffectType.HIGHLIGHTED)?.setActive(true),
+            () => this.getEffect(EffectType.HIGHLIGHTED)?.setActive(false)
+        )
+
         // o_.layers.add(this.sprite, LayerKey.FIELD_BUTTONS)
 
         this.globalEventsSubscripions.on(Evt.TIME_PASSED, () => this.onTimePassed())

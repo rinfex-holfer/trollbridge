@@ -1,7 +1,7 @@
 import {EffectType} from "./types";
 
 
-export abstract class EnityEffect {
+export abstract class EntityEffect {
     abstract type: EffectType
 
     abstract destroy(): void

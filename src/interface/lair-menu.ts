@@ -4,7 +4,7 @@ import {o_} from "../managers/locator";
 import {eventBus, Evt} from "../event-bus";
 
 enum ButtonsKeys {
-    WAIT = 'WAIT',
+    // WAIT = 'WAIT',
     UPGRADE = 'UPGRADE',
 }
 
@@ -18,11 +18,11 @@ export class LairMenu {
         const x = pos.x - 100
 
         this.verticalMenu = new VerticalMenu([
-            {
-                key: ButtonsKeys.WAIT,
-                text: 'Ждать',
-                resource: 'button_wait'
-            },
+            // {
+            //     key: ButtonsKeys.WAIT,
+            //     text: 'Ждать',
+            //     resource: 'button_wait'
+            // },
             {
                 key: ButtonsKeys.UPGRADE,
                 text: 'Строить',
@@ -33,11 +33,11 @@ export class LairMenu {
 
     onClick(action: ButtonsKeys) {
         switch (action) {
-            case ButtonsKeys.WAIT:
-                eventBus.emit(Evt.INTERFACE_WAIT_BUTTON_CLICKED)
-                o_.upgrade.hideButtons()
-                o_.time.wait();
-                break;
+            // case ButtonsKeys.WAIT:
+            //     eventBus.emit(Evt.INTERFACE_WAIT_BUTTON_CLICKED)
+            //     o_.upgrade.hideButtons()
+            //     o_.time.wait();
+            //     break;
             case ButtonsKeys.UPGRADE:
                 eventBus.emit(Evt.INTERFACE_OPEN_BUILD_MENU_BUTTON_CLICKED)
                 break;

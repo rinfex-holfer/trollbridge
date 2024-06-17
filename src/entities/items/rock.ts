@@ -8,6 +8,8 @@ import {resoursePaths} from "../../resourse-paths";
 import {SOUND_KEY} from "../../managers/core/audio";
 import {BaseItem} from "./base-item/base-item";
 import {ItemType} from "./types";
+import {EffectHighlight} from "../../effects/highlight";
+import {EffectType} from "../../effects/types";
 
 
 export class Rock extends BaseItem<ItemType.ROCK> {
@@ -24,6 +26,13 @@ export class Rock extends BaseItem<ItemType.ROCK> {
 
         this.sprite = o_.render.createSprite('rock', pos.x, pos.y)
         this.sprite.setOrigin(0, 0.5)
+
+        this.addEffect(new EffectHighlight(this)) as EffectHighlight
+        this.sprite.onHover(
+            () => this.getEffect(EffectType.HIGHLIGHTED)?.setActive(true),
+            () => this.getEffect(EffectType.HIGHLIGHTED)?.setActive(false)
+        )
+
         // this.sprite.setWidth(32)
         this.updateLayer()
     }

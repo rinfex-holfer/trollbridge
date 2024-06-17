@@ -8,3 +8,8 @@ export abstract class GameInputEventEmitter extends O_EventEmitter<typeof GAME_I
     ['GAME_INPUT_EVENT']: GameInputEvent
 }> {
 }
+
+export type GamePointerEvent = {
+    x: number,
+    y: number,
+}

@@ -3,6 +3,8 @@ import {TrollFearLevel} from "./managers/game/troll/types";
 import {Settings} from "./managers/core/settings";
 import {PotState} from "./entities/buildings/pot";
 import {MenuScreen} from "./managers/core/menu";
+import {Vec} from "./utils/utils-math";
+import {GamePointerEvent} from "./managers/core/input/types";
 
 let nextId = 0;
 
@@ -70,8 +72,12 @@ export type EvtData = {
     [Evt.GAME_LOADING_PROGRESS]: number,
     [Evt.GAME_LOADING_FINISHED]: undefined,
 
-    [Evt.INTERFACE_LAIR_CLICKED]: "left" | "right",
-    [Evt.INTERFACE_BRIDGE_CLICKED]: "left" | "right",
+    [Evt.INTERFACE_LAIR_CLICKED]: {
+        event: GamePointerEvent
+    },
+    [Evt.INTERFACE_BRIDGE_CLICKED]: {
+        event: GamePointerEvent
+    },
     [Evt.INTERFACE_BED_CLICKED]: undefined,
     [Evt.INTERFACE_POT_CLICKED]: PotState,
     [Evt.INTERFACE_CHAIR_CLICKED]: undefined,

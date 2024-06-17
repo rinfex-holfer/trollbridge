@@ -2,13 +2,14 @@ import {O_Sprite} from "../../managers/core/render/sprite";
 import {Vec} from "../../utils/utils-math";
 import {o_} from "../../managers/locator";
 import {LayerKey} from "../../managers/core/layers";
-import {Evt, eventBusSubscriptions} from "../../event-bus";
-import {gameConstants} from "../../configs/constants";
+import {Evt} from "../../event-bus";
 import {resoursePaths} from "../../resourse-paths";
 import {SOUND_KEY} from "../../managers/core/audio";
 import {goldConfig} from "../../configs/gold-config";
 import {BaseItem} from "./base-item/base-item";
 import {ItemType} from "./types";
+import {EffectHighlight} from "../../effects/highlight";
+import {EffectType} from "../../effects/types";
 
 export const enum GoldLocation {
     GROUND = 'GROUND',
@@ -38,6 +39,13 @@ export class Gold extends BaseItem<ItemType.GOLD> {
         this.sprite = o_.render.createSprite(this.getSpriteKey(), pos.x, pos.y)
         this.sprite.setOrigin(0, 0.5)
         this.sprite.setWidth(GOLD_WIDTH)
+
+        this.addEffect(new EffectHighlight(this)) as EffectHighlight
+        this.sprite.onHover(
+            () => this.getEffect(EffectType.HIGHLIGHTED)?.setActive(true),
+            () => this.getEffect(EffectType.HIGHLIGHTED)?.setActive(false)
+        )
+
         this.updateLayer()
 
         if (location === GoldLocation.GROUND) {
@@ -45,9 +53,6 @@ export class Gold extends BaseItem<ItemType.GOLD> {
             this.sprite.onClick(() => this.onClick())
         }
         this.globalEventsSubscripions.on(Evt.TIME_PASSED, () => this.onTimePassed())
-        // this.subs.on(Evt.ENCOUNTER_STARTED, () => this.updateInteractive())
-        // this.subs.on(Evt.ENCOUNTER_ENDED, () => this.updateInteractive())
-
 
         this.updateInteractive()
     }

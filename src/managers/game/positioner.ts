@@ -1,4 +1,4 @@
-import {getGameSize} from "../../utils/utils-misc";
+import {debugExpose, getGameSize} from "../../utils/utils-misc";
 import {o_} from "../locator";
 import {Rect, rndBetween, Vec} from "../../utils/utils-math";
 import {Meat} from "../../entities/items/meat/meat";
@@ -144,3 +144,5 @@ export const positioner = {
         ]
     },
 }
+
+debugExpose(() => positioner, 'getPositioner')

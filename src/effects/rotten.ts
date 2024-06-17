@@ -5,12 +5,12 @@ import {colorsNum} from "../configs/constants";
 import {Dish} from "../entities/items/dish/dish";
 import {EffectType} from "./types";
 import ParticleEmitter = Phaser.GameObjects.Particles.ParticleEmitter;
-import {EnityEffect} from "./entity-effect";
+import {EntityEffect} from "./entity-effect";
 
 
 type RottenEntity = Meat | Dish
 
-export class EffectRotten extends EnityEffect {
+export class EffectRotten extends EntityEffect {
     type = EffectType.ROTTEN
     entity: RottenEntity
     gasEmitter: ParticleEmitter

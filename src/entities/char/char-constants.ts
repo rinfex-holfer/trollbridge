@@ -18,6 +18,7 @@ export const enum CharStateKey {
 export const enum CharAnimation {
     WALK = 'walk',
     IDLE = 'idle',
+    SIT = 'sit',
     FALL = 'fall',
     UNCONSCIOUS = 'unconscious',
     DAMAGED = 'damaged',

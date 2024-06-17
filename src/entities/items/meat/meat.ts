@@ -15,6 +15,7 @@ import {EffectType} from "../../../effects/types";
 import {BaseItem} from "../base-item/base-item";
 import {ItemType} from "../types";
 import {MeatEvent} from "./meat-events";
+import {EffectHighlight} from "../../../effects/highlight";
 
 export const enum MeatLocation {
     GROUND = 'GROUND',
@@ -67,6 +68,13 @@ export class Meat extends BaseItem<ItemType.MEAT> {
         this.sprite.onRightClick(() => {
             this.onRightClick()
         })
+
+        this.addEffect(new EffectHighlight(this)) as EffectHighlight
+        this.sprite.onHover(
+            () => this.getEffect(EffectType.HIGHLIGHTED)?.setActive(true),
+            () => this.getEffect(EffectType.HIGHLIGHTED)?.setActive(false)
+        )
+
         this.realPosition = this.updateRealPosition()
 
         // this shit still ruins y coord in flyTo method somehow

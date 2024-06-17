@@ -8,6 +8,9 @@ import {PhaseMakeFood} from "./phase-make-food";
 import {PhaseBuild} from "./phase-build";
 import {PhaseLair} from "./phase-lair";
 import {TrollStateKey} from "../managers/game/troll/troll-state";
+import {Vec} from "../utils/utils-math";
+import {positioner} from "../managers/game/positioner";
+import {GamePointerEvent} from "../managers/core/input/types";
 
 export class PhaseBridge extends GamePhase {
 
@@ -18,13 +21,21 @@ export class PhaseBridge extends GamePhase {
         cancel: () => void,
     }
 
+    initialDestination: Vec
+
+    constructor(options?: { coord: Vec }) {
+        super();
+        console.log("PhaseBridge options", options)
+        this.initialDestination = options?.coord || positioner.getTrollBridgePosition()[0]
+    }
+
     onStart() {
-        this.registerListener(Evt.INTERFACE_BRIDGE_CLICKED, this.trollGoesToBridge)
-        this.registerListener(Evt.INTERFACE_LAIR_CLICKED, this.trollGoesToLair)
+        this.registerListener(Evt.INTERFACE_BRIDGE_CLICKED, (e) => this.trollGoesToBridge(e.event))
+        this.registerListener(Evt.INTERFACE_LAIR_CLICKED, e => this.trollGoesToLair(e.event))
 
         o_.troll.setLocation(TrollLocation.BRIDGE);
         o_.camera.panToBridge()
-        this.trollGoesToBridge()
+        this.trollGoesToBridge(this.initialDestination)
     }
 
     onEnd() {
@@ -52,33 +63,34 @@ export class PhaseBridge extends GamePhase {
 
     interfaceFor = {
         idleOnBridge: () => {
-            o_.lair.setClickable(true)
+            o_.lair.setInteractive(true)
 
-            o_.bridge.setInteractive.all(true)
-            o_.bridge.setInteractive.surface(false)
+            o_.bridge.setInteractive.all(false)
+            o_.bridge.setInteractive.surface(true)
         },
         goesToLair: () => {
-            o_.lair.setClickable(true)
+            o_.lair.setInteractive(true)
 
             o_.bridge.setInteractive.all(false)
             o_.bridge.setInteractive.surface(true)
         },
         cleanup: () => {
-            o_.lair.setClickable(false)
+            o_.lair.setInteractive(false)
             o_.bridge.setInteractive.all(false)
         },
         climbToLair: () => {
-            o_.lair.setClickable(false)
+            o_.lair.setInteractive(false)
             o_.bridge.setInteractive.all(false)
             o_.bridge.setInteractive.surface(true)
         },
         climbsFromLair: () => {
-            o_.lair.setClickable(true)
+            o_.lair.setInteractive(true)
             o_.bridge.setInteractive.all(false)
         },
     }
 
-    trollGoesToBridge = async () => {
+    trollGoesToBridge = async (coord: Vec) => {
+        console.log("trollGoesToBridge", coord)
         if (o_.troll.currentStateKey === TrollStateKey.CLIMB) {
             let resPromise = this.setCurrentTrollActivity(() => o_.troll.climbLadder('up'))
             this.interfaceFor.climbsFromLair()
@@ -86,19 +98,19 @@ export class PhaseBridge extends GamePhase {
             if (res === CANCELLED) return
         }
 
-        const resPromise = this.setCurrentTrollActivity(o_.troll.goToBridge)
+        const resPromise = this.setCurrentTrollActivity(() => o_.troll.goToBridge({coord}))
         this.interfaceFor.idleOnBridge()
         const res = await resPromise
         if (res === CANCELLED) return
     }
 
-    trollGoesToLair = async (part: "left" | "right") => {
+    trollGoesToLair = async (coord: Vec) => {
         o_.camera.panToLair()
 
         if (o_.troll.currentStateKey !== TrollStateKey.CLIMB) {
             this.interfaceFor.goesToLair();
 
-            const res = await this.setCurrentTrollActivity(() => o_.troll.goToLadder(part));
+            const res = await this.setCurrentTrollActivity(() => o_.troll.goToLadder('closest'));
 
             if (res === CANCELLED) {
                 o_.camera.panToBridge()

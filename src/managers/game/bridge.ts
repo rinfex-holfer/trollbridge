@@ -8,12 +8,10 @@ import {goldConfig} from "../../configs/gold-config";
 import {getGameSize} from "../../utils/utils-misc";
 import {eventBus, Evt} from "../../event-bus";
 import {Txt} from "../core/texts";
+import {CursorType} from "../core/input/cursor";
 
 export class BridgeManager {
     sprite: O_Tiles
-
-    leftPart: O_Sprite
-    rightPart: O_Sprite
 
     pos: Rect
 
@@ -27,25 +25,10 @@ export class BridgeManager {
         this.sprite.setOrigin(0, 0);
         // this.sprite.obj.alpha = 0;
 
-        this.leftPart = o_.render.createSprite('empty_sprite', this.pos.x, this.pos.y, {
-            width: this.pos.width / 2,
-            height: this.pos.height
-        });
-        this.leftPart.setOrigin(0, 0);
-
-        this.rightPart = o_.render.createSprite('empty_sprite', this.pos.x + this.pos.width / 2, this.pos.y, {
-            width: this.pos.width / 2,
-            height: this.pos.height
-        });
-        this.rightPart.setOrigin(0, 0);
-
         this.setInteractive.all(true);
 
-        this.leftPart.onClick(() => {
-            eventBus.emit(Evt.INTERFACE_BRIDGE_CLICKED, "left")
-        })
-        this.rightPart.onClick(() => {
-            eventBus.emit(Evt.INTERFACE_BRIDGE_CLICKED, "right")
+        this.sprite.onClick((e) => {
+            eventBus.emit(Evt.INTERFACE_BRIDGE_CLICKED, {event: e})
         })
 
         o_.register.bridge(this);
@@ -74,11 +57,10 @@ export class BridgeManager {
         },
         surface: (val: boolean) => {
             if (val) {
-                this.leftPart.setInteractive(true, {cursor: 'pointer'});
-                this.rightPart.setInteractive(true, {cursor: 'pointer'});
+                this.sprite.setInteractive(true);
             } else {
-                this.leftPart.setInteractive(false);
-                this.rightPart.setInteractive(false);
+                this.sprite.setInteractive(false);
+                // o_.input.setCursor(CursorType.DEFAULT)
             }
         },
     }

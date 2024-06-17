@@ -2,15 +2,10 @@ const imagesUrl = `./assets/img`;
 const atlasesUrl = `./assets/img/atlases`;
 const audioUrl = `./assets/audio`;
 
-export enum CursorType {
-    DEFAULT = 'DEFAULT',
-}
-
 export const resoursePaths = {
     images: {
         background: `${imagesUrl}/bg.png`,
         ladder: `${imagesUrl}/ladder.png`,
-        cursor_default: `${imagesUrl}/cursor_default.png`,
         floor: `${imagesUrl}/floor.png`,
         grass: `${imagesUrl}/tile_grass.png`,
         meat_raw: `${imagesUrl}/meat_raw.png`,
@@ -82,6 +77,11 @@ export const resoursePaths = {
         "gold-chest": `${imagesUrl}/gold-chest.png`,
 
         tile_black: `${imagesUrl}/tile_black.png`,
+
+        cursor_default: `${imagesUrl}/cursors/cursor_default.png`,
+        cursor_build: `${imagesUrl}/cursors/cursor_build.png`,
+        cursor_attack: `${imagesUrl}/cursors/cursor_attack.png`,
+        cursor_not_allowed: `${imagesUrl}/cursors/cursor_not_allowed.png`,
     },
 
     atlases: {
@@ -148,11 +148,3 @@ export const resoursePaths = {
 } as const;
 
 export type SpriteKey = keyof typeof resoursePaths.images
-
-const cursorImages = {
-    [CursorType.DEFAULT]: resoursePaths.images.cursor_default,
-}
-
-export const getCursor = (type: CursorType) => {
-    return `url('${cursorImages[type]}'),auto`;
-}

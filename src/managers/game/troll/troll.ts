@@ -15,7 +15,6 @@ import {LayerKey} from "../../core/layers";
 import {Zzz} from "../../../entities/zzz";
 import {TrollStats} from "../../../interface/troll-stats";
 import {TrollStateBattleAttack} from "./troll-state-battle-attack";
-import {onTrollCameToBridge, onTrollGoesToBridge,} from "../../../helpers";
 import {Char} from "../../../entities/char/char";
 import {createPromiseAndHandlers, pause} from "../../../utils/utils-async";
 import {Rock} from "../../../entities/items/rock";
@@ -29,6 +28,7 @@ import {debugExpose} from "../../../utils/utils-misc";
 import {battleConfig} from "../../../configs/battle-config";
 import {TrollFearLevel} from "./types";
 import {TrollStateClimb} from "./troll-state-climb";
+import {TrollStateSit} from "./troll-state-sit";
 
 export class Troll {
 
@@ -83,6 +83,7 @@ export class Troll {
                 {framesPrefix: CharAnimation.WALK, repeat: -1, frameRate: 8},
                 {framesPrefix: CharAnimation.FALL, repeat: -1, frameRate: 4},
                 {framesPrefix: CharAnimation.IDLE, repeat: -1, frameRate: 8},
+                {framesPrefix: CharAnimation.SIT, repeat: -1, frameRate: 4},
                 {framesPrefix: CharAnimation.DEAD, repeat: -1, frameRate: 8},
                 {framesPrefix: CharAnimation.DAMAGED, frameRate: 8},
                 {framesPrefix: CharAnimation.DEVOUR, frameRate: 8},
@@ -100,8 +101,7 @@ export class Troll {
 
         this.setInitialSpriteOrigin()
 
-        // o_.layers.add(this.sprite, LayerKey.FIELD_OBJECTS)
-        o_.layers.add(this.container, LayerKey.FIELD_OBJECTS)
+        this.setLayer('normal')
 
         this.statusNotifications = new StatusNotifications(this.container, 0, -this.sprite.height)
 
@@ -358,8 +358,24 @@ export class Troll {
                 return new TrollStateUnconscious(this);
             case TrollStateKey.CLIMB:
                 return new TrollStateClimb(this, options);
+            case TrollStateKey.SIT:
+                return new TrollStateSit(this, options);
             default:
                 throw Error('wrong state key ' + stateKey);
+        }
+    }
+
+    setLayer = (layer: 'normal' | 'top') => {
+        switch (layer) {
+            case "normal":
+                o_.layers.remove(this.container, LayerKey.FIELD_OBJECTS_1)
+                o_.layers.add(this.container, LayerKey.FIELD_OBJECTS)
+                break;
+            case "top":
+                o_.layers.remove(this.container, LayerKey.FIELD_OBJECTS)
+                o_.layers.add(this.container, LayerKey.FIELD_OBJECTS_1)
+                break;
+
         }
     }
 
@@ -378,14 +394,9 @@ export class Troll {
         eventBus.emit(Evt.TROLL_LOCATION_CHANGED, location)
     }
 
-    goToBridge = () => {
-        // console.log("goToBridge");
-        const target = {x: 0, y: 0}
-        const bridgePos = positioner.getBridgePosition()
-        target.x = bridgePos.x + bridgePos.width / 2
-        target.y = bridgePos.y + bridgePos.height / 2
-
-        return this.setState(TrollStateKey.GO_TO, {target, onStart: onTrollGoesToBridge, onEnd: onTrollCameToBridge})
+    goToBridge = (options: { coord: Vec }) => {
+        console.log("goToBridge", options)
+        return this.setState(TrollStateKey.GO_TO, {target: options.coord})
     }
 
     goToLadder = (whichLadder: 'left' | 'right' | 'closest' = 'closest') => {
@@ -436,17 +447,24 @@ export class Troll {
         return this.setState(TrollStateKey.CLIMB, {target})
     }
 
-    goToLairChillZone = () => {
-        const target = positioner.getTrollLairIdlePosition();
+    sit = () => {
+        return this.setState(TrollStateKey.SIT)
+    }
+
+    goToLair = (target: Vec) => {
+        target = target || positioner.getTrollLairIdlePosition();
 
         return this.setState(TrollStateKey.GO_TO, {target})
     }
 
     goToBed = () => {
-        const target = {x: 0, y: 0}
-        const bedPos = positioner.getBedPosition();
-        target.x = bedPos.x
-        target.y = bedPos.y
+        const target = positioner.getBedPosition();
+
+        return this.setState(TrollStateKey.GO_TO, {target});
+    }
+
+    goToSit = () => {
+        const target = positioner.getChairPosition();
 
         return this.setState(TrollStateKey.GO_TO, {target});
     }

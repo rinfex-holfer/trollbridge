@@ -5,6 +5,7 @@ export const enum LayerKey {
     BACKGROUND = 'BACKGROUND',
     PARTICLES = 'PARTICLES',
     FIELD_OBJECTS = 'FIELD_OBJECTS',
+    FIELD_OBJECTS_1 = 'FIELD_OBJECTS_1',
     FIELD_BUTTONS = 'FIELD_BUTTONS',
     UNDER_BUTTONS = 'UNDER_BUTTONS',
     MAIN_MENUES = 'MAIN_MENUES',
@@ -13,10 +14,11 @@ export const enum LayerKey {
 const layersConfig = [
     [LayerKey.BACKGROUND, 0],
     [LayerKey.FIELD_OBJECTS, 1],
-    [LayerKey.UNDER_BUTTONS, 2],
-    [LayerKey.FIELD_BUTTONS, 3],
-    [LayerKey.PARTICLES, 4],
-    [LayerKey.MAIN_MENUES, 5],
+    [LayerKey.FIELD_OBJECTS_1, 2],
+    [LayerKey.UNDER_BUTTONS, 3],
+    [LayerKey.FIELD_BUTTONS, 4],
+    [LayerKey.PARTICLES, 5],
+    [LayerKey.MAIN_MENUES, 6],
 ] as [LayerKey, number][]
 
 export class LayersManager {

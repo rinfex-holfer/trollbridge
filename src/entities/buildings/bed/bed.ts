@@ -3,6 +3,7 @@ import {O_Sprite} from "../../../managers/core/render/sprite";
 import {LayerKey} from "../../../managers/core/layers";
 import {Vec} from "../../../utils/utils-math";
 import {eventBus, Evt} from "../../../event-bus";
+import {CursorType} from "../../../managers/core/input/cursor";
 
 export class Bed {
     sprite: O_Sprite
@@ -14,7 +15,7 @@ export class Bed {
         this.sprite = o_.render.createSprite(spriteKey, position.x, position.y)
         // this.sprite.setOrigin(0, 0)
         // o_.layers.add(this.sprite, LayerKey.BACKGROUND)
-        this.sprite.setInteractive(true, {cursor: 'pointer'})
+        this.sprite.setInteractive(true, {cursor: CursorType.DEFAULT})
         this.sprite.setWidth(200, false)
         this.sprite.setHeight(100, false)
         this.sprite.onClick(() => this.onClick())

@@ -1,11 +1,12 @@
 import {O_Sprite} from "../../../managers/core/render/sprite";
 import {EffectToTypeMap, EffectType} from "../../../effects/types";
-import {EnityEffect} from "../../../effects/entity-effect";
+import {EntityEffect} from "../../../effects/entity-effect";
 import {eventBusSubscriptions} from "../../../event-bus";
 import {O_EventEmitter} from "../../../utils/utils-events";
 import {o_} from "../../../managers/locator";
 import {Item, ItemEventPayload, ItemEvents, ItemPropsMap, ItemType} from "../types";
 import {BaseItemEvent, BaseItemEventPayload} from "./types";
+import {EffectHighlight} from "../../../effects/highlight";
 
 export abstract class BaseItem<T extends ItemType> implements Item<T> {
     abstract type: T
@@ -15,7 +16,7 @@ export abstract class BaseItem<T extends ItemType> implements Item<T> {
 
     sprite?: O_Sprite
 
-    private effects: Partial<Record<EffectType, EnityEffect>> = {}
+    private effects: Partial<Record<EffectType, EntityEffect>> = {}
 
     destroyed = false
 
@@ -39,12 +40,12 @@ export abstract class BaseItem<T extends ItemType> implements Item<T> {
     public setInteractive(val: boolean) {
     }
 
-    protected getEffect(type: EffectType): EffectToTypeMap[EffectType] | undefined {
+    protected getEffect<T extends EffectType>(type: T): EffectToTypeMap[T] | undefined {
         // @ts-ignore
         return this.effects[type]
     }
 
-    protected addEffect(effect: EnityEffect) {
+    protected addEffect(effect: EntityEffect) {
         this.effects[effect.type] = effect
         return effect
     }

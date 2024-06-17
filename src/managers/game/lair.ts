@@ -10,6 +10,7 @@ import {Treasury} from "../../entities/buildings/treasury";
 import {LairMenu} from "../../interface/lair-menu";
 import {O_Sprite} from "../core/render/sprite";
 import {Chair} from "../../entities/buildings/chair/chair";
+import {CursorType} from "../core/input/cursor";
 
 export class Lair {
     foodStorage: FoodStorage
@@ -21,9 +22,6 @@ export class Lair {
 
     sprite: O_Tiles
 
-    leftPart: O_Sprite
-    rightPart: O_Sprite
-
     menu: LairMenu
 
     constructor() {
@@ -32,23 +30,8 @@ export class Lair {
         this.sprite = o_.render.createTiles('grass', pos.x, pos.y, pos.width, pos.height);
         this.sprite.setOrigin(0, 0);
 
-        this.leftPart = o_.render.createSprite('empty_sprite', pos.x, pos.y, {
-            width: pos.width / 2,
-            height: pos.height
-        });
-        this.leftPart.setOrigin(0, 0);
-
-        this.rightPart = o_.render.createSprite('empty_sprite', pos.x + pos.width / 2, pos.y, {
-            width: pos.width / 2,
-            height: pos.height
-        });
-        this.rightPart.setOrigin(0, 0);
-
-        this.leftPart.onClick(() => {
-            eventBus.emit(Evt.INTERFACE_LAIR_CLICKED, "left")
-        })
-        this.rightPart.onClick(() => {
-            eventBus.emit(Evt.INTERFACE_LAIR_CLICKED, "right")
+        this.sprite.onClick((event) => {
+            eventBus.emit(Evt.INTERFACE_LAIR_CLICKED, {event})
         })
 
         // this.sprite.obj.alpha = 0
@@ -66,13 +49,11 @@ export class Lair {
         throw Error("TODO phase-lair")
     }
 
-    setClickable(val: boolean) {
+    setInteractive(val: boolean) {
         if (val) {
-            this.leftPart.setInteractive(true, {cursor: 'pointer'})
-            this.rightPart.setInteractive(true, {cursor: 'pointer'})
+            this.sprite.setInteractive(true)
         } else {
-            this.leftPart.setInteractive(false)
-            this.rightPart.setInteractive(false)
+            this.sprite.setInteractive(false)
         }
     }
 

@@ -1,9 +1,12 @@
 import Phaser from "phaser";
 import {resoursePaths} from "../../../resourse-paths";
 import {O_Container} from "./container";
+import {o_} from "../../locator";
+import {CursorType} from "../input/cursor";
 import Pointer = Phaser.Input.Pointer;
 import Rectangle = Phaser.Geom.Rectangle;
 import Vector2 = Phaser.Math.Vector2;
+import {GamePointerEvent} from "../input/types";
 
 export class O_Sprite {
     obj: Phaser.GameObjects.Sprite
@@ -39,6 +42,16 @@ export class O_Sprite {
     }
 
     setInteractive(val: boolean, options?: any) {
+        if (options?.cursor) {
+            if (options.cursor === 'default') {
+                options.cursor = o_.input.getCursor(CursorType.DEFAULT)
+            } else if (options.cursor === 'cursor') {
+                options.cursor = o_.input.getCursor(CursorType.POINTER)
+            } else {
+                options.cursor = o_.input.getCursor(options.cursor)
+            }
+        }
+
         if (val) this.obj.setInteractive(options)
         else {
             try {
@@ -61,16 +74,27 @@ export class O_Sprite {
         this.obj.setPosition(x, y);
     }
 
-    onClick(callback: () => void) {
+    onClick(callback: (event: GamePointerEvent) => void) {
         this.obj.on('pointerdown', (pointer: Pointer) => {
-            if (!pointer.rightButtonDown()) callback()
+            if (!pointer.rightButtonDown()) callback({
+                x: pointer.worldX,
+                y: pointer.worldY
+            })
         })
     }
 
-    onRightClick(callback: () => void) {
+    onRightClick(callback: (event: GamePointerEvent) => void) {
         this.obj.on('pointerdown', (pointer: Pointer) => {
-            if (pointer.rightButtonDown()) callback()
+            if (pointer.rightButtonDown()) callback({
+                x: pointer.x,
+                y: pointer.y
+            })
         })
+    }
+
+    onHover = (onIn: () => void, onOut: () => void) => {
+        this.onPointerOver(onIn)
+        this.onPointerOut(onOut)
     }
 
     onPointerOver(callback: () => void) {

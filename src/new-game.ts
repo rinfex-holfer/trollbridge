@@ -30,6 +30,8 @@ import {InputManager} from "./managers/core/input";
 import {MenuManager} from "./managers/core/menu";
 import {GameLoader} from "./game-loader";
 import {TextsManager} from "./managers/core/texts";
+import OutlinePostFx from "phaser3-rex-plugins/plugins/outlinepipeline.js";
+import {outlinePipeline} from "./shaders/OutlinePipeline";
 
 const preload = (scene: Phaser.Scene) => {
     const gameLoader = new GameLoader(scene)
@@ -89,6 +91,7 @@ export const newGame = () => {
 
     const size = getGameSize()
 
+
     const config: Phaser.Types.Core.GameConfig = {
         type: Phaser.WEBGL,
         pixelArt: true,
@@ -111,11 +114,16 @@ export const newGame = () => {
                 create(this);
             }
         },
+
+        // types are WRONG
         // @ts-ignore
-        pipeline: {'Gray': GrayScalePipeline}
+        pipeline: {
+            [outlinePipeline.name]: outlinePipeline.pipeline
+        },
     };
 
     return new Phaser.Game(config)
 }
 
-
+console.log("OutlinePostFx")
+// console.log(new OutlinePostFx({}));

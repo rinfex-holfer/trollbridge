@@ -1,8 +1,8 @@
 import {BuildingEvents, BuildingEventsPayload, BuildingsPropsMap, BuildingType} from "../types";
 import {ItemEventPayload, ItemEvents, ItemPropsMap} from "../../items/types";
 import {O_Sprite} from "../../../managers/core/render/sprite";
-import {EffectType} from "../../../effects/types";
-import {EnityEffect} from "../../../effects/entity-effect";
+import {EffectToTypeMap, EffectType} from "../../../effects/types";
+import {EntityEffect} from "../../../effects/entity-effect";
 import {eventBusSubscriptions} from "../../../event-bus";
 import {O_EventEmitter} from "../../../utils/utils-events";
 import {o_} from "../../../managers/locator";
@@ -30,6 +30,18 @@ export abstract class BaseBuilding<T extends BuildingType> {
     }
 
     abstract createSprite(props: BuildingsPropsMap[T] & BuildingProps): O_Sprite
+
+    private effects: Partial<Record<EffectType, EntityEffect>> = {}
+
+    protected getEffect(type: EffectType): EffectToTypeMap[EffectType] | undefined {
+        // @ts-ignore
+        return this.effects[type]
+    }
+
+    protected addEffect(effect: EntityEffect) {
+        this.effects[effect.type] = effect
+        return effect
+    }
 
     setInteractive(val: boolean) {
         this.sprite.setInteractive(val)
