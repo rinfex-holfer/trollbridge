@@ -10,7 +10,7 @@ import {BuildingEvent, BuildingEventPayload, BuildingProps} from "./types";
 import {SpriteKey} from "../../../resourse-paths";
 
 
-export abstract class BaseBuilding<T extends BuildingType> {
+export abstract class BasicBuilding<T extends BuildingType> {
     abstract readonly type: T
 
     props: BuildingsPropsMap[T] & BuildingProps

@@ -2,9 +2,9 @@ import {o_} from "../../../managers/locator";
 import {LayerKey} from "../../../managers/core/layers";
 import {eventBus, Evt} from "../../../event-bus";
 import {SpriteKey} from "../../../resourse-paths";
-import {BaseBuilding} from "../base-building/base-building";
+import {BasicBuilding} from "../basic-building/basic-building";
 import {BuildingType} from "../types";
-import {BuildingProps} from "../base-building/types";
+import {BuildingProps} from "../basic-building/types";
 import {ChairProps} from "./types";
 import {MakeOptional} from "../../../utils/utils-types";
 import {createId} from "../../../utils/utils-misc";
@@ -22,7 +22,7 @@ type Props = ChairProps & MakeOptional<BuildingProps, "id">
 
 const CHAIR_WIDTH = 100
 
-export class Chair extends BaseBuilding<BuildingType.CHAIR> {
+export class Chair extends BasicBuilding<BuildingType.CHAIR> {
     type = BuildingType.CHAIR as BuildingType.CHAIR
 
     constructor(props?: Props) {
