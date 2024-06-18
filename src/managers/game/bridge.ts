@@ -55,13 +55,11 @@ export class BridgeManager {
         all: (val: boolean) => {
             this.setInteractive.surface(val)
         },
-        surface: (val: boolean) => {
-            if (val) {
-                this.sprite.setInteractive(true);
-            } else {
-                this.sprite.setInteractive(false);
-                // o_.input.setCursor(CursorType.DEFAULT)
-            }
+        surface: (val: boolean) => this.sprite.setInteractive(val),
+
+        surfaceOnly: () => {
+            this.setInteractive.all(false)
+            this.setInteractive.surface(true)
         },
     }
 

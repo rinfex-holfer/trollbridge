@@ -7,22 +7,21 @@ import {FoodStorage} from "../../entities/buildings/food-storage";
 import {Bed} from "../../entities/buildings/bed/bed";
 import {Pot} from "../../entities/buildings/pot";
 import {Treasury} from "../../entities/buildings/treasury";
-import {LairMenu} from "../../interface/lair-menu";
 import {O_Sprite} from "../core/render/sprite";
 import {Chair} from "../../entities/buildings/chair/chair";
 import {CursorType} from "../core/input/cursor";
+import {Tools} from "../../entities/buildings/tools/tools";
 
 export class Lair {
     foodStorage: FoodStorage
     bed: Bed
     pot: Pot
     chair: Chair
+    tools: Tools
 
     treasury: Treasury
 
     sprite: O_Tiles
-
-    menu: LairMenu
 
     constructor() {
         o_.register.lair(this);
@@ -38,38 +37,41 @@ export class Lair {
 
         this.treasury = new Treasury(positioner.getTreasuryPosition())
         this.foodStorage = new FoodStorage(positioner.getFoodStoragePosition())
-        this.bed = new Bed(positioner.getBedPosition())
-        this.pot = new Pot();
+        this.bed = new Bed()
+        this.pot = new Pot()
         this.chair = new Chair()
-
-        this.menu = new LairMenu()
+        this.tools = new Tools()
     }
 
     updateMayBeMovedInto() {
         throw Error("TODO phase-lair")
     }
 
-    setInteractive(val: boolean) {
-        if (val) {
-            this.sprite.setInteractive(true)
-        } else {
-            this.sprite.setInteractive(false)
-        }
+    setInteractive = {
+        all: (val: boolean) => {
+            this.setInteractive.surface(val)
+            this.setInteractive.bed(val)
+            this.setInteractive.foodStorage(val)
+            this.setInteractive.pot(val)
+            this.setInteractive.chair(val)
+            this.setInteractive.tools(val)
+        },
+        surface: (val: boolean) => this.sprite.setInteractive(val),
+        bed: (val: boolean) => this.bed.setInteractive(val),
+        foodStorage: (val: boolean) => this.foodStorage.setInteractive(val),
+        pot: (val: boolean) => this.pot.setInteractive(val),
+        chair: (val: boolean) => this.chair.setInteractive(val),
+        tools: (val: boolean) => this.tools.setInteractive(val),
+
+        surfaceOnly: () => {
+            this.setInteractive.all(false)
+            this.setInteractive.surface(true)
+        },
     }
 
+    /** @deprecated */
     setObjectsActive(val: boolean) {
-        this.bed.setInteractive(val)
-        this.foodStorage.setEnabled(val)
-        this.pot.setInteractive(val)
-        this.chair.setInteractive(val)
-    }
-
-    setMenuShown(val: boolean) {
-        if (val) {
-            this.menu.show()
-        } else {
-            this.menu.hide()
-        }
+        throw Error("use setInteractive.all")
     }
 
     changeResource(key: ResourceKey, val: number) {

@@ -75,6 +75,14 @@ export const positioner = {
         }
     },
 
+    getToolsPosition() {
+        const pos = positioner.getLairPosition();
+        return {
+            x: pos.x + pos.width / 2 + 100,
+            y: pos.y + pos.height / 2 + 150,
+        }
+    },
+
     getPotPosition() {
         const pos = positioner.getLairPosition();
         return {

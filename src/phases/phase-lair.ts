@@ -9,9 +9,7 @@ import {PhaseBuild} from "./phase-build";
 import {PhaseBridge} from "./phase-bridge";
 import {TrollStateKey} from "../managers/game/troll/troll-state";
 import {Vec} from "../utils/utils-math";
-import {GameInputEvent} from "../managers/core/input/domain";
 import {GamePointerEvent} from "../managers/core/input/types";
-import {positioner} from "../managers/game/positioner";
 
 export class PhaseLair extends GamePhase {
 
@@ -33,11 +31,11 @@ export class PhaseLair extends GamePhase {
         this.registerListener(Evt.INTERFACE_BED_CLICKED, this.trollGoesToBed)
         this.registerListener(Evt.INTERFACE_CHAIR_CLICKED, this.onChairClicked)
         this.registerListener(Evt.INTERFACE_POT_CLICKED, this.onPotClicked)
-        this.registerListener(Evt.INTERFACE_OPEN_BUILD_MENU_BUTTON_CLICKED, this.onBuildMenuClicked)
+        this.registerListener(Evt.INTERFACE_TOOLS_CLICKED, this.onToolsClicked)
         this.registerListener(Evt.INTERFACE_LAIR_CLICKED, (e) => this.onLairClicked(e.event))
         this.registerListener(Evt.INTERFACE_BRIDGE_CLICKED, (e) => this.trollGoesToBridge({coord: e.event}))
 
-        o_.troll.setLocation(TrollLocation.LAIR);
+        o_.troll.setLocation(TrollLocation.LAIR)
         o_.camera.panToLair()
         this.interfaceFor.idleInLair()
 
@@ -71,66 +69,45 @@ export class PhaseLair extends GamePhase {
 
     interfaceFor = {
         idleInLair: () => {
-            o_.lair.setObjectsActive(true)
-            o_.lair.setInteractive(true)
-            o_.lair.setMenuShown(true)
+            o_.lair.setInteractive.all(true)
             o_.bridge.setInteractive.all(true)
         },
         goesToBed: () => {
-            o_.lair.setInteractive(true)
-            o_.lair.setObjectsActive(false)
-            o_.lair.setMenuShown(false)
+            o_.lair.setInteractive.surfaceOnly()
             o_.bridge.setInteractive.all(true);
         },
         goesToSit: () => {
-            o_.lair.setInteractive(true)
-            o_.lair.setObjectsActive(false)
-            o_.lair.setMenuShown(false)
+            o_.lair.setInteractive.all(true)
             o_.bridge.setInteractive.all(false);
         },
         sit: () => {
-            o_.lair.setInteractive(true)
-            o_.lair.setObjectsActive(true)
-            o_.lair.setMenuShown(true)
-            o_.bridge.setInteractive.all(false);
-            o_.bridge.setInteractive.surface(true);
+            o_.lair.setInteractive.all(true)
+            o_.bridge.setInteractive.surfaceOnly()
         },
         sleepOnBed: () => {
-            o_.lair.setInteractive(true)
-            o_.lair.setObjectsActive(false)
+            o_.lair.setInteractive.surfaceOnly()
             o_.lair.bed.setInteractive(true)
-            o_.lair.setMenuShown(false)
             o_.bridge.setInteractive.all(false);
         },
         cleanup: () => {
-            o_.lair.setObjectsActive(false)
-            o_.lair.setInteractive(false)
-            o_.lair.setMenuShown(false)
+            o_.lair.setInteractive.all(false)
             o_.bridge.setInteractive.all(false)
         },
         goesToBridge: () => {
-            o_.lair.setObjectsActive(false)
-            o_.lair.setMenuShown(false)
-            o_.lair.setInteractive(true)
-            o_.bridge.setInteractive.all(false)
-            o_.bridge.setInteractive.surface(true)
+            o_.lair.setInteractive.surfaceOnly()
+            o_.bridge.setInteractive.surfaceOnly()
         },
         climbsToBridge: () => {
-            o_.lair.setObjectsActive(false)
-            o_.lair.setMenuShown(false)
-            o_.lair.setInteractive(true)
-            o_.bridge.setInteractive.all(false)
+            o_.lair.setInteractive.surfaceOnly()
+            o_.bridge.setInteractive.surfaceOnly()
         },
         climbsFromBridge: () => {
-            o_.lair.setObjectsActive(false)
-            o_.lair.setMenuShown(false)
-            o_.lair.setInteractive(false)
-            o_.bridge.setInteractive.all(false)
-            o_.bridge.setInteractive.surface(true)
+            o_.lair.setInteractive.surfaceOnly()
+            o_.bridge.setInteractive.surfaceOnly()
         }
     }
 
-    onBuildMenuClicked = () => {
+    onToolsClicked = () => {
         this.goToNextPhase(new PhaseBuild())
     }
 

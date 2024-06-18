@@ -26,6 +26,8 @@ export const resoursePaths = {
         chair_2: `${imagesUrl}/chair_2.png`,
         chair_3: `${imagesUrl}/chair_3.png`,
 
+        tools: `${imagesUrl}/tools.png`,
+
         button_release: `${imagesUrl}/leg.png`,
         button_imprison: `${imagesUrl}/prisoner.png`,
         button_strike: `${imagesUrl}/icon_claws.png`,
@@ -82,6 +84,8 @@ export const resoursePaths = {
         cursor_build: `${imagesUrl}/cursors/cursor_build.png`,
         cursor_attack: `${imagesUrl}/cursors/cursor_attack.png`,
         cursor_not_allowed: `${imagesUrl}/cursors/cursor_not_allowed.png`,
+        cursor_wait: `${imagesUrl}/cursors/cursor_wait.png`,
+        cursor_sleep: `${imagesUrl}/cursors/cursor_sleep.png`,
     },
 
     atlases: {

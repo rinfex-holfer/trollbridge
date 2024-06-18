@@ -150,6 +150,7 @@ export class AudioManager {
     }
 
     playSound = (key: SOUND_KEY) => {
+        console.log("play sound", key)
         if (this.sounds[key]) {
             this.sounds[key].play();
         }

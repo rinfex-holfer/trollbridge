@@ -15,6 +15,10 @@ export class InputManager extends GameInputEventEmitter {
         this.keyboard = new KeyboardController(scene)
         this.keyboard.on(GAME_INPUT_EVENT, (signal) => this.emit(GAME_INPUT_EVENT, signal))
 
+        this.updateDefaultCursor()
+    }
+
+    updateDefaultCursor() {
         this.setCursor(CursorType.DEFAULT)
     }
 

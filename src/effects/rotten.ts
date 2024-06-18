@@ -38,6 +38,8 @@ export class EffectRotten extends EntityEffect {
             this.gasEmitter.x = center.x
             this.gasEmitter.y = center.y
         })
+
+        this.entity.sprite.obj.setTint(colorsNum.ROTTEN)
     }
 
     subId: number

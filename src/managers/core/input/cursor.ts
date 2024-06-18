@@ -7,6 +7,8 @@ export enum CursorType {
     BUILD = 'build',
     ATTACK = 'attack',
     NOT_ALLOWED = 'not_allowed',
+    WAIT = 'wait',
+    SLEEP = 'sleep',
 }
 
 export const CursorImgMap: Record<CursorType, ImageKey> = {
@@ -15,6 +17,8 @@ export const CursorImgMap: Record<CursorType, ImageKey> = {
     [CursorType.BUILD]: "cursor_build",
     [CursorType.ATTACK]: "cursor_attack",
     [CursorType.NOT_ALLOWED]: "cursor_not_allowed",
+    [CursorType.WAIT]: "cursor_wait",
+    [CursorType.SLEEP]: "cursor_sleep",
 } as const
 
 

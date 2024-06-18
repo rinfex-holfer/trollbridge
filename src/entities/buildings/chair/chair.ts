@@ -13,6 +13,7 @@ import {Txt} from "../../../managers/core/texts";
 import {positioner} from "../../../managers/game/positioner";
 import {EffectHighlight} from "../../../effects/highlight";
 import {EffectType} from "../../../effects/types";
+import {CursorType} from "../../../managers/core/input/cursor";
 
 const defaultProps: ChairProps = {
     level: 1
@@ -87,5 +88,16 @@ export class Chair extends BasicBuilding<BuildingType.CHAIR> {
 
     onClick() {
         eventBus.emit(Evt.INTERFACE_CHAIR_CLICKED)
+    }
+
+    switchCursor(cursor: CursorType.POINTER | CursorType.WAIT) {
+        this.sprite.setInteractive(true, {cursor})
+    }
+
+    setInteractive(val: boolean) {
+        super.setInteractive(val);
+        if (val === false) {
+            this.getEffect(EffectType.HIGHLIGHTED)?.setActive(false)
+        }
     }
 }

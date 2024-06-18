@@ -109,7 +109,7 @@ export class FoodStorage {
         })
     }
 
-    setEnabled(val: boolean) {
+    setInteractive(val: boolean) {
         this.places.forEach(p => p[1]?.setInteractive(val))
     }
 }
