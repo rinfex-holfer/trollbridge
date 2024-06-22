@@ -40,7 +40,7 @@ export class Gold extends BaseItem<ItemType.GOLD> {
         this.sprite.setOrigin(0, 0.5)
         this.sprite.setWidth(GOLD_WIDTH)
 
-        this.addEffect(new EffectHighlight(this)) as EffectHighlight
+        this.addEffect(new EffectHighlight(this.sprite)) as EffectHighlight
         this.sprite.onHover(
             () => this.getEffect(EffectType.HIGHLIGHTED)?.setActive(true),
             () => this.getEffect(EffectType.HIGHLIGHTED)?.setActive(false)
@@ -49,7 +49,7 @@ export class Gold extends BaseItem<ItemType.GOLD> {
         this.updateLayer()
 
         if (location === GoldLocation.GROUND) {
-            this.sprite.setInteractive(true, {cursor: 'pointer'})
+            this.sprite.setInteractive(true)
             this.sprite.onClick(() => this.onClick())
         }
         this.globalEventsSubscripions.on(Evt.TIME_PASSED, () => this.onTimePassed())

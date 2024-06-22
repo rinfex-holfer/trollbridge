@@ -27,7 +27,7 @@ export class Rock extends BaseItem<ItemType.ROCK> {
         this.sprite = o_.render.createSprite('rock', pos.x, pos.y)
         this.sprite.setOrigin(0, 0.5)
 
-        this.addEffect(new EffectHighlight(this)) as EffectHighlight
+        this.addEffect(new EffectHighlight(this.sprite)) as EffectHighlight
         this.sprite.onHover(
             () => this.getEffect(EffectType.HIGHLIGHTED)?.setActive(true),
             () => this.getEffect(EffectType.HIGHLIGHTED)?.setActive(false)

@@ -38,7 +38,9 @@ export const resoursePaths = {
         button_make_food: `${imagesUrl}/icon_devour.png`,
         button_feed: `${imagesUrl}/makeFood.png`,
         button_upgrade: `${imagesUrl}/icon_build.png`,
-        button_wait: `${imagesUrl}/icon_wait.png`,
+
+        button_sleep: `${imagesUrl}/button_sleep.png`,
+        button_wait: `${imagesUrl}/button_wait.png`,
 
         status_change_dmg: `${imagesUrl}/icon_blood.png`,
         status_change_heal: `${imagesUrl}/icon_green_plus.png`,

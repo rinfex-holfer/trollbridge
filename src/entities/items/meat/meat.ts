@@ -69,7 +69,7 @@ export class Meat extends BaseItem<ItemType.MEAT> {
             this.onRightClick()
         })
 
-        this.addEffect(new EffectHighlight(this)) as EffectHighlight
+        this.addEffect(new EffectHighlight(this.sprite)) as EffectHighlight
         this.sprite.onHover(
             () => this.getEffect(EffectType.HIGHLIGHTED)?.setActive(true),
             () => this.getEffect(EffectType.HIGHLIGHTED)?.setActive(false)
@@ -203,7 +203,7 @@ export class Meat extends BaseItem<ItemType.MEAT> {
     }
 
     public setInteractive(val: boolean) {
-        this.sprite.setInteractive(val, {cursor: 'pointer'})
+        this.sprite.setInteractive(val)
     }
 
     public updateInteractive() {

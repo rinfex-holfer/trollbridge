@@ -15,9 +15,12 @@ export class TimeManager {
 
     constructor() {
         o_.register.time(this)
+
+        eventBus.on(Evt.INTERFACE_SLEEP_BUTTON_CLICKED, () => this.wait(3))
+        eventBus.on(Evt.INTERFACE_WAIT_BUTTON_CLICKED, () => this.wait(1))
     }
 
-    sub(fn:UpdateListener): number {
+    sub(fn: UpdateListener): number {
         const lastId = nextId
         nextId++
         this.listeners.push([lastId, fn]);
@@ -32,15 +35,17 @@ export class TimeManager {
         this.listeners.forEach(l => l[1](dt))
     }
 
-    wait() {
+    wait(timePassed: number) {
         const timeIndex = TimeOrder.indexOf(this.time);
-        if (timeIndex === TimeOrder.length - 1) {
+        const nextTimeIndex = (timeIndex + timePassed) % TimeOrder.length;
+
+        const isNextDay = timeIndex + timePassed > TimeOrder.length - 1
+        if (isNextDay) {
             this.day = this.day + 1;
-            this.time = TimeOrder[0];
-        } else {
-            this.time = TimeOrder[timeIndex + 1];
         }
 
-        eventBus.emit(Evt.TIME_PASSED);
+        this.time = TimeOrder[nextTimeIndex];
+
+        eventBus.emit(Evt.TIME_PASSED, timePassed);
     }
 }

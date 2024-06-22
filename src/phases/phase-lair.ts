@@ -73,36 +73,35 @@ export class PhaseLair extends GamePhase {
             o_.bridge.setInteractive.all(true)
         },
         goesToBed: () => {
-            o_.lair.setInteractive.surfaceOnly()
-            o_.bridge.setInteractive.all(true);
+            o_.lair.setInteractive.all(true)
+            o_.bridge.setInteractive.all(true)
         },
         goesToSit: () => {
             o_.lair.setInteractive.all(true)
-            o_.bridge.setInteractive.all(false);
+            o_.bridge.setInteractive.surfaceOnly()
         },
         sit: () => {
             o_.lair.setInteractive.all(true)
             o_.bridge.setInteractive.surfaceOnly()
         },
         sleepOnBed: () => {
-            o_.lair.setInteractive.surfaceOnly()
-            o_.lair.bed.setInteractive(true)
-            o_.bridge.setInteractive.all(false);
+            o_.lair.setInteractive.all(true)
+            o_.bridge.setInteractive.surfaceOnly()
         },
         cleanup: () => {
             o_.lair.setInteractive.all(false)
             o_.bridge.setInteractive.all(false)
         },
         goesToBridge: () => {
-            o_.lair.setInteractive.surfaceOnly()
+            o_.lair.setInteractive.allButComplexStuff()
             o_.bridge.setInteractive.surfaceOnly()
         },
         climbsToBridge: () => {
-            o_.lair.setInteractive.surfaceOnly()
+            o_.lair.setInteractive.allButComplexStuff()
             o_.bridge.setInteractive.surfaceOnly()
         },
         climbsFromBridge: () => {
-            o_.lair.setInteractive.surfaceOnly()
+            o_.lair.setInteractive.allButComplexStuff()
             o_.bridge.setInteractive.surfaceOnly()
         }
     }

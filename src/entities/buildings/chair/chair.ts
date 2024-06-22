@@ -14,6 +14,7 @@ import {positioner} from "../../../managers/game/positioner";
 import {EffectHighlight} from "../../../effects/highlight";
 import {EffectType} from "../../../effects/types";
 import {CursorType} from "../../../managers/core/input/cursor";
+import {O_Sprite} from "../../../managers/core/render/sprite";
 
 const defaultProps: ChairProps = {
     level: 1
@@ -25,6 +26,8 @@ const CHAIR_WIDTH = 100
 
 export class Chair extends BasicBuilding<BuildingType.CHAIR> {
     type = BuildingType.CHAIR as BuildingType.CHAIR
+
+    private waitButton: O_Sprite
 
     constructor(props?: Props) {
         super({
@@ -41,18 +44,60 @@ export class Chair extends BasicBuilding<BuildingType.CHAIR> {
             this.getIsMaxLevel
         )
 
-        this.addEffect(new EffectHighlight(this)) as EffectHighlight
+        this.addEffect(new EffectHighlight(this.sprite)) as EffectHighlight
         this.sprite.onHover(
             () => this.getEffect(EffectType.HIGHLIGHTED)?.setActive(true),
             () => this.getEffect(EffectType.HIGHLIGHTED)?.setActive(false)
         )
+
+        this.waitButton = o_.render.createSprite(
+            'button_wait',
+            this.sprite.x + this.sprite.width / 2 + 20,
+            this.sprite.y - this.sprite.height - 40
+        )
+        this.waitButton.setWidth(50)
+        this.waitButton.onClick(() => {
+            eventBus.emit(Evt.INTERFACE_WAIT_BUTTON_CLICKED)
+        })
+        this.waitButton.setCursor(CursorType.POINTER)
+        this.waitButton.setVisibility(false)
+        const effect = new EffectHighlight(this.waitButton)
+        this.waitButton.onHover(
+            () => effect.setActive(true),
+            () => effect.setActive(false)
+        )
+    }
+
+    private _occupied = false
+
+    get occupied() {
+        return this._occupied
+    }
+
+    set occupied(val: boolean) {
+        this._occupied = val
+
+        this.waitButton.setVisibility(val)
+        this.waitButton.setInteractive(val)
+
+        if (val) {
+            this.setInteractive(false)
+
+            this.waitButton.alpha = 0
+            this.waitButton.y = this.waitButton.y + 30
+            o_.render.fadeInFromBottom(this.waitButton, 150, 30)
+        }
+    }
+
+    private setCursor(cursor: CursorType.WAIT | CursorType.POINTER) {
+        this.sprite.setCursor(cursor)
     }
 
     createSprite(props: Props) {
         const position = positioner.getChairPosition()
         const sprite = o_.render.createSprite(this.getSpriteKey(), position.x, position.y)
         o_.layers.add(sprite, LayerKey.FIELD_OBJECTS)
-        sprite.setInteractive(true, {cursor: 'pointer'})
+        sprite.setInteractive(true)
         sprite.setWidth(CHAIR_WIDTH)
         sprite.setOrigin(0.5, 1)
 
@@ -88,10 +133,6 @@ export class Chair extends BasicBuilding<BuildingType.CHAIR> {
 
     onClick() {
         eventBus.emit(Evt.INTERFACE_CHAIR_CLICKED)
-    }
-
-    switchCursor(cursor: CursorType.POINTER | CursorType.WAIT) {
-        this.sprite.setInteractive(true, {cursor})
     }
 
     setInteractive(val: boolean) {

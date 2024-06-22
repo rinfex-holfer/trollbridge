@@ -45,7 +45,7 @@ export class Dish extends BaseItem<ItemType.DISH> {
 
         this.sprite = o_.render.createSprite('dish', pos.x, pos.y)
 
-        this.addEffect(new EffectHighlight(this)) as EffectHighlight
+        this.addEffect(new EffectHighlight(this.sprite)) as EffectHighlight
         this.sprite.onHover(
             () => this.getEffect(EffectType.HIGHLIGHTED)?.setActive(true),
             () => this.getEffect(EffectType.HIGHLIGHTED)?.setActive(false)

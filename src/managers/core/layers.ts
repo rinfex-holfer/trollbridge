@@ -9,6 +9,7 @@ export const enum LayerKey {
     FIELD_BUTTONS = 'FIELD_BUTTONS',
     UNDER_BUTTONS = 'UNDER_BUTTONS',
     MAIN_MENUES = 'MAIN_MENUES',
+    CURSOR = 'CURSOR',
 }
 
 const layersConfig = [
@@ -19,6 +20,7 @@ const layersConfig = [
     [LayerKey.FIELD_BUTTONS, 4],
     [LayerKey.PARTICLES, 5],
     [LayerKey.MAIN_MENUES, 6],
+    [LayerKey.CURSOR, 7],
 ] as [LayerKey, number][]
 
 export class LayersManager {

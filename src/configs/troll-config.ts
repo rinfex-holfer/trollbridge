@@ -11,6 +11,9 @@ export const trollConfig = {
     HP_FROM_SLEEP_ON_BED: 0.25,
     SELF_CONTROL_FROM_SLEEP: 1,
 
+    HP_FROM_SIT: 0.05,
+    SELF_CONTROL_FROM_SIT: 0.5,
+
     DMG_MODIFIER_RAGE: 1.5,
     DMG_MODIFIER_THROW_ROCK: 1.25,
     DMG_MODIFIER_GRAPPLE: 1,
@@ -154,7 +157,7 @@ export const trollConfig = {
             },
             newAbilities: [],
         },
-    } as {[key: number]: LevelReqs},
+    } as { [key: number]: LevelReqs },
 }
 
 // @ts-ignore

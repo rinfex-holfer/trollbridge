@@ -1,4 +1,4 @@
-import {ResourceKey, TrollLocation} from "../../types";
+import {ResourceKey} from "../../types";
 import {eventBus, Evt} from "../../event-bus";
 import {positioner} from "./positioner";
 import {o_} from "../locator";
@@ -7,9 +7,8 @@ import {FoodStorage} from "../../entities/buildings/food-storage";
 import {Bed} from "../../entities/buildings/bed/bed";
 import {Pot} from "../../entities/buildings/pot";
 import {Treasury} from "../../entities/buildings/treasury";
-import {O_Sprite} from "../core/render/sprite";
 import {Chair} from "../../entities/buildings/chair/chair";
-import {CursorType} from "../core/input/cursor";
+import {CursorType, getCursorStyle} from "../core/input/cursor";
 import {Tools} from "../../entities/buildings/tools/tools";
 
 export class Lair {
@@ -67,6 +66,11 @@ export class Lair {
             this.setInteractive.all(false)
             this.setInteractive.surface(true)
         },
+        allButComplexStuff: () => {
+            this.setInteractive.all(true)
+            this.setInteractive.tools(false)
+            this.setInteractive.pot(false)
+        }
     }
 
     /** @deprecated */

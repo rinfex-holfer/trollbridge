@@ -1,5 +1,4 @@
 import Phaser from "phaser";
-import {resoursePaths} from "./resourse-paths";
 import {RenderManager} from "./managers/core/render/render-manager";
 import {Troll} from "./managers/game/troll/troll";
 import {getGameSize} from "./utils/utils-misc";
@@ -12,8 +11,6 @@ import {AudioManager} from "./managers/core/audio";
 import {TimeManager} from "./managers/core/time";
 import {BattleManager} from "./managers/game/battle";
 import {LayersManager} from "./managers/core/layers";
-import {Meat} from "./entities/items/meat/meat";
-import {GrayScalePipeline} from "./shaders";
 import {ItemManager} from "./managers/core/entities/items";
 import {InteractionManager} from "./managers/core/interaction";
 import {Gold} from "./entities/items/gold";
@@ -30,7 +27,6 @@ import {InputManager} from "./managers/core/input";
 import {MenuManager} from "./managers/core/menu";
 import {GameLoader} from "./game-loader";
 import {TextsManager} from "./managers/core/texts";
-import OutlinePostFx from "phaser3-rex-plugins/plugins/outlinepipeline.js";
 import {outlinePipeline} from "./shaders/OutlinePipeline";
 
 const preload = (scene: Phaser.Scene) => {
@@ -40,11 +36,14 @@ const preload = (scene: Phaser.Scene) => {
 
 const create = (scene: Phaser.Scene) => {
     new GameManager(scene)
-    new InputManager(scene)
+    const inputManager = new InputManager(scene)
     new MenuManager()
     const timeManager = new TimeManager()
     new LayersManager(scene)
     new RenderManager(scene)
+
+    inputManager.initializeCursor()
+
     new CameraManager(scene)
     new InteractionManager(scene)
     new ItemManager()
@@ -115,9 +114,9 @@ export const newGame = () => {
             }
         },
 
-        // types are WRONG
-        // @ts-ignore
+        // phaser types are WRONG here
         pipeline: {
+            // @ts-ignore
             [outlinePipeline.name]: outlinePipeline.pipeline
         },
     };

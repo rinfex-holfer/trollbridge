@@ -25,7 +25,7 @@ export class Tools extends BasicBuilding<BuildingType.TOOLS> {
             ...props
         })
 
-        this.addEffect(new EffectHighlight(this)) as EffectHighlight
+        this.addEffect(new EffectHighlight(this.sprite)) as EffectHighlight
         this.sprite.onHover(
             () => this.getEffect(EffectType.HIGHLIGHTED)?.setActive(true),
             () => this.getEffect(EffectType.HIGHLIGHTED)?.setActive(false)
@@ -38,7 +38,7 @@ export class Tools extends BasicBuilding<BuildingType.TOOLS> {
         const sprite = o_.render.createSprite(spriteKey, position.x, position.y)
         // sprite.setOrigin(0, 0)
         // o_.layers.add(sprite, LayerKey.BACKGROUND)
-        sprite.setInteractive(true, {cursor: CursorType.POINTER})
+        sprite.setInteractive(true)
         sprite.setWidth(100)
         sprite.onClick(() => this.onClick())
 
@@ -49,7 +49,7 @@ export class Tools extends BasicBuilding<BuildingType.TOOLS> {
         super.setInteractive(val);
         if (val === false) {
             this.getEffect(EffectType.HIGHLIGHTED)?.setActive(false)
-            o_.input.updateDefaultCursor()
+            o_.input.setDefaultCursor()
         }
     }
 

@@ -1,5 +1,6 @@
 import {Troll} from "./troll";
 import {createPromiseAndHandlers} from "../../../utils/utils-async";
+import {eventBusSubscriptions} from "../../../event-bus";
 
 export const enum TrollStateKey {
     IDLE = 'IDLE',
@@ -17,6 +18,8 @@ export abstract class TrollState {
 
     onEndPromise: Promise<any>
     onEndCallback: () => void
+
+    subs = eventBusSubscriptions()
 
     constructor(host: Troll) {
         this.host = host
@@ -40,6 +43,7 @@ export abstract class TrollState {
     }
 
     end() {
+        this.subs.clear()
         this.onEnd()
         this.onEndCallback()
     }

@@ -14,6 +14,12 @@ export class PhaseBuild extends GamePhase {
     onStart() {
         o_.upgrade.showButtons(this.goToLairPhase)
 
+        o_.lair.setInteractive.tools(true)
+
+        this.registerListener(Evt.INTERFACE_TOOLS_CLICKED, () => {
+            this.goToLairPhase()
+        })
+
         this.registerListener(Evt.BUILDING_COMPLETED, () => {
             if (o_.upgrade.buttons.length === 0) {
                 this.goToLairPhase()
@@ -27,5 +33,6 @@ export class PhaseBuild extends GamePhase {
 
     protected onEnd() {
         o_.upgrade.hideButtons()
+        o_.lair.setInteractive.tools(false)
     }
 }

@@ -1,6 +1,14 @@
 import {FoodType, LevelReqs, Time} from "../types";
 
-export const TimeOrder = [Time.MORNING, Time.AFTERNOON, Time.EVENING, Time.NIGHT];
+export const TimeOrder = [
+    Time.EARLY_MORNING,
+    Time.MORNING,
+    Time.AFTERNOON,
+    Time.LATE_AFTERNOON,
+    Time.EVENING,
+    Time.MIDNIGHT,
+    Time.NIGHT
+];
 
 export const gameConstants = {
     //  ======================== CHARS ========================

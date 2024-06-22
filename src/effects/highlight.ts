@@ -2,10 +2,9 @@ import {O_Sprite} from "../managers/core/render/sprite";
 import {outlinePipeline} from "../shaders/OutlinePipeline";
 import {EntityEffect} from "./entity-effect";
 import {EffectType} from "./types";
+import Sprite = Phaser.GameObjects.Sprite;
 
-interface HighlightableEntity {
-    sprite: O_Sprite
-}
+type HighlightableEntity = O_Sprite
 
 interface HighlightEffectConfig {
     thickness?: number,
@@ -38,11 +37,11 @@ export class EffectHighlight extends EntityEffect {
 
         this.entity = entity
 
-        entity.sprite.obj.setPostPipeline(outlinePipeline.name, options);
+        entity.obj.setPostPipeline(outlinePipeline.name, options);
 
         this.thickness = options.thickness ?? 0
 
-        this.pipeline = entity.sprite.obj.getPostPipeline(outlinePipeline.name)
+        this.pipeline = entity.obj.getPostPipeline(outlinePipeline.name)
 
         this.setOptions({
             color: options.color,
@@ -69,6 +68,6 @@ export class EffectHighlight extends EntityEffect {
 
     destroy() {
         this.setActive(false)
-        this.entity.sprite.obj.removePostPipeline(outlinePipeline.name)
+        this.entity.obj.removePostPipeline(outlinePipeline.name)
     }
 }

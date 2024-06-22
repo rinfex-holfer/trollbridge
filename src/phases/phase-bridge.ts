@@ -63,28 +63,28 @@ export class PhaseBridge extends GamePhase {
 
     interfaceFor = {
         idleOnBridge: () => {
-            o_.lair.setInteractive(true)
+            o_.lair.setInteractive.all(true)
 
             o_.bridge.setInteractive.all(false)
             o_.bridge.setInteractive.surface(true)
         },
         goesToLair: () => {
-            o_.lair.setInteractive(true)
+            o_.lair.setInteractive.all(true)
 
             o_.bridge.setInteractive.all(false)
             o_.bridge.setInteractive.surface(true)
         },
         cleanup: () => {
-            o_.lair.setInteractive(false)
+            o_.lair.setInteractive.all(false)
             o_.bridge.setInteractive.all(false)
         },
         climbToLair: () => {
-            o_.lair.setInteractive(false)
+            o_.lair.setInteractive.all(false)
             o_.bridge.setInteractive.all(false)
             o_.bridge.setInteractive.surface(true)
         },
         climbsFromLair: () => {
-            o_.lair.setInteractive(true)
+            o_.lair.setInteractive.all(true)
             o_.bridge.setInteractive.all(false)
         },
     }

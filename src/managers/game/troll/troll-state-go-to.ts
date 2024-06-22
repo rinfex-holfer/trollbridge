@@ -10,6 +10,7 @@ type GoToOptions = {
     turnToTarget?: boolean
     onStart?: () => void
     onEnd?: () => void
+    onReached?: () => void
 }
 
 export class TrollStateGoTo extends TrollState {
@@ -43,6 +44,7 @@ export class TrollStateGoTo extends TrollState {
         const distanceLeft = getDistanceBetween(this.host.container, this.options.target);
 
         if (distanceLeft <= this.minDistance) {
+            this.options.onReached?.()
             this.host.goIdle()
         }
     }

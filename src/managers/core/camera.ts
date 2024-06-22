@@ -54,7 +54,9 @@ export class CameraManager {
     }
 
     panTo = (x: number, y: number, duration?: number, ease?: string, force?: boolean) => {
-        this.camera.pan(x, y, duration, ease, force)
+        this.camera.pan(x, y, duration, ease, force, () => {
+            o_.input.cursor.updateCursorCoord()
+        })
     }
 
     follow(gameObject: O_GameObject) {

@@ -1,4 +1,3 @@
-
 export const enum FoodType {
     MEAT = 'MEAT',
     DISH = 'DISH',
@@ -16,9 +15,12 @@ export const enum TrollLocation {
 }
 
 export const enum Time {
+    EARLY_MORNING = 'early_morning',
     MORNING = 'morning',
     AFTERNOON = 'afternoon',
+    LATE_AFTERNOON = 'late_afternoon',
     EVENING = 'evening',
+    MIDNIGHT = 'midnight',
     NIGHT = 'night',
 }
 

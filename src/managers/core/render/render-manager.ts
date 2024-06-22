@@ -12,6 +12,7 @@ import {LayerKey} from "../layers";
 import {createPromiseAndHandlers} from "../../../utils/utils-async";
 import GameObject = Phaser.GameObjects.GameObject;
 import {stub} from "../../../utils/utils-misc";
+import {ImageKey} from "../../../utils/utils-types";
 
 export class RenderManager {
     scene: Phaser.Scene
@@ -141,7 +142,7 @@ export class RenderManager {
         return new O_Container(this.scene, x, y, options)
     }
 
-    createSprite(key: keyof typeof resoursePaths.images, x: number, y: number, options?: {
+    createSprite(key: ImageKey, x: number, y: number, options?: {
         width?: number,
         height?: number,
         parent?: O_Container
@@ -382,8 +383,22 @@ export class RenderManager {
         return tweenChain;
     }
 
+    fadeInFromBottom(targets: O_GameObject | O_GameObject[], duration = 500, height = 30) {
+        const {promise, done} = createPromiseAndHandlers<any>()
+        const tween = this.createTween({
+            targets: Array.isArray(targets) ? targets.map(t => t.obj) : targets.obj,
+            ease: 'Power2.easeOut',
+            duration,
+            alpha: 1,
+            y: '-=' + height,
+            onComplete: done
+        })
+        tween.play()
+        return promise
+    }
+
     fadeIn(targets: O_GameObject | O_GameObject[], duration = 500) {
-        const {promise, done} = createPromiseAndHandlers()
+        const {promise, done} = createPromiseAndHandlers<any>()
         const tween = this.createTween({
             targets: Array.isArray(targets) ? targets.map(t => t.obj) : targets.obj,
             ease: 'Power2.easeOut',
