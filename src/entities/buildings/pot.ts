@@ -5,7 +5,7 @@ import {O_AnimatedSprite} from "../../managers/core/render/animated-sprite";
 import {colorsCSS} from "../../configs/constants";
 import {eventBus, eventBusSubscriptions, Evt} from "../../event-bus";
 import {Meat} from "../items/meat/meat";
-import {findAndSplice} from "../../utils/utils-misc";
+import {createId, findAndSplice} from "../../utils/utils-misc";
 import {O_Text} from "../../managers/core/render/text";
 import {SOUND_KEY} from "../../managers/core/audio";
 import {foodConfig} from "../../configs/food-config";
@@ -14,6 +14,9 @@ import {ItemType} from "../items/types";
 import {Dish} from "../items/dish/dish";
 import {positioner} from "../../managers/game/positioner";
 import {BaseItemEvent} from "../items/base-item/types";
+import {createUpgradableComponent, UpgradableComponent, UpgradableComponentData} from "../../components/upgradable";
+import {Txt} from "../../managers/core/texts";
+import {goldConfig} from "../../configs/gold-config";
 
 export const enum PotState {
     NOT_EXIST = 'NOT_EXIST',
@@ -22,24 +25,24 @@ export const enum PotState {
     READY = 'READY',
 }
 
-export type PotProps = {
-    position: Vec,
+type PotComponent = {
     state: PotState,
     timePassed: number,
     ingridientsContainHumanMeat: boolean,
     ingridientsAreStale: boolean,
 }
 
-const defaultProps: PotProps = {
-    position: positioner.getPotPosition(),
-    state: PotState.NOT_EXIST,
-    timePassed: 0,
-    ingridientsContainHumanMeat: false,
-    ingridientsAreStale: false,
+export type PotProps = {
+    id: string,
+    upgradable?: UpgradableComponentData
+    pot?: PotComponent
 }
 
 export class Pot {
+    id: string
+
     text: O_Text
+
     sprite: O_AnimatedSprite
 
     subs = eventBusSubscriptions()
@@ -49,19 +52,57 @@ export class Pot {
     textShowTimeout: any
     chosenFood: Meat[] = []
 
-    props: PotProps
+    cmp: {
+        upgradable: UpgradableComponent
+        pot: PotComponent
+    }
 
-    constructor(props: Partial<PotProps> = {}) {
-        const initialProps: PotProps = {
-            ...defaultProps,
-            ...props,
+    constructor(props?: Partial<PotProps>) {
+        this.id = props?.id || createId('pot')
+
+        this.sprite = this.createSprite()
+
+        this.text = o_.render.createText('На блюдо нужно 3 единицы мяса', this.sprite.x, this.sprite.y - 60, {color: colorsCSS.WHITE})
+        this.text.setOrigin(0.5, 1)
+        this.text.setVisibility(false)
+        o_.layers.add(this.text, LayerKey.FIELD_BUTTONS)
+
+        this.cmp = {
+            upgradable: createUpgradableComponent(this, {
+                buttonCoord: {x: this.sprite.x, y: this.sprite.y},
+                textKey: Txt.UpgradePot,
+                cost: goldConfig.costs.pot,
+                canBeUpgraded: this._canBeUpgraded,
+                upgrade: this._upgrade,
+                level: 0,
+                ...props?.upgradable,
+            }),
+            pot: {
+                state: PotState.NOT_EXIST,
+                timePassed: 0,
+                ingridientsContainHumanMeat: false,
+                ingridientsAreStale: false,
+                ...props?.pot
+            }
         }
-        this.props = initialProps
 
+        this.cmp.upgradable.init()
+
+        this.subs.on(Evt.TIME_PASSED, () => this.onTimePassed())
+
+        this.setState(this.cmp.pot.state);
+    }
+
+    private _canBeUpgraded = () => {
+        return this.cmp.pot.state === PotState.NOT_EXIST
+    }
+
+    createSprite(): O_AnimatedSprite {
+        const position = positioner.getPotPosition()
         this.sprite = o_.render.createAnimatedSprite({
             atlasKey: 'pot',
-            x: initialProps.position.x,
-            y: initialProps.position.y,
+            x: position.x,
+            y: position.y,
             animations: [
                 {framesPrefix: 'empty', repeat: -1, frameRate: 6},
                 {framesPrefix: 'full', repeat: -1, frameRate: 6},
@@ -75,24 +116,15 @@ export class Pot {
         this.sprite.onPointerOver(() => this.onPointerOver())
         this.sprite.onPointerOut(() => this.onPointerOut())
 
-        this.text = o_.render.createText('На блюдо нужно 3 единицы мяса', this.sprite.x, this.sprite.y - 60, {color: colorsCSS.WHITE})
-        this.text.setOrigin(0.5, 1)
-        this.text.setVisibility(false)
-        o_.layers.add(this.text, LayerKey.FIELD_BUTTONS)
-
-        o_.upgrade.createUpgradeButton({x: this.sprite.x, y: this.sprite.y}, 'Котел', 50, () => this.upgrade())
-
-        this.subs.on(Evt.TIME_PASSED, () => this.onTimePassed())
-
-        this.setState(initialProps.state);
+        return this.sprite
     }
 
-    private upgrade() {
+    private _upgrade() {
         this.setState(PotState.EMPTY)
     }
 
     private onTimePassed() {
-        if (this.props.state === PotState.PREPARING) {
+        if (this.cmp.pot.state === PotState.PREPARING) {
             this.setState(PotState.READY);
         }
     }
@@ -112,20 +144,20 @@ export class Pot {
     }
 
     private setState(state: PotState) {
-        this.props.state = state;
+        this.cmp.pot.state = state;
         switch (state) {
             case PotState.NOT_EXIST:
                 this.sprite.setVisibility(false)
                 this.removeDish()
-                this.props.ingridientsContainHumanMeat = false
-                this.props.ingridientsAreStale = false
+                this.cmp.pot.ingridientsContainHumanMeat = false
+                this.cmp.pot.ingridientsAreStale = false
                 break;
             case PotState.EMPTY:
                 this.sprite.setVisibility(true)
                 this.sprite.play('empty')
                 this.removeDish()
-                this.props.ingridientsContainHumanMeat = false
-                this.props.ingridientsAreStale = false
+                this.cmp.pot.ingridientsContainHumanMeat = false
+                this.cmp.pot.ingridientsAreStale = false
                 break;
             case PotState.PREPARING:
                 this.sprite.setVisibility(true)
@@ -147,9 +179,9 @@ export class Pot {
         this.dish = new Dish({
             x: this.sprite.x,
             y: this.sprite.y - 10
-        }, this.props.ingridientsContainHumanMeat, this.props.ingridientsAreStale)
-        this.props.ingridientsContainHumanMeat = false
-        this.props.ingridientsAreStale = false
+        }, this.cmp.pot.ingridientsContainHumanMeat, this.cmp.pot.ingridientsAreStale)
+        this.cmp.pot.ingridientsContainHumanMeat = false
+        this.cmp.pot.ingridientsAreStale = false
         this.dish.eventEmitter.once(BaseItemEvent.DESTROYED, () => {
             this.removeDish()
         })
@@ -197,8 +229,8 @@ export class Pot {
         o_.audio.playSound(SOUND_KEY.COLLECT)
 
         this.chosenFood.forEach(food => {
-            if (food.props.isStale) this.props.ingridientsAreStale = true
-            if (food.props.isHuman) this.props.ingridientsContainHumanMeat = true
+            if (food.props.isStale) this.cmp.pot.ingridientsAreStale = true
+            if (food.props.isHuman) this.cmp.pot.ingridientsContainHumanMeat = true
             food.onLastAnimation()
             const flyTarget = {x: this.sprite.x, y: this.sprite.y - 30}
             promises.push(food.flyTo(flyTarget, 50, 500).then(() => food.destroy()))
@@ -249,6 +281,6 @@ export class Pot {
     }
 
     onClick() {
-        eventBus.emit(Evt.INTERFACE_POT_CLICKED, this.props.state)
+        eventBus.emit(Evt.INTERFACE_POT_CLICKED, this.cmp.pot.state)
     }
 }

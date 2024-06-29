@@ -39,16 +39,10 @@ export class BridgeManager {
         // @ts-ignore
         // this.shakePosition = o_.game.getScene().plugins.get('rexshakepositionplugin').add(this.sprite.obj);
 
-        o_.upgrade.createUpgradeButton({
-            x: this.pos.x - 100,
-            y: this.pos.y + 350
-        }, o_.texts.t(Txt.BuildGoblinsLair), goldConfig.costs.goblins_lair, () => {
-        })
-
-        o_.upgrade.createUpgradeButton({
-            x: this.pos.x + this.pos.width - 100,
-            y: this.pos.y + 350
-        }, o_.texts.t(Txt.UpgradeBridge), goldConfig.costs.bridge_ornament, () => this.createStatues())
+        // o_.upgrade.createUpgradeButton({
+        //     x: this.pos.x + this.pos.width - 100,
+        //     y: this.pos.y + 350
+        // }, o_.texts.t(Txt.UpgradeBridge), goldConfig.costs.bridge_ornament, () => this.createStatues())
     }
 
     setInteractive = {
@@ -151,9 +145,9 @@ class RockPlace {
     }
 
     createUpgradeButton(pos: Vec) {
-        this.btn = o_.upgrade.createUpgradeButton(pos, 'Починить мостовую', goldConfig.costs.fix_bridge, () => {
-            this.repair()
-        })
+        // this.btn = o_.upgrade.createUpgradeButton(pos, 'Починить мостовую', goldConfig.costs.fix_bridge, () => {
+        //     this.repair()
+        // })
     }
 
     repair() {

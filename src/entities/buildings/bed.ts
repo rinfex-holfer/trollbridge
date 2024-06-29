@@ -1,27 +1,26 @@
-import {o_} from "../../../managers/locator";
-import {O_Sprite} from "../../../managers/core/render/sprite";
-import {eventBus, Evt} from "../../../event-bus";
-import {CursorType} from "../../../managers/core/input/cursor";
-import {BasicBuilding} from "../basic-building/basic-building";
-import {BuildingType} from "../types";
-import {BedProps} from "./types";
-import {positioner} from "../../../managers/game/positioner";
-import {MakeOptional} from "../../../utils/utils-types";
-import {BuildingProps} from "../basic-building/types";
-import {createId} from "../../../utils/utils-misc";
-import {EffectHighlight} from "../../../effects/highlight";
-import {EffectType} from "../../../effects/types";
+import {o_} from "../../managers/locator";
+import {O_Sprite} from "../../managers/core/render/sprite";
+import {eventBus, Evt} from "../../event-bus";
+import {CursorType} from "../../managers/core/input/cursor";
+import {positioner} from "../../managers/game/positioner";
+import {createId} from "../../utils/utils-misc";
+import {EffectHighlight} from "../../effects/highlight";
+import {EffectToTypeMap, EffectType} from "../../effects/types";
+import {createUpgradableComponent, UpgradableComponent, UpgradableComponentData} from "../../components/upgradable";
+import {Txt} from "../../managers/core/texts";
+import {EntityEffect} from "../../effects/entity-effect";
 
-const defaultProps: BedProps = {
-    level: 1
+type Props = {
+    id?: string,
+    cmp?: {
+        upgradable?: UpgradableComponentData
+    }
 }
 
-type Props = BedProps & MakeOptional<BuildingProps, "id">
+export class Bed {
+    id: string
 
-export class Bed extends BasicBuilding<BuildingType.BED> {
-    type = BuildingType.BED as BuildingType.BED
-
-    upgraded = false
+    sprite: O_Sprite
 
     private _occupied = false
 
@@ -44,17 +43,33 @@ export class Bed extends BasicBuilding<BuildingType.BED> {
         }
     }
 
-    constructor(props?: Partial<Props>) {
-        const finalProps = {
-            ...defaultProps,
-            id: props?.id || createId('bed'),
-            ...props
-        }
-        super(finalProps)
+    cmp: {
+        upgradable: UpgradableComponent
+    }
 
-        o_.upgrade.createUpgradeButton({x: this.sprite.x, y: this.sprite.y}, 'кровать', 50, () => this.upgrade())
+    constructor(props?: Partial<Props>) {
+        this.id = props?.id || createId('bed')
+
+        this.sprite = this.createSprite(props?.cmp?.upgradable?.level || 0)
+
+        this.cmp = {
+            upgradable: createUpgradableComponent(this, {
+                buttonCoord: {x: this.sprite.x, y: this.sprite.y},
+                textKey: Txt.UpgradeChair,
+                cost: 50,
+                canBeUpgraded: this._canBeUpgraded,
+                upgrade: this._upgrade,
+                level: 0,
+                ...props?.cmp?.upgradable,
+            })
+        }
+
+        this.sprite = this.createSprite(this.cmp.upgradable.level)
+
+        this.cmp.upgradable.init()
 
         this.addEffect(new EffectHighlight(this.sprite)) as EffectHighlight
+
         this.sprite.onHover(
             () => this.getEffect(EffectType.HIGHLIGHTED)?.setActive(true),
             () => this.getEffect(EffectType.HIGHLIGHTED)?.setActive(false)
@@ -78,9 +93,23 @@ export class Bed extends BasicBuilding<BuildingType.BED> {
         )
     }
 
-    createSprite(props: Props): O_Sprite {
+    private effects: Partial<Record<EffectType, EntityEffect>> = {}
+
+    protected getEffect(type: EffectType): EffectToTypeMap[EffectType] | undefined {
+        // @ts-ignore
+        return this.effects[type]
+    }
+
+    protected addEffect(effect: EntityEffect) {
+        this.effects[effect.type] = effect
+        return effect
+    }
+
+    private _canBeUpgraded = () => this.cmp.upgradable.level === 0
+
+    createSprite(level: number): O_Sprite {
         const position = positioner.getBedPosition()
-        const spriteKey = this.upgraded ? 'bed_upgraded' : 'bed'
+        const spriteKey = level > 0 ? 'bed_upgraded' : 'bed'
 
         const sprite = o_.render.createSprite(spriteKey, position.x, position.y)
         // sprite.setOrigin(0, 0)
@@ -93,9 +122,9 @@ export class Bed extends BasicBuilding<BuildingType.BED> {
         return sprite
     }
 
-    upgrade() {
+    private _upgrade() {
         this.sprite.setTexture('bed_upgraded')
-        this.upgraded = true
+        this.cmp.upgradable.level++
     }
 
     setInteractive(val: boolean) {

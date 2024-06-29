@@ -4,7 +4,7 @@ import {EntityEffect} from "./entity-effect";
 import {EffectType} from "./types";
 import Sprite = Phaser.GameObjects.Sprite;
 
-type HighlightableEntity = O_Sprite
+export type HighlightableEntity = O_Sprite
 
 interface HighlightEffectConfig {
     thickness?: number,

@@ -2,14 +2,13 @@ import {o_} from "../locator";
 import {Vec} from "../../utils/utils-math";
 import {UpgradeButton} from "../../interface/upgrade-button";
 import {findAndSplice, stub} from "../../utils/utils-misc";
-import {LayerKey} from "../core/layers";
 import {SOUND_KEY} from "../core/audio";
 import {TextKey} from "../core/texts";
+import {UpgradableComponent, UpgradableEntity} from "../../components/upgradable";
 
 export class UpgradeManager {
-    buttons: UpgradeButton[] = []
-
     upgradeButtonsShown = false
+    components: UpgradableComponent[] = []
 
     unsubFromLClick: () => void = stub
     unsubFromRClick: () => void = stub
@@ -46,30 +45,14 @@ export class UpgradeManager {
 
     private setButtonsShown(val: boolean) {
         this.upgradeButtonsShown = val
-        this.buttons.forEach(b => b.setVisible(val))
+        this.components.forEach(c => c.button?.setVisible(val))
     }
 
-    public createUpgradeButton(
-        pos: Vec,
-        textKey: TextKey,
-        cost: number,
-        upgradeFn: () => void,
-        checkIsLastUpgrade: () => boolean = () => true
-    ) {
-        const btn = new UpgradeButton(pos, cost, textKey, (b: UpgradeButton) => {
-            o_.audio.playSound(SOUND_KEY.UPGRADE)
-            upgradeFn()
+    register(upgradable: UpgradableComponent) {
+        this.components.push(upgradable)
+    }
 
-            o_.audio.playSound(SOUND_KEY.COLLECT)
-            o_.lair.treasury.removeGold(btn.cost)
-            if (checkIsLastUpgrade()) {
-                btn.destroy()
-                findAndSplice(this.buttons, btn)
-            }
-        })
-        btn.setVisible(false)
-        o_.layers.add(btn.button.container, LayerKey.FIELD_BUTTONS)
-        this.buttons.push(btn)
-        return btn
+    unregister(upgradable: UpgradableComponent) {
+        findAndSplice(this.components, upgradable)
     }
 }

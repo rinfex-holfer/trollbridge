@@ -4,9 +4,6 @@ import {eventBus, Evt} from "../event-bus";
 import {o_} from "../managers/locator";
 
 
-// TODO ============== строить можно и в логове, и на мосту
-
-
 export class PhaseBuild extends GamePhase {
 
     name = "build"
@@ -21,7 +18,7 @@ export class PhaseBuild extends GamePhase {
         })
 
         this.registerListener(Evt.BUILDING_COMPLETED, () => {
-            if (o_.upgrade.buttons.length === 0) {
+            if (o_.upgrade.components.length === 0) {
                 this.goToLairPhase()
             }
         })

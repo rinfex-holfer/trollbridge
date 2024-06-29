@@ -6,5 +6,6 @@ export const goldConfig = {
         drying_rack: 25,
         bridge_ornament: 200,
         goblins_lair: 400,
+        pot: 50
     },
 }

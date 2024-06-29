@@ -63,13 +63,13 @@ export class PhaseBridge extends GamePhase {
 
     interfaceFor = {
         idleOnBridge: () => {
-            o_.lair.setInteractive.all(true)
+            o_.lair.setInteractive.surfaceOnly()
 
             o_.bridge.setInteractive.all(false)
             o_.bridge.setInteractive.surface(true)
         },
         goesToLair: () => {
-            o_.lair.setInteractive.all(true)
+            o_.lair.setInteractive.surfaceOnly()
 
             o_.bridge.setInteractive.all(false)
             o_.bridge.setInteractive.surface(true)
@@ -84,13 +84,12 @@ export class PhaseBridge extends GamePhase {
             o_.bridge.setInteractive.surface(true)
         },
         climbsFromLair: () => {
-            o_.lair.setInteractive.all(true)
+            o_.lair.setInteractive.surfaceOnly()
             o_.bridge.setInteractive.all(false)
         },
     }
 
     trollGoesToBridge = async (coord: Vec) => {
-        console.log("trollGoesToBridge", coord)
         if (o_.troll.currentStateKey === TrollStateKey.CLIMB) {
             let resPromise = this.setCurrentTrollActivity(() => o_.troll.climbLadder('up'))
             this.interfaceFor.climbsFromLair()

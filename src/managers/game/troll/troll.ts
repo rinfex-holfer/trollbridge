@@ -379,7 +379,7 @@ export class Troll {
         }
     }
 
-    getIsMaxLevelReached() {
+    getCanBeUpgradedReached() {
         return maxTrollLevel === this.level
     }
 

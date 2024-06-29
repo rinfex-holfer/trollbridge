@@ -37,7 +37,7 @@ export const resoursePaths = {
         button_devour: `${imagesUrl}/icon_devour.png`,
         button_make_food: `${imagesUrl}/icon_devour.png`,
         button_feed: `${imagesUrl}/makeFood.png`,
-        button_upgrade: `${imagesUrl}/icon_build.png`,
+        button_upgrade: `${imagesUrl}/upgrade.png`,
 
         button_sleep: `${imagesUrl}/button_sleep.png`,
         button_wait: `${imagesUrl}/button_wait.png`,
@@ -66,6 +66,7 @@ export const resoursePaths = {
         icon_give_all: `${imagesUrl}/icon_give_all.png`,
 
         empty_sprite: `${imagesUrl}/tile_empty.png`,
+        tile_white: `${imagesUrl}/tile_white.png`,
         particle_hit: `${imagesUrl}/particle_hit.png`,
         particle_blood: `${imagesUrl}/particle_blood.jpg`,
         particle_smoke_green: `${imagesUrl}/particle_smoke_green.png`,

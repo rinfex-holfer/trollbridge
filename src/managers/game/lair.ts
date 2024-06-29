@@ -4,12 +4,12 @@ import {positioner} from "./positioner";
 import {o_} from "../locator";
 import {O_Tiles} from "../core/render/tiles";
 import {FoodStorage} from "../../entities/buildings/food-storage";
-import {Bed} from "../../entities/buildings/bed/bed";
+import {Bed} from "../../entities/buildings/bed";
 import {Pot} from "../../entities/buildings/pot";
 import {Treasury} from "../../entities/buildings/treasury";
-import {Chair} from "../../entities/buildings/chair/chair";
+import {Chair} from "../../entities/buildings/chair";
 import {CursorType, getCursorStyle} from "../core/input/cursor";
-import {Tools} from "../../entities/buildings/tools/tools";
+import {Tools} from "../../entities/buildings/tools";
 
 export class Lair {
     foodStorage: FoodStorage

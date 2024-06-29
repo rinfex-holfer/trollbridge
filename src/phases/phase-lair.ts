@@ -127,7 +127,7 @@ export class PhaseLair extends GamePhase {
         switch (o_.troll.state.key) {
             case TrollStateKey.SIT:
                 this.trollSit()
-                o_.time.wait()
+                o_.time.wait(1)
                 break;
             default:
                 this.trollGoesToSit();

@@ -14,28 +14,37 @@ export class TextsManager {
 export type TextKey = typeof Txt[keyof typeof Txt]
 
 export const Txt = {
+    // common
+
+    Gold: "gold",
+
+
     Pause: "Pause",
-    StartGame: "Start Game",
+    StartGame: "StartGame",
     Resume: "Resume",
     Language: "Language",
     Back: "Back",
     Loading: "Loading",
-    SoundVolume: "Sound Volume",
-    MusicVolume: "Music Volume",
-    CharsFarmer: "Farmer",
+    SoundVolume: "SoundVolume",
+    MusicVolume: "MusicVolume",
+    CharsFarmer: "CharsFarmer",
     Wait: "Wait",
 
     // menues
-    MainMenu: "Main Menu",
+    MainMenu: "MainMenu",
     Settings: "Settings",
-    SaveMenu: "Save game",
-    HowToPlay: "How to play",
+    SaveMenu: "SaveMenu",
+    HowToPlay: "HowToPlay",
 
     // buildings
-    UpgradeBridge: "Decorate the bridge",
-    UpgradeChair: "Upgrade the chair",
-    BuildGoblinsLair: "Build the goblin's lair",
-}
+    UpgradeCost1: "Cost:",
+    UpgradeBridge: "UpgradeBridge",
+    UpgradeChair: "UpgradeChair",
+    UpgradeBed: "UpgradeBed",
+    BuildGoblinsLair: "BuildGoblinsLair",
+    UpgradePot: "UpgradePot",
+    UpgradeDryingRack: "UpgradeDryingRack",
+} as const
 
 export const translations = {
     [Language.EN]: {
@@ -63,9 +72,12 @@ export const translations = {
             [Txt.CharsFarmer]: "peasant",
 
             // buildings
-            [Txt.UpgradeChair]: "Upgrade chair",
-        }
-    },
+            [Txt.UpgradeChair]: "Chair upgrade: restores more health",
+            [Txt.UpgradePot]: "Craft a pot: can prepare food",
+            [Txt.UpgradeBed]: "Bed upgrade: restores more health",
+            [Txt.UpgradeDryingRack]: "Drying rack upgrade: stores more food",
+        } as const
+    } as const,
     [Language.RU]: {
         translation: {
             [Txt.Loading]: "Загрузка",
@@ -92,7 +104,10 @@ export const translations = {
             [Txt.CharsFarmer]: "крестьянин",
 
             // buildings
-            [Txt.UpgradeChair]: "Улучшить сидение",
-        }
-    }
+            [Txt.UpgradeChair]: "Улучшить: восстанавливает больше здоровья",
+            [Txt.UpgradePot]: "Сделать котел: можно готовить пищу",
+            [Txt.UpgradeBed]: "Улучшить: восстанавливает больше здоровья",
+            [Txt.UpgradeDryingRack]: "Улучшить: вмещает больше еды",
+        } as const
+    } as const
 }
