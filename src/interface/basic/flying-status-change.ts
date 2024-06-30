@@ -4,13 +4,14 @@ import {LayerKey} from "../../managers/core/layers";
 import {O_Container} from "../../managers/core/render/container";
 import {rndBetween} from "../../utils/utils-math";
 import {createPromiseAndHandlers} from "../../utils/utils-async";
+import {TextKey} from "../../translations";
 
-export function flyingStatusChange(text: string, x: number, y: number, color?: string, direction?: 'left' | 'right') {
-    const status = o_.render.createText(
-        text,
+export function flyingStatusChange(text: TextKey, x: number, y: number, color?: string, direction?: 'left' | 'right') {
+    const status = o_.render.createText({
+        textKey: text,
         x,
         y,
-        {
+        style: {
             align: 'center',
             color: color || colorsCSS.WHITE,
             fontStyle: 'bold',
@@ -18,7 +19,7 @@ export function flyingStatusChange(text: string, x: number, y: number, color?: s
             stroke: colorsCSS.BLACK,
             strokeThickness: 3
         },
-    )
+    })
     status.setOrigin(0.5, 0.5)
     o_.layers.add(status, LayerKey.FIELD_BUTTONS);
 

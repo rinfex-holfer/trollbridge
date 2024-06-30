@@ -39,6 +39,13 @@ export class CameraManager {
         }
     }
 
+    getScroll() {
+        return {
+            x: this.camera.scrollX,
+            y: this.camera.scrollY,
+        }
+    }
+
     centerOnLair() {
         const pos = this.getLairCameraPoint()
         this.centerOn(pos.x, pos.y)

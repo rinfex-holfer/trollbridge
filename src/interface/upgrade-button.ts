@@ -1,16 +1,27 @@
 import {Vec} from "../utils/utils-math";
 import {o_} from "../managers/locator";
-import {TextKey, Txt} from "../managers/core/texts";
 import {O_Sprite} from "../managers/core/render/sprite";
 import {O_Text} from "../managers/core/render/text";
 import {LayerKey} from "../managers/core/layers";
 import {UpgradableComponent, UpgradableEntity} from "../components/upgradable";
+import {reactUiRef} from "./html/react-ui";
+import {O_Container} from "../managers/core/render/container";
+import {TextKey, Txt} from "../translations";
+import {colorsCSS} from "../configs/constants";
+import {sub} from "../utils/utils-events";
+import {Evt} from "../event-bus";
 
 const BUTTON_SIZE = 32
 const TEXT_PANEL_WIDTH = 300
 const TEXT_PANEL_HEIGHT = BUTTON_SIZE * 2
 const TEXT_PADDING = 4
-const MARGIN = 5
+const TEXT_INNER_HORIZONTAL_PADDING = 2
+const MARGIN = 10
+
+const titleFontSize = '20px';
+const descriptionFontSize = '16px';
+const costFontSize = '16px';
+const notEnoughMoneyColor = colorsCSS.RED
 
 export class UpgradeButton {
     button: O_Sprite
@@ -18,15 +29,28 @@ export class UpgradeButton {
 
     isEnabled: boolean = true
 
+    textContainer: O_Container
     background: O_Sprite
-    text: O_Text
-    textCost: O_Text
 
     host: UpgradableEntity
 
-    constructor(private onClickCb: (btn: UpgradeButton) => void, host: UpgradableEntity) {
-        const {cost, textKey, buttonCoord} = host.cmp.upgradable
+    titleKey: TextKey
+    descriptionKey?: TextKey
 
+    titleText: O_Text
+    descriptionText?: O_Text
+    costText: O_Text
+    costTextNotEnough: O_Text
+
+    unsub: VoidFunction
+
+    constructor(private onClickCb: (btn: UpgradeButton) => void, host: UpgradableEntity) {
+        this.unsub = sub(Evt.RESOURSES_CHANGED, this.updateEnabledState)
+
+        const {cost, titleTextKey, buttonCoord, descriptionTextKey} = host.cmp.upgradable
+
+        this.descriptionKey = descriptionTextKey
+        this.titleKey = titleTextKey || Txt.UpgradeTitle
         this.cost = cost
         this.host = host
 
@@ -35,59 +59,102 @@ export class UpgradeButton {
             height: BUTTON_SIZE,
         });
         this.button.setOrigin(0.5, 1)
-        this.button.setInteractive(true);
+        this.button.setInteractive(true)
         this.button.onClick(this.onClick)
 
         this.button.onHover(
             () => {
-                this.text.setVisibility(true)
-                this.background.setVisibility(true)
+                this.textContainer.setVisibility(true)
             },
             () => {
-                this.text.setVisibility(false)
-                this.background.setVisibility(false)
+                this.textContainer.setVisibility(false)
             },
         )
+
+        const textContainerX = buttonCoord.x + BUTTON_SIZE / 2 + MARGIN
+        const textContainerY = buttonCoord.y - BUTTON_SIZE
+        this.textContainer = o_.render.createContainer(textContainerX, textContainerY)
 
         this.background = o_.render.createSprite(
             'tile_white',
-            buttonCoord.x + BUTTON_SIZE / 2 + MARGIN,
-            buttonCoord.y,
+            0,
+            0,
             {
                 width: TEXT_PANEL_WIDTH,
-                height: TEXT_PANEL_HEIGHT
+                height: TEXT_PANEL_HEIGHT,
+                parent: this.textContainer
             })
-        this.background.setOrigin(0, 1)
-        this.background.alpha = 0.5
+        this.background.setOrigin(0, 0)
+        this.background.alpha = 0.75
 
-        this.text = o_.render.createText(
-            o_.texts.t(textKey),
-            buttonCoord.x + BUTTON_SIZE / 2 + MARGIN,
-            buttonCoord.y,
-            {
+        this.titleText = o_.render.createText({
+                textKey: this.titleKey,
+                x: 0,
+                y: 0,
+                style: {
+                    color: '#000',
+                    fontStyle: 'bold',
+                    fontSize: titleFontSize,
+                    padding: {x: TEXT_PADDING, y: TEXT_PADDING},
+                },
+                parent: this.textContainer
+            }
+        )
+        this.titleText.setOrigin(0, 0)
+
+        o_.layers.add(this.titleText, LayerKey.FIELD_BUTTONS)
+
+        if (this.descriptionKey) {
+            console.log(this.titleText.y + this.titleText.height, this.titleText.getBottomCenter())
+            this.descriptionText = o_.render.createText({
+                textKey: this.descriptionKey,
+                x: 0,
+                y: this.titleText.getBottomCenter().y,
+                style: {
+                    color: '#000',
+                    fontSize: descriptionFontSize,
+                    padding: {x: TEXT_PADDING, y: TEXT_PADDING},
+                },
+                parent: this.textContainer
+            })
+            this.descriptionText.setOrigin(0, 0)
+        }
+
+        const costTextY = this.descriptionText?.getBottomCenter().y || this.titleText.getBottomCenter().y
+        this.costText = o_.render.createText({
+            textKey: Txt.UpgradeCost,
+            textVars: {amount: this.cost},
+            x: 0,
+            y: costTextY,
+            style: {
                 color: '#000',
                 fontStyle: 'bold',
+                fontSize: costFontSize,
                 padding: {x: TEXT_PADDING, y: TEXT_PADDING},
             },
-        )
-        this.text.setOrigin(0, 1)
+            parent: this.textContainer
+        })
+        this.costText.setOrigin(0, 0)
 
-        this.textCost = o_.render.createText(
-            o_.texts.t(Txt.UpgradeCost1) + " " + cost,
-            buttonCoord.x + BUTTON_SIZE / 2 + MARGIN,
-            this.text.y + this.text.height * 2,
-            {
-                color: '#000',
+        this.costTextNotEnough = o_.render.createText({
+            textKey: this.getIsEnoughGold() ? '' : Txt.UpgradeCostNotEnoughMoney,
+            textVars: {amount: this.cost},
+            x: this.costText.getRightCenter().x - TEXT_PADDING,
+            y: costTextY,
+            style: {
+                color: notEnoughMoneyColor,
                 fontStyle: 'bold',
-                padding: {x: TEXT_PADDING, y: TEXT_PADDING},
+                fontSize: costFontSize,
+                padding: {x: 0, y: TEXT_PADDING},
             },
-        )
-        this.textCost.setOrigin(0, 1)
+            parent: this.textContainer
+        })
+        this.costTextNotEnough.setOrigin(0, 0)
 
-        this.background.setWidth(Math.max(this.text.width, this.textCost.width), false)
-
-        o_.layers.add(this.background, LayerKey.FIELD_BUTTONS)
-        o_.layers.add(this.text, LayerKey.FIELD_BUTTONS)
+        this.background.setWidth(Math.max(this.descriptionText?.width || 0, this.costTextNotEnough.getRightCenter().x), false)
+        this.background.setHeight(Math.max(this.costText.getBottomCenter().y), false)
+        this.textContainer.y = this.textContainer.y - this.costText.getBottomCenter().y + BUTTON_SIZE / 2
+        o_.layers.add(this.textContainer, LayerKey.FIELD_BUTTONS)
         o_.layers.add(this.button, LayerKey.FIELD_BUTTONS)
     }
 
@@ -101,25 +168,23 @@ export class UpgradeButton {
 
     isVisible = false
 
+    updateEnabledState = () => {
+        this.isEnabled = this.getIsEnoughGold()
+        this.costTextNotEnough.setText(this.isEnabled ? Txt.Empty : Txt.UpgradeCostNotEnoughMoney)
+        this.background.setWidth(Math.max(this.descriptionText?.width || 0, this.costTextNotEnough.getRightCenter().x), false)
+    }
+
+    getIsEnoughGold = () => o_.lair.treasury.amount >= this.cost
+
     setVisible(val: boolean) {
         this.isVisible = val
         this.button.setInteractive(val)
         this.button.setVisibility(val)
-        this.textCost.setVisibility(val)
 
         if (!val) {
-            this.background.setVisibility(false)
-            this.text.setVisibility(false)
-            this.textCost.setVisibility(false)
+            this.textContainer.setVisibility(false)
         }
 
-        // TODO in system or component
-        if (o_.lair.treasury.amount < this.cost) {
-            this.isEnabled = false
-            // this.button.visiblyDisable()
-        } else {
-            //     this.isEnabled = true
-            //     this.button.visiblyEnable()
-        }
+        this.updateEnabledState()
     }
 }

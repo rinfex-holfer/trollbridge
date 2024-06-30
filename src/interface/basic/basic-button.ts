@@ -3,9 +3,10 @@ import {O_Container} from "../../managers/core/render/container";
 import {O_Text} from "../../managers/core/render/text";
 import {o_} from "../../managers/locator";
 import {LayerKey} from "../../managers/core/layers";
+import {TextKey} from "../../translations";
 
 export interface ButtonOptions {
-    text: string
+    text: TextKey
     onClick: () => void
     x?: number
     y?: number
@@ -26,7 +27,13 @@ export class BasicButton {
         this.options = {...options};
 
         this.container = o_.render.createContainer(options.x || 0, options.y || 0, options && {parent: options.parent})
-        this.text = o_.render.createText(options.text, 0, 0, options.style || { fontFamily: 'serif', color: colorsCSS.BLACK }, {parent: this.container})
+        this.text = o_.render.createText({
+            textKey: options.text,
+            x: 0,
+            y: 0,
+            style: options.style || {fontFamily: 'serif', color: colorsCSS.BLACK},
+            parent: this.container
+        })
         this.text.setOrigin(0, 0);
 
         const rect = this.getRect();

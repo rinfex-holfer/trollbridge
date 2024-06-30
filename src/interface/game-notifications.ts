@@ -6,6 +6,7 @@ import {eventBus, Evt} from "../event-bus";
 import {TrollFearLevel} from "../managers/game/troll/types";
 import {ImageKey} from "../utils/utils-types";
 import {colorsCSS} from "../configs/constants";
+import {TextKey} from "../translations";
 
 const ICON_SIZE = 64
 const CONTAINER_PADDING = 10
@@ -34,7 +35,7 @@ export class GameNotifications {
         eventBus.on(Evt.VIGILANTE_PLANNED, t => this.onVigilantePlanned(t))
     }
 
-    private show(str: string, imgKey: ImageKey, color: string = colorsCSS.GREEN) {
+    private show(str: TextKey, imgKey: ImageKey, color: string = colorsCSS.GREEN) {
         const y = this.notifications.length * (NOTIFICATION_HEIGHT + PADDING)
         const notification = o_.render.createContainer(0, y + 50, {parent: this.container})
         notification.alpha = 0.5
@@ -56,11 +57,11 @@ export class GameNotifications {
         })
         icon.setOrigin(1, 0.5)
 
-        const text = o_.render.createText(
-            str,
-            TEXT_X,
-            NOTIFICATION_HEIGHT / 2,
-            {
+        const text = o_.render.createText({
+            textKey: str,
+            x: TEXT_X,
+            y: NOTIFICATION_HEIGHT / 2,
+            style: {
                 color,
                 fontStyle: 'bold',
                 fontSize: '20px',
@@ -68,8 +69,8 @@ export class GameNotifications {
                 stroke: colorsCSS.BLACK,
                 strokeThickness: 3
             },
-            {parent: notification}
-        )
+            parent: notification
+        })
         text.setOrigin(0.5, 0.5)
         text.x = -(PADDING + ICON_SIZE + TEXT_PADDING + TEXT_WIDTH / 2)
         bg.setWidth(NOTIFICATION_WIDTH, false)

@@ -7,8 +7,8 @@ import {createId} from "../../utils/utils-misc";
 import {EffectHighlight} from "../../effects/highlight";
 import {EffectToTypeMap, EffectType} from "../../effects/types";
 import {createUpgradableComponent, UpgradableComponent, UpgradableComponentData} from "../../components/upgradable";
-import {Txt} from "../../managers/core/texts";
 import {EntityEffect} from "../../effects/entity-effect";
+import {Txt} from "../../translations";
 
 type Props = {
     id?: string,
@@ -55,7 +55,8 @@ export class Bed {
         this.cmp = {
             upgradable: createUpgradableComponent(this, {
                 buttonCoord: {x: this.sprite.x, y: this.sprite.y},
-                textKey: Txt.UpgradeChair,
+                titleTextKey: Txt.BuildTitle,
+                descriptionTextKey: Txt.UpgradeChair,
                 cost: 50,
                 canBeUpgraded: this._canBeUpgraded,
                 upgrade: this._upgrade,

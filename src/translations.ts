@@ -5,45 +5,139 @@ export enum Language {
     RU = 'ru'
 }
 
+export type TextKey = typeof Txt[keyof typeof Txt]
+export const Txt = {
+    // common
+    Empty: "",
+
+    Gold: "gold",
+
+
+    Pause: "Pause",
+    StartGame: "StartGame",
+    Resume: "Resume",
+    Language: "Language",
+    Back: "Back",
+    Loading: "Loading",
+    SoundVolume: "SoundVolume",
+    MusicVolume: "MusicVolume",
+    CharsFarmer: "CharsFarmer",
+    Wait: "Wait",
+
+    // menues
+    MainMenu: "MainMenu",
+    Settings: "Settings",
+    SaveMenu: "SaveMenu",
+    HowToPlay: "HowToPlay",
+
+    // lair
+    NotEnoughMeat: "NotEnoughMeat",
+
+    // buildings
+    UpgradeTitle: "Upgrade",
+    BuildTitle: "Build",
+
+    UpgradeCost: "UpgradeCost",
+    UpgradeCostNotEnoughMoney: "UpgradeCostNotEnoughMoney",
+
+    UpgradeBridge: "UpgradeBridge",
+    UpgradeChair: "UpgradeChair",
+    UpgradeBed: "UpgradeBed",
+    BuildGoblinsLair: "BuildGoblinsLair",
+    UpgradePotTitle: "UpgradePotTitle",
+    UpgradePotDescr: "UpgradePotDescr",
+    UpgradeDryingRack: "UpgradeDryingRack",
+} as const
+export const translations = {
+    [Language.EN]: {
+        translation: {
+            [Txt.Empty]: "",
+            [Txt.Loading]: "Loading",
+
+            // menues
+            [Txt.Back]: "Back",
+            [Txt.SaveMenu]: "Save game",
+            [Txt.MainMenu]: "Main Menu",
+            [Txt.HowToPlay]: "How to play",
+            [Txt.Pause]: "Pause",
+            [Txt.StartGame]: "Start Game",
+            [Txt.Resume]: "Resume",
+
+            [Txt.Settings]: "Settings",
+            [Txt.Language]: "Language",
+            [Txt.SoundVolume]: "Sound Volume",
+            [Txt.MusicVolume]: "Music Volume",
+
+            // game interface
+            [Txt.Wait]: "Wait",
+
+            // chars
+            [Txt.CharsFarmer]: "peasant",
+
+            // lair
+            [Txt.NotEnoughMeat]: "You need 3 meat peaces to prepare a dish",
+
+            // buildings
+            [Txt.UpgradeTitle]: "Upgrade",
+            [Txt.BuildTitle]: "Build",
+
+            [Txt.UpgradeCost]: "Cost: {{amount}} gold",
+            [Txt.UpgradeCostNotEnoughMoney]: " (not enough!)",
+
+            [Txt.UpgradeChair]: "Restores more health",
+            [Txt.UpgradePotTitle]: "Build pot",
+            [Txt.UpgradePotDescr]: "Can prepare food",
+
+            [Txt.UpgradeBed]: "Restores more health",
+            [Txt.UpgradeDryingRack]: "Stores more food",
+        } as const
+    } as const,
+    [Language.RU]: {
+        translation: {
+            [Txt.Empty]: "",
+            [Txt.Loading]: "Загрузка",
+
+            // menues
+
+            [Txt.Pause]: "Пауза",
+            [Txt.Back]: "Назад",
+            [Txt.SaveMenu]: "Сохранение",
+            [Txt.MainMenu]: "Главное Меню",
+            [Txt.HowToPlay]: "Как играть",
+
+            [Txt.Settings]: "Настройки",
+            [Txt.StartGame]: "Начать игру",
+            [Txt.Resume]: "Продолжить",
+            [Txt.Language]: "Язык",
+            [Txt.SoundVolume]: "Громкость звука",
+            [Txt.MusicVolume]: "Громкость музыки",
+
+            // game interface
+            [Txt.Wait]: "Ждать",
+
+            // chars
+            [Txt.CharsFarmer]: "крестьянин",
+
+            // lair
+            [Txt.NotEnoughMeat]: "Чтобы приготовить блюдо, нужно 3 единицы мяса",
+
+            // buildings
+            [Txt.UpgradeTitle]: "Улучшить",
+            [Txt.BuildTitle]: "Построить",
+            [Txt.UpgradeCost]: "Цена: {{amount}} золота",
+            [Txt.UpgradeCostNotEnoughMoney]: " (не достаточно!)",
+
+            [Txt.UpgradeChair]: "Восстанавливает больше здоровья",
+            [Txt.UpgradePotDescr]: "Можно готовить пищу",
+            [Txt.UpgradeBed]: "Восстанавливает больше здоровья",
+            [Txt.UpgradeDryingRack]: "Вмещает больше еды",
+        } as const
+    } as const
+}
 export default i18n
     .init({
         resources: {
-            [Language.EN]: {
-                translation: {
-                    "Main Menu": "Main Menu",
-                    "Settings": "Settings",
-                    "Pause": "Pause",
-                    "Start Game": "Start Game",
-                    "Resume": "Resume",
-                    "Language": "Language",
-                    "Back": "Back",
-                    "Loading": "Loading",
-                    "Sound Volume": "Sound Volume",
-                    "Music Volume": "Music Volume",
-                    "Chars": {
-                        "Farmer": "peasant"
-                    },
-                    "wait": "Wait",
-                }
-            },
-            [Language.RU]: {
-                translation: {
-                    "Main Menu": "Главное Меню",
-                    "Settings": "Настройки",
-                    "Pause": "Пауза",
-                    "Start Game": "Начать игру",
-                    "Resume": "Продолжить",
-                    "Language": "Язык",
-                    "Back": "Назад",
-                    "Loading": "Загрузка",
-                    "Sound Volume": "Громкость звука",
-                    "Music Volume": "Громкость музыки",
-                    "Chars": {
-                        "Farmer": "крестьянин"
-                    },
-                    "wait": "Ждать",
-                }
-            }
+            ...translations
         },
         lng: Language.EN,
         fallbackLng: Language.EN,

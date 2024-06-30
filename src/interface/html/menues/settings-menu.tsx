@@ -4,7 +4,8 @@ import {o_} from "../../../managers/locator";
 import {Resolution, resolutionMap, Settings} from "../../../managers/core/settings";
 import {MenuTemplate} from "../components/menu-template";
 import {MenuButtonBack} from "../components/menu-button-back";
-import {Txt} from "../../../managers/core/texts";
+
+import {Txt} from "../../../translations";
 
 const subscribe = (callback: VoidFunction) => {
     const id = eventBus.on(Evt.SETTINGS_CHANGED, callback)

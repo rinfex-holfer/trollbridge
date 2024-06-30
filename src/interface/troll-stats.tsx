@@ -140,13 +140,18 @@ export class TrollStats {
         }
 
         let sprite = o_.render.createSprite(image, x, y, {width: ICON_SIZE, height: ICON_SIZE})
-        let text = o_.render.createText('New ability: ' + str, x, y + ICON_SIZE, {
-            align: 'center',
-            color: colorsCSS.WHITE,
-            fontStyle: 'bold',
-            fontSize: '22px',
-            stroke: colorsCSS.BLACK,
-            strokeThickness: 3
+        let text = o_.render.createText({
+            textKey: 'New ability: ' + str,
+            x,
+            y: y + ICON_SIZE,
+            style: {
+                align: 'center',
+                color: colorsCSS.WHITE,
+                fontStyle: 'bold',
+                fontSize: '22px',
+                stroke: colorsCSS.BLACK,
+                strokeThickness: 3
+            }
         })
         text.setOrigin(0.5, 0)
         o_.layers.add(sprite, LayerKey.FIELD_BUTTONS)

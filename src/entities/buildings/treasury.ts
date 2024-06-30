@@ -1,9 +1,9 @@
 import {O_Text} from "../../managers/core/render/text";
-import {Evt, eventBusSubscriptions} from "../../event-bus";
+import {eventBus, eventBusSubscriptions, Evt} from "../../event-bus";
 import {Vec} from "../../utils/utils-math";
 import {o_} from "../../managers/locator";
 import {LayerKey} from "../../managers/core/layers";
-import {colorsCSS, gameConstants} from "../../configs/constants";
+import {colorsCSS} from "../../configs/constants";
 import {O_Sprite} from "../../managers/core/render/sprite";
 import {Gold, GOLD_WIDTH, GoldLocation} from "../items/gold";
 import {flyingStatusChange} from "../../interface/basic/flying-status-change";
@@ -33,7 +33,12 @@ export class Treasury {
         this.sprite.onPointerOver(() => this.onPointerOver())
         this.sprite.onPointerOut(() => this.onPointerOut())
 
-        this.text = o_.render.createText('Золото: 0', this.sprite.x + 50, this.sprite.y - 40, {color: colorsCSS.WHITE})
+        this.text = o_.render.createText({
+            textKey: 'Золото: 0',
+            x: this.sprite.x + 50,
+            y: this.sprite.y - 40,
+            style: {color: colorsCSS.WHITE}
+        })
         this.text.setOrigin(0.5, 1)
         this.text.setVisibility(false)
         o_.layers.add(this.text, LayerKey.FIELD_BUTTONS)
@@ -83,6 +88,7 @@ export class Treasury {
     onGoldChanged() {
         this.amount = this.gold.reduce((acc, g) => acc + g.props.amount, 0)
         this.text.setText('Золото: ' + this.amount)
+        eventBus.emit(Evt.RESOURSES_CHANGED)
     }
 
     public async gatherGold(gold: Gold[]) {

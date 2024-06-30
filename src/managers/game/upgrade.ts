@@ -3,8 +3,8 @@ import {Vec} from "../../utils/utils-math";
 import {UpgradeButton} from "../../interface/upgrade-button";
 import {findAndSplice, stub} from "../../utils/utils-misc";
 import {SOUND_KEY} from "../core/audio";
-import {TextKey} from "../core/texts";
 import {UpgradableComponent, UpgradableEntity} from "../../components/upgradable";
+import {TextKey} from "../../translations";
 
 export class UpgradeManager {
     upgradeButtonsShown = false

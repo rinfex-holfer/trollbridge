@@ -4,7 +4,8 @@ import {MenuButton} from "../components/menu-button";
 import {MenuNavButton} from "../components/menu-nav-button";
 import {MenuScreen} from "../../../managers/core/menu";
 import {o_} from "../../../managers/locator";
-import {Txt} from "../../../managers/core/texts";
+
+import {Txt} from "../../../translations";
 
 
 export const MainMenu: FC = () => {

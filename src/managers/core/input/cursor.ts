@@ -51,8 +51,10 @@ export class CursorController {
 
         if (!pointer) pointer = o_.game.getScene().input.activePointer
 
-        this.sprite.x = pointer.x + o_.camera.camera.scrollX
-        this.sprite.y = pointer.y + o_.camera.camera.scrollY
+        const cameraScroll = o_.camera.getScroll()
+
+        this.sprite.x = pointer.x + cameraScroll.x
+        this.sprite.y = pointer.y + cameraScroll.y
     }
 
     getCursorConfig() {
@@ -74,6 +76,13 @@ export class CursorController {
         this.sprite.setOrigin(origin.x, origin.y)
 
         o_.layers.add(this.sprite, LayerKey.CURSOR)
+
+        o_.game.getHtmlContainer().addEventListener('pointerout', (e) => {
+            this.sprite?.setVisibility(false)
+        })
+        o_.game.getHtmlContainer().addEventListener('pointerenter', (e) => {
+            this.sprite?.setVisibility(true)
+        })
     }
 
     setCursor(cursor: CursorType) {

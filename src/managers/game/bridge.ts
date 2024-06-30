@@ -7,8 +7,8 @@ import {UpgradeButton} from "../../interface/upgrade-button";
 import {goldConfig} from "../../configs/gold-config";
 import {getGameSize} from "../../utils/utils-misc";
 import {eventBus, Evt} from "../../event-bus";
-import {Txt} from "../core/texts";
 import {CursorType} from "../core/input/cursor";
+import {Txt} from "../../translations";
 
 export class BridgeManager {
     sprite: O_Tiles

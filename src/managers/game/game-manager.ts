@@ -27,6 +27,10 @@ export class GameManager {
         return this.scene
     }
 
+    getHtmlContainer() {
+        return document.getElementById('game-container')!
+    }
+
     gameOver(reason: string) {
         // o_.interaction.disableEverything()
 

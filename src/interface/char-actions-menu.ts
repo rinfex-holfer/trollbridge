@@ -68,7 +68,12 @@ export class CharActionsMenu {
         this.container = o_.render.createContainer(50, -25, {parent: this.char.container});
         // this.container.zIndex = zLayers.GAME_OBJECTS_MIN
 
-        this.text = o_.render.createText('', 0, 0, {color: colorsCSS.WHITE}, {parent: this.container})
+        this.text = o_.render.createText({
+            textKey: '',
+            x: 0, y: 0,
+            style: {color: colorsCSS.WHITE},
+            parent: this.container
+        })
         this.text.setOrigin(0.5, 1);
 
         buttonsTemplate.forEach((template, idx) => {

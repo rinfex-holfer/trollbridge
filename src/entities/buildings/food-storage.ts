@@ -10,7 +10,8 @@ import {createId} from "../../utils/utils-misc";
 import {goldConfig} from "../../configs/gold-config";
 import {createUpgradableComponent, UpgradableComponent, UpgradableComponentData} from "../../components/upgradable";
 import {positioner} from "../../managers/game/positioner";
-import {Txt} from "../../managers/core/texts";
+
+import {Txt} from "../../translations";
 
 const START_X = 60
 const START_Y = -70
@@ -62,7 +63,8 @@ export class FoodStorage {
                     x: this.container.x + this.sprite.width + 30,
                     y: this.container.y - this.sprite.height / 2
                 },
-                textKey: Txt.UpgradeDryingRack,
+                titleTextKey: Txt.BuildTitle,
+                descriptionTextKey: Txt.UpgradeDryingRack,
                 cost: goldConfig.costs.drying_rack,
                 canBeUpgraded: this._canBeUpgraded,
                 upgrade: this._upgrade,

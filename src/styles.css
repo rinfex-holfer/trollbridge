@@ -34,6 +34,7 @@ body {
     align-items: center;
     justify-content: center;
     background: black;
+    /*cursor: url('../public/assets/img/cursors/cursor_default.png'), auto*/
 }
 
 canvas {
@@ -48,6 +49,10 @@ canvas {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+#game-container {
+    position: relative;
 }
 
 #time {
@@ -276,4 +281,20 @@ canvas {
 .menu-button.focused {
     color: #000;
     background: rgba(255, 255, 255, 0.8);
+}
+
+.build-panel {
+    position: absolute;
+}
+
+.build-panel__title {
+
+}
+
+.build-panel__description {
+
+}
+
+.build-panel__cost {
+
 }

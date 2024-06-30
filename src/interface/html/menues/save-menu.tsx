@@ -2,7 +2,8 @@ import {FC} from "react";
 import {SaveFile} from "../components/save-file";
 import {MenuTemplate} from "../components/menu-template";
 import {o_} from "../../../managers/locator";
-import {Txt} from "../../../managers/core/texts";
+
+import {Txt} from "../../../translations";
 
 export const SaveMenu: FC = () => {
     return <MenuTemplate title={o_.texts.t(Txt.SaveMenu)}>

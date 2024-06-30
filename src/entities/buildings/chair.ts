@@ -4,7 +4,6 @@ import {eventBus, Evt} from "../../event-bus";
 import {SpriteKey} from "../../resourse-paths";
 import {createId} from "../../utils/utils-misc";
 import {o_logger} from "../../utils/logger";
-import {Txt} from "../../managers/core/texts";
 import {positioner} from "../../managers/game/positioner";
 import {EffectHighlight} from "../../effects/highlight";
 import {EffectToTypeMap, EffectType} from "../../effects/types";
@@ -13,6 +12,7 @@ import {O_Sprite} from "../../managers/core/render/sprite";
 import {Vec} from "../../utils/utils-math";
 import {EntityEffect} from "../../effects/entity-effect";
 import {createUpgradableComponent, UpgradableComponent, UpgradableComponentData} from "../../components/upgradable";
+import {Txt} from "../../translations";
 
 const CHAIR_WIDTH = 100
 
@@ -41,10 +41,28 @@ export class Chair {
 
         this.coord = positioner.getChairPosition()
 
+        const level = props?.cmp?.upgradable?.level || 0
+        const position = this.coord
+        this.sprite = o_.render.createSprite(this.getSpriteKey(level), position.x, position.y)
+        o_.layers.add(this.sprite, LayerKey.FIELD_OBJECTS)
+        this.sprite.setInteractive(true)
+        this.sprite.setWidth(CHAIR_WIDTH)
+        this.sprite.setOrigin(0.5, 1)
+        this.sprite.onClick(() => this.onClick())
+
+        this.addEffect(new EffectHighlight(this.sprite)) as EffectHighlight
+        this.sprite.onHover(
+            () => this.getEffect(EffectType.HIGHLIGHTED)?.setActive(true),
+            () => this.getEffect(EffectType.HIGHLIGHTED)?.setActive(false)
+        )
+
         this.cmp = {
             upgradable: createUpgradableComponent(this, {
-                buttonCoord: {x: this.coord.x, y: this.coord.y},
-                textKey: Txt.UpgradeChair,
+                buttonCoord: {
+                    x: this.sprite.x,
+                    y: this.sprite.y - this.sprite.height
+                },
+                descriptionTextKey: Txt.UpgradeChair,
                 cost: 50,
                 canBeUpgraded: this._canBeUpgraded,
                 upgrade: this._upgrade,
@@ -54,14 +72,6 @@ export class Chair {
         }
 
         this.cmp.upgradable.init()
-
-        this.sprite = this.createSprite()
-
-        this.addEffect(new EffectHighlight(this.sprite)) as EffectHighlight
-        this.sprite.onHover(
-            () => this.getEffect(EffectType.HIGHLIGHTED)?.setActive(true),
-            () => this.getEffect(EffectType.HIGHLIGHTED)?.setActive(false)
-        )
 
         this.waitButton = o_.render.createSprite(
             'button_wait',
@@ -132,21 +142,8 @@ export class Chair {
         this.sprite.setCursor(cursor)
     }
 
-    private createSprite() {
-        const position = this.coord
-        const sprite = o_.render.createSprite(this.getSpriteKey(), position.x, position.y)
-        o_.layers.add(sprite, LayerKey.FIELD_OBJECTS)
-        sprite.setInteractive(true)
-        sprite.setWidth(CHAIR_WIDTH)
-        sprite.setOrigin(0.5, 1)
-
-        sprite.onClick(() => this.onClick())
-
-        return sprite
-    }
-
-    private getSpriteKey(): SpriteKey {
-        switch (this.cmp.upgradable.level) {
+    private getSpriteKey(level = this.cmp.upgradable.level): SpriteKey {
+        switch (level) {
             case 0:
                 return 'chair_0'
             case 1:

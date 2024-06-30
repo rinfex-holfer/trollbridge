@@ -1,7 +1,8 @@
 import {FC, useEffect, useState} from "react";
 import {eventBus, Evt} from "../../event-bus";
 import {o_} from "../../managers/locator";
-import {Txt} from "../../managers/core/texts";
+
+import {Txt} from "../../translations";
 
 
 export const LoadingScreen: FC = () => {

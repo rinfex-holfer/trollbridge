@@ -19,13 +19,13 @@ export class Zzz {
         this.letters = Array
             .from({length: 3})
             .map((_, i) => {
-                const text = o_.render.createText(
-                    'z',
-                    0,
-                    0,
-                    {color: colorsCSS.WHITE},
-                    {parent: this.container}
-                )
+                const text = o_.render.createText({
+                    textKey: 'z',
+                    x: 0,
+                    y: 0,
+                    style: {color: colorsCSS.WHITE},
+                    parent: this.container,
+                })
                 text.setVisibility(false)
                 return text;
             })

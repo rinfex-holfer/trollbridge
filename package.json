@@ -16,7 +16,7 @@
     "@types/react-router-dom": "^5.3.3",
     "@vitejs/plugin-react": "^4.2.1",
     "i": "^0.3.7",
-    "i18next": "^23.11.2",
+    "i18next": "^23.11.5",
     "npm": "^10.8.1",
     "phaser": "^3.80.1",
     "phaser3-rex-plugins": "^1.80.4",

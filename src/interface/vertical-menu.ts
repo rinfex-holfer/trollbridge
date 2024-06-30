@@ -88,23 +88,23 @@ export class VerticalMenu<Keys extends string> {
             sprite.setOrigin(0, 0)
             sprite.alpha = DEFAULT_ALPHA
 
-            const text = o_.render.createText(
-                template.getText ? template.getText() : template.text,
-                x - 20,
-                y + BUTTON_SIZE / 2,
-                {color: colorsCSS.WHITE},
-                {parent: this.container}
-            )
+            const text = o_.render.createText({
+                textKey: template.getText ? template.getText() : template.text,
+                x: x - 20,
+                y: y + BUTTON_SIZE / 2,
+                style: {color: colorsCSS.WHITE},
+                parent: this.container
+            })
             text.setOrigin(1, 0.5);
             text.setVisibility(false)
 
-            const disabledText = o_.render.createText(
-                '',
-                x + BUTTON_SIZE / 2,
-                y + BUTTON_SIZE / 2,
-                {color: colorsCSS.WHITE, wordWrap: {width: BUTTON_SIZE * 2}, align: 'center'},
-                {parent: this.container}
-            )
+            const disabledText = o_.render.createText({
+                textKey: '',
+                x: x + BUTTON_SIZE / 2,
+                y: y + BUTTON_SIZE / 2,
+                style: {color: colorsCSS.WHITE, wordWrap: {width: BUTTON_SIZE * 2}, align: 'center'},
+                parent: this.container
+            })
             disabledText.setOrigin(0.5, 0.5);
             disabledText.setVisibility(false)
 

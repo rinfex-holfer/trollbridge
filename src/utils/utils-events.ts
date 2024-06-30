@@ -1,3 +1,5 @@
+import {eventBus, Evt, EvtData} from "../event-bus";
+
 type Subscribers = {
     [eventType: string]: {
         [subId: number]: (data: any) => void
@@ -68,4 +70,9 @@ export function createMessageEmitter<Message>() {
             subscribers.forEach(s => s[1](message))
         }
     }
+}
+
+export const sub = <E extends Evt>(e: E, cb: (data: EvtData[E]) => void) => {
+    const unsubId = eventBus.on(e, cb)
+    return () => eventBus.unsubscribe(e, unsubId)
 }

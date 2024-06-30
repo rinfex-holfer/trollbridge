@@ -13,6 +13,7 @@ import {createPromiseAndHandlers} from "../../../utils/utils-async";
 import GameObject = Phaser.GameObjects.GameObject;
 import {stub} from "../../../utils/utils-misc";
 import {ImageKey} from "../../../utils/utils-types";
+import {TextKey} from "../../../translations";
 
 export class RenderManager {
     scene: Phaser.Scene
@@ -166,10 +167,15 @@ export class RenderManager {
         return new O_Tiles(this.scene, key, x, y, width, height);
     }
 
-    createText(text: string, x: number, y: number, style: Phaser.Types.GameObjects.Text.TextStyle, options?: {
+    createText(options: {
+        textKey: TextKey,
+        textVars?: any,
+        x: number,
+        y: number,
+        style: Phaser.Types.GameObjects.Text.TextStyle,
         parent?: O_Container
     }) {
-        return new O_Text(this.scene, text, x, y, style, options);
+        return new O_Text(this.scene, options);
     }
 
     createTween(config: Phaser.Types.Tweens.TweenBuilderConfig) {

@@ -3,6 +3,7 @@ import {o_} from "../managers/locator";
 import {ImageKey} from "../utils/utils-types";
 import {colorsCSS} from "../configs/constants";
 import {flyingStatusChange} from "./basic/flying-status-change";
+import {TextKey} from "../translations";
 
 const ICON_SIZE = 36
 const PADDING = 5
@@ -11,7 +12,7 @@ const TEXT_WIDTH = 100
 const NOTIFICATION_HEIGHT = ICON_SIZE + PADDING * 2
 const NOTIFICATION_WIDTH = ICON_SIZE + PADDING * 2 + TEXT_PADDING + TEXT_WIDTH
 
-const getNotificationWidth = (textWidth: number) =>  ICON_SIZE + PADDING * 2 + TEXT_PADDING + textWidth
+const getNotificationWidth = (textWidth: number) => ICON_SIZE + PADDING * 2 + TEXT_PADDING + textWidth
 
 const TEXT_X = PADDING + ICON_SIZE + TEXT_PADDING
 
@@ -25,21 +26,35 @@ export class StatusNotifications {
     }
 
     // private show(str: string, imgKey: ImageKey, color: string = colorsCSS.GREEN) {
-    private show(str: string, imgKey: ImageKey, color: string = colorsCSS.GREEN) {
+    private show(str: TextKey, imgKey: ImageKey, color: string = colorsCSS.GREEN) {
         const y = -this.notifications.length * (NOTIFICATION_HEIGHT + PADDING)
         const notification = o_.render.createContainer(0, y - 30, {parent: this.container})
         notification.alpha = 0.5
         o_.render.fadeIn(notification)
         o_.render.flyWithBounceTo(notification, {x: 0, y}, 100)
 
-        const bg = o_.render.createSprite('tile_black', 0, 0, {width: NOTIFICATION_WIDTH, height: NOTIFICATION_HEIGHT, parent: notification})
+        const bg = o_.render.createSprite('tile_black', 0, 0, {
+            width: NOTIFICATION_WIDTH,
+            height: NOTIFICATION_HEIGHT,
+            parent: notification
+        })
         bg.alpha = 0.3
         bg.setOrigin(0, 0)
 
-        const icon = o_.render.createSprite(imgKey, PADDING, NOTIFICATION_HEIGHT / 2, {width: ICON_SIZE, height: ICON_SIZE, parent: notification})
+        const icon = o_.render.createSprite(imgKey, PADDING, NOTIFICATION_HEIGHT / 2, {
+            width: ICON_SIZE,
+            height: ICON_SIZE,
+            parent: notification
+        })
         icon.setOrigin(0, 0.5)
 
-        const text = o_.render.createText(str, TEXT_X, NOTIFICATION_HEIGHT / 2, {color, fontStyle: 'bold', fontSize: '20px'}, {parent: notification})
+        const text = o_.render.createText({
+            textKey: str,
+            x: TEXT_X,
+            y: NOTIFICATION_HEIGHT / 2,
+            style: {color, fontStyle: 'bold', fontSize: '20px'},
+            parent: notification
+        })
         text.setOrigin(0, 0.5)
 
         bg.setWidth(getNotificationWidth(text.width), true)
@@ -89,18 +104,19 @@ export class StatusNotifications {
     }
 
     public showDmg(val: number, direction?: 'left' | 'right') {
-        this.flyingNumbers(''+val, colorsCSS.RED, direction)
+        this.flyingNumbers('' + val, colorsCSS.RED, direction)
     }
 
     public showHeal(val: number) {
-        this.flyingNumbers('+'+val, colorsCSS.GREEN)
+        this.flyingNumbers('+' + val, colorsCSS.GREEN)
     }
 
     public showMoraleDmg(val: number, direction?: 'left' | 'right') {
-        this.flyingNumbers(''+val, colorsCSS.BLUE, direction)
+        this.flyingNumbers('' + val, colorsCSS.BLUE, direction)
     }
 
     numbersQueue: Parameters<typeof flyingStatusChange>[] = []
+
     private flyingNumbers(val: string, color: string, direction?: 'left' | 'right') {
         let x = this.parent.x
         let y = this.parent.y - 100
@@ -118,6 +134,7 @@ export class StatusNotifications {
     }
 
     timer: any
+
     nextNumbers() {
         const p = this.numbersQueue.shift()
         if (!p) {
@@ -139,7 +156,7 @@ export class StatusNotifications {
     }
 
     public showFearChange(val: number) {
-        const str = 'Страшность: ' + (val > 0 ? '+'+val : ''+val)
-        this.flyingNumbers(str, val > 0  ? colorsCSS.RED : colorsCSS.WHITE)
+        const str = 'Страшность: ' + (val > 0 ? '+' + val : '' + val)
+        this.flyingNumbers(str, val > 0 ? colorsCSS.RED : colorsCSS.WHITE)
     }
 }

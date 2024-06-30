@@ -69,7 +69,13 @@ export class ProgressBar {
 
         this.withoutNumbers = options.withoutNumbers || false
         this.label = options.text
-        this.text = o_.render.createText('', this.width / 2, this.height / 2, options.textStyle || {}, {parent: this.container})
+        this.text = o_.render.createText({
+            textKey: '',
+            x: this.width / 2,
+            y: this.height / 2,
+            style: options.textStyle || {},
+            parent: this.container
+        })
         this.text.setOrigin(0.5, 0.5)
         this.updateText()
     }

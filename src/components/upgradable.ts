@@ -3,7 +3,8 @@ import {o_} from "../managers/locator";
 import {SOUND_KEY} from "../managers/core/audio";
 import {findAndSplice} from "../utils/utils-misc";
 import {Vec} from "../utils/utils-math";
-import {TextKey, Txt} from "../managers/core/texts";
+
+import {TextKey, Txt} from "../translations";
 
 export interface UpgradableEntity {
     cmp: {
@@ -15,7 +16,8 @@ export type UpgradableComponent = UpgradableComponentData & {
     button?: UpgradeButton
     buttonCoord: Vec
     cost: number
-    textKey: TextKey
+    titleTextKey?: TextKey
+    descriptionTextKey?: TextKey
     canBeUpgraded: () => boolean
     upgrade: () => void
     getData: () => UpgradableComponentData
@@ -39,7 +41,7 @@ export const createUpgradableComponent = (
 
         cost: 10,
 
-        textKey: Txt.UpgradeChair,
+        titleTextKey: Txt.UpgradeTitle,
 
         canBeUpgraded: () => false,
 

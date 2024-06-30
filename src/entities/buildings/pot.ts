@@ -15,8 +15,8 @@ import {Dish} from "../items/dish/dish";
 import {positioner} from "../../managers/game/positioner";
 import {BaseItemEvent} from "../items/base-item/types";
 import {createUpgradableComponent, UpgradableComponent, UpgradableComponentData} from "../../components/upgradable";
-import {Txt} from "../../managers/core/texts";
 import {goldConfig} from "../../configs/gold-config";
+import {Txt} from "../../translations";
 
 export const enum PotState {
     NOT_EXIST = 'NOT_EXIST',
@@ -62,7 +62,12 @@ export class Pot {
 
         this.sprite = this.createSprite()
 
-        this.text = o_.render.createText('На блюдо нужно 3 единицы мяса', this.sprite.x, this.sprite.y - 60, {color: colorsCSS.WHITE})
+        this.text = o_.render.createText({
+            textKey: Txt.NotEnoughMeat,
+            x: this.sprite.x,
+            y: this.sprite.y - 60,
+            style: {color: colorsCSS.WHITE}
+        })
         this.text.setOrigin(0.5, 1)
         this.text.setVisibility(false)
         o_.layers.add(this.text, LayerKey.FIELD_BUTTONS)
@@ -70,7 +75,8 @@ export class Pot {
         this.cmp = {
             upgradable: createUpgradableComponent(this, {
                 buttonCoord: {x: this.sprite.x, y: this.sprite.y},
-                textKey: Txt.UpgradePot,
+                titleTextKey: Txt.UpgradePotTitle,
+                descriptionTextKey: Txt.UpgradePotDescr,
                 cost: goldConfig.costs.pot,
                 canBeUpgraded: this._canBeUpgraded,
                 upgrade: this._upgrade,

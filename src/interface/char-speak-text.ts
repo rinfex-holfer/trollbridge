@@ -2,6 +2,7 @@ import {colors, colorsCSS} from "../configs/constants";
 import {O_Text} from "../managers/core/render/text";
 import {O_Container} from "../managers/core/render/container";
 import {o_} from "../managers/locator";
+import {Txt} from "../translations";
 
 export class CharSpeakText {
     text: O_Text
@@ -10,17 +11,19 @@ export class CharSpeakText {
 
     constructor(private container: O_Container) {
         this.text = o_.render.createText(
-            '',
-            -150,
-            -50,
             {
-                align: 'center',
-                color: colorsCSS.WHITE,
-                fontStyle: 'italic',
-                fontSize: '18px',
-                wordWrap: {width: 300}
-            },
-            {parent: container}
+                x: -150,
+                y: -50,
+                textKey: '',
+                style: {
+                    align: 'center',
+                    color: colorsCSS.WHITE,
+                    fontStyle: 'italic',
+                    fontSize: '18px',
+                    wordWrap: {width: 300}
+                },
+                parent: container
+            }
         )
         this.text.setOrigin(0.5, 1);
     }
