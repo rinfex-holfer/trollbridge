@@ -55,8 +55,8 @@ export class Bed {
         this.cmp = {
             upgradable: createUpgradableComponent(this, {
                 buttonCoord: {x: this.sprite.x, y: this.sprite.y},
-                titleTextKey: Txt.BuildTitle,
-                descriptionTextKey: Txt.UpgradeChair,
+                titleTextKey: Txt.UpgradeBedTitle,
+                descriptionTextKey: Txt.UpgradeBed,
                 cost: 50,
                 canBeUpgraded: this._canBeUpgraded,
                 upgrade: this._upgrade,

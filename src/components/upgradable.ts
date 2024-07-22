@@ -60,7 +60,7 @@ export const createUpgradableComponent = (
                 o_.lair.treasury.removeGold(btn.cost)
                 if (!cmp().canBeUpgraded()) {
                     btn.destroy()
-                    o_.upgrade.register(cmp())
+                    o_.upgrade.unregister(cmp())
                 }
             }, host)
 

@@ -23,6 +23,8 @@ type Props = {
     }
 }
 
+const MAX_LEVEL = 3
+
 export class Chair {
     id: string
 
@@ -63,10 +65,11 @@ export class Chair {
                     y: this.sprite.y - this.sprite.height
                 },
                 descriptionTextKey: Txt.UpgradeChair,
+                titleTextKey: Txt.UpgradeChairTitle,
                 cost: 50,
                 canBeUpgraded: this._canBeUpgraded,
                 upgrade: this._upgrade,
-                level: 0,
+                level,
                 ...props?.cmp?.upgradable,
             })
         }
@@ -92,11 +95,11 @@ export class Chair {
     }
 
     private _canBeUpgraded = () => {
-        return this.cmp.upgradable.level >= 4
+        return this.cmp.upgradable.level < MAX_LEVEL
     }
 
     private _upgrade = () => {
-        if (this.cmp.upgradable.canBeUpgraded()) {
+        if (!this.cmp.upgradable.canBeUpgraded()) {
             o_logger.error("can't be upgraded, already max level")
             return;
         }
@@ -150,7 +153,7 @@ export class Chair {
                 return 'chair_1'
             case 2:
                 return 'chair_2'
-            case 3:
+            case MAX_LEVEL: // 3
                 return 'chair_3'
             default:
                 throw Error("wrong chair level: " + this.cmp.upgradable.level)

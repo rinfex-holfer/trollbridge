@@ -10,6 +10,7 @@ import {TextKey, Txt} from "../translations";
 import {colorsCSS} from "../configs/constants";
 import {sub} from "../utils/utils-events";
 import {Evt} from "../event-bus";
+import {EffectHighlight} from "../effects/highlight";
 
 const BUTTON_SIZE = 32
 const TEXT_PANEL_WIDTH = 300
@@ -62,15 +63,6 @@ export class UpgradeButton {
         this.button.setInteractive(true)
         this.button.onClick(this.onClick)
 
-        this.button.onHover(
-            () => {
-                this.textContainer.setVisibility(true)
-            },
-            () => {
-                this.textContainer.setVisibility(false)
-            },
-        )
-
         const textContainerX = buttonCoord.x + BUTTON_SIZE / 2 + MARGIN
         const textContainerY = buttonCoord.y - BUTTON_SIZE
         this.textContainer = o_.render.createContainer(textContainerX, textContainerY)
@@ -105,7 +97,6 @@ export class UpgradeButton {
         o_.layers.add(this.titleText, LayerKey.FIELD_BUTTONS)
 
         if (this.descriptionKey) {
-            console.log(this.titleText.y + this.titleText.height, this.titleText.getBottomCenter())
             this.descriptionText = o_.render.createText({
                 textKey: this.descriptionKey,
                 x: 0,
@@ -156,6 +147,23 @@ export class UpgradeButton {
         this.textContainer.y = this.textContainer.y - this.costText.getBottomCenter().y + BUTTON_SIZE / 2
         o_.layers.add(this.textContainer, LayerKey.FIELD_BUTTONS)
         o_.layers.add(this.button, LayerKey.FIELD_BUTTONS)
+
+        const effect = new EffectHighlight(this.button)
+
+        const tween = o_.render.createUpDownMovementTween(this.button, 15, 500)
+        tween.play()
+        this.button.onHover(
+            () => {
+                effect.setActive(true)
+                this.textContainer.alpha = 0
+                o_.render.fadeIn(this.textContainer, 200)
+                this.textContainer.setVisibility(true)
+            },
+            () => {
+                effect.setActive(false)
+                this.textContainer.setVisibility(false)
+            },
+        )
     }
 
     onClick = () => {
@@ -164,6 +172,7 @@ export class UpgradeButton {
 
     destroy() {
         this.button.destroy()
+        this.textContainer.destroy()
     }
 
     isVisible = false
@@ -176,7 +185,7 @@ export class UpgradeButton {
 
     getIsEnoughGold = () => o_.lair.treasury.amount >= this.cost
 
-    setVisible(val: boolean) {
+    setVisible = (val: boolean) => {
         this.isVisible = val
         this.button.setInteractive(val)
         this.button.setVisibility(val)

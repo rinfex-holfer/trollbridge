@@ -41,7 +41,9 @@ export const Txt = {
     UpgradeCostNotEnoughMoney: "UpgradeCostNotEnoughMoney",
 
     UpgradeBridge: "UpgradeBridge",
+    UpgradeChairTitle: "UpgradeChairTitle",
     UpgradeChair: "UpgradeChair",
+    UpgradeBedTitle: "UpgradeBedTitle",
     UpgradeBed: "UpgradeBed",
     BuildGoblinsLair: "BuildGoblinsLair",
     UpgradePotTitle: "UpgradePotTitle",
@@ -85,9 +87,11 @@ export const translations = {
             [Txt.UpgradeCostNotEnoughMoney]: " (not enough!)",
 
             [Txt.UpgradeChair]: "Restores more health",
+            [Txt.UpgradeChairTitle]: "Upgrade chair",
             [Txt.UpgradePotTitle]: "Build pot",
             [Txt.UpgradePotDescr]: "Can prepare food",
 
+            [Txt.UpgradeBedTitle]: "Upgrade bed",
             [Txt.UpgradeBed]: "Restores more health",
             [Txt.UpgradeDryingRack]: "Stores more food",
         } as const
@@ -127,8 +131,10 @@ export const translations = {
             [Txt.UpgradeCost]: "Цена: {{amount}} золота",
             [Txt.UpgradeCostNotEnoughMoney]: " (не достаточно!)",
 
+            [Txt.UpgradeChairTitle]: "Улучшить стул",
             [Txt.UpgradeChair]: "Восстанавливает больше здоровья",
             [Txt.UpgradePotDescr]: "Можно готовить пищу",
+            [Txt.UpgradeBedTitle]: "Улучшить кровать",
             [Txt.UpgradeBed]: "Восстанавливает больше здоровья",
             [Txt.UpgradeDryingRack]: "Вмещает больше еды",
         } as const

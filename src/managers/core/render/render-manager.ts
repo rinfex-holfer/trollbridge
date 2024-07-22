@@ -356,6 +356,18 @@ export class RenderManager {
         return tween
     }
 
+    createUpDownMovementTween(targets: O_GameObject | O_GameObject[], height = 10, duration = 500) {
+        const tween = this.createTween({
+            targets: Array.isArray(targets) ? targets.map(t => t.obj) : targets.obj,
+            ease: 'Linear',
+            yoyo: true,
+            repeat: -1,
+            duration,
+            y: `-=${height}`,
+        })
+        return tween
+    }
+
     createZzzTween(targets: O_GameObject[], x: number, y: number) {
         const getConfig = (i: number) => (
             {
