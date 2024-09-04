@@ -55,11 +55,12 @@ export const createUpgradableComponent = (
 
         init: () => {
             const btn = new UpgradeButton((b: UpgradeButton) => {
+                o_.audio.playSound(SOUND_KEY.COLLECT)
+                o_.lair.treasury.removeGold(cmp().getUpgradeCost())
+                
                 o_.audio.playSound(SOUND_KEY.UPGRADE)
                 cmp().upgrade()
 
-                o_.audio.playSound(SOUND_KEY.COLLECT)
-                o_.lair.treasury.removeGold(cmp().getUpgradeCost())
                 if (!cmp().canBeUpgraded()) {
                     btn.destroy()
                     o_.upgrade.unregister(cmp())

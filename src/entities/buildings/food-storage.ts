@@ -96,9 +96,7 @@ export class FoodStorage {
             return
         }
 
-        if (this.cmp.upgradable.level >= 1) {
-            if (!!this.sprite1) return
-
+        if (this.cmp.upgradable.level >= 1 && !this.sprite1) {
             const sprite = o_.render.createSprite('drying_rack', 0, 0, {parent: this.container})
             sprite.setOrigin(0, 1)
             sprite.setWidth(RACK_WIDTH)
