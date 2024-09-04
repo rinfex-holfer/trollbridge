@@ -16,8 +16,8 @@ export interface UpgradableEntity {
 export type UpgradableComponent = UpgradableComponentData & {
     button?: UpgradeButton
     buttonCoord: Vec
-    titleTextKey?: TextKey
-    descriptionTextKey?: TextKey
+    titleTextKey?: TextKey | (() => TextKey)
+    descriptionTextKey?: TextKey | (() => TextKey)
     canBeUpgraded: () => boolean
     getUpgradeCost: () => number
     upgrade: () => void

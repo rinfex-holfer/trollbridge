@@ -3,11 +3,7 @@ export const goldConfig = {
 
     costs: {
         fix_bridge: 10,
-        drying_rack: {
-            0: 10,
-            1: 20,
-            2: 30
-        },
+        drying_rack: [10, 20, 30],
         bridge_ornament: 200,
         goblins_lair: 400,
         chair: [10, 20, 30],

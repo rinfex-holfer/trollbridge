@@ -3,6 +3,7 @@ import {o_} from "./locator";
 import {debugExpose} from "../utils/utils-misc";
 import {ChairData} from "../entities/buildings/chair";
 import {BedData} from "../entities/buildings/bed";
+import {FoodStorageData} from "../entities/buildings/food-storage";
 
 const LS_KEY = "tb_save"
 
@@ -18,6 +19,7 @@ export interface SaveData {
         chair: ChairData
         bed: BedData
         pot: PotData
+        foodStorage: FoodStorageData
     }
 }
 
@@ -37,6 +39,7 @@ export class SaveManager {
                 chair: o_.lair.chair.getData(),
                 bed: o_.lair.bed.getData(),
                 pot: o_.lair.pot.getData(),
+                foodStorage: o_.lair.foodStorage.getData(),
             }
         }
 

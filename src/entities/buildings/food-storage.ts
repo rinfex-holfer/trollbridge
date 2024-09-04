@@ -13,6 +13,7 @@ import {positioner} from "../../managers/game/positioner";
 
 import {Txt} from "../../translations";
 import {EffectType} from "../../effects/types";
+import {ChairData} from "./chair";
 
 const START_X = 60
 const START_Y = -70
@@ -20,12 +21,14 @@ const MARGIN_X = MEAT_WIDTH
 const MARGIN_Y = 40
 const RACK_WIDTH = 250
 
-type Props = {
+export type FoodStorageData = {
     id?: string,
     cmp?: {
         upgradable?: UpgradableComponentData
     }
 }
+
+type FoodPlace = [Vec, Meat | null]
 
 export class FoodStorage {
     id: string
@@ -36,38 +39,31 @@ export class FoodStorage {
 
     position: Vec = {x: 0, y: 0}
 
-    sprite: O_Sprite
+    sprite1?: O_Sprite
+    sprite2?: O_Sprite
 
     container: O_Container;
 
     subscriptions = eventBusSubscriptions()
 
-    places: [Vec, Meat | null][] = [
-        [{x: START_X, y: START_Y}, null],
-        [{x: START_X + MARGIN_X, y: START_Y}, null],
-        [{x: START_X + MARGIN_X * 2, y: START_Y}, null],
-        [{x: START_X + MARGIN_X * 3, y: START_Y}, null],
-    ]
+    places: FoodPlace[] = []
 
-    constructor(props: Props) {
+    constructor(props?: FoodStorageData) {
         this.id = createId('food_storage')
         this.position = positioner.getFoodStoragePosition()
 
         this.container = o_.render.createContainer(this.position.x, this.position.y)
         o_.layers.add(this.container, LayerKey.FIELD_OBJECTS)
 
-        this.sprite = this.createSprite()
-
         const level = props?.cmp?.upgradable?.level || 0
         this.cmp = {
             upgradable: createUpgradableComponent(this, {
                 buttonCoord: {
-                    x: this.container.x + this.sprite.width + 30,
-                    y: this.container.y - this.sprite.height / 2
+                    x: this.container.x + 30,
+                    y: this.container.y - 30
                 },
-                titleTextKey: Txt.UpgradeDryingRackTitle,
-                descriptionTextKey: Txt.UpgradeDryingRack,
-                cost: goldConfig.costs.drying_rack,
+                ...this.getTextKeys(),
+                getUpgradeCost: this.getUpgradeCost,
                 canBeUpgraded: this._canBeUpgraded,
                 upgrade: this._upgrade,
                 level,
@@ -76,31 +72,112 @@ export class FoodStorage {
         }
 
         this.cmp.upgradable.init()
+
+        this.updateSprites()
     }
 
-    private _canBeUpgraded = () => this.cmp.upgradable.level === 0
+    getTextKeys = () => {
+        return {
+            titleTextKey: () => {
+                if (this.cmp.upgradable.level === 0) return Txt.BuildDryingRackTitle
+                return Txt.UpgradeDryingRackTitle
+            },
+            descriptionTextKey: () => {
+                if (this.cmp.upgradable.level === 0) return Txt.BuildDryingRackText
+                return Txt.UpgradeDryingRackText
+            },
+        }
+    }
 
-    private createSprite() {
-        const sprite = o_.render.createSprite('drying_rack', 0, 0, {parent: this.container})
-        sprite.setOrigin(0, 1)
-        sprite.setWidth(RACK_WIDTH)
+    private _canBeUpgraded = () => this.cmp.upgradable.level < 2
 
-        return sprite
+    updateSprites() {
+        if (this.cmp.upgradable.level === 0) {
+            return
+        }
+
+        if (this.cmp.upgradable.level >= 1) {
+            if (!!this.sprite1) return
+
+            const sprite = o_.render.createSprite('drying_rack', 0, 0, {parent: this.container})
+            sprite.setOrigin(0, 1)
+            sprite.setWidth(RACK_WIDTH)
+            this.sprite1 = sprite
+        }
+
+        if (this.cmp.upgradable.level === 2) {
+            if (!!this.sprite2) return
+
+            if (!this.sprite1) {
+                throw Error('cant upgrade food storage to level 2 without sprite from level 1')
+            }
+
+            const sprite2 = o_.render.createSprite('drying_rack', this.sprite1.width - 30, 0, {parent: this.container})
+            sprite2.setOrigin(0, 1)
+            sprite2.setWidth(RACK_WIDTH)
+            this.sprite2 = sprite2
+        }
     }
 
     _upgrade = () => {
-        const sprite2 = o_.render.createSprite('drying_rack', this.sprite.width - 30, 0, {parent: this.container})
-        sprite2.setOrigin(0, 1)
-        sprite2.setWidth(RACK_WIDTH)
-        this.places = this.places.concat([
-            // [{x: START_X + MARGIN_X * 4, y: START_Y}, null],
-            // [{x: START_X + MARGIN_X * 5, y: START_Y}, null],
+        if (!this._canBeUpgraded()) {
+            throw Error("food storage cant be upgraded")
+        }
+
+        this.cmp.upgradable.level++
+
+        this.updateSprites()
+
+        const oldFood = [...this.places]
+
+        this.places = this.getPlacesForFood()
+        oldFood.forEach((oldPlace, idx) => {
+            if (!!oldPlace[1]) {
+                this.places[idx][1] = oldPlace[1]
+            }
+        })
+    }
+
+    getPlacesForFood = (): FoodPlace[] => {
+        const firstSection: FoodPlace[] = [
+            [{x: START_X, y: START_Y}, null],
+            [{x: START_X + MARGIN_X, y: START_Y}, null],
+            [{x: START_X + MARGIN_X * 2, y: START_Y}, null],
+            [{x: START_X + MARGIN_X * 3, y: START_Y}, null],
+        ];
+        const secondSection: FoodPlace[] = [
             [{x: START_X + MARGIN_X * 6, y: START_Y}, null],
             [{x: START_X + MARGIN_X * 7, y: START_Y}, null],
             [{x: START_X + MARGIN_X * 8, y: START_Y}, null],
-            [{x: START_X + MARGIN_X * 9, y: START_Y}, null],])
+            [{x: START_X + MARGIN_X * 9, y: START_Y}, null]
+        ]
+        if (this.cmp.upgradable.level === 0) {
+            return []
+        } else if (this.cmp.upgradable.level === 1) {
+            return [
+                ...firstSection,
+            ]
+        } else if (this.cmp.upgradable.level === 2) {
+            return [
+                ...firstSection,
+                ...secondSection,
+            ]
+        }
 
-        this.cmp.upgradable.level++
+        throw Error('incorrect level of food storage ' + this.cmp.upgradable.level)
+    }
+
+    getData(): FoodStorageData {
+        return {
+            id: this.id,
+            cmp: {
+                upgradable: this.cmp.upgradable.getData()
+            }
+        }
+    }
+
+    getUpgradeCost = () => {
+        return goldConfig.costs.drying_rack[this.cmp.upgradable.level]
     }
 
     placeFood(food: Meat) {
@@ -131,7 +208,8 @@ export class FoodStorage {
 
     destroy() {
         this.subscriptions.clear();
-        this.sprite.destroy()
+        this.sprite1?.destroy()
+        this.sprite2?.destroy()
         this.container.destroy()
     }
 

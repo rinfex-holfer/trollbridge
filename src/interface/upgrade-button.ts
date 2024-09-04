@@ -35,8 +35,8 @@ export class UpgradeButton {
 
     host: UpgradableEntity
 
-    titleKey: TextKey
-    descriptionKey?: TextKey
+    titleKey: TextKey | (() => TextKey)
+    descriptionKey?: TextKey | (() => TextKey)
 
     titleText: O_Text
     descriptionText?: O_Text
@@ -80,7 +80,7 @@ export class UpgradeButton {
         this.background.alpha = 0.75
 
         this.titleText = o_.render.createText({
-                textKey: this.titleKey,
+                textKey: typeof this.titleKey === 'function' ? this.titleKey() : this.titleKey,
                 x: 0,
                 y: 0,
                 style: {
@@ -98,7 +98,7 @@ export class UpgradeButton {
 
         if (this.descriptionKey) {
             this.descriptionText = o_.render.createText({
-                textKey: this.descriptionKey,
+                textKey: typeof this.descriptionKey === 'function' ? this.descriptionKey() : this.descriptionKey,
                 x: 0,
                 y: this.titleText.getBottomCenter().y,
                 style: {
@@ -142,7 +142,7 @@ export class UpgradeButton {
         })
         this.costTextNotEnough.setOrigin(0, 0)
 
-        this.background.setWidth(Math.max(this.descriptionText?.width || 0, this.costTextNotEnough.getRightCenter().x), false)
+        this.background.setWidth(Math.max(this.titleText.width, this.descriptionText?.width || 0, this.costTextNotEnough.getRightCenter().x), false)
         this.background.setHeight(Math.max(this.costText.getBottomCenter().y), false)
         this.textContainer.y = this.textContainer.y - this.costText.getBottomCenter().y + BUTTON_SIZE / 2
         o_.layers.add(this.textContainer, LayerKey.FIELD_BUTTONS)
@@ -179,9 +179,17 @@ export class UpgradeButton {
 
     updateEnabledState = () => {
         this.isEnabled = this.getIsEnoughGold()
+
+        if (typeof this.titleKey === 'function') {
+            this.titleText?.setText(this.titleKey())
+        }
+        if (typeof this.descriptionKey === 'function') {
+            this.descriptionText?.setText(this.descriptionKey())
+        }
+
         this.costText.setText(Txt.UpgradeCost, {amount: this.getUpgradeCost()})
         this.costTextNotEnough.setText(this.isEnabled ? Txt.Empty : Txt.UpgradeCostNotEnoughMoney)
-        this.background.setWidth(Math.max(this.descriptionText?.width || 0, this.costTextNotEnough.getRightCenter().x), false)
+        this.background.setWidth(Math.max(this.titleText.width, this.descriptionText?.width || 0, this.costTextNotEnough.getRightCenter().x), false)
     }
 
     getIsEnoughGold = () => o_.lair.treasury.amount >= this.getUpgradeCost()
