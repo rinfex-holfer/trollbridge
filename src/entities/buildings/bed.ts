@@ -11,6 +11,7 @@ import {EntityEffect} from "../../effects/entity-effect";
 import {Txt} from "../../translations";
 import {SpriteKey} from "../../resourse-paths";
 import {o_logger} from "../../utils/logger";
+import {goldConfig} from "../../configs/gold-config";
 
 type Props = {
     id?: string,
@@ -61,7 +62,7 @@ export class Bed {
                 buttonCoord: {x: this.sprite.x, y: this.sprite.y},
                 titleTextKey: Txt.UpgradeBedTitle,
                 descriptionTextKey: Txt.UpgradeBed,
-                cost: 50,
+                getUpgradeCost: this.getUpgradeCost,
                 canBeUpgraded: this._canBeUpgraded,
                 upgrade: this._upgrade,
                 level: 0,
@@ -147,6 +148,10 @@ export class Bed {
         this.cmp.upgradable.level++
 
         this.sprite.setTexture(this.getSpriteKey())
+    }
+
+    getUpgradeCost = () => {
+        return goldConfig.costs.bed[this.cmp.upgradable.level]
     }
 
     setInteractive(val: boolean) {

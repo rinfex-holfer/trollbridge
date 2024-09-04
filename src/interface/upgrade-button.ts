@@ -26,7 +26,7 @@ const notEnoughMoneyColor = colorsCSS.RED
 
 export class UpgradeButton {
     button: O_Sprite
-    cost: number
+    getUpgradeCost: () => number
 
     isEnabled: boolean = true
 
@@ -48,11 +48,11 @@ export class UpgradeButton {
     constructor(private onClickCb: (btn: UpgradeButton) => void, host: UpgradableEntity) {
         this.unsub = sub(Evt.RESOURSES_CHANGED, this.updateEnabledState)
 
-        const {cost, titleTextKey, buttonCoord, descriptionTextKey} = host.cmp.upgradable
+        const {getUpgradeCost, titleTextKey, buttonCoord, descriptionTextKey} = host.cmp.upgradable
 
         this.descriptionKey = descriptionTextKey
         this.titleKey = titleTextKey || Txt.UpgradeTitle
-        this.cost = cost
+        this.getUpgradeCost = getUpgradeCost
         this.host = host
 
         this.button = o_.render.createSprite('button_upgrade', buttonCoord.x, buttonCoord.y, {
@@ -114,7 +114,7 @@ export class UpgradeButton {
         const costTextY = this.descriptionText?.getBottomCenter().y || this.titleText.getBottomCenter().y
         this.costText = o_.render.createText({
             textKey: Txt.UpgradeCost,
-            textVars: {amount: this.cost},
+            textVars: {amount: this.getUpgradeCost()},
             x: 0,
             y: costTextY,
             style: {
@@ -129,7 +129,7 @@ export class UpgradeButton {
 
         this.costTextNotEnough = o_.render.createText({
             textKey: this.getIsEnoughGold() ? '' : Txt.UpgradeCostNotEnoughMoney,
-            textVars: {amount: this.cost},
+            textVars: {amount: this.getUpgradeCost()},
             x: this.costText.getRightCenter().x - TEXT_PADDING,
             y: costTextY,
             style: {
@@ -179,11 +179,12 @@ export class UpgradeButton {
 
     updateEnabledState = () => {
         this.isEnabled = this.getIsEnoughGold()
+        this.costText.setText(Txt.UpgradeCost, {amount: this.getUpgradeCost()})
         this.costTextNotEnough.setText(this.isEnabled ? Txt.Empty : Txt.UpgradeCostNotEnoughMoney)
         this.background.setWidth(Math.max(this.descriptionText?.width || 0, this.costTextNotEnough.getRightCenter().x), false)
     }
 
-    getIsEnoughGold = () => o_.lair.treasury.amount >= this.cost
+    getIsEnoughGold = () => o_.lair.treasury.amount >= this.getUpgradeCost()
 
     setVisible = (val: boolean) => {
         this.isVisible = val

@@ -16,10 +16,10 @@ export interface UpgradableEntity {
 export type UpgradableComponent = UpgradableComponentData & {
     button?: UpgradeButton
     buttonCoord: Vec
-    cost: number
     titleTextKey?: TextKey
     descriptionTextKey?: TextKey
     canBeUpgraded: () => boolean
+    getUpgradeCost: () => number
     upgrade: () => void
     getData: () => UpgradableComponentData
     init: () => void
@@ -29,6 +29,7 @@ export type UpgradableComponentData = {
     level: number
 }
 
+// это пиздец конечно месиво, так не планировалось
 export const createUpgradableComponent = (
     host: UpgradableEntity,
     props?: Partial<UpgradableComponent>,
@@ -40,11 +41,11 @@ export const createUpgradableComponent = (
 
         level: 0,
 
-        cost: 10,
-
         titleTextKey: Txt.UpgradeTitle,
 
         canBeUpgraded: () => false,
+
+        getUpgradeCost: () => 0,
 
         upgrade: () => void 0,
 
@@ -58,7 +59,7 @@ export const createUpgradableComponent = (
                 cmp().upgrade()
 
                 o_.audio.playSound(SOUND_KEY.COLLECT)
-                o_.lair.treasury.removeGold(btn.cost)
+                o_.lair.treasury.removeGold(cmp().getUpgradeCost())
                 if (!cmp().canBeUpgraded()) {
                     btn.destroy()
                     o_.upgrade.unregister(cmp())

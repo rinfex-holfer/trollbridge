@@ -13,6 +13,7 @@ import {Vec} from "../../utils/utils-math";
 import {EntityEffect} from "../../effects/entity-effect";
 import {createUpgradableComponent, UpgradableComponent, UpgradableComponentData} from "../../components/upgradable";
 import {Txt} from "../../translations";
+import {goldConfig} from "../../configs/gold-config";
 
 const CHAIR_WIDTH = 100
 
@@ -68,7 +69,7 @@ export class Chair {
                 },
                 descriptionTextKey: Txt.UpgradeChair,
                 titleTextKey: Txt.UpgradeChairTitle,
-                cost: 50,
+                getUpgradeCost: this.getUpgradeCost,
                 canBeUpgraded: this._canBeUpgraded,
                 upgrade: this._upgrade,
                 level,
@@ -158,6 +159,10 @@ export class Chair {
             default:
                 throw Error("wrong chair level: " + level)
         }
+    }
+
+    getUpgradeCost = () => {
+        return goldConfig.costs.chair[this.cmp.upgradable.level]
     }
 
     onClick() {
