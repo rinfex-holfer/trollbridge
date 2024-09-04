@@ -28,6 +28,9 @@ import {MenuManager} from "./managers/core/menu";
 import {GameLoader} from "./game-loader";
 import {TextsManager} from "./managers/core/texts";
 import {outlinePipeline} from "./shaders/OutlinePipeline";
+import {SaveManager} from "./managers/save-manager";
+import {o_} from "./managers/locator";
+import {createBasicManagers, createGameManagers, createSceneManagers} from "./game-utils";
 
 const preload = (scene: Phaser.Scene) => {
     const gameLoader = new GameLoader(scene)
@@ -35,41 +38,11 @@ const preload = (scene: Phaser.Scene) => {
 }
 
 const create = (scene: Phaser.Scene) => {
-    new GameManager(scene)
-    const inputManager = new InputManager(scene)
-    new MenuManager()
-    const timeManager = new TimeManager()
-    new LayersManager(scene)
-    new RenderManager(scene)
+    createGameManagers(scene)
 
-    inputManager.initializeCursor()
+    const saveData = o_.saves.getSaveData()
+    createSceneManagers(saveData)
 
-    new CameraManager(scene)
-    new InteractionManager(scene)
-    new ItemManager()
-    new AudioManager(scene)
-    new UpgradeManager()
-    new Environment()
-    new CharactersManager()
-    new Lair()
-    new BridgeManager()
-    new Ladder()
-    new Negotiations()
-    new BattleManager()
-    new Troll()
-    new MusicManager()
-
-    new GameNotifications()
-
-    // new Meat({x: 660, y: 1200})
-    // new Meat({x: 680, y: 1200})
-    // new Meat({x: 600, y: 1200})
-    // new Meat({x: 620, y: 1200})
-    // new Meat({x: 640, y: 1200})
-    // new Meat({x: 660, y: 1200})
-    // new Meat({x: 670, y: 1200})
-    // new Meat({x: 680, y: 1200})
-    // new Meat({x: 690, y: 1200})
     new Gold({x: 720, y: 1200}, 1)
     new Gold({x: 740, y: 1200}, 2)
     new Gold({x: 760, y: 1200}, 3)
@@ -78,15 +51,14 @@ const create = (scene: Phaser.Scene) => {
     new Gold({x: 800, y: 1200}, 100)
 
     scene.update = function (time, delta) {
-        timeManager.onUpdate(delta);
+        o_.time.onUpdate(delta);
     }
 
     gamePhaseCycle(new PhaseLair())
 }
 
 export const newGame = () => {
-    new TextsManager()
-    new SettingsManager()
+    createBasicManagers()
 
     const size = getGameSize()
 

@@ -12,7 +12,12 @@ export const Txt = {
 
     Gold: "gold",
 
+    No: "No",
+    Yes: "Yes",
+    Cancel: "Cancel",
 
+    NewGame: "NewGame",
+    StartNewGame: "StartNewGame",
     Pause: "Pause",
     StartGame: "StartGame",
     Resume: "Resume",
@@ -48,13 +53,19 @@ export const Txt = {
     BuildGoblinsLair: "BuildGoblinsLair",
     UpgradePotTitle: "UpgradePotTitle",
     UpgradePotDescr: "UpgradePotDescr",
+    UpgradeDryingRackTitle: "UpgradeDryingRackTitle",
     UpgradeDryingRack: "UpgradeDryingRack",
 } as const
 export const translations = {
     [Language.EN]: {
         translation: {
+            [Txt.Yes]: "Yes",
+            [Txt.No]: "No",
+            [Txt.Cancel]: "Cancel",
             [Txt.Empty]: "",
             [Txt.Loading]: "Loading",
+            [Txt.NewGame]: "New game",
+            [Txt.StartNewGame]: "Start new game",
 
             // menues
             [Txt.Back]: "Back",
@@ -93,13 +104,20 @@ export const translations = {
 
             [Txt.UpgradeBedTitle]: "Upgrade bed",
             [Txt.UpgradeBed]: "Restores more health",
+            [Txt.UpgradeDryingRackTitle]: "Expand food storage",
             [Txt.UpgradeDryingRack]: "Stores more food",
         } as const
     } as const,
     [Language.RU]: {
         translation: {
+            [Txt.Yes]: "Да",
+            [Txt.No]: "Нет",
+            [Txt.Cancel]: "Отмена",
+
             [Txt.Empty]: "",
             [Txt.Loading]: "Загрузка",
+            [Txt.NewGame]: "Новая игра",
+            [Txt.StartNewGame]: "Начать новую игру",
 
             // menues
 
@@ -136,6 +154,7 @@ export const translations = {
             [Txt.UpgradePotDescr]: "Можно готовить пищу",
             [Txt.UpgradeBedTitle]: "Улучшить кровать",
             [Txt.UpgradeBed]: "Восстанавливает больше здоровья",
+            [Txt.UpgradeDryingRackTitle]: "Расширить хранилище еды",
             [Txt.UpgradeDryingRack]: "Вмещает больше еды",
         } as const
     } as const

@@ -7,6 +7,7 @@ import {GameOver} from "./game-over";
 import {eventBus, Evt} from "../../event-bus";
 import {MenuScreen} from "../../managers/core/menu";
 import {SaveMenu} from "./menues/save-menu";
+import {NewGameMenu} from "./menues/new-game-menu";
 
 const subscribe = (callback: VoidFunction) => {
     const id = eventBus.on(Evt.INTERFACE_MENU_SCREEN_CHANGED, callback)
@@ -37,6 +38,8 @@ const getMenu = (screen: MenuScreen) => {
             return <GameOver/>
         case MenuScreen.SAVE:
             return <SaveMenu/>
+        case MenuScreen.NEW_GAME:
+            return <NewGameMenu/>
         case MenuScreen.LOAD:
         case undefined:
             return null

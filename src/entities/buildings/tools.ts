@@ -10,12 +10,23 @@ export class Tools {
     id = 'tools_0'
     sprite: O_Sprite
 
+
+    isHovered = false
+
     constructor() {
         this.sprite = this.createSprite()
         this.addEffect(new EffectHighlight(this.sprite)) as EffectHighlight
         this.sprite.onHover(
-            () => this.getEffect(EffectType.HIGHLIGHTED)?.setActive(true),
-            () => this.getEffect(EffectType.HIGHLIGHTED)?.setActive(false)
+            () => {
+                this.isHovered = true
+                this.getEffect(EffectType.HIGHLIGHTED)?.setActive(true)
+            },
+            () => {
+                this.isHovered = false
+                if (!this.isAlwaysHighlighted) {
+                    this.getEffect(EffectType.HIGHLIGHTED)?.setActive(false)
+                }
+            }
         )
     }
 
@@ -49,6 +60,19 @@ export class Tools {
         if (val === false) {
             this.getEffect(EffectType.HIGHLIGHTED)?.setActive(false)
             o_.input.setDefaultCursor()
+        }
+    }
+
+    isAlwaysHighlighted = false
+    setAlwaysHighlighted = (val: boolean) => {
+        this.isAlwaysHighlighted = val;
+
+        if (val) {
+            this.getEffect(EffectType.HIGHLIGHTED)?.setActive(true)
+        } else {
+            if (!this.isHovered) {
+                this.getEffect(EffectType.HIGHLIGHTED)?.setActive(false)
+            }
         }
     }
 

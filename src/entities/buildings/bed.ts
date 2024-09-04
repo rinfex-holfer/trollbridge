@@ -9,6 +9,8 @@ import {EffectToTypeMap, EffectType} from "../../effects/types";
 import {createUpgradableComponent, UpgradableComponent, UpgradableComponentData} from "../../components/upgradable";
 import {EntityEffect} from "../../effects/entity-effect";
 import {Txt} from "../../translations";
+import {SpriteKey} from "../../resourse-paths";
+import {o_logger} from "../../utils/logger";
 
 type Props = {
     id?: string,
@@ -16,6 +18,8 @@ type Props = {
         upgradable?: UpgradableComponentData
     }
 }
+
+const MAX_LEVEL = 2
 
 export class Bed {
     id: string
@@ -65,8 +69,6 @@ export class Bed {
             })
         }
 
-        this.sprite = this.createSprite(this.cmp.upgradable.level)
-
         this.cmp.upgradable.init()
 
         this.addEffect(new EffectHighlight(this.sprite)) as EffectHighlight
@@ -106,11 +108,12 @@ export class Bed {
         return effect
     }
 
-    private _canBeUpgraded = () => this.cmp.upgradable.level === 0
+    private _canBeUpgraded = () => this.cmp.upgradable.level < MAX_LEVEL
 
     createSprite(level: number): O_Sprite {
         const position = positioner.getBedPosition()
-        const spriteKey = level > 0 ? 'bed_upgraded' : 'bed'
+
+        const spriteKey = this.getSpriteKey(level)
 
         const sprite = o_.render.createSprite(spriteKey, position.x, position.y)
         // sprite.setOrigin(0, 0)
@@ -123,9 +126,27 @@ export class Bed {
         return sprite
     }
 
-    private _upgrade() {
-        this.sprite.setTexture('bed_upgraded')
+    private getSpriteKey(level = this.cmp.upgradable.level): SpriteKey {
+        switch (level) {
+            case 0:
+                return 'bed_0'
+            case 1:
+                return 'bed_1'
+            case MAX_LEVEL: // 2
+                return 'bed_2'
+            default:
+                throw Error("wrong bed level: " + level)
+        }
+    }
+
+    private _upgrade = () => {
+        if (!this.cmp.upgradable.canBeUpgraded()) {
+            o_logger.error("bed can't be upgraded, already max level")
+            return;
+        }
         this.cmp.upgradable.level++
+
+        this.sprite.setTexture(this.getSpriteKey())
     }
 
     setInteractive(val: boolean) {

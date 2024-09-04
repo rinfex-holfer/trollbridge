@@ -8,6 +8,7 @@ import {TextKey, Txt} from "../translations";
 
 export interface UpgradableEntity {
     cmp: {
+        // TODO why this should be in cmp object? Better lift it up
         upgradable: UpgradableComponent
     }
 }

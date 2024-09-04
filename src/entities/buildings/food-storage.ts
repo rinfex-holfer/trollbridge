@@ -12,6 +12,7 @@ import {createUpgradableComponent, UpgradableComponent, UpgradableComponentData}
 import {positioner} from "../../managers/game/positioner";
 
 import {Txt} from "../../translations";
+import {EffectType} from "../../effects/types";
 
 const START_X = 60
 const START_Y = -70
@@ -57,18 +58,19 @@ export class FoodStorage {
 
         this.sprite = this.createSprite()
 
+        const level = props?.cmp?.upgradable?.level || 0
         this.cmp = {
             upgradable: createUpgradableComponent(this, {
                 buttonCoord: {
                     x: this.container.x + this.sprite.width + 30,
                     y: this.container.y - this.sprite.height / 2
                 },
-                titleTextKey: Txt.BuildTitle,
+                titleTextKey: Txt.UpgradeDryingRackTitle,
                 descriptionTextKey: Txt.UpgradeDryingRack,
                 cost: goldConfig.costs.drying_rack,
                 canBeUpgraded: this._canBeUpgraded,
                 upgrade: this._upgrade,
-                level: 0,
+                level,
                 ...props?.cmp?.upgradable,
             })
         }
@@ -86,7 +88,7 @@ export class FoodStorage {
         return sprite
     }
 
-    _upgrade() {
+    _upgrade = () => {
         const sprite2 = o_.render.createSprite('drying_rack', this.sprite.width - 30, 0, {parent: this.container})
         sprite2.setOrigin(0, 1)
         sprite2.setWidth(RACK_WIDTH)
@@ -97,6 +99,8 @@ export class FoodStorage {
             [{x: START_X + MARGIN_X * 7, y: START_Y}, null],
             [{x: START_X + MARGIN_X * 8, y: START_Y}, null],
             [{x: START_X + MARGIN_X * 9, y: START_Y}, null],])
+
+        this.cmp.upgradable.level++
     }
 
     placeFood(food: Meat) {
@@ -127,6 +131,8 @@ export class FoodStorage {
 
     destroy() {
         this.subscriptions.clear();
+        this.sprite.destroy()
+        this.container.destroy()
     }
 
     updateFood() {

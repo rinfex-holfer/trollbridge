@@ -18,6 +18,7 @@ import {SettingsManager} from "./core/settings";
 import {InputManager} from "./core/input";
 import {MenuManager} from "./core/menu";
 import {TextsManager} from "./core/texts";
+import {SaveManager} from "./save-manager";
 
 class Locator {
     #_render: RenderManager | undefined
@@ -39,6 +40,7 @@ class Locator {
     #_upgrade: UpgradeManager | undefined
     #_camera: CameraManager | undefined;
     #_settings: SettingsManager | undefined;
+    #_saves: SaveManager | undefined;
     #_texts: TextsManager | undefined;
 
     static crashStr(m: string) {
@@ -102,6 +104,9 @@ class Locator {
         },
         settings: (settings: SettingsManager) => {
             this.#_settings = settings
+        },
+        saves: (saves: SaveManager) => {
+            this.#_saves = saves
         },
         texts: (textsManager: TextsManager) => {
             this.#_texts = textsManager
@@ -201,6 +206,11 @@ class Locator {
     get settings() {
         if (!this.#_settings) throw Error(Locator.crashStr('settings'))
         return this.#_settings
+    }
+
+    get saves() {
+        if (!this.#_saves) throw Error(Locator.crashStr('saves'))
+        return this.#_saves
     }
 
     get texts() {

@@ -16,9 +16,9 @@ import {Txt} from "../../translations";
 
 const CHAIR_WIDTH = 100
 
-type Props = {
-    id?: string,
-    cmp?: {
+export type ChairData = {
+    id: string,
+    cmp: {
         upgradable?: UpgradableComponentData
     }
 }
@@ -34,11 +34,13 @@ export class Chair {
 
     private waitButton: O_Sprite
 
+    private effects: Partial<Record<EffectType, EntityEffect>> = {}
+
     cmp: {
         upgradable: UpgradableComponent
     }
 
-    constructor(props?: Props) {
+    constructor(props?: ChairData) {
         this.id = props?.id || createId('chair')
 
         this.coord = positioner.getChairPosition()
@@ -108,8 +110,6 @@ export class Chair {
         this.sprite.setWidth(CHAIR_WIDTH)
     }
 
-    private effects: Partial<Record<EffectType, EntityEffect>> = {}
-
     protected getEffect(type: EffectType): EffectToTypeMap[EffectType] | undefined {
         // @ts-ignore
         return this.effects[type]
@@ -156,7 +156,7 @@ export class Chair {
             case MAX_LEVEL: // 3
                 return 'chair_3'
             default:
-                throw Error("wrong chair level: " + this.cmp.upgradable.level)
+                throw Error("wrong chair level: " + level)
         }
     }
 
@@ -169,5 +169,20 @@ export class Chair {
         if (val === false) {
             this.getEffect(EffectType.HIGHLIGHTED)?.setActive(false)
         }
+    }
+
+    getData(): ChairData {
+        return {
+            id: this.id,
+            cmp: {
+                upgradable: this.cmp.upgradable.getData()
+            }
+        }
+    }
+
+    destroy() {
+        this.sprite.destroy()
+        this.waitButton.destroy()
+        Object.keys(this.effects).forEach((key) => this.effects[key as EffectType]?.destroy())
     }
 }

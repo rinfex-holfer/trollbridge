@@ -12,6 +12,7 @@ export class PhaseBuild extends GamePhase {
         o_.upgrade.showButtons(this.goToLairPhase)
 
         o_.lair.setInteractive.tools(true)
+        o_.lair.tools.setAlwaysHighlighted(true)
 
         this.registerListener(Evt.INTERFACE_TOOLS_CLICKED, () => {
             this.goToLairPhase()
@@ -29,7 +30,8 @@ export class PhaseBuild extends GamePhase {
     }
 
     protected onEnd() {
+        o_.lair.tools.setAlwaysHighlighted(false)
         o_.upgrade.hideButtons()
-        o_.lair.setInteractive.tools(false)
+        // o_.lair.setInteractive.tools(false)
     }
 }

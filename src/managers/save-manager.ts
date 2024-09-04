@@ -1,46 +1,60 @@
 import {PotProps} from "../entities/buildings/pot";
 import {o_} from "./locator";
 import {debugExpose} from "../utils/utils-misc";
+import {ChairData} from "../entities/buildings/chair";
 
 const LS_KEY = "tb_save"
 
 const gameVersion = "0.1"
 
-interface SaveData {
+export interface SaveData {
     _meta: {
         gameVersion: typeof gameVersion
         timestamp: string
     }
 
-    pot: PotProps
+    lair: {
+        chair: ChairData
+    }
 }
 
 export class SaveManager {
-    static save() {
+    constructor() {
+        debugExpose(() => this, 'saveManager')
+        o_.register.saves(this)
+    }
+
+    save() {
         const saveData: SaveData = {
             _meta: {
                 gameVersion,
                 timestamp: (new Date()).toString()
             },
-            pot: o_.lair.pot.props
+            lair: {
+                chair: o_.lair.chair.getData()
+            }
         }
 
         localStorage.setItem(LS_KEY, JSON.stringify(saveData))
     }
 
-    static load() {
+    deleteSave() {
+        localStorage.setItem(LS_KEY, '');
+    }
+
+    getSaveData() {
         const saveDataStr = localStorage.getItem(LS_KEY)
-        if (!saveDataStr) return null
+        if (!saveDataStr) return undefined
 
         let saveData: SaveData
         try {
             saveData = JSON.parse(saveDataStr)
         } catch (e) {
-            return null
+            return undefined
         }
 
         if (saveData._meta.gameVersion !== gameVersion) {
-            return null;
+            return undefined;
         }
 
         return saveData

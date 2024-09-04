@@ -8,21 +8,20 @@ import {Bed} from "../../entities/buildings/bed";
 import {Pot} from "../../entities/buildings/pot";
 import {Treasury} from "../../entities/buildings/treasury";
 import {Chair} from "../../entities/buildings/chair";
-import {CursorType, getCursorStyle} from "../core/input/cursor";
 import {Tools} from "../../entities/buildings/tools";
+import {SaveData} from "../save-manager";
 
 export class Lair {
-    foodStorage: FoodStorage
+    foodStorage!: FoodStorage
     bed: Bed
     pot: Pot
     chair: Chair
     tools: Tools
-
     treasury: Treasury
 
     sprite: O_Tiles
 
-    constructor() {
+    constructor(saveData?: SaveData) {
         o_.register.lair(this);
         const pos = positioner.getLairPosition();
         this.sprite = o_.render.createTiles('grass', pos.x, pos.y, pos.width, pos.height);
@@ -32,18 +31,40 @@ export class Lair {
             eventBus.emit(Evt.INTERFACE_LAIR_CLICKED, {event})
         })
 
-        // this.sprite.obj.alpha = 0
+        const children = this.initialize(saveData)
+        this.bed = children.bed // only to please TS
+        this.pot = children.pot
+        this.chair = children.chair
+        this.tools = children.tools
+        this.treasury = children.treasury
+        this.foodStorage = children.foodStorage
+    }
 
+    load(saveData?: SaveData) {
+        this.cleanup()
+        this.initialize(saveData)
+    }
+
+    initialize(saveData?: SaveData) {
         this.treasury = new Treasury(positioner.getTreasuryPosition())
         this.foodStorage = new FoodStorage(positioner.getFoodStoragePosition())
         this.bed = new Bed()
         this.pot = new Pot()
-        this.chair = new Chair()
+        this.chair = new Chair(saveData?.lair.chair)
         this.tools = new Tools()
+
+        return {
+            treasury: this.treasury,
+            foodStorage: this.foodStorage,
+            bed: this.bed,
+            pot: this.pot,
+            chair: this.chair,
+            tools: this.tools,
+        }
     }
 
-    updateMayBeMovedInto() {
-        throw Error("TODO phase-lair")
+    cleanup() {
+        this.chair.destroy();
     }
 
     setInteractive = {

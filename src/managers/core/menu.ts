@@ -8,6 +8,7 @@ export enum MenuScreen {
     MAIN = "MAIN",
     SETTINGS = "SETTINGS",
     HOW_TO_PLAY = "HOW_TO_PLAY",
+    NEW_GAME = "NEW_GAME",
     GAME_OVER = "GAME_OVER",
     SAVE = "SAVE",
     LOAD = "LOAD"
@@ -59,6 +60,12 @@ export class MenuManager {
         this.menuStack.pop()
 
         if (!this.isOpened) eventBus.emit(Evt.INTERFACE_MENU_CLOSED)
+        eventBus.emit(Evt.INTERFACE_MENU_SCREEN_CHANGED, this.currentScreen)
+    }
+
+    closeAllMenues() {
+        this.menuStack = [];
+        eventBus.emit(Evt.INTERFACE_MENU_CLOSED)
         eventBus.emit(Evt.INTERFACE_MENU_SCREEN_CHANGED, this.currentScreen)
     }
 }
