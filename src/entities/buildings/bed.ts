@@ -12,8 +12,9 @@ import {Txt} from "../../translations";
 import {SpriteKey} from "../../resourse-paths";
 import {o_logger} from "../../utils/logger";
 import {goldConfig} from "../../configs/gold-config";
+import {ChairData} from "./chair";
 
-type Props = {
+export type BedData = {
     id?: string,
     cmp?: {
         upgradable?: UpgradableComponentData
@@ -52,7 +53,7 @@ export class Bed {
         upgradable: UpgradableComponent
     }
 
-    constructor(props?: Partial<Props>) {
+    constructor(props?: Partial<BedData>) {
         this.id = props?.id || createId('bed')
 
         this.sprite = this.createSprite(props?.cmp?.upgradable?.level || 0)
@@ -95,6 +96,15 @@ export class Bed {
             () => effect.setActive(true),
             () => effect.setActive(false)
         )
+    }
+
+    getData(): BedData {
+        return {
+            id: this.id,
+            cmp: {
+                upgradable: this.cmp.upgradable.getData()
+            }
+        }
     }
 
     private effects: Partial<Record<EffectType, EntityEffect>> = {}
