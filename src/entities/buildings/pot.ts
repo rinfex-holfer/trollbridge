@@ -17,6 +17,7 @@ import {BaseItemEvent} from "../items/base-item/types";
 import {createUpgradableComponent, UpgradableComponent, UpgradableComponentData} from "../../components/upgradable";
 import {goldConfig} from "../../configs/gold-config";
 import {Txt} from "../../translations";
+import {BedData} from "./bed";
 
 export const enum PotState {
     NOT_EXIST = 'NOT_EXIST',
@@ -32,10 +33,12 @@ type PotComponent = {
     ingridientsAreStale: boolean,
 }
 
-export type PotProps = {
+export type PotData = {
     id: string,
-    upgradable?: UpgradableComponentData
-    pot?: PotComponent
+    cmp?: {
+        upgradable?: UpgradableComponentData
+        pot?: PotComponent
+    }
 }
 
 export class Pot {
@@ -57,7 +60,7 @@ export class Pot {
         pot: PotComponent
     }
 
-    constructor(props?: Partial<PotProps>) {
+    constructor(props?: Partial<PotData>) {
         this.id = props?.id || createId('pot')
 
         this.sprite = this.createSprite()
@@ -77,18 +80,18 @@ export class Pot {
                 buttonCoord: {x: this.sprite.x, y: this.sprite.y},
                 titleTextKey: Txt.UpgradePotTitle,
                 descriptionTextKey: Txt.UpgradePotDescr,
-                cost: goldConfig.costs.pot,
+                getUpgradeCost: this.getUpgradeCost,
                 canBeUpgraded: this._canBeUpgraded,
                 upgrade: this._upgrade,
                 level: 0,
-                ...props?.upgradable,
+                ...props?.cmp?.upgradable,
             }),
             pot: {
                 state: PotState.NOT_EXIST,
                 timePassed: 0,
                 ingridientsContainHumanMeat: false,
                 ingridientsAreStale: false,
-                ...props?.pot
+                ...props?.cmp?.pot
             }
         }
 
@@ -101,6 +104,10 @@ export class Pot {
 
     private _canBeUpgraded = () => {
         return this.cmp.pot.state === PotState.NOT_EXIST
+    }
+
+    getUpgradeCost = () => {
+        return goldConfig.costs.pot
     }
 
     createSprite(): O_AnimatedSprite {
@@ -125,8 +132,9 @@ export class Pot {
         return this.sprite
     }
 
-    private _upgrade() {
+    private _upgrade = () => {
         this.setState(PotState.EMPTY)
+        this.cmp.upgradable.level = 1
     }
 
     private onTimePassed() {
@@ -141,6 +149,16 @@ export class Pot {
         this.textShowTimeout = setTimeout(() => this.text.setVisibility(false), 3000)
     }
 
+    getData(): PotData {
+        return {
+            id: this.id,
+            cmp: {
+                upgradable: this.cmp.upgradable.getData(),
+                pot: this.cmp.pot
+            },
+        }
+    }
+
     onPointerOver() {
 
     }
@@ -149,7 +167,7 @@ export class Pot {
 
     }
 
-    private setState(state: PotState) {
+    private setState = (state: PotState) => {
         this.cmp.pot.state = state;
         switch (state) {
             case PotState.NOT_EXIST:

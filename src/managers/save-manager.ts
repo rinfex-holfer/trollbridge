@@ -1,4 +1,4 @@
-import {PotProps} from "../entities/buildings/pot";
+import {PotData} from "../entities/buildings/pot";
 import {o_} from "./locator";
 import {debugExpose} from "../utils/utils-misc";
 import {ChairData} from "../entities/buildings/chair";
@@ -17,6 +17,7 @@ export interface SaveData {
     lair: {
         chair: ChairData
         bed: BedData
+        pot: PotData
     }
 }
 
@@ -34,7 +35,8 @@ export class SaveManager {
             },
             lair: {
                 chair: o_.lair.chair.getData(),
-                bed: o_.lair.bed.getData()
+                bed: o_.lair.bed.getData(),
+                pot: o_.lair.pot.getData(),
             }
         }
 

@@ -71,6 +71,11 @@ export const createUpgradableComponent = (
             cmp().button = btn
 
             o_.upgrade.register(cmp())
+
+            if (!cmp().canBeUpgraded()) {
+                btn.destroy()
+                o_.upgrade.unregister(cmp())
+            }
         }
     }
 
