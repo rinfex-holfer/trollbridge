@@ -4,6 +4,7 @@ import {debugExpose} from "../utils/utils-misc";
 import {ChairData} from "../entities/buildings/chair";
 import {BedData} from "../entities/buildings/bed";
 import {FoodStorageData} from "../entities/buildings/food-storage";
+import {ItemsData} from "./core/items";
 
 const LS_KEY = "tb_save"
 
@@ -21,6 +22,8 @@ export interface SaveData {
         pot: PotData
         foodStorage: FoodStorageData
     }
+
+    items: ItemsData
 }
 
 export class SaveManager {
@@ -40,7 +43,8 @@ export class SaveManager {
                 bed: o_.lair.bed.getData(),
                 pot: o_.lair.pot.getData(),
                 foodStorage: o_.lair.foodStorage.getData(),
-            }
+            },
+            items: o_.items.getData(),
         }
 
         localStorage.setItem(LS_KEY, JSON.stringify(saveData))

@@ -60,6 +60,6 @@ export class InteractionManager {
     }
 
     disableEntities() {
-        o_.entities.getAll().forEach(o => o.setInteractive(false))
+        o_.items.getAll().forEach(o => o.setInteractive(false))
     }
 }

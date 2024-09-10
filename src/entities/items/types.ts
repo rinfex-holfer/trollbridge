@@ -1,7 +1,7 @@
 import {MeatEvent, MeatEventsPayload} from "./meat/meat-events";
 import {Meat} from "./meat/meat";
 import {Dish} from "./dish/dish";
-import {Gold} from "./gold";
+import {Gold, GoldData} from "./gold";
 import {Rock} from "./rock";
 import {DishEvent, DishEventsPayload} from "./dish/dish-events";
 
@@ -12,7 +12,7 @@ export interface Item<T extends ItemType> {
     deregister: () => void,
 }
 
-export interface ItemPropsMap {
+export interface ItemDataMap {
     [ItemType.DISH]: {
         isHuman: boolean,
         isStale: boolean,
@@ -21,9 +21,7 @@ export interface ItemPropsMap {
         isHuman: boolean,
         isStale: boolean,
     },
-    [ItemType.GOLD]: {
-        amount: number
-    },
+    [ItemType.GOLD]: GoldData,
     [ItemType.ROCK]: {}
 }
 

@@ -25,7 +25,7 @@ import {O_Sprite} from "../../managers/core/render/sprite";
 import {O_Container} from "../../managers/core/render/container";
 import {o_} from "../../managers/locator";
 import {LayerKey} from "../../managers/core/layers";
-import {Gold} from "../items/gold";
+import {Gold, GoldLocation} from "../items/gold";
 import {Meat, MeatLocation, meatSprite} from "../items/meat/meat";
 import {CharStateBattleGoDefend} from "./states/CharStateBattleGoDefend";
 import {CharStateGoToBattlePosition} from "./states/CharStateGoToBattlePosition";
@@ -377,7 +377,11 @@ export class Char {
         while (amount) {
             const goldInSprite = Math.min(amount, goldConfig.MAX_GOLD_IN_SPRITE)
             amount -= goldInSprite
-            gold.push(new Gold(this.getCoords(), goldInSprite))
+            gold.push(new Gold({
+                position: this.getCoords(),
+                amount: goldInSprite,
+                location: GoldLocation.GROUND,
+            }))
         }
 
         return gold
@@ -434,7 +438,7 @@ export class Char {
     takeGold(gold: Gold) {
         return gold.flyTo({x: this.container.x, y: this.container.y - 70}).then(() => {
             o_.audio.playSound(SOUND_KEY.PICK)
-            this.gold += gold.props.amount
+            this.gold += gold.data.amount
             gold.destroy()
         })
     }

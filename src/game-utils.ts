@@ -1,5 +1,5 @@
 import {SaveData, SaveManager} from "./managers/save-manager";
-import {ItemManager} from "./managers/core/entities/items";
+import {ItemManager} from "./managers/core/items";
 import {UpgradeManager} from "./managers/game/upgrade";
 import {Environment} from "./managers/game/environment";
 import {CharactersManager} from "./managers/game/characters";
@@ -55,7 +55,7 @@ export const createGameManagers = (scene: Scene) => {
 }
 
 export const createSceneManagers = (saveData?: SaveData) => {
-    new ItemManager()
+    new ItemManager(saveData)
     new UpgradeManager()
     new Environment()
     new CharactersManager()

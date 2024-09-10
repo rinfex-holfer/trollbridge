@@ -112,8 +112,8 @@ export const positioner = {
         let xRand = rndBetween(-30, 30)
         let yRand = rndBetween(-30, 30)
 
-        if (meat.props.isStale) xRand += 150
-        if (meat.props.isHuman) yRand -= 100
+        if (meat.data.isStale) xRand += 150
+        if (meat.data.isHuman) yRand -= 100
         return {x: foodStoragePos.x - 100 + xRand, y: foodStoragePos.y - 50 + yRand}
     },
 

@@ -2,10 +2,6 @@ import {O_Sprite} from "../../managers/core/render/sprite";
 import {Vec} from "../../utils/utils-math";
 import {o_} from "../../managers/locator";
 import {LayerKey} from "../../managers/core/layers";
-import {Evt, eventBusSubscriptions} from "../../event-bus";
-import {gameConstants} from "../../configs/constants";
-import {resoursePaths} from "../../resourse-paths";
-import {SOUND_KEY} from "../../managers/core/audio";
 import {BaseItem} from "./base-item/base-item";
 import {ItemType} from "./types";
 import {EffectHighlight} from "../../effects/highlight";
@@ -18,7 +14,7 @@ export class Rock extends BaseItem<ItemType.ROCK> {
 
     sprite: O_Sprite
 
-    props = {}
+    data = {}
 
     constructor(pos: Vec) {
         super()

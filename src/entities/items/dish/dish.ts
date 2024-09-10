@@ -31,7 +31,7 @@ export class Dish extends BaseItem<ItemType.DISH> {
 
     timePassed = 0
 
-    props = {
+    data = {
         isHuman: false,
         isStale: false,
     }
@@ -40,8 +40,8 @@ export class Dish extends BaseItem<ItemType.DISH> {
         super()
         this.id = this.register()
 
-        this.props.isHuman = isHuman
-        this.props.isStale = isStale
+        this.data.isHuman = isHuman
+        this.data.isStale = isStale
 
         this.sprite = o_.render.createSprite('dish', pos.x, pos.y)
 
@@ -62,22 +62,22 @@ export class Dish extends BaseItem<ItemType.DISH> {
             console.error("cant eat destroyed dish")
             return
         }
-        o_.troll.eat(FoodType.DISH, this.props.isStale, this.props.isHuman)
+        o_.troll.eat(FoodType.DISH, this.data.isStale, this.data.isHuman)
         this.destroy()
     }
 
     becomeRotten() {
         this.addEffect(new EffectRotten(this))
-        this.props.isStale = true
+        this.data.isStale = true
         this.timePassed = 0
     }
 
     private onTimePassed() {
         this.timePassed++;
 
-        if (!this.props.isStale && this.timePassed > foodConfig.FRESH_DISH_TIME_LIMIT) {
+        if (!this.data.isStale && this.timePassed > foodConfig.FRESH_DISH_TIME_LIMIT) {
             this.becomeRotten()
-        } else if (this.props.isStale && this.timePassed > foodConfig.STALE_DISH_TIME_LIMIT) {
+        } else if (this.data.isStale && this.timePassed > foodConfig.STALE_DISH_TIME_LIMIT) {
             this.timePassed = 0
             destroyInteractiveObjWithFade(this)
         }

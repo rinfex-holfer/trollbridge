@@ -45,7 +45,7 @@ export class Meat extends BaseItem<ItemType.MEAT> {
 
     realPosition: Vec
 
-    props = {
+    data = {
         isHuman: false,
         isStale: false,
     }
@@ -55,7 +55,7 @@ export class Meat extends BaseItem<ItemType.MEAT> {
         this.id = this.register()
 
         this.location = location;
-        this.props.isHuman = isHuman
+        this.data.isHuman = isHuman
 
         this.sprite = o_.render.createSprite(key, pos.x, pos.y)
         this.sprite.setWidth(MEAT_WIDTH)
@@ -132,7 +132,7 @@ export class Meat extends BaseItem<ItemType.MEAT> {
     }
 
     eat() {
-        o_.troll.eat(FoodType.MEAT, this.props.isStale, this.props.isHuman)
+        o_.troll.eat(FoodType.MEAT, this.data.isStale, this.data.isHuman)
         o_.lair.foodStorage.updateFood();
         this.destroy()
     }
@@ -153,7 +153,7 @@ export class Meat extends BaseItem<ItemType.MEAT> {
     becomeRotten() {
         this.eventEmitter.emit(MeatEvent.WENT_STALE)
         this.addEffect(new EffectRotten(this))
-        this.props.isStale = true
+        this.data.isStale = true
         this.timePassed = 0
     }
 
@@ -166,9 +166,9 @@ export class Meat extends BaseItem<ItemType.MEAT> {
             }
         }
 
-        if (!this.props.isStale && this.timePassed > foodConfig.RAW_MEAT_TIME_LIMIT) {
+        if (!this.data.isStale && this.timePassed > foodConfig.RAW_MEAT_TIME_LIMIT) {
             this.becomeRotten()
-        } else if (this.props.isStale && this.timePassed > foodConfig.STALE_MEAT_TIME_LIMIT) {
+        } else if (this.data.isStale && this.timePassed > foodConfig.STALE_MEAT_TIME_LIMIT) {
             destroyInteractiveObjWithFade(this)
         }
     }
@@ -221,7 +221,7 @@ export class Meat extends BaseItem<ItemType.MEAT> {
         this.setJumping(false);
 
         const effectRotten = this.getEffect(EffectType.ROTTEN)
-        if (this.props.isStale && !!effectRotten) effectRotten.stopGas()
+        if (this.data.isStale && !!effectRotten) effectRotten.stopGas()
         if (this.location === MeatLocation.STORAGE && this.sprite.obj.parentContainer === o_.lair.foodStorage.container.obj) {
             o_.lair.foodStorage.container.remove(this.sprite)
             this.sprite.x += o_.lair.foodStorage.container.x
@@ -231,7 +231,7 @@ export class Meat extends BaseItem<ItemType.MEAT> {
         return o_.render.flyTo(this.sprite, pos, speed, maxDuration).then(() => {
             // console.log("finish", this)
             // this.updateEmitters()
-            if (this.props.isStale && !!effectRotten) effectRotten.startGas()
+            if (this.data.isStale && !!effectRotten) effectRotten.startGas()
         });
     }
 

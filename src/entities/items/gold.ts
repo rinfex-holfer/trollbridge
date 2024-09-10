@@ -1,5 +1,5 @@
 import {O_Sprite} from "../../managers/core/render/sprite";
-import {Vec} from "../../utils/utils-math";
+import {rndBetween, Vec} from "../../utils/utils-math";
 import {o_} from "../../managers/locator";
 import {LayerKey} from "../../managers/core/layers";
 import {Evt} from "../../event-bus";
@@ -10,6 +10,8 @@ import {BaseItem} from "./base-item/base-item";
 import {ItemType} from "./types";
 import {EffectHighlight} from "../../effects/highlight";
 import {EffectType} from "../../effects/types";
+import {debugExpose} from "../../utils/utils-misc";
+import {Meat, MeatLocation} from "./meat/meat";
 
 export const enum GoldLocation {
     GROUND = 'GROUND',
@@ -18,25 +20,34 @@ export const enum GoldLocation {
 
 export const GOLD_WIDTH = 50
 
+export interface GoldData {
+    amount: number
+    position: Vec
+    location: GoldLocation
+}
+
 export class Gold extends BaseItem<ItemType.GOLD> {
     type: ItemType.GOLD = ItemType.GOLD
     id: string
 
-    location: GoldLocation
     sprite: O_Sprite
 
-    props = {
-        amount: 0
+    data = {
+        amount: 0,
+        position: {x: 0, y: 0},
+        location: GoldLocation.GROUND
     }
 
-    constructor(pos: Vec, amount: number, location: GoldLocation = GoldLocation.GROUND) {
+    constructor(data: GoldData) {
         super()
         this.id = this.register()
 
-        this.props.amount = amount
-        this.location = location
+        this.data = {
+            ...this.data,
+            ...data
+        }
 
-        this.sprite = o_.render.createSprite(this.getSpriteKey(), pos.x, pos.y)
+        this.sprite = o_.render.createSprite(this.getSpriteKey(), this.data.position.x, this.data.position.y)
         this.sprite.setOrigin(0, 0.5)
         this.sprite.setWidth(GOLD_WIDTH)
 
@@ -48,7 +59,7 @@ export class Gold extends BaseItem<ItemType.GOLD> {
 
         this.updateLayer()
 
-        if (location === GoldLocation.GROUND) {
+        if (this.data.location === GoldLocation.GROUND) {
             this.sprite.setInteractive(true)
             this.sprite.onClick(() => this.onClick())
         }
@@ -62,12 +73,12 @@ export class Gold extends BaseItem<ItemType.GOLD> {
     }
 
     public flyToStorage() {
-        switch (this.location) {
+        switch (this.data.location) {
             case GoldLocation.GROUND:
                 o_.audio.playSound(SOUND_KEY.PICK_THIN)
                 this.sprite.setInteractive(false)
                 const lastGoldItem = o_.lair.treasury.gold[o_.lair.treasury.gold.length - 1]
-                const coord = (lastGoldItem && lastGoldItem.props.amount < goldConfig.MAX_GOLD_IN_SPRITE)
+                const coord = (lastGoldItem && lastGoldItem.data.amount < goldConfig.MAX_GOLD_IN_SPRITE)
                     ? lastGoldItem.sprite
                     : o_.lair.treasury.getNextPosition()
                 return o_.render.flyTo(this.sprite, coord, 500, 300).then(() => {
@@ -90,7 +101,7 @@ export class Gold extends BaseItem<ItemType.GOLD> {
     }
 
     private updateLayer() {
-        if (this.props.amount < 20) {
+        if (this.data.amount < 20) {
             // o_.layers.add(this.sprite, LayerKey.BACKGROUND)
             o_.layers.add(this.sprite, LayerKey.FIELD_OBJECTS)
         } else {
@@ -99,24 +110,24 @@ export class Gold extends BaseItem<ItemType.GOLD> {
     }
 
     private getSpriteKey(): keyof typeof resoursePaths.images {
-        if (this.props.amount === 1) {
+        if (this.data.amount === 1) {
             return 'gold-1'
-        } else if (this.props.amount === 2) {
+        } else if (this.data.amount === 2) {
             return 'gold-2'
-        } else if (this.props.amount === 3) {
+        } else if (this.data.amount === 3) {
             return 'gold-3'
-        } else if (this.props.amount < 10) {
+        } else if (this.data.amount < 10) {
             return 'gold-4-9'
-        } else if (this.props.amount < 20) {
+        } else if (this.data.amount < 20) {
             return 'gold-some'
-        } else if (this.props.amount < 50) {
+        } else if (this.data.amount < 50) {
             return 'gold-many'
-        } else if (this.props.amount < goldConfig.MAX_GOLD_IN_SPRITE) {
+        } else if (this.data.amount < goldConfig.MAX_GOLD_IN_SPRITE) {
             return 'gold-almost'
-        } else if (this.props.amount === goldConfig.MAX_GOLD_IN_SPRITE) {
+        } else if (this.data.amount === goldConfig.MAX_GOLD_IN_SPRITE) {
             return 'gold-chest'
         } else {
-            throw Error('wrong amount of gold ' + this.props.amount)
+            throw Error('wrong amount of gold ' + this.data.amount)
         }
     }
 
@@ -128,7 +139,7 @@ export class Gold extends BaseItem<ItemType.GOLD> {
     }
 
     public setAmount(amount: number) {
-        this.props.amount = amount
+        this.data.amount = amount
         this.updateSprite()
         this.updateLayer()
     }
@@ -139,9 +150,7 @@ export class Gold extends BaseItem<ItemType.GOLD> {
 
     public updateInteractive() {
         this.setInteractive(
-            this.location === GoldLocation.GROUND &&
-            !o_.battle.isBattle &&
-            !o_.negotiations.getIsNegotiationsInProgress()
+            this.data.location === GoldLocation.GROUND
         )
     }
 
@@ -150,3 +159,15 @@ export class Gold extends BaseItem<ItemType.GOLD> {
         o_.render.thrownTo(this.sprite, pos, 700).then(() => this.updateInteractive())
     }
 }
+
+debugExpose((amount?: number) => {
+    const x = rndBetween(600, 700);
+    const y = rndBetween(1100, 1300);
+    amount = amount || rndBetween(1, 100);
+
+    new Gold({
+        position: {x, y},
+        location: GoldLocation.GROUND,
+        amount
+    })
+}, 'spawnGold')

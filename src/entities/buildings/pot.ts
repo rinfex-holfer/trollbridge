@@ -253,8 +253,8 @@ export class Pot {
         o_.audio.playSound(SOUND_KEY.COLLECT)
 
         this.chosenFood.forEach(food => {
-            if (food.props.isStale) this.cmp.pot.ingridientsAreStale = true
-            if (food.props.isHuman) this.cmp.pot.ingridientsContainHumanMeat = true
+            if (food.data.isStale) this.cmp.pot.ingridientsAreStale = true
+            if (food.data.isHuman) this.cmp.pot.ingridientsContainHumanMeat = true
             food.onLastAnimation()
             const flyTarget = {x: this.sprite.x, y: this.sprite.y - 30}
             promises.push(food.flyTo(flyTarget, 50, 500).then(() => food.destroy()))
@@ -266,7 +266,7 @@ export class Pot {
     }
 
     startChoosingFood() {
-        o_.entities.get(ItemType.MEAT).forEach(this.makeFoodChoosable)
+        o_.items.get(ItemType.MEAT).forEach(this.makeFoodChoosable)
     }
 
     makeFoodChoosable = (food: Meat) => {
@@ -284,7 +284,7 @@ export class Pot {
     }
 
     stopChoosingFood() {
-        o_.entities.get(ItemType.MEAT).forEach(this.makeFoodUnchoosable)
+        o_.items.get(ItemType.MEAT).forEach(this.makeFoodUnchoosable)
         this.chosenFood.forEach(food => food.moveBackToPlaceFromWhereItWasChosen())
         this.chosenFood = [];
     }

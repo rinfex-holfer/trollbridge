@@ -147,8 +147,8 @@ export class BattleManager {
             x: t.container.x,
             y: gameSize.height + 100
         }, rndBetween(400, 600)))
-        o_.entities.get(ItemType.MEAT).filter(m => m.location === MeatLocation.GROUND).forEach(m => m.destroy())
-        o_.entities.get(ItemType.GOLD).filter(m => m.location === GoldLocation.GROUND).forEach(m => m.destroy())
+        o_.items.get(ItemType.MEAT).filter(m => m.location === MeatLocation.GROUND).forEach(m => m.destroy())
+        o_.items.get(ItemType.GOLD).filter(m => m.location === GoldLocation.GROUND).forEach(m => m.destroy())
     }
 
     async trollThrowRock(char: Char) {

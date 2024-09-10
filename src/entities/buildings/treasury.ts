@@ -86,7 +86,7 @@ export class Treasury {
     }
 
     onGoldChanged() {
-        this.amount = this.gold.reduce((acc, g) => acc + g.props.amount, 0)
+        this.amount = this.gold.reduce((acc, g) => acc + g.data.amount, 0)
         this.text.setText('Золото: ' + this.amount)
         eventBus.emit(Evt.RESOURSES_CHANGED)
     }
@@ -94,7 +94,7 @@ export class Treasury {
     public async gatherGold(gold: Gold[]) {
         let amount = 0
         await Promise.all(gold.map(g => {
-            amount += g.props.amount
+            amount += g.data.amount
             return g.flyToStorage()
         }))
         this.addGold(amount)
@@ -115,16 +115,20 @@ export class Treasury {
         this.flyingNumbers('+ ' + amount + ' gold')
 
         const goldEntity = this.gold[this.gold.length - 1];
-        if (goldEntity && goldEntity.props.amount < goldConfig.MAX_GOLD_IN_SPRITE) {
-            const addAmount = Math.min(amount, goldConfig.MAX_GOLD_IN_SPRITE - goldEntity.props.amount)
-            goldEntity.setAmount(goldEntity.props.amount + addAmount)
+        if (goldEntity && goldEntity.data.amount < goldConfig.MAX_GOLD_IN_SPRITE) {
+            const addAmount = Math.min(amount, goldConfig.MAX_GOLD_IN_SPRITE - goldEntity.data.amount)
+            goldEntity.setAmount(goldEntity.data.amount + addAmount)
             amount -= addAmount;
         }
 
         while (amount > 0) {
-            const addAmount = Math.min(amount, goldConfig.MAX_GOLD_IN_SPRITE)
-            this.gold.push(new Gold(this.getNextPosition(), addAmount, GoldLocation.TREASURY))
-            amount -= addAmount
+            const amountToAdd = Math.min(amount, goldConfig.MAX_GOLD_IN_SPRITE)
+            this.gold.push(new Gold({
+                position: this.getNextPosition(),
+                location: GoldLocation.TREASURY,
+                amount: amountToAdd,
+            }))
+            amount -= amountToAdd
         }
 
         this.onGoldChanged()
@@ -167,12 +171,12 @@ export class Treasury {
             }
 
             const goldEntity = this.gold[this.gold.length - 1];
-            const removeAmount = Math.min(amount, goldEntity.props.amount)
-            if (removeAmount === goldEntity.props.amount) {
+            const removeAmount = Math.min(amount, goldEntity.data.amount)
+            if (removeAmount === goldEntity.data.amount) {
                 goldEntity.destroy()
                 this.gold.pop()
             } else {
-                goldEntity.setAmount(goldEntity.props.amount - removeAmount)
+                goldEntity.setAmount(goldEntity.data.amount - removeAmount)
             }
             amount -= removeAmount
         }

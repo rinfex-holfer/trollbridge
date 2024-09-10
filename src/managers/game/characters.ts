@@ -322,16 +322,16 @@ export class CharactersManager {
         let start = 0
 
         const travellers = o_.characters.getTravellers()
-        const promises = o_.entities
+        const promises = o_.items
             .get(ItemType.GOLD)
             .filter(g => g.location === GoldLocation.GROUND)
             .map(g => {
                 return pause((start++) * 50).then(() => getRndItem(travellers).takeGold(g))
             })
 
-        o_.entities
+        o_.items
             .get(ItemType.MEAT)
-            .filter(m => m.location === MeatLocation.GROUND && !m.props.isStale && !m.props.isHuman)
+            .filter(m => m.location === MeatLocation.GROUND && !m.data.isStale && !m.data.isHuman)
             .forEach(m => {
                 promises.push(pause((start++) * 50).then(() => getRndItem(travellers).takeMeat(m)))
             })

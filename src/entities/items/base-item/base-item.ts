@@ -4,7 +4,7 @@ import {EntityEffect} from "../../../effects/entity-effect";
 import {eventBusSubscriptions} from "../../../event-bus";
 import {O_EventEmitter} from "../../../utils/utils-events";
 import {o_} from "../../../managers/locator";
-import {Item, ItemEventPayload, ItemEvents, ItemPropsMap, ItemType} from "../types";
+import {Item, ItemEventPayload, ItemEvents, ItemDataMap, ItemType} from "../types";
 import {BaseItemEvent, BaseItemEventPayload} from "./types";
 import {EffectHighlight} from "../../../effects/highlight";
 
@@ -12,7 +12,13 @@ export abstract class BaseItem<T extends ItemType> implements Item<T> {
     abstract type: T
     abstract id: string
 
-    abstract props: ItemPropsMap[T]
+    abstract data: ItemDataMap[T]
+
+    public getData = () => {
+        return {
+            ...this.data
+        }
+    }
 
     sprite?: O_Sprite
 
@@ -26,12 +32,12 @@ export abstract class BaseItem<T extends ItemType> implements Item<T> {
 
     register(): string {
         // @ts-ignore
-        return o_.entities.register(this.type, this)
+        return o_.items.register(this.type, this)
     }
 
     deregister() {
         // @ts-ignore
-        o_.entities.deregister(this)
+        o_.items.deregister(this)
     }
 
     public updateInteractive() {
