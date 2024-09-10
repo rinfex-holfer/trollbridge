@@ -184,6 +184,7 @@ export class Pot {
                 this.cmp.pot.ingridientsAreStale = false
                 break;
             case PotState.PREPARING:
+                eventBus.emit(Evt.FOOD_PREPARATION_STARTED)
                 this.sprite.setVisibility(true)
                 this.sprite.play('full')
                 this.removeDish()
@@ -202,7 +203,7 @@ export class Pot {
     createDish() {
         this.dish = new Dish({
             x: this.sprite.x,
-            y: this.sprite.y - 10
+            y: this.sprite.y - 100
         }, this.cmp.pot.ingridientsContainHumanMeat, this.cmp.pot.ingridientsAreStale)
         this.cmp.pot.ingridientsContainHumanMeat = false
         this.cmp.pot.ingridientsAreStale = false
@@ -228,7 +229,7 @@ export class Pot {
     public getFreePlaceForChosenFood(): Vec {
         return {
             x: this.sprite.x - 30 + 30 * this.chosenFood.length,
-            y: this.sprite.y - 70
+            y: this.sprite.y - 200
         }
     }
 
@@ -239,8 +240,8 @@ export class Pot {
         this.chosenFood.push(food)
         if (this.chosenFood.length === foodConfig.FOOD_FOR_DISH) {
             this.chosenFood.forEach(f => f.updateRealPosition())
-            this.stopChoosingFood()
             this.startPreparingChosenFood()
+            this.stopChoosingFood()
         } else {
             food.setOnClick(this.unchooseFood)
         }
@@ -252,12 +253,17 @@ export class Pot {
 
         o_.audio.playSound(SOUND_KEY.COLLECT)
 
+        console.log("startPreparingChosenFood")
         this.chosenFood.forEach(food => {
+
+            console.log("chosenFood", food)
             if (food.data.isStale) this.cmp.pot.ingridientsAreStale = true
             if (food.data.isHuman) this.cmp.pot.ingridientsContainHumanMeat = true
             food.onLastAnimation()
             const flyTarget = {x: this.sprite.x, y: this.sprite.y - 30}
-            promises.push(food.flyTo(flyTarget, 50, 500).then(() => food.destroy()))
+            promises.push(food.flyTo(flyTarget, 50, 500).then(() => {
+                food.destroy()
+            }))
         })
         Promise.all(promises).then(() => {
             o_.audio.playSound(SOUND_KEY.BUBBLE)
@@ -293,6 +299,7 @@ export class Pot {
         o_.audio.playSound(SOUND_KEY.CANCEL)
         findAndSplice(this.chosenFood, food)
         food.moveBackToPlaceFromWhereItWasChosen()
+        this.makeFoodChoosable(food)
     }
 
     setInteractive(val: boolean) {

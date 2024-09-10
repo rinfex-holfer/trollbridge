@@ -44,6 +44,7 @@ export class PhaseMakeFood extends GamePhase {
         })
 
         this.registerListener(Evt.INTERFACE_POT_CLICKED, this.onPotClicked)
+        this.registerListener(Evt.FOOD_PREPARATION_STARTED, this.goToLairPhase)
     }
 
     interruptChoosing() {
@@ -63,13 +64,9 @@ export class PhaseMakeFood extends GamePhase {
     onEnd() {
         this.unsubFromRightClick()
         o_.lair.pot.stopChoosingFood()
-        o_.items.get(ItemType.MEAT).forEach(meat => {
-            meat.setJumping(false)
-            meat.setOnClick(undefined)
-        })
     }
 
-    goToLairPhase() {
+    goToLairPhase = () => {
         this.goToNextPhase(new PhaseLair())
     }
 }

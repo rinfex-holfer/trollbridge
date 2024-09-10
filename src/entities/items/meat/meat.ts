@@ -218,6 +218,7 @@ export class Meat extends BaseItem<ItemType.MEAT> {
     }
 
     public flyTo(pos: Vec, speed = 1000, maxDuration = 500): Promise<any> {
+        console.log("flyTo 0")
         this.setJumping(false);
 
         const effectRotten = this.getEffect(EffectType.ROTTEN)
@@ -228,7 +229,9 @@ export class Meat extends BaseItem<ItemType.MEAT> {
             this.sprite.y += o_.lair.foodStorage.container.y
         }
 
+        console.log("flyTo 1")
         return o_.render.flyTo(this.sprite, pos, speed, maxDuration).then(() => {
+            console.log("flyTo then")
             // console.log("finish", this)
             // this.updateEmitters()
             if (this.data.isStale && !!effectRotten) effectRotten.startGas()

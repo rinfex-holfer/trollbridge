@@ -51,7 +51,7 @@ export class Dish extends BaseItem<ItemType.DISH> {
             () => this.getEffect(EffectType.HIGHLIGHTED)?.setActive(false)
         )
 
-        // o_.layers.add(this.sprite, LayerKey.FIELD_BUTTONS)
+        o_.layers.add(this.sprite, LayerKey.FIELD_BUTTONS)
 
         this.globalEventsSubscripions.on(Evt.TIME_PASSED, () => this.onTimePassed())
     }

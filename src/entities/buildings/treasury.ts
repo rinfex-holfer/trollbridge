@@ -10,6 +10,7 @@ import {flyingStatusChange} from "../../interface/basic/flying-status-change";
 import {SOUND_KEY} from "../../managers/core/audio";
 import {goldConfig} from "../../configs/gold-config";
 import {debugExpose} from "../../utils/utils-misc";
+import {ItemType} from "../items/types";
 
 export class Treasury {
     text: O_Text
@@ -17,7 +18,8 @@ export class Treasury {
 
     subs = eventBusSubscriptions()
 
-    amount = 0
+    amount = o_.items.get(ItemType.GOLD).reduce((acc, next) =>
+        next.data.location === GoldLocation.TREASURY ? acc + next.data.amount : acc, 0)
 
     gold: Gold[] = []
 
@@ -34,7 +36,7 @@ export class Treasury {
         this.sprite.onPointerOut(() => this.onPointerOut())
 
         this.text = o_.render.createText({
-            textKey: 'Золото: 0',
+            textKey: 'Золото: ' + this.amount,
             x: this.sprite.x + 50,
             y: this.sprite.y - 40,
             style: {color: colorsCSS.WHITE}

@@ -39,6 +39,8 @@ export const enum Evt {
     ALL_GIVEN = 'ALL_GIVEN',
     PAYMENT_GIVEN = 'PAYMENT_GIVEN',
 
+    FOOD_PREPARATION_STARTED = 'FOOD_PREPARATION_STARTED',
+
     BATTLE_STARTED = 'BATTLE_STARTED',
     BATTLE_WON = 'BATTLE_WON',
     BATTLE_DEFEAT = 'BATTLE_DEFEAT',
@@ -104,6 +106,8 @@ export type EvtData = {
 
     [Evt.ALL_GIVEN]: undefined,
     [Evt.PAYMENT_GIVEN]: undefined,
+
+    [Evt.FOOD_PREPARATION_STARTED]: undefined,
 
     [Evt.BATTLE_STARTED]: undefined,
     [Evt.BATTLE_TRAVELLERS_TURN_END]: undefined,

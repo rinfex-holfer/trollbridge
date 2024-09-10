@@ -57,15 +57,19 @@ export abstract class BaseItem<T extends ItemType> implements Item<T> {
     }
 
     private _destroy = () => {
+        console.log("_destroy 1")
         if (this.destroyed) {
+            console.log(":-(((((")
             return
         }
         this.deregister()
         this.destroyed = true
         this.globalEventsSubscripions.clear()
         Object.values(this.effects).forEach(effect => effect.destroy())
+        console.log("_destroy 2")
 
         if (this.sprite) {
+            console.log("this.sprite.destroy()")
             this.sprite.destroy()
         }
 
