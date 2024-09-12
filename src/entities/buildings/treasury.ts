@@ -18,8 +18,7 @@ export class Treasury {
 
     subs = eventBusSubscriptions()
 
-    amount = o_.items.get(ItemType.GOLD).reduce((acc, next) =>
-        next.data.location === GoldLocation.TREASURY ? acc + next.data.amount : acc, 0)
+    amount = 0
 
     gold: Gold[] = []
 
@@ -46,6 +45,9 @@ export class Treasury {
         o_.layers.add(this.text, LayerKey.FIELD_BUTTONS)
 
         this.subs.on(Evt.TIME_PASSED, () => this.onTimePassed())
+
+        this.gold = o_.items.get(ItemType.GOLD).filter(gold => gold.data.location === GoldLocation.TREASURY)
+        this.onGoldChanged()
 
         debugExpose((amount: number) => this.addGold(amount), 'addGold')
     }

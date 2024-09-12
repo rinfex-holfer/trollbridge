@@ -1,5 +1,5 @@
 import {SaveData, SaveManager} from "./managers/save-manager";
-import {ItemManager} from "./managers/core/items";
+import {ItemManager} from "./managers/game/items";
 import {UpgradeManager} from "./managers/game/upgrade";
 import {Environment} from "./managers/game/environment";
 import {CharactersManager} from "./managers/game/characters";

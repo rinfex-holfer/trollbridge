@@ -8,7 +8,7 @@ import {TimeManager} from "./core/time";
 import {GameManager} from "./game/game-manager";
 import {BattleManager} from "./game/battle";
 import {LayersManager} from "./core/layers";
-import {ItemManager} from "./core/items";
+import {ItemManager} from "./game/items";
 import {InteractionManager} from "./core/interaction";
 import {UpgradeManager} from "./game/upgrade";
 import {Negotiations} from "./game/negotiations";

@@ -65,7 +65,7 @@ export class ItemManager {
         }
 
         saveData?.items?.entities.GOLD.forEach((data) => {
-            this.entities.GOLD.push(new Gold(data));
+            new Gold(data) // it will register itself
         })
     }
 

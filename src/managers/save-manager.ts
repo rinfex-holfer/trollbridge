@@ -4,7 +4,7 @@ import {debugExpose} from "../utils/utils-misc";
 import {ChairData} from "../entities/buildings/chair";
 import {BedData} from "../entities/buildings/bed";
 import {FoodStorageData} from "../entities/buildings/food-storage";
-import {ItemsData} from "./core/items";
+import {ItemsData} from "./game/items";
 
 const LS_KEY = "tb_save"
 
