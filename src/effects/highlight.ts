@@ -3,8 +3,9 @@ import {outlinePipeline} from "../shaders/OutlinePipeline";
 import {EntityEffect} from "./entity-effect";
 import {EffectType} from "./types";
 import Sprite = Phaser.GameObjects.Sprite;
+import {O_AnimatedSprite} from "../managers/core/render/animated-sprite";
 
-export type HighlightableEntity = O_Sprite
+export type HighlightableEntity = O_Sprite | O_AnimatedSprite
 
 interface HighlightEffectConfig {
     thickness?: number,
@@ -23,12 +24,12 @@ const defaultOptions: HighlightEffectOptions = {
     isActive: false
 }
 
-export class EffectHighlight extends EntityEffect {
+export class EffectHighlight extends EntityEffect<EffectType.HIGHLIGHTED> {
     pipeline: any
 
     thickness: number
 
-    type = EffectType.HIGHLIGHTED
+    type = EffectType.HIGHLIGHTED as const
 
     entity: HighlightableEntity
 

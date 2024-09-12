@@ -21,7 +21,7 @@ import {EffectHighlight} from "../../../effects/highlight";
 import {EffectType} from "../../../effects/types";
 
 
-export const MEAT_WIDTH = 50;
+const WIDTH = 100;
 
 export class Dish extends BaseItem<ItemType.DISH> {
     type: ItemType.DISH = ItemType.DISH
@@ -44,6 +44,7 @@ export class Dish extends BaseItem<ItemType.DISH> {
         this.data.isStale = isStale
 
         this.sprite = o_.render.createSprite('dish', pos.x, pos.y)
+        this.sprite.setWidth(WIDTH)
 
         this.addEffect(new EffectHighlight(this.sprite)) as EffectHighlight
         this.sprite.onHover(

@@ -132,6 +132,11 @@ export class O_AnimatedSprite {
         this.obj.on('pointerdown', this.rightClickCb)
     }
 
+    onHover = (onIn: () => void, onOut: () => void) => {
+        this.onPointerOver(onIn)
+        this.onPointerOut(onOut)
+    }
+
     onPointerOver(callback: () => void) {
         this.obj.removeListener('pointerover')
         this.obj.on('pointerover', callback)

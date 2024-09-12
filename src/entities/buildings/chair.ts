@@ -35,7 +35,7 @@ export class Chair {
 
     private waitButton: O_Sprite
 
-    private effects: Partial<Record<EffectType, EntityEffect>> = {}
+    private effects: Partial<EffectToTypeMap> = {}
 
     cmp: {
         upgradable: UpgradableComponent
@@ -112,11 +112,11 @@ export class Chair {
     }
 
     protected getEffect(type: EffectType): EffectToTypeMap[EffectType] | undefined {
-        // @ts-ignore
         return this.effects[type]
     }
 
-    protected addEffect(effect: EntityEffect) {
+    protected addEffect<T extends keyof EffectToTypeMap>(effect: EntityEffect<T>) {
+        // @ts-ignore
         this.effects[effect.type] = effect
         return effect
     }

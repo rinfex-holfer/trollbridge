@@ -10,8 +10,8 @@ import {EntityEffect} from "./entity-effect";
 
 type RottenEntity = Meat | Dish
 
-export class EffectRotten extends EntityEffect {
-    type = EffectType.ROTTEN
+export class EffectRotten extends EntityEffect<EffectType.ROTTEN> {
+    type = EffectType.ROTTEN as const
     entity: RottenEntity
     gasEmitter: ParticleEmitter
 

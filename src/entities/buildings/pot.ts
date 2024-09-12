@@ -18,6 +18,9 @@ import {createUpgradableComponent, UpgradableComponent, UpgradableComponentData}
 import {goldConfig} from "../../configs/gold-config";
 import {Txt} from "../../translations";
 import {BedData} from "./bed";
+import {EffectToTypeMap, EffectType} from "../../effects/types";
+import {EntityEffect} from "../../effects/entity-effect";
+import {EffectHighlight} from "../../effects/highlight";
 
 export const enum PotState {
     NOT_EXIST = 'NOT_EXIST',
@@ -54,6 +57,8 @@ export class Pot {
 
     textShowTimeout: any
     chosenFood: Meat[] = []
+
+    private effects: Partial<EffectToTypeMap> = {}
 
     cmp: {
         upgradable: UpgradableComponent
@@ -102,6 +107,16 @@ export class Pot {
         this.setState(this.cmp.pot.state);
     }
 
+    protected getEffect(type: EffectType): EffectToTypeMap[EffectType] | undefined {
+        return this.effects[type]
+    }
+
+    protected addEffect<T extends keyof EffectToTypeMap>(effect: EntityEffect<T>) {
+        // @ts-ignore
+        this.effects[effect.type] = effect
+        return effect
+    }
+
     private _canBeUpgraded = () => {
         return this.cmp.pot.state === PotState.NOT_EXIST
     }
@@ -124,10 +139,17 @@ export class Pot {
         this.sprite.setWidth(200, true);
         this.sprite.setOrigin(0.5, 1)
         o_.layers.add(this.sprite, LayerKey.FIELD_OBJECTS)
-        this.sprite.setInteractive(true, {cursor: 'pointer'})
         this.sprite.onClick(() => this.onClick())
         this.sprite.onPointerOver(() => this.onPointerOver())
         this.sprite.onPointerOut(() => this.onPointerOut())
+
+        this.addEffect(new EffectHighlight(this.sprite)) as EffectHighlight
+        this.sprite.onHover(
+            () => this.getEffect(EffectType.HIGHLIGHTED)?.setActive(true),
+            () => this.getEffect(EffectType.HIGHLIGHTED)?.setActive(false)
+        )
+
+        this.setInteractive(true)
 
         return this.sprite
     }
@@ -203,7 +225,7 @@ export class Pot {
     createDish() {
         this.dish = new Dish({
             x: this.sprite.x,
-            y: this.sprite.y - 100
+            y: this.sprite.y - 175
         }, this.cmp.pot.ingridientsContainHumanMeat, this.cmp.pot.ingridientsAreStale)
         this.cmp.pot.ingridientsContainHumanMeat = false
         this.cmp.pot.ingridientsAreStale = false
@@ -253,10 +275,7 @@ export class Pot {
 
         o_.audio.playSound(SOUND_KEY.COLLECT)
 
-        console.log("startPreparingChosenFood")
         this.chosenFood.forEach(food => {
-
-            console.log("chosenFood", food)
             if (food.data.isStale) this.cmp.pot.ingridientsAreStale = true
             if (food.data.isHuman) this.cmp.pot.ingridientsContainHumanMeat = true
             food.onLastAnimation()
@@ -304,6 +323,9 @@ export class Pot {
 
     setInteractive(val: boolean) {
         this.sprite.setInteractive(val);
+        if (val === false) {
+            this.getEffect(EffectType.HIGHLIGHTED)?.setActive(false)
+        }
     }
 
     unchooseAllFood() {
