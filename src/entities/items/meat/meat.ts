@@ -95,15 +95,11 @@ export class Meat extends BaseItem<ItemType.MEAT> {
     }
 
     private onClickDefault() {
-        this.bePlacedOrBeEaten()
+        this.bePlaced()
     }
 
     private onRightClick() {
-        if (this.data.location === MeatLocation.STORAGE) {
-            this.flyOnLairGround()
-        } else {
-            destroyInteractiveObjWithJump(this)
-        }
+        this.eat()
     }
 
     private flyOnLairGround() {
@@ -115,7 +111,7 @@ export class Meat extends BaseItem<ItemType.MEAT> {
         o_.lair.foodStorage.updateFood()
     }
 
-    public bePlacedOrBeEaten() {
+    public bePlaced() {
         switch (this.data.location) {
             case MeatLocation.GROUND:
                 if (o_.lair.foodStorage.hasFreeSpace()) {
@@ -125,17 +121,23 @@ export class Meat extends BaseItem<ItemType.MEAT> {
                 }
                 break;
             case MeatLocation.STORAGE:
-                this.eat()
+                this.flyOnLairGround()
                 break;
             case MeatLocation.LAIR:
                 if (o_.lair.foodStorage.hasFreeSpace()) {
                     o_.lair.foodStorage.placeFood(this)
                 } else {
-                    this.eat()
+                    if (this.isBouncing) return;
+                    this.isBouncing = true
+                    o_.render.bounceOfGround(this.sprite, 20, 500).then(() => {
+                        this.isBouncing = false
+                    })
                 }
                 break;
         }
     }
+
+    isBouncing = false
 
     eat() {
         o_.troll.eat(FoodType.MEAT, this.data.isStale, this.data.isHuman)

@@ -420,7 +420,7 @@ export class Char {
                 location: MeatLocation.GROUND
             })
             if (flyToStorage) {
-                meat.bePlacedOrBeEaten()
+                meat.bePlaced()
             } else {
                 meat.throwTo(coord)
             }

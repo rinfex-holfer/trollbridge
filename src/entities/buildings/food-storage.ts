@@ -12,8 +12,7 @@ import {createUpgradableComponent, UpgradableComponent, UpgradableComponentData}
 import {positioner} from "../../managers/game/positioner";
 
 import {Txt} from "../../translations";
-import {EffectType} from "../../effects/types";
-import {ChairData} from "./chair";
+import {ItemType} from "../items/types";
 
 const START_X = 60
 const START_Y = -70
@@ -74,6 +73,14 @@ export class FoodStorage {
         this.cmp.upgradable.init()
 
         this.updateSprites()
+
+        this.places = this.getPlacesForFood()
+
+        o_.items.get(ItemType.MEAT).forEach(meat => {
+            if (meat.data.location === MeatLocation.STORAGE) {
+                this.placeFood(meat, false)
+            }
+        })
     }
 
     getTextKeys = () => {
@@ -178,22 +185,24 @@ export class FoodStorage {
         return goldConfig.costs.drying_rack[this.cmp.upgradable.level]
     }
 
-    placeFood(food: Meat) {
+    async placeFood(food: Meat, withEffects = true) {
         const place = this.getNextPlace();
         if (!place) return;
 
         const coord = place[0];
 
-        o_.audio.playSound(SOUND_KEY.PICK)
         place[1] = food
         food.setLocation(MeatLocation.STORAGE)
-        food.flyTo({x: this.container.x + coord.x, y: this.container.y + coord.y})
-            .then(() => {
-                this.container.add(food.sprite)
-                food.sprite.move(coord.x, coord.y)
-                food.updateRealPosition()
-                o_.audio.playSound(SOUND_KEY.PICK_BIG)
-            })
+
+        if (withEffects) {
+            o_.audio.playSound(SOUND_KEY.PICK)
+            await food.flyTo({x: this.container.x + coord.x, y: this.container.y + coord.y})
+        }
+
+        this.container.add(food.sprite)
+        food.sprite.move(coord.x, coord.y)
+        food.updateRealPosition()
+        o_.audio.playSound(SOUND_KEY.PICK_BIG)
     }
 
     hasFreeSpace() {
@@ -213,7 +222,7 @@ export class FoodStorage {
 
     updateFood() {
         this.places.forEach(p => {
-            if (p[1]?.destroyed === true || p[1]?.location !== MeatLocation.STORAGE) {
+            if (p[1]?.destroyed === true || p[1]?.data.location !== MeatLocation.STORAGE) {
                 p[1] = null;
             }
         })
