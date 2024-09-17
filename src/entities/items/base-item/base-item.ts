@@ -40,9 +40,6 @@ export abstract class BaseItem<T extends ItemType> implements Item<T> {
         o_.items.deregister(this)
     }
 
-    public updateInteractive() {
-    }
-
     public setInteractive(val: boolean) {
     }
 
@@ -59,17 +56,15 @@ export abstract class BaseItem<T extends ItemType> implements Item<T> {
     private _destroy = () => {
         console.log("_destroy 1")
         if (this.destroyed) {
-            console.log(":-(((((")
+            console.warn("item is already destroyed: " + this.id)
             return
         }
         this.deregister()
         this.destroyed = true
         this.globalEventsSubscripions.clear()
         Object.values(this.effects).forEach(effect => effect.destroy())
-        console.log("_destroy 2")
 
         if (this.sprite) {
-            console.log("this.sprite.destroy()")
             this.sprite.destroy()
         }
 

@@ -1,27 +1,25 @@
-import {rnd, rnd2, rndBetween, Vec} from "../../../utils/utils-math";
+import {Vec} from "../../../utils/utils-math";
 import {O_Sprite} from "../../../managers/core/render/sprite";
 import {o_} from "../../../managers/locator";
-import {colorsNum, gameConstants} from "../../../configs/constants";
-import {Evt, eventBusSubscriptions} from "../../../event-bus";
-import {positioner} from "../../../managers/game/positioner";
-import {Pot, PotState} from "../../buildings/pot";
+import {Evt} from "../../../event-bus";
 import {LayerKey} from "../../../managers/core/layers";
-import {SOUND_KEY} from "../../../managers/core/audio";
-import {ImageKey} from "../../../utils/utils-types";
 import {FoodType} from "../../../types";
-import ParticleEmitter = Phaser.GameObjects.Particles.ParticleEmitter;
-import {GoldLocation} from "../gold";
 import {foodConfig} from "../../../configs/food-config";
-import {destroyInteractiveObjWithFade, destroyInteractiveObjWithJump} from "../../../helpers";
-import {debugExpose} from "../../../utils/utils-misc";
+import {destroyInteractiveObjWithFade} from "../../../helpers";
 import {EffectRotten} from "../../../effects/rotten";
 import {ItemType} from "../types";
 import {BaseItem} from "../base-item/base-item";
 import {EffectHighlight} from "../../../effects/highlight";
 import {EffectType} from "../../../effects/types";
 
-
 const WIDTH = 100;
+
+export interface DishData {
+    isHuman: boolean,
+    isStale: boolean,
+    timePassed: number,
+    position: Vec
+}
 
 export class Dish extends BaseItem<ItemType.DISH> {
     type: ItemType.DISH = ItemType.DISH
@@ -29,21 +27,23 @@ export class Dish extends BaseItem<ItemType.DISH> {
 
     sprite: O_Sprite
 
-    timePassed = 0
-
     data = {
         isHuman: false,
         isStale: false,
+        timePassed: 0,
+        position: {x: 0, y: 0},
     }
 
-    constructor(pos: Vec, isHuman = false, isStale = false) {
+    constructor(data: Partial<DishData>) {
         super()
         this.id = this.register()
 
-        this.data.isHuman = isHuman
-        this.data.isStale = isStale
+        this.data = {
+            ...this.data,
+            ...data
+        }
 
-        this.sprite = o_.render.createSprite('dish', pos.x, pos.y)
+        this.sprite = o_.render.createSprite('dish', this.data.position.x, this.data.position.y)
         this.sprite.setWidth(WIDTH)
 
         this.addEffect(new EffectHighlight(this.sprite)) as EffectHighlight
@@ -53,6 +53,8 @@ export class Dish extends BaseItem<ItemType.DISH> {
         )
 
         o_.layers.add(this.sprite, LayerKey.FIELD_BUTTONS)
+
+        this.updateRottenEffect()
 
         this.globalEventsSubscripions.on(Evt.TIME_PASSED, () => this.onTimePassed())
     }
@@ -68,18 +70,24 @@ export class Dish extends BaseItem<ItemType.DISH> {
     }
 
     becomeRotten() {
-        this.addEffect(new EffectRotten(this))
         this.data.isStale = true
-        this.timePassed = 0
+        this.data.timePassed = 0
+        this.updateRottenEffect()
+    }
+
+    updateRottenEffect() {
+        if (this.data.isStale && this.getEffect(EffectType.ROTTEN) === undefined) {
+            this.addEffect(new EffectRotten(this))
+        }
     }
 
     private onTimePassed() {
-        this.timePassed++;
+        this.data.timePassed++;
 
-        if (!this.data.isStale && this.timePassed > foodConfig.FRESH_DISH_TIME_LIMIT) {
+        if (!this.data.isStale && this.data.timePassed > foodConfig.FRESH_DISH_TIME_LIMIT) {
             this.becomeRotten()
-        } else if (this.data.isStale && this.timePassed > foodConfig.STALE_DISH_TIME_LIMIT) {
-            this.timePassed = 0
+        } else if (this.data.isStale && this.data.timePassed > foodConfig.STALE_DISH_TIME_LIMIT) {
+            this.data.timePassed = 0
             destroyInteractiveObjWithFade(this)
         }
     }

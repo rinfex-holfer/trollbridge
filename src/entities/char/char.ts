@@ -415,7 +415,10 @@ export class Char {
             coord.x += rndBetween(-80, 80)
             coord.y += (-this.sprite.height / 2) + rndBetween(-80, 80)
 
-            const meat = new Meat(this.getCoords(), MeatLocation.GROUND)
+            const meat = new Meat({
+                position: this.getCoords(),
+                location: MeatLocation.GROUND
+            })
             if (flyToStorage) {
                 meat.bePlacedOrBeEaten()
             } else {
@@ -430,7 +433,12 @@ export class Char {
             coord.x += rndBetween(-80, 80)
             coord.y += (-this.sprite.height / 2) + rndBetween(-80, 80)
 
-            const meat = new Meat(this.getCoords(), MeatLocation.GROUND, true, i < 2 ? meatSprite.HUMAN_LEG : meatSprite.HUMAN_HAND)
+            const meat = new Meat(
+                {
+                    position: this.getCoords(),
+                    location: MeatLocation.GROUND,
+                    isHuman: true,
+                }, i < 2 ? meatSprite.HUMAN_LEG : meatSprite.HUMAN_HAND)
             meat.throwTo(coord)
         }
     }

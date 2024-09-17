@@ -1,6 +1,6 @@
 import {MeatEvent, MeatEventsPayload} from "./meat/meat-events";
-import {Meat} from "./meat/meat";
-import {Dish} from "./dish/dish";
+import {Meat, MeatData} from "./meat/meat";
+import {Dish, DishData} from "./dish/dish";
 import {Gold, GoldData} from "./gold";
 import {Rock} from "./rock";
 import {DishEvent, DishEventsPayload} from "./dish/dish-events";
@@ -13,14 +13,8 @@ export interface Item<T extends ItemType> {
 }
 
 export interface ItemDataMap {
-    [ItemType.DISH]: {
-        isHuman: boolean,
-        isStale: boolean,
-    },
-    [ItemType.MEAT]: {
-        isHuman: boolean,
-        isStale: boolean,
-    },
+    [ItemType.DISH]: DishData,
+    [ItemType.MEAT]: MeatData,
     [ItemType.GOLD]: GoldData,
     [ItemType.ROCK]: {}
 }

@@ -190,6 +190,7 @@ export class Pot {
     }
 
     private setState = (state: PotState) => {
+        const prevState = this.cmp.pot.state
         this.cmp.pot.state = state;
         switch (state) {
             case PotState.NOT_EXIST:
@@ -213,23 +214,37 @@ export class Pot {
                 break;
             case PotState.READY:
                 this.sprite.setVisibility(true)
-                o_.render.burstYellow(this.sprite.x, this.sprite.y)
+                this.cmp.pot.ingridientsContainHumanMeat = false
+                this.cmp.pot.ingridientsAreStale = false
                 this.sprite.play('empty')
-                this.createDish()
+
+                if (prevState === PotState.PREPARING) {
+                    o_.render.burstYellow(this.sprite.x, this.sprite.y)
+                    const dish = new Dish({
+                        position: {
+                            x: this.sprite.x,
+                            y: this.sprite.y - 175
+                        },
+                        isStale: this.cmp.pot.ingridientsAreStale,
+                        isHuman: this.cmp.pot.ingridientsContainHumanMeat
+                    },);
+                    this.addDish(dish)
+                } else {
+                    // initial state
+                    const dish = o_.items.get(ItemType.DISH)[0]
+                    if (dish) {
+                        this.addDish(dish)
+                    }
+                }
                 break;
             default:
                 throw Error('wrong pot state ' + state)
         }
     }
 
-    createDish() {
-        this.dish = new Dish({
-            x: this.sprite.x,
-            y: this.sprite.y - 175
-        }, this.cmp.pot.ingridientsContainHumanMeat, this.cmp.pot.ingridientsAreStale)
-        this.cmp.pot.ingridientsContainHumanMeat = false
-        this.cmp.pot.ingridientsAreStale = false
-        this.dish.eventEmitter.once(BaseItemEvent.DESTROYED, () => {
+    addDish(dish: Dish) {
+        this.dish = dish
+        this.dish?.eventEmitter.once(BaseItemEvent.DESTROYED, () => {
             this.removeDish()
         })
     }

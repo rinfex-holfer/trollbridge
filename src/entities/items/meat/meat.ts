@@ -31,33 +31,40 @@ export const meatSprite = {
 
 export const MEAT_WIDTH = 50;
 
+export interface MeatData {
+    isHuman: boolean,
+    isStale: boolean,
+    position: Vec,
+    timePassed: number,
+    location: MeatLocation
+}
+
 export class Meat extends BaseItem<ItemType.MEAT> {
     type: ItemType.MEAT = ItemType.MEAT
     id: string
 
     sprite: O_Sprite
-    location: MeatLocation
-
-    timePassed = 0
 
     jumpTween: Phaser.Tweens.Tween
-    jumpTweenDirty = false
 
-    realPosition: Vec
-
-    data = {
+    data: MeatData = {
         isHuman: false,
         isStale: false,
+        position: {x: 0, y: 0},
+        location: MeatLocation.GROUND,
+        timePassed: 0
     }
 
-    constructor(pos: Vec, location: MeatLocation = MeatLocation.GROUND, isHuman = false, key: ImageKey = meatSprite.ANIMAL) {
+    constructor(data: Partial<MeatData>, key: ImageKey = meatSprite.ANIMAL) {
         super()
         this.id = this.register()
 
-        this.location = location;
-        this.data.isHuman = isHuman
+        this.data = {
+            ...this.data,
+            ...data
+        }
 
-        this.sprite = o_.render.createSprite(key, pos.x, pos.y)
+        this.sprite = o_.render.createSprite(key, this.data.position.x, this.data.position.y)
         this.sprite.setWidth(MEAT_WIDTH)
         this.sprite.setOrigin(0.5, 0.5)
         o_.layers.add(this.sprite, LayerKey.FIELD_OBJECTS)
@@ -75,17 +82,16 @@ export class Meat extends BaseItem<ItemType.MEAT> {
             () => this.getEffect(EffectType.HIGHLIGHTED)?.setActive(false)
         )
 
-        this.realPosition = this.updateRealPosition()
+        this.data.position = this.updateRealPosition()
 
         // this shit still ruins y coord in flyTo method somehow
         this.jumpTween = o_.render.createJumpingTween(this.sprite)
 
+        if (this.data.isStale) {
+            this.addEffect(new EffectRotten(this))
+        }
+
         this.globalEventsSubscripions.on(Evt.TIME_PASSED, () => this.onTimePassed())
-
-        this.globalEventsSubscripions.on(Evt.ENCOUNTER_STARTED, () => this.updateInteractive())
-        this.globalEventsSubscripions.on(Evt.ENCOUNTER_ENDED, () => this.updateInteractive())
-
-        this.updateInteractive()
     }
 
     private onClickDefault() {
@@ -93,7 +99,7 @@ export class Meat extends BaseItem<ItemType.MEAT> {
     }
 
     private onRightClick() {
-        if (this.location === MeatLocation.STORAGE) {
+        if (this.data.location === MeatLocation.STORAGE) {
             this.flyOnLairGround()
         } else {
             destroyInteractiveObjWithJump(this)
@@ -110,7 +116,7 @@ export class Meat extends BaseItem<ItemType.MEAT> {
     }
 
     public bePlacedOrBeEaten() {
-        switch (this.location) {
+        switch (this.data.location) {
             case MeatLocation.GROUND:
                 if (o_.lair.foodStorage.hasFreeSpace()) {
                     o_.lair.foodStorage.placeFood(this)
@@ -146,7 +152,7 @@ export class Meat extends BaseItem<ItemType.MEAT> {
             this.jumpTween.stop()
             this.jumpTween.destroy()
             this.jumpTween = o_.render.createJumpingTween(this.sprite)
-            this.sprite.move(this.realPosition.x, this.realPosition.y)
+            this.sprite.move(this.data.position.x, this.data.position.y)
         }
     }
 
@@ -154,28 +160,28 @@ export class Meat extends BaseItem<ItemType.MEAT> {
         this.eventEmitter.emit(MeatEvent.WENT_STALE)
         this.addEffect(new EffectRotten(this))
         this.data.isStale = true
-        this.timePassed = 0
+        this.data.timePassed = 0
     }
 
     private onTimePassed() {
-        this.timePassed++;
-        if (this.location !== MeatLocation.STORAGE) {
-            this.timePassed += 2;
+        this.data.timePassed++;
+        if (this.data.location !== MeatLocation.STORAGE) {
+            this.data.timePassed += 2;
             if (rnd() > 0.9) {
                 return destroyInteractiveObjWithFade(this)
             }
         }
 
-        if (!this.data.isStale && this.timePassed > foodConfig.RAW_MEAT_TIME_LIMIT) {
+        if (!this.data.isStale && this.data.timePassed > foodConfig.RAW_MEAT_TIME_LIMIT) {
             this.becomeRotten()
-        } else if (this.data.isStale && this.timePassed > foodConfig.STALE_MEAT_TIME_LIMIT) {
+        } else if (this.data.isStale && this.data.timePassed > foodConfig.STALE_MEAT_TIME_LIMIT) {
             destroyInteractiveObjWithFade(this)
         }
     }
 
     updateRealPosition() {
-        this.realPosition = {x: this.sprite.x, y: this.sprite.y}
-        return this.realPosition
+        this.data.position = {x: this.sprite.x, y: this.sprite.y}
+        return this.data.position
     }
 
     setOnClick(callback: undefined | ((meat: Meat) => void)) {
@@ -184,15 +190,15 @@ export class Meat extends BaseItem<ItemType.MEAT> {
 
     moveToPreparationPlace(coord: Vec) {
         this.setJumping(false)
-        if (this.location === MeatLocation.STORAGE) o_.lair.foodStorage.container.remove(this.sprite)
+        if (this.data.location === MeatLocation.STORAGE) o_.lair.foodStorage.container.remove(this.sprite)
 
         o_.layers.add(this.sprite, LayerKey.FIELD_BUTTONS)
         this.sprite.move(coord.x, coord.y)
     }
 
     moveBackToPlaceFromWhereItWasChosen() {
-        if (this.location === MeatLocation.STORAGE) o_.lair.foodStorage.container.add(this.sprite)
-        this.sprite.move(this.realPosition.x, this.realPosition.y)
+        if (this.data.location === MeatLocation.STORAGE) o_.lair.foodStorage.container.add(this.sprite)
+        this.sprite.move(this.data.position.x, this.data.position.y)
         o_.layers.add(this.sprite, LayerKey.FIELD_OBJECTS)
     }
 
@@ -206,24 +212,16 @@ export class Meat extends BaseItem<ItemType.MEAT> {
         this.sprite.setInteractive(val)
     }
 
-    public updateInteractive() {
-        this.setInteractive(
-            !o_.battle.isBattle &&
-            !o_.negotiations.getIsNegotiationsInProgress()
-        )
-    }
-
     public setLocation(loc: MeatLocation) {
-        this.location = loc;
+        this.data.location = loc;
     }
 
     public flyTo(pos: Vec, speed = 1000, maxDuration = 500): Promise<any> {
-        console.log("flyTo 0")
         this.setJumping(false);
 
         const effectRotten = this.getEffect(EffectType.ROTTEN)
         if (this.data.isStale && !!effectRotten) effectRotten.stopGas()
-        if (this.location === MeatLocation.STORAGE && this.sprite.obj.parentContainer === o_.lair.foodStorage.container.obj) {
+        if (this.data.location === MeatLocation.STORAGE && this.sprite.obj.parentContainer === o_.lair.foodStorage.container.obj) {
             o_.lair.foodStorage.container.remove(this.sprite)
             this.sprite.x += o_.lair.foodStorage.container.x
             this.sprite.y += o_.lair.foodStorage.container.y
@@ -239,8 +237,9 @@ export class Meat extends BaseItem<ItemType.MEAT> {
     }
 
     public throwTo(pos: Vec) {
+        const oldInteractive = this.sprite.isInteractive
         this.setInteractive(false)
-        o_.render.thrownTo(this.sprite, pos, 700).then(() => this.updateInteractive())
+        o_.render.thrownTo(this.sprite, pos, 700).then(() => this.setInteractive(oldInteractive))
     }
 
 
@@ -253,7 +252,11 @@ debugExpose((amount = 1) => {
     for (let i = 0; i < amount; i++) {
         const x = rndBetween(600, 700)
         const y = rndBetween(1100, 1300)
-        const meat = new Meat({x, y}, MeatLocation.GROUND, true, rnd2(meatSprite.HUMAN_LEG, meatSprite.HUMAN_HAND))
+        const meat = new Meat({
+            position: {x, y},
+            location: MeatLocation.GROUND,
+            isHuman: true,
+        }, rnd2(meatSprite.HUMAN_LEG, meatSprite.HUMAN_HAND))
         console.log(meat)
         return meat
     }
@@ -263,7 +266,11 @@ debugExpose((amount = 1) => {
     for (let i = 0; i < amount; i++) {
         const x = rndBetween(600, 700)
         const y = rndBetween(1100, 1300)
-        const meat = new Meat({x, y}, MeatLocation.GROUND, false)
+        const meat = new Meat({
+            position: {x, y},
+            location: MeatLocation.GROUND,
+            isHuman: false,
+        })
         console.log(meat)
         return meat
     }

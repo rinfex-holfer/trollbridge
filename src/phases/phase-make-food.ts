@@ -35,6 +35,8 @@ export class PhaseMakeFood extends GamePhase {
 
         o_.audio.playSound(SOUND_KEY.BONK)
 
+        o_.items.getAll().forEach(i => i.setInteractive(false))
+
         o_.lair.pot.setInteractive(true)
 
         o_.lair.pot.startChoosingFood()

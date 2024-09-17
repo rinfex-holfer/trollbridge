@@ -14,6 +14,8 @@ export class PhaseBuild extends GamePhase {
         o_.lair.setInteractive.tools(true)
         o_.lair.tools.setAlwaysHighlighted(true)
 
+        o_.items.getAll().forEach(i => i.setInteractive(false))
+
         this.registerListener(Evt.INTERFACE_TOOLS_CLICKED, () => {
             this.goToLairPhase()
         })

@@ -4,6 +4,8 @@ import {findAndSplice} from "../../utils/utils-misc";
 import {ItemDataMap, ItemMap, ItemType} from "../../entities/items/types";
 import {Gold} from "../../entities/items/gold";
 import {SaveData} from "../save-manager";
+import {Meat} from "../../entities/items/meat/meat";
+import {Dish} from "../../entities/items/dish/dish";
 
 
 type ItemStorage = {
@@ -32,8 +34,8 @@ export class ItemManager {
             },
             entities: {
                 [ItemType.GOLD]: this.entities[ItemType.GOLD].map(entity => entity.getData()),
-                [ItemType.MEAT]: [],
-                [ItemType.DISH]: [],
+                [ItemType.MEAT]: this.entities[ItemType.MEAT].map(entity => entity.getData()),
+                [ItemType.DISH]: this.entities[ItemType.DISH].map(entity => entity.getData()),
                 [ItemType.ROCK]: [],
             },
         }
@@ -67,6 +69,12 @@ export class ItemManager {
         saveData?.items?.entities.GOLD.forEach((data) => {
             new Gold(data) // it will register itself
         })
+        saveData?.items?.entities.MEAT.forEach((data) => {
+            new Meat(data) // it will register itself
+        })
+        saveData?.items?.entities.DISH.forEach((data) => {
+            new Dish(data) // it will register itself
+        })
     }
 
     public register<T extends ItemType>(itemType: T, item: ItemMap[T]) {
@@ -89,5 +97,13 @@ export class ItemManager {
 
     public getAll() {
         return Object.values(this.entities).flat()
+    }
+
+    public getAllNonCombat() {
+        return [
+            ...this.entities.GOLD,
+            ...this.entities.MEAT,
+            ...this.entities.DISH,
+        ]
     }
 }

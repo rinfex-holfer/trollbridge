@@ -1,16 +1,12 @@
 import {o_} from "../managers/locator";
 import {TrollLocation} from "../types";
-import {eventBus, Evt} from "../event-bus";
-import {CancellablePromise, CANCELLED, createCancellablePromise, createPromiseAndHandlers} from "../utils/utils-async";
+import {Evt} from "../event-bus";
+import {CancellablePromise, CANCELLED, createCancellablePromise} from "../utils/utils-async";
 import {GamePhase} from "./game-phase";
-import {PotState} from "../entities/buildings/pot";
-import {PhaseMakeFood} from "./phase-make-food";
-import {PhaseBuild} from "./phase-build";
 import {PhaseLair} from "./phase-lair";
 import {TrollStateKey} from "../managers/game/troll/troll-state";
 import {Vec} from "../utils/utils-math";
 import {positioner} from "../managers/game/positioner";
-import {GamePointerEvent} from "../managers/core/input/types";
 
 export class PhaseBridge extends GamePhase {
 
@@ -36,10 +32,13 @@ export class PhaseBridge extends GamePhase {
         o_.troll.setLocation(TrollLocation.BRIDGE);
         o_.camera.panToBridge()
         this.trollGoesToBridge(this.initialDestination)
+
+        o_.items.getAllNonCombat().forEach(i => i.setInteractive(true))
     }
 
     onEnd() {
         this.interfaceFor.cleanup()
+        o_.items.getAllNonCombat().forEach(i => i.setInteractive(false))
     }
 
     setCurrentTrollActivity(runActivity: () => Promise<any>): CancellablePromise<void> {

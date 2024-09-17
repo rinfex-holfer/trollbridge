@@ -39,12 +39,15 @@ export class PhaseLair extends GamePhase {
         o_.camera.panToLair()
         this.interfaceFor.idleInLair()
 
+        o_.items.getAllNonCombat().forEach(i => i.setInteractive(true))
+
         if (this.initialCoord) {
             this.trollGoesToLair(this.initialCoord)
         }
     }
 
     onEnd() {
+        o_.items.getAllNonCombat().forEach(i => i.setInteractive(false))
         this.interfaceFor.cleanup()
     }
 

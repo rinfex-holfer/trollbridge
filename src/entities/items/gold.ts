@@ -64,8 +64,6 @@ export class Gold extends BaseItem<ItemType.GOLD> {
             this.sprite.onClick(() => this.onClick())
         }
         this.globalEventsSubscripions.on(Evt.TIME_PASSED, () => this.onTimePassed())
-
-        this.updateInteractive()
     }
 
     private onClick() {
@@ -148,15 +146,10 @@ export class Gold extends BaseItem<ItemType.GOLD> {
         this.sprite.setInteractive(val)
     }
 
-    public updateInteractive() {
-        this.setInteractive(
-            this.data.location === GoldLocation.GROUND
-        )
-    }
-
     public throwTo(pos: Vec) {
+        const oldInteractive = this.sprite.isInteractive
         this.setInteractive(false)
-        o_.render.thrownTo(this.sprite, pos, 700).then(() => this.updateInteractive())
+        o_.render.thrownTo(this.sprite, pos, 700).then(() => this.setInteractive(oldInteractive))
     }
 }
 
