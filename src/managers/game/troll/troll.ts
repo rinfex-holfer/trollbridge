@@ -160,6 +160,20 @@ export class Troll {
         this.sprite.setOrigin(0.5, 1);
     }
 
+    get positionCenter(): Vec {
+        return {
+            x: this.x,
+            y: this.y - this.sprite.height / 2
+        }
+    }
+
+    get position(): Vec {
+        return {
+            x: this.x,
+            y: this.y
+        }
+    }
+
     get x() {
         return this.container.x
     }

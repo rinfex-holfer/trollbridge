@@ -10,6 +10,7 @@ import {Treasury} from "../../entities/buildings/treasury";
 import {Chair} from "../../entities/buildings/chair";
 import {Tools} from "../../entities/buildings/tools";
 import {SaveData} from "../save-manager";
+import {debugExpose} from "../../utils/utils-misc";
 
 export class Lair {
     foodStorage!: FoodStorage
@@ -38,6 +39,8 @@ export class Lair {
         this.tools = children.tools
         this.treasury = children.treasury
         this.foodStorage = children.foodStorage
+
+        debugExpose(() => this, 'lair')
     }
 
     load(saveData?: SaveData) {

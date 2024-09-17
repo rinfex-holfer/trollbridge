@@ -139,7 +139,8 @@ export class Meat extends BaseItem<ItemType.MEAT> {
 
     isBouncing = false
 
-    eat() {
+    async eat() {
+        await this.flyTo(o_.troll.positionCenter, undefined, 250)
         o_.troll.eat(FoodType.MEAT, this.data.isStale, this.data.isHuman)
         o_.lair.foodStorage.updateFood();
         this.destroy()

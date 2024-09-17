@@ -148,7 +148,7 @@ export class PhaseLair extends GamePhase {
             case PotState.PREPARING:
                 break;
             case PotState.READY:
-                o_.lair.pot.eat()
+                o_.lair.pot.dish?.jump()
                 break;
         }
     }

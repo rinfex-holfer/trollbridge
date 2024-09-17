@@ -246,6 +246,7 @@ export class Pot {
         this.dish = dish
         this.dish?.eventEmitter.once(BaseItemEvent.DESTROYED, () => {
             this.removeDish()
+            this.setState(PotState.EMPTY)
         })
     }
 
@@ -337,6 +338,7 @@ export class Pot {
     }
 
     setInteractive(val: boolean) {
+        this.dish?.setInteractive(val)
         this.sprite.setInteractive(val);
         if (val === false) {
             this.getEffect(EffectType.HIGHLIGHTED)?.setActive(false)

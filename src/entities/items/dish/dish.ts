@@ -57,14 +57,24 @@ export class Dish extends BaseItem<ItemType.DISH> {
         this.updateRottenEffect()
 
         this.globalEventsSubscripions.on(Evt.TIME_PASSED, () => this.onTimePassed())
+
+        this.setInteractive(true)
+
+        this.sprite.onClick(() => {
+            this.jump()
+        })
+        this.sprite.onRightClick(() => {
+            this.eat()
+        })
     }
 
 
-    eat() {
+    async eat() {
         if (this.destroyed) {
             console.error("cant eat destroyed dish")
             return
         }
+        await o_.render.flyTo(this.sprite, o_.troll.positionCenter, 1000, 250)
         o_.troll.eat(FoodType.DISH, this.data.isStale, this.data.isHuman)
         this.destroy()
     }
@@ -91,6 +101,25 @@ export class Dish extends BaseItem<ItemType.DISH> {
             destroyInteractiveObjWithFade(this)
         }
     }
+
+    public setInteractive(val: boolean) {
+        this.sprite.setInteractive(val)
+
+        if (val === false) {
+            this.getEffect(EffectType.HIGHLIGHTED)?.setActive(false)
+        }
+    }
+
+    jump() {
+        if (this.isJumping) return
+
+        this.isJumping = true
+        o_.render.bounceOfGround(this.sprite, 20, 500).then(() => {
+            this.isJumping = false
+        })
+    }
+
+    isJumping = false
 
     onDestroyed() {
     }
