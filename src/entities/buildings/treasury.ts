@@ -9,8 +9,22 @@ import {Gold, GOLD_WIDTH, GoldLocation} from "../items/gold";
 import {flyingStatusChange} from "../../interface/basic/flying-status-change";
 import {SOUND_KEY} from "../../managers/core/audio";
 import {goldConfig} from "../../configs/gold-config";
-import {debugExpose} from "../../utils/utils-misc";
+import {createId, debugExpose} from "../../utils/utils-misc";
 import {ItemType} from "../items/types";
+import {PotData} from "./pot";
+import {createUpgradableComponent, UpgradableComponent, UpgradableComponentData} from "../../components/upgradable";
+import {positioner} from "../../managers/game/positioner";
+import {Txt} from "../../translations";
+
+export type TreasuryData = {
+    id: string,
+    cmp: {
+        upgradable: UpgradableComponentData
+        treasury: {
+            amount: number
+        }
+    }
+}
 
 export class Treasury {
     text: O_Text
@@ -18,11 +32,16 @@ export class Treasury {
 
     subs = eventBusSubscriptions()
 
-    amount = 0
+    id: string
+    cmp: {
+        upgradable: UpgradableComponent
+        treasury: {
+            amount: number
+        }
+    }
 
-    gold: Gold[] = []
-
-    constructor(position: Vec) {
+    constructor(props?: TreasuryData) {
+        const position = positioner.getTreasuryPosition()
         this.sprite = o_.render.createSprite('treasury', position.x, position.y)
         this.sprite.setOrigin(0, 0.5)
         this.sprite.setWidth(300, false)
@@ -46,10 +65,36 @@ export class Treasury {
 
         this.subs.on(Evt.TIME_PASSED, () => this.onTimePassed())
 
-        this.gold = o_.items.get(ItemType.GOLD).filter(gold => gold.data.location === GoldLocation.TREASURY)
+        this.id = props?.id || createId('treasury')
+
+        this.cmp = {
+            upgradable: createUpgradableComponent(this, {
+                buttonCoord: {x: this.sprite.x, y: this.sprite.y},
+                titleTextKey: Txt.UpgradePotTitle,
+                descriptionTextKey: Txt.UpgradePotDescr,
+                getUpgradeCost: this.getUpgradeCost,
+                canBeUpgraded: this._canBeUpgraded,
+                upgrade: this._upgrade,
+                level: 0,
+                ...props?.cmp?.upgradable,
+            }),
+            treasury: {
+                amount: 0,
+                ...props?.cmp?.treasury
+            }
+        }
+
         this.onGoldChanged()
 
         debugExpose((amount: number) => this.addGold(amount), 'addGold')
+    }
+
+    getUpgradeCost = () => goldConfig.costs.treasury
+    _canBeUpgraded = () => false
+    _upgrade = () => null
+
+    getData(): PotData {
+        return {}
     }
 
     private onTimePassed() {
@@ -102,16 +147,6 @@ export class Treasury {
             return g.flyToStorage()
         }))
         this.addGold(amount)
-    }
-
-    getNextPosition() {
-        const newCoord = {x: this.sprite.x, y: this.sprite.y}
-
-        const lastSprite = this.gold[this.gold.length - 1]?.sprite
-        if (lastSprite) {
-            newCoord.x = lastSprite.x + GOLD_WIDTH + 10
-        }
-        return newCoord
     }
 
     addGold(amount: number) {

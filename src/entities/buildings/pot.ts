@@ -259,11 +259,6 @@ export class Pot {
         }
     }
 
-    eat() {
-        this.dish?.eat()
-        this.setState(PotState.EMPTY)
-    }
-
     public getFreePlaceForChosenFood(): Vec {
         return {
             x: this.sprite.x - 30 + 30 * this.chosenFood.length,
