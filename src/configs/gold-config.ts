@@ -9,6 +9,6 @@ export const goldConfig = {
         chair: [10, 20, 30],
         bed: [10, 20, 30],
         pot: 50,
-        treasury: 100,
+        treasury: [10, 50, 200],
     },
 }

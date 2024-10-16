@@ -15,17 +15,24 @@ export const resoursePaths = {
         meat_human_hand: `${imagesUrl}/meat_human_hand.png`,
         dish: `${imagesUrl}/dish.png`,
         bones: `${imagesUrl}/bones.png`,
-        bed_0: `${imagesUrl}/bed_0.png`,
-        bed_1: `${imagesUrl}/bed_1.png`,
-        bed_2: `${imagesUrl}/bed_2.png`,
         rock: `${imagesUrl}/rock.png`,
         arrow: `${imagesUrl}/arrow.png`,
         bridge_crack: `${imagesUrl}/bridge_crack.png`,
         drying_rack: `${imagesUrl}/drying_rack.png`,
+
+        bed_0: `${imagesUrl}/bed_0.png`,
+        bed_1: `${imagesUrl}/bed_1.png`,
+        bed_2: `${imagesUrl}/bed_2.png`,
+
         chair_0: `${imagesUrl}/chair_0.png`,
         chair_1: `${imagesUrl}/chair_1.png`,
         chair_2: `${imagesUrl}/chair_2.png`,
         chair_3: `${imagesUrl}/chair_3.png`,
+
+        treasury_0: `${imagesUrl}/treasury_0.png`,
+        treasury_1: `${imagesUrl}/treasury_1.png`,
+        treasury_2: `${imagesUrl}/treasury_2.png`,
+        treasury_3: `${imagesUrl}/treasury_3.png`,
 
         tools: `${imagesUrl}/tools.png`,
 
@@ -71,7 +78,7 @@ export const resoursePaths = {
         particle_hit: `${imagesUrl}/particle_hit.png`,
         particle_blood: `${imagesUrl}/particle_blood.jpg`,
         particle_smoke_green: `${imagesUrl}/particle_smoke_green.png`,
-        treasury: `${imagesUrl}/treasury.png`,
+
         statue: `${imagesUrl}/statue.png`,
         "gold-1": `${imagesUrl}/gold-1.png`,
         "gold-2": `${imagesUrl}/gold-2.png`,

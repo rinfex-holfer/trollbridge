@@ -192,7 +192,7 @@ export class UpgradeButton {
         this.background.setWidth(Math.max(this.titleText.width, this.descriptionText?.width || 0, this.costTextNotEnough.getRightCenter().x), false)
     }
 
-    getIsEnoughGold = () => o_.lair.treasury.amount >= this.getUpgradeCost()
+    getIsEnoughGold = () => o_.lair.treasury?.cmp.treasury.amount >= this.getUpgradeCost()
 
     setVisible = (val: boolean) => {
         this.isVisible = val

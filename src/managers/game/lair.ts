@@ -49,7 +49,7 @@ export class Lair {
     }
 
     initialize(saveData?: SaveData) {
-        this.treasury = new Treasury(positioner.getTreasuryPosition())
+        this.treasury = new Treasury(saveData?.lair.treasury)
         this.foodStorage = new FoodStorage(saveData?.lair.foodStorage)
         this.bed = new Bed(saveData?.lair.bed)
         this.pot = new Pot(saveData?.lair.pot)

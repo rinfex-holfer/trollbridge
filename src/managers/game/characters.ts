@@ -324,7 +324,6 @@ export class CharactersManager {
         const travellers = o_.characters.getTravellers()
         const promises = o_.items
             .get(ItemType.GOLD)
-            .filter(g => g.location === GoldLocation.GROUND)
             .map(g => {
                 return pause((start++) * 50).then(() => getRndItem(travellers).takeGold(g))
             })

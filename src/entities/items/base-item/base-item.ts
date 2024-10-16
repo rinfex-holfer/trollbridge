@@ -54,7 +54,6 @@ export abstract class BaseItem<T extends ItemType> implements Item<T> {
     }
 
     private _destroy = () => {
-        console.log("_destroy 1")
         if (this.destroyed) {
             console.warn("item is already destroyed: " + this.id)
             return

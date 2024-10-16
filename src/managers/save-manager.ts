@@ -5,10 +5,11 @@ import {ChairData} from "../entities/buildings/chair";
 import {BedData} from "../entities/buildings/bed";
 import {FoodStorageData} from "../entities/buildings/food-storage";
 import {ItemsData} from "./game/items";
+import {TreasuryData} from "../entities/buildings/treasury";
 
 const LS_KEY = "tb_save"
 
-const gameVersion = "0.1"
+const gameVersion = "0.2"
 
 export interface SaveData {
     _meta: {
@@ -21,6 +22,7 @@ export interface SaveData {
         bed: BedData
         pot: PotData
         foodStorage: FoodStorageData
+        treasury: TreasuryData
     }
 
     items: ItemsData
@@ -43,6 +45,7 @@ export class SaveManager {
                 bed: o_.lair.bed.getData(),
                 pot: o_.lair.pot.getData(),
                 foodStorage: o_.lair.foodStorage.getData(),
+                treasury: o_.lair.treasury.getData(),
             },
             items: o_.items.getData(),
         }

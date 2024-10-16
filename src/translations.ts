@@ -53,6 +53,10 @@ export const Txt = {
     BuildGoblinsLair: "BuildGoblinsLair",
     UpgradePotTitle: "UpgradePotTitle",
     UpgradePotDescr: "UpgradePotDescr",
+
+    UpgradeTreasuryTitle: "UpgradeTreasuryTitle",
+    UpgradeTreasuryDescr: "UpgradeTreasuryDescr",
+
     BuildDryingRackTitle: "BuildDryingRackTitle",
     UpgradeDryingRackTitle: "UpgradeDryingRackTitle",
     BuildDryingRackText: "BuildDryingRackText",
@@ -107,6 +111,9 @@ export const translations = {
             [Txt.UpgradeBedTitle]: "Upgrade bed",
             [Txt.UpgradeBed]: "Restores more health",
 
+            [Txt.UpgradeTreasuryTitle]: "Upgrade treasury",
+            [Txt.UpgradeTreasuryDescr]: "Becomes more secure",
+
             [Txt.BuildDryingRackTitle]: "Build food storage",
             [Txt.BuildDryingRackText]: "Stores food so it doesn't go bad too quick",
             [Txt.UpgradeDryingRackTitle]: "Expand food storage",
@@ -159,6 +166,8 @@ export const translations = {
             [Txt.UpgradePotDescr]: "Можно готовить пищу",
             [Txt.UpgradeBedTitle]: "Улучшить кровать",
             [Txt.UpgradeBed]: "Восстанавливает больше здоровья",
+            [Txt.UpgradeTreasuryTitle]: "Улучшить сокровищницу",
+            [Txt.UpgradeTreasuryDescr]: "Становится более надежной",
 
             [Txt.BuildDryingRackTitle]: "Построить хранилище еды",
             [Txt.BuildDryingRackText]: "Хранящаяся там еда дольше остается свежей",

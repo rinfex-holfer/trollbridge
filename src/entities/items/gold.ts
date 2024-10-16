@@ -11,11 +11,9 @@ import {ItemType} from "./types";
 import {EffectHighlight} from "../../effects/highlight";
 import {EffectType} from "../../effects/types";
 import {debugExpose} from "../../utils/utils-misc";
-import {Meat, MeatLocation} from "./meat/meat";
 
 export const enum GoldLocation {
     GROUND = 'GROUND',
-    TREASURY = 'TREASURY',
 }
 
 export const GOLD_WIDTH = 50
@@ -59,10 +57,8 @@ export class Gold extends BaseItem<ItemType.GOLD> {
 
         this.updateLayer()
 
-        if (this.data.location === GoldLocation.GROUND) {
-            this.sprite.setInteractive(true)
-            this.sprite.onClick(() => this.onClick())
-        }
+        this.sprite.setInteractive(true)
+        this.sprite.onClick(() => this.onClick())
         this.globalEventsSubscripions.on(Evt.TIME_PASSED, () => this.onTimePassed())
     }
 
@@ -71,22 +67,9 @@ export class Gold extends BaseItem<ItemType.GOLD> {
     }
 
     public flyToStorage() {
-        switch (this.data.location) {
-            case GoldLocation.GROUND:
-                o_.audio.playSound(SOUND_KEY.PICK_THIN)
-                this.sprite.setInteractive(false)
-                const lastGoldItem = o_.lair.treasury.gold[o_.lair.treasury.gold.length - 1]
-                const coord = (lastGoldItem && lastGoldItem.data.amount < goldConfig.MAX_GOLD_IN_SPRITE)
-                    ? lastGoldItem.sprite
-                    : o_.lair.treasury.getNextPosition()
-                return o_.render.flyTo(this.sprite, coord, 500, 300).then(() => {
-                    this.destroy()
-                })
-                break;
-            case GoldLocation.TREASURY:
-                return Promise.resolve()
-                break;
-        }
+        o_.audio.playSound(SOUND_KEY.PICK_THIN)
+        this.sprite.setInteractive(false)
+        return this.flyTo(o_.lair.treasury.getPositionForGoldToFly())
     }
 
     public flyTo(pos: Vec) {
