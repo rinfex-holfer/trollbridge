@@ -7,11 +7,13 @@ import {FoodStorageData} from "../entities/buildings/food-storage";
 import {ItemsData} from "./game/items";
 import {TreasuryData} from "../entities/buildings/treasury";
 
-const LS_KEY = "tb_save"
+const LS_KEY = "trbr_save"
 
-const gameVersion = "0.2"
+const gameVersion = "0.2.1"
 
-export interface SaveData {
+export type SaveData = {
+    isEmpty: false
+
     _meta: {
         gameVersion: typeof gameVersion
         timestamp: string
@@ -28,14 +30,25 @@ export interface SaveData {
     items: ItemsData
 }
 
+export type SaveDataEmpty = {
+    isEmpty: true
+}
+
+type SaveList = (SaveData | SaveDataEmpty)[]
+
+const MAX_SAVES = 10
+
 export class SaveManager {
     constructor() {
         debugExpose(() => this, 'saveManager')
         o_.register.saves(this)
     }
 
-    save() {
+    static isSaveEmpty = (save: SaveData | SaveDataEmpty): save is SaveDataEmpty => !!save.isEmpty
+
+    save(slot: number) {
         const saveData: SaveData = {
+            isEmpty: false,
             _meta: {
                 gameVersion,
                 timestamp: (new Date()).toString()
@@ -50,28 +63,47 @@ export class SaveManager {
             items: o_.items.getData(),
         }
 
+        const savesList = this.getSaves()
+
+        savesList[slot] = saveData
+
         localStorage.setItem(LS_KEY, JSON.stringify(saveData))
     }
 
-    deleteSave() {
+    cleanupSavesStorage() {
         localStorage.setItem(LS_KEY, '');
     }
 
-    getSaveData() {
+    getSaves(): SaveList {
         const saveDataStr = localStorage.getItem(LS_KEY)
-        if (!saveDataStr) return undefined
+        if (!saveDataStr) return []
 
-        let saveData: SaveData
+        let savesList: SaveList
         try {
-            saveData = JSON.parse(saveDataStr)
+            savesList = JSON.parse(saveDataStr)
         } catch (e) {
-            return undefined
+            return Array.from({length: MAX_SAVES}, () => ({isEmpty: true}))
         }
 
-        if (saveData._meta.gameVersion !== gameVersion) {
-            return undefined;
-        }
+        savesList = savesList.map(save => {
+            if (SaveManager.isSaveEmpty(save)) return save
 
-        return saveData
+            if (save._meta.gameVersion !== gameVersion) {
+                return {isEmpty: true}
+            }
+
+            return save
+        })
+
+        return savesList
+    }
+
+    getLatestSave(): SaveData | undefined {
+        const saves = this.getSaves()
+        const nonEmptySaves: SaveData[] = saves.filter((save): save is SaveData => !SaveManager.isSaveEmpty(save))
+        return nonEmptySaves
+            .sort((a, b) => {
+                return new Date(b._meta.timestamp).getTime() - new Date(a._meta.timestamp).getTime()
+            })[0]
     }
 }

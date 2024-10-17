@@ -21,6 +21,12 @@ export const Txt = {
     Pause: "Pause",
     StartGame: "StartGame",
     Resume: "Resume",
+    Save: "Save",
+    Load: "Load",
+
+    SavedGame: "SavedGame",
+    SaveSlotEmpty: "SaveSlotEmpty",
+
     Language: "Language",
     Back: "Back",
     Loading: "Loading",
@@ -81,6 +87,11 @@ export const translations = {
             [Txt.Pause]: "Pause",
             [Txt.StartGame]: "Start Game",
             [Txt.Resume]: "Resume",
+            [Txt.Save]: "Save",
+            [Txt.Load]: "Load",
+
+            [Txt.SavedGame]: "Save",
+            [Txt.SaveSlotEmpty]: "Empty",
 
             [Txt.Settings]: "Settings",
             [Txt.Language]: "Language",
@@ -137,7 +148,12 @@ export const translations = {
             [Txt.Back]: "Назад",
             [Txt.SaveMenu]: "Сохранение",
             [Txt.MainMenu]: "Главное Меню",
+            [Txt.Load]: "Загрузить",
+            [Txt.Save]: "Сохранить",
             [Txt.HowToPlay]: "Как играть",
+
+            [Txt.SavedGame]: "Сохраненная игра",
+            [Txt.SaveSlotEmpty]: "Пусто",
 
             [Txt.Settings]: "Настройки",
             [Txt.StartGame]: "Начать игру",

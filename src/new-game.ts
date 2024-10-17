@@ -16,8 +16,7 @@ const preload = (scene: Phaser.Scene) => {
 const create = (scene: Phaser.Scene) => {
     createGameManagers(scene)
 
-    const saveData = o_.saves.getSaveData()
-    createSceneManagers(saveData)
+    createSceneManagers(o_.saves.getLatestSave())
 
     // new Gold({position: {x: 720, y: 1200}, amount: 1, location: GoldLocation.GROUND})
     // new Gold({position: {x: 740, y: 1200}, amount: 2, location: GoldLocation.GROUND})
