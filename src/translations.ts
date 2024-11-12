@@ -15,6 +15,8 @@ export const Txt = {
     No: "No",
     Yes: "Yes",
     Cancel: "Cancel",
+    Overwrite: "Overwrite",
+    Delete: "Delete",
 
     NewGame: "NewGame",
     StartNewGame: "StartNewGame",
@@ -39,6 +41,10 @@ export const Txt = {
     MainMenu: "MainMenu",
     Settings: "Settings",
     SaveMenu: "SaveMenu",
+    SaveMenuOverwrite: "SaveMenuOverwrite",
+    SaveWillBeOverwritten: "SaveWillBeOverwritten",
+    SaveDelete: "SaveDelete",
+    SaveWillBeDeleted: "SaveWillBeDeleted",
     HowToPlay: "HowToPlay",
 
     // lair
@@ -74,6 +80,9 @@ export const translations = {
             [Txt.Yes]: "Yes",
             [Txt.No]: "No",
             [Txt.Cancel]: "Cancel",
+            [Txt.Overwrite]: "Overwrite",
+            [Txt.Delete]: "Delete",
+
             [Txt.Empty]: "",
             [Txt.Loading]: "Loading",
             [Txt.NewGame]: "New game",
@@ -82,6 +91,10 @@ export const translations = {
             // menues
             [Txt.Back]: "Back",
             [Txt.SaveMenu]: "Save game",
+            [Txt.SaveMenuOverwrite]: "Overwrite save?",
+            [Txt.SaveWillBeOverwritten]: 'Save "{{save}}" will be overwritten',
+            [Txt.SaveDelete]: "Delete save?",
+            [Txt.SaveWillBeDeleted]: 'Save "{{save}}" will be deleted',
             [Txt.MainMenu]: "Main Menu",
             [Txt.HowToPlay]: "How to play",
             [Txt.Pause]: "Pause",
@@ -136,6 +149,8 @@ export const translations = {
             [Txt.Yes]: "Да",
             [Txt.No]: "Нет",
             [Txt.Cancel]: "Отмена",
+            [Txt.Overwrite]: "Перезаписать",
+            [Txt.Delete]: "Удалить",
 
             [Txt.Empty]: "",
             [Txt.Loading]: "Загрузка",
@@ -147,6 +162,10 @@ export const translations = {
             [Txt.Pause]: "Пауза",
             [Txt.Back]: "Назад",
             [Txt.SaveMenu]: "Сохранение",
+            [Txt.SaveMenuOverwrite]: "Перезаписать сохранение?",
+            [Txt.SaveWillBeOverwritten]: 'Сохранение "{{save}}" будет перезаписано',
+            [Txt.SaveDelete]: "Удалить сохранение?",
+            [Txt.SaveWillBeDeleted]: 'Сохранение "{{save}}" будет удалено',
             [Txt.MainMenu]: "Главное Меню",
             [Txt.Load]: "Загрузить",
             [Txt.Save]: "Сохранить",

@@ -1,8 +1,11 @@
 :root {
     --menu-min-width: 500px;
     --button-font-size: 1.5rem;
+    --button-font-size-small: 1.25rem;
 
     --TITLE_WIDTH: 300px; /* Arbitrary value for title width */
+    --SUBTITLE_WIDTH: 400px; /* Arbitrary value for subtitle width */
+
     --BUTTON_HIDE_TIME: 0.5s; /* Arbitrary value for button hide animation duration */
 
     --INTERFACE_Z: 99
@@ -18,6 +21,41 @@ button {
     outline: none;
     cursor: pointer;
     margin: 10px;
+}
+
+.button {
+    border: none;
+    background: none;
+    outline: none;
+    cursor: pointer;
+    margin: 10px;
+}
+
+.button {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 2rem;
+    border: none;
+    background: rgba(255, 255, 255, 0);
+    box-shadow: 0 0 10px 0 rgba(255, 255, 255, 1), inset 0 0 10px 0 rgba(255, 255, 255, 1);
+    font-weight: normal;
+    outline: 1px solid white;
+    padding: 8px 10px;
+    min-width: 70px;
+    max-width: var(--TITLE_WIDTH);
+    min-height: 40px;
+}
+
+.button:focus,
+.button:active {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.button:hover {
+    background: rgba(255, 255, 255, 0.2);
 }
 
 html {
@@ -257,13 +295,20 @@ canvas {
     justify-content: center;
 }
 
+.menu-subtitle {
+    width: var(--SUBTITLE_WIDTH);
+    color: #fff;
+    font-size: 1.5rem;
+    margin: 0 0 30px;
+    text-align: center;
+}
+
 .menu-button {
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: center;
     color: #fff;
-    text-transform: uppercase;
     font-size: 2rem;
     border: none;
     background: rgba(255, 255, 255, 0);
@@ -290,23 +335,78 @@ canvas {
     outline: 1px solid white;
 }
 
-.menu-button.focused {
-    color: #000;
-    background: rgba(255, 255, 255, 0.8);
+
+.save-menu {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    margin: 8vh auto 0;
+    padding: 0 5vh;
+    width: 100%;
 }
 
-.build-panel {
-    position: absolute;
+.save-file {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+
+    font-weight: normal;
+    margin: 0 15px 30px;
+
+    max-width: 100%;
+    min-height: 40px;
 }
 
-.build-panel__title {
+.save-file__main-content {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
 
+    color: #fff;
+    /*font-size: 2rem;*/
+    font-weight: normal;
+    padding: 8px 10px;
+
+    min-width: var(--TITLE_WIDTH);
+    border: none;
+    background: rgba(255, 255, 255, 0);
+    outline: 1px solid white;
+    box-shadow: 0 0 10px 0 rgba(255, 255, 255, 1), inset 0 0 10px 0 rgba(255, 255, 255, 1);
+    min-height: 40px;
+    cursor: pointer;
 }
 
-.build-panel__description {
-
+.save-file__main-content:hover {
+    background: rgba(255, 255, 255, 0.1);
 }
 
-.build-panel__cost {
+.save-file__index {
+    text-align: center;
+    margin-right: 10px;
+    font-size: var(--button-font-size);
+}
 
+.save-file__index:after {
+    content: '.';
+}
+
+.save-file__name {
+    text-align: left;
+    margin-right: 5px;
+    font-size: var(--button-font-size);
+}
+
+.save-file__timestamp {
+    flex: 1;
+    text-align: right;
+    font-size: var(--button-font-size-small);
+    white-space: nowrap;
+}
+
+.delete-icon:before {
+    content: '❌';
+    font-size: 1rem;
 }

@@ -67,7 +67,15 @@ export class SaveManager {
 
         savesList[slot] = saveData
 
-        localStorage.setItem(LS_KEY, JSON.stringify(saveData))
+        localStorage.setItem(LS_KEY, JSON.stringify(savesList))
+    }
+
+    delete(slot: number) {
+        const savesList = this.getSaves()
+
+        savesList[slot] = {isEmpty: true}
+
+        localStorage.setItem(LS_KEY, JSON.stringify(savesList))
     }
 
     cleanupSavesStorage() {
@@ -75,15 +83,19 @@ export class SaveManager {
     }
 
     getSaves(): SaveList {
+        const emptySavesList: SaveDataEmpty[] = Array.from({length: MAX_SAVES}, () => ({isEmpty: true}));
+
         const saveDataStr = localStorage.getItem(LS_KEY)
-        if (!saveDataStr) return []
+        if (!saveDataStr) return emptySavesList
 
         let savesList: SaveList
         try {
             savesList = JSON.parse(saveDataStr)
         } catch (e) {
-            return Array.from({length: MAX_SAVES}, () => ({isEmpty: true}))
+            return emptySavesList
         }
+
+        console.log("savesList", savesList)
 
         savesList = savesList.map(save => {
             if (SaveManager.isSaveEmpty(save)) return save
