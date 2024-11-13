@@ -1,10 +1,13 @@
 import {FC, PropsWithChildren} from "react";
+import {o_} from "../../../managers/locator";
+import {Txt} from "../../../translations";
 
 export const MenuTemplate: FC<PropsWithChildren<{
     title: string
     subtitle?: string
     isHorizontal?: boolean
-}>> = ({title, subtitle, isHorizontal, children}) => {
+    withBackButton?: boolean
+}>> = ({title, subtitle, isHorizontal, withBackButton, children}) => {
     let buttonsClass = 'menu-buttons'
     if (isHorizontal) buttonsClass += ' menu-buttons--horizontal'
 
@@ -15,6 +18,9 @@ export const MenuTemplate: FC<PropsWithChildren<{
         {subtitle && <div className="menu-subtitle">
             {subtitle}
         </div>}
+        {withBackButton &&
+            <div className="menu-button menu-button--short"
+                 onClick={() => o_.menu.closeMenu()}>{o_.texts.t(Txt.Back)}</div>}
         <div className={buttonsClass}>
             {children}
         </div>

@@ -8,19 +8,20 @@ import {format} from "date-fns";
 import {SaveData} from "../../../managers/save-manager";
 import {MenuButton} from "../components/menu-button";
 
-export const DeleteSaveAreYouSure: FC<{
-    saveFileToDelete: SaveData
-    onDelete: () => void
+export const LoadGameAreYouSure: FC<{
+    saveDataToLoad: SaveData
+    onLoad: () => void
 }> = ({
-          saveFileToDelete,
-          onDelete,
+          saveDataToLoad,
+          onLoad
       }) => {
+    const subtitle = o_.texts.t(Txt.LoadGameProgressWillBeLost);
     return <MenuTemplate
-        title={o_.texts.t(Txt.SaveDelete)}
-        subtitle={o_.texts.t(Txt.SaveWillBeDeleted, {save: format(new Date(saveFileToDelete._meta.timestamp), "yyyy-MM-dd HH:mm")})}
+        title={o_.texts.t(Txt.LoadMenu)}
+        subtitle={subtitle}
         isHorizontal
     >
-        <MenuButton onClick={onDelete} label={o_.texts.t(Txt.Delete)}/>
-        <MenuButton onClick={o_.menu.closeMenu} label={o_.texts.t(Txt.Cancel)}/>
+        <MenuButton onClick={onLoad} label={o_.texts.t(Txt.Yes)}/>
+        <MenuButton onClick={() => o_.menu.closeMenu()} label={o_.texts.t(Txt.Cancel)}/>
     </MenuTemplate>
 }

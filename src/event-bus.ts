@@ -2,7 +2,7 @@ import {CharKey, EncounterDanger, TrollLocation} from "./types";
 import {TrollFearLevel} from "./managers/game/troll/types";
 import {Settings} from "./managers/core/settings";
 import {PotState} from "./entities/buildings/pot";
-import {MenuScreen} from "./managers/core/menu";
+import {MenuParams, MenuScreen} from "./managers/core/menu";
 import {Vec} from "./utils/utils-math";
 import {GamePointerEvent} from "./managers/core/input/types";
 
@@ -96,7 +96,7 @@ export type EvtData = {
 
     [Evt.INTERFACE_MENU_OPENED]: undefined,
     [Evt.INTERFACE_MENU_CLOSED]: undefined,
-    [Evt.INTERFACE_MENU_SCREEN_CHANGED]: MenuScreen,
+    [Evt.INTERFACE_MENU_SCREEN_CHANGED]: [MenuScreen, MenuParams],
 
     [Evt.LANGUAGE_CHANGED]: undefined,
 

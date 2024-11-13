@@ -11,11 +11,18 @@ export enum MenuScreen {
     NEW_GAME = "NEW_GAME",
     GAME_OVER = "GAME_OVER",
     SAVE = "SAVE",
-    LOAD = "LOAD"
+    LOAD = "LOAD",
+    ARE_YOU_SURE_OVERWRITE = "ARE_YOU_SURE_OVERWRITE",
+    ARE_YOU_SURE_DELETE = "ARE_YOU_SURE_DELETE",
+    ARE_YOU_SURE_LOAD = "ARE_YOU_SURE_LOAD",
 }
 
+export type MenuParams = any;
+
+const NO_MENU = [undefined, undefined]
+
 export class MenuManager {
-    private menuStack: MenuScreen[] = []
+    private menuStack: [MenuScreen, MenuParams][] = []
 
     constructor() {
         o_.input.on(GAME_INPUT_EVENT, this.onGameInputEvent)
@@ -40,12 +47,12 @@ export class MenuManager {
     }
 
     get currentScreen() {
-        return this.menuStack[this.menuStack.length - 1]
+        return this.menuStack[this.menuStack.length - 1] || NO_MENU
     }
 
-    openMenu(menuScreen: MenuScreen) {
+    openMenu(menuScreen: MenuScreen, menuParams?: MenuParams) {
         const wasOpened = this.isOpened
-        this.menuStack.push(menuScreen)
+        this.menuStack.push([menuScreen, menuParams])
 
         if (!wasOpened && this.isOpened) {
             eventBus.emit(Evt.INTERFACE_MENU_OPENED)
@@ -54,7 +61,7 @@ export class MenuManager {
         eventBus.emit(Evt.INTERFACE_MENU_SCREEN_CHANGED, this.currentScreen)
     }
 
-    closeMenu() {
+    closeMenu = () => {
         if (!this.isOpened) return
 
         this.menuStack.pop()

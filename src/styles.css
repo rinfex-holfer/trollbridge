@@ -1,10 +1,13 @@
 :root {
     --menu-min-width: 500px;
-    --button-font-size: 1.5rem;
+    --button-font-size: 1.25rem;
     --button-font-size-small: 1.25rem;
 
     --TITLE_WIDTH: 300px; /* Arbitrary value for title width */
     --SUBTITLE_WIDTH: 400px; /* Arbitrary value for subtitle width */
+
+    --BUTTON_WIDTH: 400px; /* Arbitrary value for title width */
+    --BUTTON_WIDTH--SMALL: 200px; /* Arbitrary value for title width */
 
     --BUTTON_HIDE_TIME: 0.5s; /* Arbitrary value for button hide animation duration */
 
@@ -238,7 +241,7 @@ canvas {
 
 .title {
     font-size: 3rem;
-    margin: 2vh 0 10vh;
+    margin: 2vh 0 5vh;
     text-align: center;
     z-index: 1;
     color: #fff;
@@ -319,8 +322,14 @@ canvas {
     padding: 8px 10px;
     width: 100%;
     min-width: 70px;
-    max-width: var(--TITLE_WIDTH);
+    max-width: var(--BUTTON_WIDTH);
     min-height: 40px;
+    cursor: pointer;
+}
+
+.menu-button--short {
+    min-width: var(--BUTTON_WIDTH--SMALL);
+    width: auto;
 }
 
 .menuHorizontal .menu-button {
@@ -335,13 +344,16 @@ canvas {
     outline: 1px solid white;
 }
 
+.menu-button:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
 
 .save-menu {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     justify-content: center;
-    margin: 8vh auto 0;
+    margin: 4vh auto 0;
     padding: 0 5vh;
     width: 100%;
 }
@@ -370,12 +382,12 @@ canvas {
     font-weight: normal;
     padding: 8px 10px;
 
-    min-width: var(--TITLE_WIDTH);
+    min-width: var(--BUTTON_WIDTH);
     border: none;
     background: rgba(255, 255, 255, 0);
     outline: 1px solid white;
     box-shadow: 0 0 10px 0 rgba(255, 255, 255, 1), inset 0 0 10px 0 rgba(255, 255, 255, 1);
-    min-height: 40px;
+    min-height: 60px;
     cursor: pointer;
 }
 

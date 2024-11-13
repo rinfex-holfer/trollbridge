@@ -11,11 +11,9 @@ import {MenuButton} from "../components/menu-button";
 export const SaveMenuAreYouSure: FC<{
     saveFileToOverwrite: SaveData
     onOverwrite: () => void
-    onCancel: () => void
 }> = ({
           saveFileToOverwrite,
           onOverwrite,
-          onCancel
       }) => {
     const subtitle = o_.texts.t(Txt.SaveWillBeOverwritten, {save: format(new Date(saveFileToOverwrite._meta.timestamp), "yyyy-MM-dd HH:mm")});
     return <MenuTemplate
@@ -24,6 +22,6 @@ export const SaveMenuAreYouSure: FC<{
         isHorizontal
     >
         <MenuButton onClick={onOverwrite} label={o_.texts.t(Txt.Yes)}/>
-        <MenuButton onClick={onCancel} label={o_.texts.t(Txt.Cancel)}/>
+        <MenuButton onClick={() => o_.menu.closeMenu()} label={o_.texts.t(Txt.Cancel)}/>
     </MenuTemplate>
 }

@@ -45,6 +45,8 @@ export const Txt = {
     SaveWillBeOverwritten: "SaveWillBeOverwritten",
     SaveDelete: "SaveDelete",
     SaveWillBeDeleted: "SaveWillBeDeleted",
+    LoadMenu: "LoadMenu",
+    LoadGameProgressWillBeLost: "LoadGameProgressWillBeLost",
     HowToPlay: "HowToPlay",
 
     // lair
@@ -91,6 +93,8 @@ export const translations = {
             // menues
             [Txt.Back]: "Back",
             [Txt.SaveMenu]: "Save game",
+            [Txt.LoadMenu]: "Load game",
+            [Txt.LoadGameProgressWillBeLost]: "Are you sure? Unsaved progress will be lost",
             [Txt.SaveMenuOverwrite]: "Overwrite save?",
             [Txt.SaveWillBeOverwritten]: 'Save "{{save}}" will be overwritten',
             [Txt.SaveDelete]: "Delete save?",
@@ -103,7 +107,7 @@ export const translations = {
             [Txt.Save]: "Save",
             [Txt.Load]: "Load",
 
-            [Txt.SavedGame]: "Save",
+            [Txt.SavedGame]: "Saved game",
             [Txt.SaveSlotEmpty]: "Empty",
 
             [Txt.Settings]: "Settings",
@@ -161,7 +165,9 @@ export const translations = {
 
             [Txt.Pause]: "Пауза",
             [Txt.Back]: "Назад",
-            [Txt.SaveMenu]: "Сохранение",
+            [Txt.SaveMenu]: "Сохранить игру",
+            [Txt.LoadMenu]: "Загрузить игру",
+            [Txt.LoadGameProgressWillBeLost]: "Вы уверены? Не сохраненный прогресс будет потерян",
             [Txt.SaveMenuOverwrite]: "Перезаписать сохранение?",
             [Txt.SaveWillBeOverwritten]: 'Сохранение "{{save}}" будет перезаписано',
             [Txt.SaveDelete]: "Удалить сохранение?",
