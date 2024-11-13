@@ -1,14 +1,14 @@
-import {rnd} from "../../utils/utils-math";
-import {EncounterDanger, NegotiationsMessage, TrollLocation} from "../../types";
-import {eventBus, Evt} from "../../event-bus";
-import {positioner} from "./positioner";
-import {O_Container} from "../core/render/container";
-import {o_} from "../locator";
-import {onEncounterEnd, onEncounterStart} from "../../helpers";
-import {LayerKey} from "../core/layers";
-import {pause} from "../../utils/utils-async";
-import {trollConfig} from "../../configs/troll-config";
-import {NegotiationMenu} from "../../interface/negotiation-menu";
+import {GamePhase} from "./game-phase";
+import {eventBus, Evt} from "../event-bus";
+import {o_} from "../managers/locator";
+import {O_Container} from "../managers/core/render/container";
+import {positioner} from "../managers/game/positioner";
+import {LayerKey} from "../managers/core/layers";
+import {EncounterDanger, NegotiationsMessage} from "../types";
+import {pause} from "../utils/utils-async";
+import {NegotiationMenu} from "../interface/negotiation-menu";
+import {rnd} from "../utils/utils-math";
+import {trollConfig} from "../configs/troll-config";
 
 export const enum NegotiationsState {
     START = 'START',
@@ -25,60 +25,32 @@ const BUTTON_MARGIN = 30;
 
 const getButtonsRowWidth = (amount: number) => amount * BUTTON_WIDTH + (amount - 1) * BUTTON_MARGIN;
 
-export class Negotiations {
-    isNegotiationInProgress = false
+export class PhaseNegotiations extends GamePhase {
+
+    name = "talk"
+
+    container!: O_Container
+
     currentStateKey = NegotiationsState.END;
-    encounterState: any
+
     danger: EncounterDanger = EncounterDanger.NONE;
 
-    container: O_Container
+    encounterState: any
+
     travellersReadyToTalk = [] as string[];
 
-    constructor() {
-        eventBus.on(Evt.TROLL_LOCATION_CHANGED, (str) => this.onTrollLocationChange(str));
-        eventBus.on(Evt.CHAR_READY_TO_TALK, id => this.onTravellerReadyToTalk(id));
-        eventBus.on(Evt.TRAVELLERS_APPEAR, () => this.onTravellersAppear());
-
+    onStart() {
         const bridgePos = positioner.getBridgePosition()
         this.container = o_.render.createContainer(bridgePos.x + bridgePos.width / 2, bridgePos.y + bridgePos.height - 64)
         o_.layers.add(this.container, LayerKey.FIELD_BUTTONS)
-        o_.register.negotiations(this)
-    }
 
-    public getIsNegotiationsInProgress() {
-        return this.isNegotiationInProgress
-    }
+        eventBus.on(Evt.CHAR_READY_TO_TALK, id => this.onTravellerReadyToTalk(id));
 
-    onEncounterStart() {
-        this.isNegotiationInProgress = true
-        onEncounterStart()
-    }
+        o_.troll.goToBattlePosition()
+        o_.characters.setPrisonersInteractive(false)
+        o_.characters.travellersGoToTalk();
 
-    onTravellersAppear() {
-        if (o_.troll.location === TrollLocation.BRIDGE) {
-            this.onEncounterStart()
-        }
-    }
-
-    onTrollLocationChange(location: TrollLocation) {
-        if (
-            location === TrollLocation.BRIDGE &&
-            o_.characters.getNewTravellers().length
-        ) {
-            this.onEncounterStart()
-        }
-    }
-
-    onEncounterEnd() {
-        this.isNegotiationInProgress = false
-        this.encounterState = null
-        this.danger = EncounterDanger.NONE
-
-        this.negotiationMenu.hide()
-
-        o_.characters.letAllTravellersPass()
-
-        onEncounterEnd()
+        eventBus.emit(Evt.ENCOUNTER_STARTED);
     }
 
     onTravellerReadyToTalk(id: string) {
@@ -89,27 +61,6 @@ export class Negotiations {
             console.log('encounterLevel', o_.characters.encounterLevel, 'danger', o_.characters.getDangerKey())
             console.log('===========================')
             this.startNegotiations(o_.characters.getDangerKey());
-        }
-    }
-
-    startNegotiations(danger: EncounterDanger) {
-        if (o_.characters.isVigilante) {
-            this.currentStateKey = NegotiationsState.BATTLE
-            this.onStateChange()
-            return
-        }
-
-        this.danger = danger;
-        this.currentStateKey = NegotiationsState.START
-
-        const tree = o_.characters.isKing ? kingNegotiationTree : negotiationTree
-        this.encounterState = tree[this.currentStateKey]
-        this.onStateChange()
-
-        if (o_.characters.isKing) {
-            o_.characters.travellersSpeak('Прочь с пути, тролль!')
-        } else {
-            o_.characters.travellersSpeak(wordsOnStart[danger][100])
         }
     }
 
@@ -133,11 +84,12 @@ export class Negotiations {
                 })
                 break;
             case NegotiationsState.BATTLE:
-                this.isNegotiationInProgress = false
-                o_.battle.startBattle()
+                // TODO
+                // o_.battle.startBattle()
                 break;
             case NegotiationsState.END:
-                this.onEncounterEnd()
+                // TODO
+                // this.goToNextPhase()
                 break;
             case NegotiationsState.ALL_REFUSED:
             case NegotiationsState.PAY_REFUSED:
@@ -151,11 +103,6 @@ export class Negotiations {
     negotiationMenu = new NegotiationMenu([], (message: NegotiationsMessage) => this.onMessage(message))
 
     updateDialogButtons() {
-        if (!this.isNegotiationInProgress) {
-            this.negotiationMenu.hide()
-            return;
-        }
-
         this.negotiationMenu.hide().then(() => {
             const answers = this.getDialogVariants();
             const fullWidth = getButtonsRowWidth(answers.length)
@@ -185,6 +132,27 @@ export class Negotiations {
         //
         //     return b;
         // })
+    }
+
+    startNegotiations(danger: EncounterDanger) {
+        if (o_.characters.isVigilante) {
+            this.currentStateKey = NegotiationsState.BATTLE
+            this.onStateChange()
+            return
+        }
+
+        this.danger = danger;
+        this.currentStateKey = NegotiationsState.START
+
+        const tree = o_.characters.isKing ? kingNegotiationTree : negotiationTree
+        this.encounterState = tree[this.currentStateKey]
+        this.onStateChange()
+
+        if (o_.characters.isKing) {
+            o_.characters.travellersSpeak('Прочь с пути, тролль!')
+        } else {
+            o_.characters.travellersSpeak(wordsOnStart[danger][100])
+        }
     }
 
     getDialogVariants(): NegotiationsMessage[] {
@@ -243,6 +211,18 @@ export class Negotiations {
         this.encounterState = tree[this.currentStateKey];
 
         this.onStateChange(edges[edgeKey].text);
+    }
+
+    goToLairPhase = () => {
+
+    }
+
+    protected onEnd() {
+        this.encounterState = null
+
+        this.negotiationMenu.hide()
+
+        o_.characters.letAllTravellersPass()
     }
 }
 

@@ -11,7 +11,6 @@ import {LayersManager} from "./core/layers";
 import {ItemManager} from "./game/items";
 import {InteractionManager} from "./core/interaction";
 import {UpgradeManager} from "./game/upgrade";
-import {Negotiations} from "./game/negotiations";
 import {MusicManager} from "./core/music";
 import {CameraManager} from "./core/camera";
 import {SettingsManager} from "./core/settings";
@@ -31,7 +30,6 @@ class Locator {
     #_time: TimeManager | undefined
     #_game: GameManager | undefined
     #_battle: BattleManager | undefined
-    #_negotiations: Negotiations | undefined
     #_layers: LayersManager | undefined
     #_items: ItemManager | undefined
     #_interaction: InteractionManager | undefined
@@ -95,9 +93,6 @@ class Locator {
         },
         upgrade: (upgrade: UpgradeManager) => {
             this.#_upgrade = upgrade
-        },
-        negotiations: (negotiations: Negotiations) => {
-            this.#_negotiations = negotiations
         },
         camera: (camera: CameraManager) => {
             this.#_camera = camera
@@ -191,11 +186,6 @@ class Locator {
     get upgrade() {
         if (!this.#_upgrade) throw Error(Locator.crashStr('upgrade'))
         return this.#_upgrade
-    }
-
-    get negotiations() {
-        if (!this.#_negotiations) throw Error(Locator.crashStr('negotiations'))
-        return this.#_negotiations
     }
 
     get camera() {

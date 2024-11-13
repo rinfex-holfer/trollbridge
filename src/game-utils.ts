@@ -6,7 +6,6 @@ import {CharactersManager} from "./managers/game/characters";
 import {Lair} from "./managers/game/lair";
 import {BridgeManager} from "./managers/game/bridge";
 import {Ladder} from "./entities/buildings/ladder";
-import {Negotiations} from "./managers/game/negotiations";
 import {BattleManager} from "./managers/game/battle";
 import {Troll} from "./managers/game/troll/troll";
 import {GameManager} from "./managers/game/game-manager";
@@ -62,7 +61,6 @@ export const createSceneManagers = (saveData?: SaveData) => {
     new Lair(saveData)
     new BridgeManager()
     new Ladder()
-    new Negotiations()
     new BattleManager()
     new Troll()
 }

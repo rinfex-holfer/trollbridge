@@ -1,6 +1,6 @@
 import {o_} from "../managers/locator";
 import {TrollLocation} from "../types";
-import {Evt} from "../event-bus";
+import {eventBus, Evt} from "../event-bus";
 import {CancellablePromise, CANCELLED, createCancellablePromise} from "../utils/utils-async";
 import {GamePhase} from "./game-phase";
 import {PhaseLair} from "./phase-lair";
@@ -126,4 +126,25 @@ export class PhaseBridge extends GamePhase {
 
         this.goToNextPhase(new PhaseLair())
     }
+
+
+    // constructor() {
+    //     eventBus.on(Evt.TROLL_LOCATION_CHANGED, (str) => this.onTrollLocationChange(str));
+    //     eventBus.on(Evt.TRAVELLERS_APPEAR, () => this.onTravellersAppear());
+    // }
+    //
+    // onTravellersAppear() {
+    //     if (o_.troll.location === TrollLocation.BRIDGE) {
+    //         this.onEncounterStart()
+    //     }
+    // }
+    //
+    // onTrollLocationChange(location: TrollLocation) {
+    //     if (
+    //         location === TrollLocation.BRIDGE &&
+    //         o_.characters.getNewTravellers().length
+    //     ) {
+    //         this.onEncounterStart()
+    //     }
+    // }
 }
