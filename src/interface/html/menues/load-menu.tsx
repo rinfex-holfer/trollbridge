@@ -22,7 +22,10 @@ export const LoadMenu: FC = () => {
                     timestamp={dateStr}
                     onLoad={save.isEmpty ? undefined : () => {
                         o_.menu.openMenu(MenuScreen.ARE_YOU_SURE_LOAD, {
-                            onLoad: save
+                            saveFileToLoad: save,
+                            onLoad: () => {
+                                o_.saves.load(i);
+                            }
                         });
                     }}
                     onDelete={save.isEmpty ? undefined : () => {

@@ -41,6 +41,16 @@ export class ItemManager {
         }
     }
 
+    clear() {
+        this.getAll().forEach(entity => entity.destroy())
+        this.entities = {
+            [ItemType.MEAT]: [],
+            [ItemType.DISH]: [],
+            [ItemType.GOLD]: [],
+            [ItemType.ROCK]: [],
+        }
+    }
+
     private entityNextId = {
         [ItemType.MEAT]: 0,
         [ItemType.DISH]: 0,

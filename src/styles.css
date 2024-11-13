@@ -26,6 +26,10 @@ button {
     margin: 10px;
 }
 
+.invisible {
+    visibility: hidden;
+}
+
 .button {
     border: none;
     background: none;

@@ -6,10 +6,12 @@ import {BedData} from "../entities/buildings/bed";
 import {FoodStorageData} from "../entities/buildings/food-storage";
 import {ItemsData} from "./game/items";
 import {TreasuryData} from "../entities/buildings/treasury";
+import {nanoid} from "nanoid";
 
 const LS_KEY = "trbr_save"
+const LS_KEY_GAME_IN_PROGRESS = "trbr_game_in_progress"
 
-const gameVersion = "0.2.1"
+const gameVersion = "0.2.2"
 
 export type SaveData = {
     isEmpty: false
@@ -17,6 +19,7 @@ export type SaveData = {
     _meta: {
         gameVersion: typeof gameVersion
         timestamp: string
+        id: string
     }
 
     lair: {
@@ -45,13 +48,37 @@ export class SaveManager {
     }
 
     static isSaveEmpty = (save: SaveData | SaveDataEmpty): save is SaveDataEmpty => !!save.isEmpty
+    static isSaveNonEmpty = (save: SaveData | SaveDataEmpty): save is SaveData => !save.isEmpty
+
+    setGameInProgress(saveId: string | null) {
+        localStorage.setItem(LS_KEY_GAME_IN_PROGRESS, saveId || '')
+    }
+
+    getGameInProgress(): SaveData | null {
+        const saveId = localStorage.getItem(LS_KEY_GAME_IN_PROGRESS) || null
+        if (!saveId) return null
+
+        const savesList = this.getSaves()
+        const save = savesList.filter(SaveManager.isSaveNonEmpty).find(save => save._meta.id === saveId)
+        return save || null
+    }
+
+    load(slot: number) {
+        const savesList = this.getSaves()
+        const save = savesList[slot]
+        if (SaveManager.isSaveEmpty(save)) throw new Error("Save is empty")
+
+        this.setGameInProgress(save._meta.id)
+        window.location.reload()
+    }
 
     save(slot: number) {
         const saveData: SaveData = {
             isEmpty: false,
             _meta: {
                 gameVersion,
-                timestamp: (new Date()).toString()
+                timestamp: (new Date()).toString(),
+                id: nanoid(),
             },
             lair: {
                 chair: o_.lair.chair.getData(),
@@ -112,7 +139,7 @@ export class SaveManager {
 
     getLatestSave(): SaveData | undefined {
         const saves = this.getSaves()
-        const nonEmptySaves: SaveData[] = saves.filter((save): save is SaveData => !SaveManager.isSaveEmpty(save))
+        const nonEmptySaves: SaveData[] = saves.filter(SaveManager.isSaveNonEmpty)
         return nonEmptySaves
             .sort((a, b) => {
                 return new Date(b._meta.timestamp).getTime() - new Date(a._meta.timestamp).getTime()

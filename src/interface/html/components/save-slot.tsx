@@ -18,7 +18,8 @@ export const SaveSlot: FC<{
             </div>
             <div className="save-file__timestamp">{timestamp}</div>
         </div>
-        {onDelete &&
-            <button onClick={onDelete} className='button delete-icon'></button>}
+        {onDelete
+            ? <div onClick={onDelete} className='button delete-icon'></div>
+            : <div className='button delete-icon invisible'></div>}
     </div>
 }

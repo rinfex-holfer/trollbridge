@@ -16,14 +16,13 @@ const preload = (scene: Phaser.Scene) => {
 const create = (scene: Phaser.Scene) => {
     createGameManagers(scene)
 
-    createSceneManagers(o_.saves.getLatestSave())
-
-    // new Gold({position: {x: 720, y: 1200}, amount: 1, location: GoldLocation.GROUND})
-    // new Gold({position: {x: 740, y: 1200}, amount: 2, location: GoldLocation.GROUND})
-    // new Gold({position: {x: 760, y: 1200}, amount: 3, location: GoldLocation.GROUND})
-    // new Gold({position: {x: 780, y: 1200}, amount: 4, location: GoldLocation.GROUND})
-    // new Gold({position: {x: 700, y: 1200}, amount: 100, location: GoldLocation.GROUND})
-    // new Gold({position: {x: 800, y: 1200}, amount: 100, location: GoldLocation.GROUND})
+    const gameInProgress = o_.saves.getGameInProgress()
+    if (gameInProgress) {
+        o_.saves.setGameInProgress(null)
+        createSceneManagers(gameInProgress)
+    } else {
+        createSceneManagers(o_.saves.getLatestSave())
+    }
 
     scene.update = function (time, delta) {
         o_.time.onUpdate(delta);
