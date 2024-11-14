@@ -14,4 +14,8 @@ export class Environment {
         // this.bg.setHeight(size.height, true)
         // this.bg.obj.alpha = 0;
     }
+    
+    reset() {
+
+    }
 }

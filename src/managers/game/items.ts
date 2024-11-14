@@ -41,16 +41,6 @@ export class ItemManager {
         }
     }
 
-    clear() {
-        this.getAll().forEach(entity => entity.destroy())
-        this.entities = {
-            [ItemType.MEAT]: [],
-            [ItemType.DISH]: [],
-            [ItemType.GOLD]: [],
-            [ItemType.ROCK]: [],
-        }
-    }
-
     private entityNextId = {
         [ItemType.MEAT]: 0,
         [ItemType.DISH]: 0,
@@ -61,6 +51,10 @@ export class ItemManager {
     constructor(saveData?: SaveData) {
         o_.register.items(this)
 
+        this.initialize(saveData)
+    }
+
+    initialize(saveData?: SaveData) {
         this.entityNextId = {
             [ItemType.MEAT]: 0,
             [ItemType.DISH]: 0,
@@ -85,6 +79,11 @@ export class ItemManager {
         saveData?.items?.entities.DISH.forEach((data) => {
             new Dish(data) // it will register itself
         })
+    }
+
+    reset(data?: SaveData) {
+        this.getAll().forEach(entity => entity.destroy({silently: true}))
+        this.initialize(data)
     }
 
     public register<T extends ItemType>(itemType: T, item: ItemMap[T]) {

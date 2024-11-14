@@ -29,6 +29,7 @@ import {battleConfig} from "../../../configs/battle-config";
 import {TrollFearLevel} from "./types";
 import {TrollStateClimb} from "./troll-state-climb";
 import {TrollStateSit} from "./troll-state-sit";
+import {SaveData} from "../../save-manager";
 
 export class Troll {
 
@@ -70,7 +71,9 @@ export class Troll {
 
     grappleCooldown = 0
 
-    constructor() {
+    timeFearPassed = 0
+
+    constructor(saveData?: SaveData) {
         o_.register.troll(this)
 
         const pos = positioner.getTrollLairIdlePosition()
@@ -120,12 +123,11 @@ export class Troll {
 
         this.hpIndicator = new HpIndicator(this, -30, -100, 50, 10)
 
-        let time = 0
         eventBus.on(Evt.TIME_PASSED, () => {
-            time++
-            if (time > 1) {
+            this.timeFearPassed++
+            if (this.timeFearPassed > 1) {
                 if (this.fear > 0) this.changeFear(trollConfig.FEAR_CHANGES.DAY_PASSED)
-                time = 0
+                this.timeFearPassed = 0
             }
         });
 
@@ -154,6 +156,26 @@ export class Troll {
         debugExpose((val: number) => this.heal(val), 'heal')
 
         // o_.camera.followTroll(true);
+    }
+
+    initialize(saveData?: SaveData) {
+        this.level = 1
+        this.onNewLevel(false)
+        this.xp = 0
+        this.hp = this.maxHp
+        this.hunger = 0
+        this.selfControl = this.maxSelfControl
+        this.isEnraged = false
+        this.fear = 0
+
+        this.timeFearPassed = 0
+        this.setState(TrollStateKey.IDLE)
+        this.zzz.hide()
+        this.hpIndicator.hide()
+    }
+
+    reset(saveData?: SaveData) {
+        this.initialize(saveData)
     }
 
     setInitialSpriteOrigin() {

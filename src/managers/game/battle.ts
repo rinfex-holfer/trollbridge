@@ -12,6 +12,7 @@ import {MeatLocation} from "../../entities/items/meat/meat";
 import {GoldLocation} from "../../entities/items/gold";
 
 import {ItemType} from "../../entities/items/types";
+import {SaveData} from "../save-manager";
 
 export class BattleManager {
     unsub: any[] = []
@@ -308,5 +309,9 @@ export class BattleManager {
         if (defender.getIsAbleToFight()) allGoBack.push(defender.goToBattlePosition())
         allGoBack.push(o_.troll.goToBattlePosition())
         await Promise.all(allGoBack)
+    }
+
+    reset(saveData?: SaveData) {
+        // TODO
     }
 }

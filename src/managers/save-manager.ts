@@ -7,6 +7,7 @@ import {FoodStorageData} from "../entities/buildings/food-storage";
 import {ItemsData} from "./game/items";
 import {TreasuryData} from "../entities/buildings/treasury";
 import {nanoid} from "nanoid";
+import {resetSceneManagers} from "../game-utils";
 
 const LS_KEY = "trbr_save"
 const LS_KEY_GAME_IN_PROGRESS = "trbr_game_in_progress"
@@ -69,7 +70,7 @@ export class SaveManager {
         if (SaveManager.isSaveEmpty(save)) throw new Error("Save is empty")
 
         this.setGameInProgress(save._meta.id)
-        window.location.reload()
+        resetSceneManagers(save)
     }
 
     save(slot: number) {

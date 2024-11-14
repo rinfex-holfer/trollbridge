@@ -24,6 +24,7 @@ export const LoadMenu: FC = () => {
                         o_.menu.openMenu(MenuScreen.ARE_YOU_SURE_LOAD, {
                             saveFileToLoad: save,
                             onLoad: () => {
+                                o_.menu.closeAllMenues()
                                 o_.saves.load(i);
                             }
                         });

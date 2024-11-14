@@ -26,6 +26,7 @@ export class TrollStats {
     private fear: ProgressBar
 
     private xpMeter: XpMeter
+
     // private mightBar: ProgressBar
     // private wealthBar: ProgressBar
 

@@ -79,4 +79,8 @@ export class Tools {
     onClick = () => {
         eventBus.emit(Evt.INTERFACE_TOOLS_CLICKED)
     }
+
+    destroy() {
+        this.sprite.destroy()
+    }
 }

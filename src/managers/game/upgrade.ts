@@ -27,6 +27,11 @@ export class UpgradeManager {
         this.setButtonsShown(true)
     }
 
+    reset() {
+        this.components.forEach(c => c.destroy())
+        this.components = []
+    }
+
     public hideButtons() {
         if (!this.upgradeButtonsShown) return
 

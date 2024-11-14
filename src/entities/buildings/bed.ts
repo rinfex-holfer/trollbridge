@@ -32,6 +32,8 @@ export class Bed {
 
     private sleepButton: O_Sprite
 
+    isDestroyed = false
+
     get occupied() {
         return this._occupied
     }
@@ -96,6 +98,12 @@ export class Bed {
             () => effect.setActive(true),
             () => effect.setActive(false)
         )
+    }
+
+    destroy() {
+        this.sprite.destroy()
+        this.sleepButton.destroy()
+        this.isDestroyed = true
     }
 
     getData(): BedData {

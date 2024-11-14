@@ -47,6 +47,8 @@ export class FoodStorage {
 
     places: FoodPlace[] = []
 
+    isDestroyed = false
+
     constructor(props?: FoodStorageData) {
         this.id = createId('food_storage')
         this.position = positioner.getFoodStoragePosition()
@@ -81,6 +83,14 @@ export class FoodStorage {
                 this.placeFood(meat, false)
             }
         })
+    }
+
+    destroy() {
+        this.subscriptions.clear();
+        this.sprite1?.destroy()
+        this.sprite2?.destroy()
+        this.container.destroy()
+        this.isDestroyed = true
     }
 
     getTextKeys = () => {
@@ -211,13 +221,6 @@ export class FoodStorage {
 
     getNextPlace() {
         return this.places.find(p => p[1] === null)
-    }
-
-    destroy() {
-        this.subscriptions.clear();
-        this.sprite1?.destroy()
-        this.sprite2?.destroy()
-        this.container.destroy()
     }
 
     updateFood() {

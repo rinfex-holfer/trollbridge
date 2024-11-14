@@ -45,6 +45,10 @@ export class BridgeManager {
         // }, o_.texts.t(Txt.UpgradeBridge), goldConfig.costs.bridge_ornament, () => this.createStatues())
     }
 
+    reset() {
+        this.rockPlaces.forEach(p => p.repair())
+    }
+
     setInteractive = {
         all: (val: boolean) => {
             this.setInteractive.surface(val)

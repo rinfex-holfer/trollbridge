@@ -65,6 +65,16 @@ export const createSceneManagers = (saveData?: SaveData) => {
     new Troll()
 }
 
+export const resetSceneManagers = (saveData?: SaveData) => {
+    o_.items.reset(saveData)
+    o_.upgrade.reset()
+    o_.characters.reset(saveData)
+    o_.lair.reset(saveData)
+    o_.bridge.reset()
+    o_.battle.reset()
+    o_.troll.reset()
+}
+
 export const cleanupGameScene = () => {
     o_.lair.cleanup()
 }

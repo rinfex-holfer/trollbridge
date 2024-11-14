@@ -53,7 +53,7 @@ export abstract class BaseItem<T extends ItemType> implements Item<T> {
         return effect
     }
 
-    private _destroy = (options?: { silently?: false }) => {
+    private _destroy = (options?: { silently?: boolean }) => {
         if (this.destroyed) {
             console.warn("item is already destroyed: " + this.id)
             return
@@ -73,7 +73,7 @@ export abstract class BaseItem<T extends ItemType> implements Item<T> {
         }
     }
 
-    destroy(options?: { silently?: false }) {
+    destroy(options?: { silently?: boolean }) {
         return this._destroy(options)
     }
 

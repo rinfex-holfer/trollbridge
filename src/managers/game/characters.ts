@@ -15,6 +15,7 @@ import {TrollFearLevel} from "./troll/types";
 import {debugExpose} from "../../utils/utils-misc";
 
 import {ItemType} from "../../entities/items/types";
+import {SaveData} from "../save-manager";
 
 export class CharactersManager {
     chars: Char[] = []
@@ -53,6 +54,17 @@ export class CharactersManager {
         o_.register.characters(this);
 
         debugExpose((t: number) => this.planVigilante(t), 'planVigilante')
+    }
+
+    reset(saveData?: SaveData) {
+        this.chars.forEach(c => c.destroy())
+        this.chars = []
+        this.squad = new Squad([])
+        this.vigilanteTimeLeft = 0
+        this.vigilantePlanned = false
+        this.nextVigilanteEncounter = 0
+        this.isVigilante = false
+        this.isKing = false
     }
 
     onTrollLocationChanged(location: TrollLocation) {

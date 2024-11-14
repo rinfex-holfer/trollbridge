@@ -43,7 +43,7 @@ export class Lair {
         debugExpose(() => this, 'lair')
     }
 
-    load(saveData?: SaveData) {
+    reset(saveData?: SaveData) {
         this.cleanup()
         this.initialize(saveData)
     }
@@ -67,7 +67,12 @@ export class Lair {
     }
 
     cleanup() {
+        this.treasury.destroy();
+        this.foodStorage.destroy();
+        this.bed.destroy();
+        this.pot.destroy();
         this.chair.destroy();
+        this.tools.destroy();
     }
 
     setInteractive = {

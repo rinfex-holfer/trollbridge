@@ -45,6 +45,8 @@ export class Treasury {
         }
     }
 
+    isDestroyed = false
+
     constructor(props?: TreasuryData) {
         const position = positioner.getTreasuryPosition()
         this.sprite = o_.render.createSprite(this.getSpriteKey(), position.x, position.y)
@@ -259,5 +261,13 @@ export class Treasury {
         }
         this.cmp.treasury.amount -= amount
         this.onGoldChanged()
+    }
+
+    destroy() {
+        this.subs.clear()
+        this.sprite.destroy()
+        this.text.destroy()
+        this.goldSprite.destroy()
+        this.isDestroyed = true
     }
 }

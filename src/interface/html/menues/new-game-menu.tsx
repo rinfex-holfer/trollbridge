@@ -17,7 +17,7 @@ export const NewGameMenu: FC = () => {
                 console.log("onclick")
                 o_.menu.closeAllMenues()
                 o_.saves.cleanupSavesStorage()
-                o_.lair.load()
+                o_.lair.reset()
             }}/>
         <MenuButton
             onClick={() => o_.menu.closeMenu()}

@@ -348,4 +348,13 @@ export class Pot {
     onClick() {
         eventBus.emit(Evt.INTERFACE_POT_CLICKED, this.cmp.pot.state)
     }
+
+    destroy() {
+        this.sprite.destroy()
+        this.text.destroy()
+        this.unchooseAllFood()
+        this.stopChoosingFood()
+        this.removeDish()
+        this.subs.clear()
+    }
 }

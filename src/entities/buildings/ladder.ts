@@ -28,6 +28,10 @@ export class Ladder {
         this.spriteLeft.onClick(() => this.onClick())
     }
 
+    reset() {
+        this.setEnabled(false)
+    }
+
     setEnabled(val: boolean) {
         this.spriteLeft.setInteractive(val);
         this.spriteRight.setInteractive(val);

@@ -23,6 +23,7 @@ export type UpgradableComponent = UpgradableComponentData & {
     upgrade: () => void
     getData: () => UpgradableComponentData
     init: () => void
+    destroy: () => void
 }
 
 export type UpgradableComponentData = {
@@ -57,7 +58,7 @@ export const createUpgradableComponent = (
             const btn = new UpgradeButton((b: UpgradeButton) => {
                 o_.audio.playSound(SOUND_KEY.COLLECT)
                 o_.lair.treasury.removeGold(cmp().getUpgradeCost())
-                
+
                 o_.audio.playSound(SOUND_KEY.UPGRADE)
                 cmp().upgrade()
 
@@ -77,6 +78,11 @@ export const createUpgradableComponent = (
                 btn.destroy()
                 o_.upgrade.unregister(cmp())
             }
+        },
+
+        destroy: () => {
+            cmp().button?.destroy()
+            o_.upgrade.unregister(cmp())
         }
     }
 
