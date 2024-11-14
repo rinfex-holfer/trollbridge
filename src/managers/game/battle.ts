@@ -104,13 +104,13 @@ export class BattleManager {
         if (o_.characters.isVigilante) {
             o_.characters.getFighters()[0].say('Настал твой конец!')
             o_.characters.getFighters()[0].performFatality().then(() => {
-                o_.characters.letAllTravellersPass()
+                o_.characters.allTravelersGoAcrossBridge()
             })
             return
         }
 
         o_.characters.travellersTakeResourcesOnBridge().then(() => {
-            o_.characters.letAllTravellersPass()
+            o_.characters.allTravelersGoAcrossBridge()
             onEncounterEnd()
         })
     }

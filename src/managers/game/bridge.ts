@@ -19,6 +19,8 @@ export class BridgeManager {
 
     isWithStatues = false
 
+    statues: O_Sprite[] = []
+
     constructor() {
         this.pos = positioner.getBridgePosition();
         this.sprite = o_.render.createTiles('floor', this.pos.x, this.pos.y, this.pos.width, this.pos.height);
@@ -47,6 +49,7 @@ export class BridgeManager {
 
     reset() {
         this.rockPlaces.forEach(p => p.repair())
+        this.removeStatues()
     }
 
     setInteractive = {
@@ -128,7 +131,15 @@ export class BridgeManager {
         right1.flipX()
         right2.flipX()
 
+        this.statues.push(right1, right2)
+
         this.isWithStatues = true
+    }
+
+    removeStatues() {
+        this.statues.forEach(s => s.destroy())
+        this.statues = []
+        this.isWithStatues = false
     }
 }
 

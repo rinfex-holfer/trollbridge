@@ -7,6 +7,7 @@ import {PhaseLair} from "./phase-lair";
 import {TrollStateKey} from "../managers/game/troll/troll-state";
 import {Vec} from "../utils/utils-math";
 import {positioner} from "../managers/game/positioner";
+import {PhaseNegotiations} from "./phase-negotiations";
 
 export class PhaseBridge extends GamePhase {
 
@@ -22,18 +23,24 @@ export class PhaseBridge extends GamePhase {
     constructor(options?: { coord: Vec }) {
         super();
         console.log("PhaseBridge options", options)
-        this.initialDestination = options?.coord || positioner.getTrollBridgePosition()[0]
+        this.initialDestination = options?.coord || {...o_.troll.position}
     }
 
     onStart() {
         this.registerListener(Evt.INTERFACE_BRIDGE_CLICKED, (e) => this.trollGoesToBridge(e.event))
         this.registerListener(Evt.INTERFACE_LAIR_CLICKED, e => this.trollGoesToLair(e.event))
+        this.registerListener(Evt.TRAVELLERS_APPEAR, () => this.checkShouldStartNegotiation())
+        this.registerListener(Evt.TROLL_LOCATION_CHANGED, (str) => this.checkShouldStartNegotiation())
 
         o_.troll.setLocation(TrollLocation.BRIDGE);
         o_.camera.panToBridge()
         this.trollGoesToBridge(this.initialDestination)
 
         o_.items.getAllNonCombat().forEach(i => i.setInteractive(true))
+
+        o_.characters.allTravelersGoAcrossBridge()
+
+        this.checkShouldStartNegotiation()
     }
 
     onEnd() {
@@ -127,24 +134,12 @@ export class PhaseBridge extends GamePhase {
         this.goToNextPhase(new PhaseLair())
     }
 
-
-    // constructor() {
-    //     eventBus.on(Evt.TROLL_LOCATION_CHANGED, (str) => this.onTrollLocationChange(str));
-    //     eventBus.on(Evt.TRAVELLERS_APPEAR, () => this.onTravellersAppear());
-    // }
-    //
-    // onTravellersAppear() {
-    //     if (o_.troll.location === TrollLocation.BRIDGE) {
-    //         this.onEncounterStart()
-    //     }
-    // }
-    //
-    // onTrollLocationChange(location: TrollLocation) {
-    //     if (
-    //         location === TrollLocation.BRIDGE &&
-    //         o_.characters.getNewTravellers().length
-    //     ) {
-    //         this.onEncounterStart()
-    //     }
-    // }
+    checkShouldStartNegotiation() {
+        if (
+            o_.troll.location === TrollLocation.BRIDGE &&
+            o_.characters.getNewTravellers().length
+        ) {
+            this.goToNextPhase(new PhaseNegotiations())
+        }
+    }
 }

@@ -69,7 +69,7 @@ export class CharactersManager {
 
     onTrollLocationChanged(location: TrollLocation) {
         if (location === TrollLocation.LAIR) {
-            this.letAllTravellersPass();
+            this.allTravelersGoAcrossBridge();
         }
     }
 
@@ -96,17 +96,18 @@ export class CharactersManager {
             this.vigilanteTimeLeft--
             this.log('time till vigilante comes:', this.vigilanteTimeLeft)
             if (this.vigilanteTimeLeft <= 0) {
-                this.vigilantePlanned = false
-
-                const vigilanteEncounter = vigilanteEncounters[this.nextVigilanteEncounter++]
-                this.log('vigilante appears!')
-                this.encounterLevel = 999
-                this.isVigilante = true
-                this.createTravellers(vigilanteEncounter.enemies, CharBehavior.VIGILANTE)
-                o_.interaction.disableEverything()
-                o_.troll.goToBridge()
-                this.travellersSpeak(vigilanteEncounter.greetText || '')
-                return
+                throw Error('Vigilante TODO')
+                // this.vigilantePlanned = false
+                //
+                // const vigilanteEncounter = vigilanteEncounters[this.nextVigilanteEncounter++]
+                // this.log('vigilante appears!')
+                // this.encounterLevel = 999
+                // this.isVigilante = true
+                // this.createTravellers(vigilanteEncounter.enemies, CharBehavior.VIGILANTE)
+                // // o_.interaction.disableEverything()
+                // o_.troll.goToBridge()
+                // this.travellersSpeak(vigilanteEncounter.greetText || '')
+                // return
             }
         } else if (o_.troll.fearLevel === TrollFearLevel.HORRIFIC && vigilanteEncounters[this.nextVigilanteEncounter]) {
             this.log('check to plan vigilante')
@@ -301,7 +302,7 @@ export class CharactersManager {
         this.getTravellers().forEach(t => t.surrender());
     }
 
-    letAllTravellersPass() {
+    allTravelersGoAcrossBridge() {
         this.getTravellers().forEach(t => t.goAcrossBridge());
         // this.dangerIndicator.clearDanger();
     }
@@ -342,7 +343,7 @@ export class CharactersManager {
 
         o_.items
             .get(ItemType.MEAT)
-            .filter(m => m.location === MeatLocation.GROUND && !m.data.isStale && !m.data.isHuman)
+            .filter(m => m.data.location === MeatLocation.GROUND && !m.data.isStale && !m.data.isHuman)
             .forEach(m => {
                 promises.push(pause((start++) * 50).then(() => getRndItem(travellers).takeMeat(m)))
             })

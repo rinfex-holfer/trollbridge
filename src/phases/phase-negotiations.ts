@@ -9,6 +9,7 @@ import {pause} from "../utils/utils-async";
 import {NegotiationMenu} from "../interface/negotiation-menu";
 import {rnd} from "../utils/utils-math";
 import {trollConfig} from "../configs/troll-config";
+import {PhaseBridge} from "./phase-bridge";
 
 export const enum NegotiationsState {
     START = 'START',
@@ -88,8 +89,7 @@ export class PhaseNegotiations extends GamePhase {
                 // o_.battle.startBattle()
                 break;
             case NegotiationsState.END:
-                // TODO
-                // this.goToNextPhase()
+                this.goToNextPhase(new PhaseBridge())
                 break;
             case NegotiationsState.ALL_REFUSED:
             case NegotiationsState.PAY_REFUSED:
@@ -104,34 +104,13 @@ export class PhaseNegotiations extends GamePhase {
 
     updateDialogButtons() {
         this.negotiationMenu.hide().then(() => {
+            if (!this.encounterState) {
+                return;
+            }
+
             const answers = this.getDialogVariants();
-            const fullWidth = getButtonsRowWidth(answers.length)
-
-            let x = -fullWidth / 2
-
             this.negotiationMenu.show(answers)
         })
-
-
-        // this.buttons = answers.map((text, idx) => {
-        //     const b = new SimpleButton({
-        //         text,
-        //         onClick: () => this.onMessage(text),
-        //         style: {
-        //             align: 'center',
-        //             fill: colors.WHITE,
-        //             wordWrapWidth: BUTTON_WIDTH,
-        //             fontSize: 18,
-        //             wordWrap: true
-        //         },
-        //         x,
-        //         parent: this.container
-        //     })
-        //
-        //     x += (BUTTON_WIDTH + BUTTON_MARGIN);
-        //
-        //     return b;
-        // })
     }
 
     startNegotiations(danger: EncounterDanger) {
@@ -156,8 +135,7 @@ export class PhaseNegotiations extends GamePhase {
     }
 
     getDialogVariants(): NegotiationsMessage[] {
-        // @ts-ignore
-        return Object.keys(this.encounterState);
+        return Object.keys(this.encounterState) as NegotiationsMessage[];
     }
 
     onMessage(message: NegotiationsMessage) {
@@ -222,7 +200,7 @@ export class PhaseNegotiations extends GamePhase {
 
         this.negotiationMenu.hide()
 
-        o_.characters.letAllTravellersPass()
+        o_.characters.allTravelersGoAcrossBridge()
     }
 }
 
