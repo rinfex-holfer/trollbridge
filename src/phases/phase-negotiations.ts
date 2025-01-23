@@ -40,12 +40,27 @@ export class PhaseNegotiations extends GamePhase {
 
     travellersReadyToTalk = [] as string[];
 
+    _negotiationMenu: NegotiationMenu | undefined
+
+    get negotiationMenu() {
+        if (!this._negotiationMenu) {
+            throw Error('tried to access _negotiationMenu before Negotiation phase initialized')
+        }
+        return this._negotiationMenu
+    }
+
+    set negotiationMenu(menu: NegotiationMenu) {
+        this._negotiationMenu = menu
+    }
+
     onStart() {
+        console.log('PhaseNegotiations onStart')
+        this.negotiationMenu = new NegotiationMenu([], (message: NegotiationsMessage) => this.onMessage(message))
         const bridgePos = positioner.getBridgePosition()
         this.container = o_.render.createContainer(bridgePos.x + bridgePos.width / 2, bridgePos.y + bridgePos.height - 64)
         o_.layers.add(this.container, LayerKey.FIELD_BUTTONS)
 
-        eventBus.on(Evt.CHAR_READY_TO_TALK, id => this.onTravellerReadyToTalk(id));
+        this.registerListener(Evt.CHAR_READY_TO_TALK, id => this.onTravellerReadyToTalk(id));
 
         o_.troll.goToBattlePosition()
         o_.characters.setPrisonersInteractive(false)
@@ -58,9 +73,9 @@ export class PhaseNegotiations extends GamePhase {
         this.travellersReadyToTalk.push(id);
         if (this.travellersReadyToTalk.length === o_.characters.getTravellers().length) {
             this.travellersReadyToTalk = [];
-            console.log('===========================')
-            console.log('encounterLevel', o_.characters.encounterLevel, 'danger', o_.characters.getDangerKey())
-            console.log('===========================')
+            // console.log('===========================')
+            // console.log('encounterLevel', o_.characters.encounterLevel, 'danger', o_.characters.getDangerKey())
+            // console.log('===========================')
             this.startNegotiations(o_.characters.getDangerKey());
         }
     }
@@ -99,8 +114,6 @@ export class PhaseNegotiations extends GamePhase {
         if (travellersReaction) o_.characters.travellersSpeak(travellersReaction);
         this.updateDialogButtons();
     }
-
-    negotiationMenu = new NegotiationMenu([], (message: NegotiationsMessage) => this.onMessage(message))
 
     updateDialogButtons() {
         this.negotiationMenu.hide().then(() => {

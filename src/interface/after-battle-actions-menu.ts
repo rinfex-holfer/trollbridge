@@ -64,7 +64,7 @@ export class AfterBattleActionsMenu {
         const x = bridgePos.x + bridgePos.width / 4
 
         const a = Object.values(actionSpecs)
-        this.verticalMenu = new VerticalMenu(a, {x, y}, (key) => this.onButtonClick(key))
+        // this.verticalMenu = new VerticalMenu(a, {x, y}, (key) => this.onButtonClick(key))
     }
 
     onButtonClick(action: AfterBattleAction) {

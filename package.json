@@ -20,7 +20,7 @@
     "i18next": "^23.12.2",
     "nanoid": "^5.0.8",
     "npm": "^10.8.1",
-    "phaser": "^3.80.1",
+    "phaser": "^3.87.0",
     "phaser3-rex-plugins": "^1.80.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

@@ -40,16 +40,30 @@ const actionSpecs: { [action in NegotiationsMessage]?: NegotiationActionSpec } =
     },
 }
 
+let i = 0;
+
 export class NegotiationMenu {
-    verticalMenu!: VerticalMenu<NegotiationsMessage>
+    idx = i++
+
+    verticalMenu: VerticalMenu<NegotiationsMessage>
 
     actions = actionSpecs
 
     constructor(availableMessages: NegotiationsMessage[], private onClick: (message: NegotiationsMessage) => void) {
+        // // this.log('created')
         this.verticalMenu = this.createVerticalMenu(availableMessages)
     }
 
+    log = (...str: any[]) => {
+        console.log(`======== NegotiationMenu ${this.idx}`, ...str)
+    }
+
     createVerticalMenu(availableMessages: NegotiationsMessage[]) {
+        if (this.verticalMenu && !this.verticalMenu.isDestroyed) {
+            // this.log('destroying...')
+            this.verticalMenu.destroy()
+        }
+
         const bridgePos = positioner.getBridgePosition()
         const y = bridgePos.y + bridgePos.height / 2
         const x = bridgePos.x + bridgePos.width / 4
@@ -60,15 +74,18 @@ export class NegotiationMenu {
     }
 
     show(availableMessages: NegotiationsMessage[]) {
+        // this.log('show')
         this.createVerticalMenu(availableMessages)
         this.verticalMenu.updateButtons()
         this.verticalMenu.show()
     }
 
     hide() {
+        // this.log('hide')
         this.verticalMenu.deactivateAllButtons()
         return this.verticalMenu.hide().then(() => {
-            this.verticalMenu.container.destroy()
+            // this.log("destroying...")
+            this.verticalMenu.destroy()
         })
     }
 }

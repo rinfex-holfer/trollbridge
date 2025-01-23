@@ -62,6 +62,7 @@ export const createSceneManagers = (saveData?: SaveData) => {
     new BridgeManager()
     new Ladder()
     new BattleManager()
+
     new Troll()
 }
 

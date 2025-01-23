@@ -44,6 +44,7 @@ export class VerticalMenu<Keys extends string> {
     containerX: number
 
     constructor(private templates: BtnTemplate<Keys>[], center: Vec, private onClick: (key: Keys) => void) {
+        console.log('vertical menu created');
         const height = this.getMenuHeight()
         const y = center.y - height / 2
 
@@ -71,7 +72,7 @@ export class VerticalMenu<Keys extends string> {
                     parent: this.container
                 }
             )
-            sprite.setInteractive(true, {cursor: 'pointer'})
+            sprite.setInteractive(true)
             sprite.onPointerOver(() => {
                 if (this.selectedKey !== key) {
                     sprite.alpha = HOVER_ALPHA
@@ -213,7 +214,10 @@ export class VerticalMenu<Keys extends string> {
         }
     }
 
+    isDestroyed = false
+
     destroy() {
         this.container.destroy()
+        this.isDestroyed = true
     }
 }

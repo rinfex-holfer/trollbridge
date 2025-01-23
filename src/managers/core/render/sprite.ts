@@ -64,18 +64,18 @@ export class O_Sprite {
     }
 
     setInteractive(val: boolean) {
+        // if we call  disableInteractive() on Phaser Sprite that is already non-interactive
+        // it throws error
+        const needToUpdatePhaserSprite = val !== this.isInteractive
+
         this.isInteractive = val
 
         if (val) {
-            this.obj.setInteractive()
+            if (needToUpdatePhaserSprite) this.obj.setInteractive()
             if (this.isHovered) this.useCursor()
         } else {
             if (this.isHovered) this.stopUsingCursor()
-            try {
-                this.obj.disableInteractive()
-            } catch (e) {
-                console.error(e)
-            }
+            if (needToUpdatePhaserSprite) this.obj.disableInteractive()
         }
     }
 

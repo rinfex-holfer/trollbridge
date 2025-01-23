@@ -103,7 +103,7 @@ export class Treasury {
     }
 
     _canBeUpgraded = () => {
-        console.log('can be upgraded', this.cmp.upgradable.level < MAX_LEVEL, this.cmp.upgradable.level, MAX_LEVEL)
+        // console.log('can be upgraded', this.cmp.upgradable.level < MAX_LEVEL, this.cmp.upgradable.level, MAX_LEVEL)
         return this.cmp.upgradable.level < MAX_LEVEL
     }
 
