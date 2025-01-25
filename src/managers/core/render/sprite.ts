@@ -51,6 +51,10 @@ export class O_Sprite {
         return this.obj.getCenter(this.center, includeParent)
     }
 
+    setLockedToCamera(isLocked: boolean) {
+        this.obj.setScrollFactor(isLocked ? 0 : 1)
+    }
+
     setCursor = (cursor: CursorType) => {
         this.cursor = cursor
         if (this.isHovered) this.useCursor()

@@ -32,6 +32,7 @@ export class TrollStats {
 
     constructor(private troll: Troll) {
         this.container = o_.render.createContainer(X, Y)
+        this.container.setLockedToCamera(true)
         // this.xp = o_.render.createText('Опыт: ', 0, MARGIN*3, {}, {parent: this.container})
         // this.level = o_.render.createText('Уровень: ', 0, MARGIN*4, {}, {parent: this.container})
 
@@ -109,15 +110,6 @@ export class TrollStats {
     }
 
     public showNewAbility(ability: TrollAbility) {
-        switch (ability) {
-            case TrollAbility.THROW_ROCK:
-                break;
-            case TrollAbility.GRAPPLE:
-                break;
-            case TrollAbility.MAN_EATER:
-                break;
-        }
-
         const ICON_SIZE = 50
         const gameSize = getGameSize()
         const x = gameSize.width / 2
@@ -155,6 +147,10 @@ export class TrollStats {
             }
         })
         text.setOrigin(0.5, 0)
+
+        sprite.setLockedToCamera(true)
+        text.setLockedToCamera(true)
+
         o_.layers.add(sprite, LayerKey.FIELD_BUTTONS)
         o_.layers.add(text, LayerKey.FIELD_BUTTONS)
         setTimeout(() => {

@@ -43,6 +43,7 @@ export class XpMeter {
             withoutNumbers: true
         })
         this.xpContainer.alpha = 0
+        this.xpContainer.setLockedToCamera(true)
     }
 
     state: MeterState = MeterState.HIDDEN

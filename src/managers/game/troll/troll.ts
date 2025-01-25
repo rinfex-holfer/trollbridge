@@ -132,10 +132,6 @@ export class Troll {
         });
 
         eventBus.on(Evt.BATTLE_DEFEAT, () => this.changeFear(trollConfig.FEAR_CHANGES.DEFEAT));
-        eventBus.on(Evt.BATTLE_WON, d => {
-            if (d === EncounterDanger.LOW || d === EncounterDanger.NONE) return
-            this.changeFear(trollConfig.FEAR_CHANGES.VICTORY)
-        });
 
         eventBus.on(Evt.CHAR_DEVOURED, () => this.changeFear(trollConfig.FEAR_CHANGES.DEVOUR));
         eventBus.on(Evt.CHAR_DEVOURED_IN_BATTLE, () => this.changeFear(trollConfig.FEAR_CHANGES.DEVOUR));

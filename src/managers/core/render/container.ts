@@ -5,13 +5,17 @@ import Pointer = Phaser.Input.Pointer;
 export class O_Container {
     obj: Phaser.GameObjects.Container
 
-    constructor(private scene: Phaser.Scene, x: number, y: number, options?: {parent?: O_Container}) {
+    constructor(private scene: Phaser.Scene, x: number, y: number, options?: { parent?: O_Container }) {
         this.obj = new Phaser.GameObjects.Container(scene, x, y);
         if (options?.parent) {
             options.parent.add(this)
         } else {
             scene.add.existing(this.obj);
         }
+    }
+
+    setLockedToCamera(isLocked: boolean) {
+        this.obj.setScrollFactor(isLocked ? 0 : 1)
     }
 
     setInteractive(val: boolean, options?: any, options2?: any) {
@@ -51,20 +55,60 @@ export class O_Container {
         return {x: this.obj.x, y: this.obj.y}
     }
 
-    remove(child: O_GameObject) { this.obj.remove(child.obj) }
+    remove(child: O_GameObject) {
+        this.obj.remove(child.obj)
+    }
 
-    get x() { return this.obj.x }
-    set x(x) { this.obj.x = x }
-    get y() { return this.obj.y }
-    set y(y) { this.obj.y = y }
-    get height() {return this.obj.height }
-    get width() {return this.obj.width }
-    get alpha() { return this.obj.alpha }
-    set alpha(val: number) { this.obj.alpha = val }
-    setVisibility(val: boolean) { this.obj.visible = val; }
-    destroy() { this.obj.destroy() }
-    addPhysics() { this.scene.physics.add.existing(this.obj) }
+    get x() {
+        return this.obj.x
+    }
+
+    set x(x) {
+        this.obj.x = x
+    }
+
+    get y() {
+        return this.obj.y
+    }
+
+    set y(y) {
+        this.obj.y = y
+    }
+
+    get height() {
+        return this.obj.height
+    }
+
+    get width() {
+        return this.obj.width
+    }
+
+    get alpha() {
+        return this.obj.alpha
+    }
+
+    set alpha(val: number) {
+        this.obj.alpha = val
+    }
+
+    setVisibility(val: boolean) {
+        this.obj.visible = val;
+    }
+
+    destroy() {
+        this.obj.destroy()
+    }
+
+    addPhysics() {
+        this.scene.physics.add.existing(this.obj)
+    }
+
     // @ts-ignore
-    stop() { this.obj.body.stop() }
-    depthToY() { this.obj.depth = this.y }
+    stop() {
+        this.obj.body.stop()
+    }
+
+    depthToY() {
+        this.obj.depth = this.y
+    }
 }

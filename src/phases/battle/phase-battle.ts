@@ -10,6 +10,8 @@ import {TrollBattleAction, TrollBattleActions} from "./actions-battle";
 import {PhaseBridge} from "../phase-bridge";
 import {PhaseActionsAfterBattleWon} from "../phase-after-battle/phase-actions-after-battle-won";
 import {PhaseKeys} from "../domain";
+import {trollConfig} from "../../configs/troll-config";
+import {CharStateKey} from "../../entities/char/char-constants";
 
 export class PhaseBattle extends GamePhase {
 
@@ -18,6 +20,8 @@ export class PhaseBattle extends GamePhase {
     actionsMenu: BattleActionsMenu
 
     xpForBattle = 0
+
+    encounterDanger = o_.characters.getDangerKey()
 
     constructor() {
         super();
@@ -43,7 +47,7 @@ export class PhaseBattle extends GamePhase {
 
     protected onEnd() {
         eventBus.emit(Evt.BATTLE_END)
-        
+
         this.actionsMenu.hide()
 
         o_.troll.setEnraged(false)
@@ -112,7 +116,7 @@ export class PhaseBattle extends GamePhase {
     }
 
     fail() {
-        eventBus.emit(Evt.BATTLE_DEFEAT, EncounterDanger.NONE) // TODO danger level
+        eventBus.emit(Evt.BATTLE_DEFEAT, this.encounterDanger) // TODO danger level
 
         if (o_.characters.isVigilante) {
             o_.characters.getFighters()[0].say('Настал твой конец!')
@@ -129,7 +133,7 @@ export class PhaseBattle extends GamePhase {
     }
 
     win() {
-        eventBus.emit(Evt.BATTLE_WON, EncounterDanger.NONE) // TODO danger level
+        eventBus.emit(Evt.BATTLE_WON, this.encounterDanger)
 
         if (o_.characters.isKing) {
             // TODO win phase
@@ -137,8 +141,19 @@ export class PhaseBattle extends GamePhase {
             return
         }
 
+        if (this.encounterDanger !== EncounterDanger.LOW && this.encounterDanger !== EncounterDanger.NONE) {
+            o_.troll.changeFear(trollConfig.FEAR_CHANGES.VICTORY)
+        }
+
+        console.log(`add ${this.xpForBattle} XP for battle of danger ${this.encounterDanger}`)
         o_.troll.addXp(this.xpForBattle)
         this.xpForBattle = 0
+
+        o_.characters.getSquadChars().forEach(c => {
+            if (c.state.key === CharStateKey.UNCONSCIOUS) {
+                c.surrender(false)
+            }
+        })
 
         this.goToNextPhase(new PhaseActionsAfterBattleWon())
     }

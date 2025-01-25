@@ -19,8 +19,6 @@ export class CharStateUnconscious extends CharState {
 
         this.options = options
         this.turnsLeft = this.options.duration
-
-        this.subs.on(Evt.BATTLE_WON, () => this.char.surrender(false))
     }
 
     onStart() {

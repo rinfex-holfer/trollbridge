@@ -90,8 +90,8 @@ export class CharactersManager {
 
         const roll = rnd()
 
-        this.log('vigilantePlanned', this.vigilantePlanned)
-        this.log('vigilante may be planned', o_.troll.fearLevel === TrollFearLevel.HORRIFIC, vigilanteEncounters[this.nextVigilanteEncounter + 1])
+        // this.log('vigilantePlanned', this.vigilantePlanned)
+        // this.log('vigilante may be planned', o_.troll.fearLevel === TrollFearLevel.HORRIFIC, vigilanteEncounters[this.nextVigilanteEncounter + 1])
         if (this.vigilantePlanned) {
             this.vigilanteTimeLeft--
             this.log('time till vigilante comes:', this.vigilanteTimeLeft)

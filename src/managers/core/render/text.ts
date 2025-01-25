@@ -96,6 +96,10 @@ export class O_Text {
         this.obj.destroy()
     }
 
+    setLockedToCamera(isLocked: boolean) {
+        this.obj.setScrollFactor(isLocked ? 0 : 1)
+    }
+
     addPhysics() {
         this.scene.physics.add.existing(this.obj)
     }
