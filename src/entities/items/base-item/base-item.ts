@@ -1,12 +1,13 @@
 import {O_Sprite} from "../../../managers/core/render/sprite";
 import {EffectToTypeMap, EffectType} from "../../../effects/types";
 import {EntityEffect} from "../../../effects/entity-effect";
-import {eventBusSubscriptions} from "../../../event-bus";
+import {eventBus, eventBusSubscriptions, Evt} from "../../../event-bus";
 import {O_EventEmitter} from "../../../utils/utils-events";
 import {o_} from "../../../managers/locator";
-import {Item, ItemEventPayload, ItemEvents, ItemDataMap, ItemType} from "../types";
+import {Item, ItemDataMap, ItemEventPayload, ItemEvents, ItemType} from "../types";
 import {BaseItemEvent, BaseItemEventPayload} from "./types";
-import {EffectHighlight} from "../../../effects/highlight";
+
+export type BaseItemAny = BaseItem<ItemType>
 
 export abstract class BaseItem<T extends ItemType> implements Item<T> {
     abstract type: T
@@ -38,6 +39,10 @@ export abstract class BaseItem<T extends ItemType> implements Item<T> {
     deregister() {
         // @ts-ignore
         o_.items.deregister(this)
+    }
+
+    protected emitCreatedEvent() {
+        eventBus.emit(Evt.ITEM_CREATED, this.id)
     }
 
     public setInteractive(val: boolean) {

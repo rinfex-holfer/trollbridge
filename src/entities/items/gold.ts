@@ -57,9 +57,10 @@ export class Gold extends BaseItem<ItemType.GOLD> {
 
         this.updateLayer()
 
-        this.sprite.setInteractive(true)
         this.sprite.onClick(() => this.onClick())
         this.globalEventsSubscripions.on(Evt.TIME_PASSED, () => this.onTimePassed())
+
+        this.emitCreatedEvent();
     }
 
     private onClick() {

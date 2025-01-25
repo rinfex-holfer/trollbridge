@@ -8,10 +8,11 @@ import {Evt} from "../event-bus";
 import {Meat} from "../entities/items/meat/meat";
 
 import {ItemType} from "../entities/items/types";
+import {PhaseKeys} from "./domain";
 
 
 export class PhaseMakeFood extends GamePhase {
-    name = "cook"
+    name = PhaseKeys.MAKE_FOOD
     unsubFromRightClick = () => {
     }
 

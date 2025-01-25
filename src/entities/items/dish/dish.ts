@@ -66,6 +66,8 @@ export class Dish extends BaseItem<ItemType.DISH> {
         this.sprite.onRightClick(() => {
             this.eat()
         })
+
+        this.emitCreatedEvent();
     }
 
 

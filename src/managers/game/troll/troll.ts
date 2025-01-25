@@ -131,11 +131,6 @@ export class Troll {
             }
         });
 
-        eventBus.on(Evt.BATTLE_STARTED, () => this.hpIndicator.show());
-        eventBus.on(Evt.BATTLE_END, () => {
-            this.hpIndicator.hide()
-            this.resetCooldownds()
-        });
         eventBus.on(Evt.BATTLE_DEFEAT, () => this.changeFear(trollConfig.FEAR_CHANGES.DEFEAT));
         eventBus.on(Evt.BATTLE_WON, d => {
             if (d === EncounterDanger.LOW || d === EncounterDanger.NONE) return
@@ -156,6 +151,24 @@ export class Troll {
         debugExpose((val: number) => this.heal(val), 'heal')
 
         // o_.camera.followTroll(true);
+    }
+
+
+    isAlwaysShowHp = false
+
+    alwaysShowHp(lock: boolean) {
+        this.isAlwaysShowHp = lock
+        if (lock) {
+            this.setHpIndicatorVisible(true)
+        }
+    }
+
+    setHpIndicatorVisible(val: boolean) {
+        if (val) {
+            this.hpIndicator.show()
+        } else if (!this.isAlwaysShowHp) {
+            this.hpIndicator.hide()
+        }
     }
 
     initialize(saveData?: SaveData) {
@@ -328,7 +341,7 @@ export class Troll {
         val = Math.ceil(val)
         this.statusNotifications.showHeal(val)
         this.changeTrollHp(val)
-        this.hpIndicator.updateShowAndHide()
+        if (!this.isAlwaysShowHp) this.hpIndicator.updateShowAndHide()
     }
 
     fearLevel: TrollFearLevel = TrollFearLevel.UNPREDICTABLE

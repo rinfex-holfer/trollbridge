@@ -1,5 +1,8 @@
 import {eventBus, Evt, EvtData} from "../event-bus";
 import {createPromiseAndHandlers} from "../utils/utils-async";
+import {PhaseKey} from "./domain";
+import {BaseItem} from "../entities/items/base-item/base-item";
+import {ItemType} from "../entities/items/types";
 
 
 export abstract class GamePhase {
@@ -8,7 +11,7 @@ export abstract class GamePhase {
     private finishPhasePromise: Promise<GamePhase>
     protected goToNextPhase: (nextPhase: GamePhase) => void
 
-    abstract readonly name: string
+    abstract readonly name: PhaseKey
 
     constructor() {
         const {promise, done} = createPromiseAndHandlers<GamePhase>()

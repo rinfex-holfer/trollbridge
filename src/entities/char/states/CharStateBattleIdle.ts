@@ -5,6 +5,7 @@ export class CharStateBattleIdle extends CharState {
     key = CharStateKey.BATTLE_IDLE
 
     onStart() {
+        this.char.stop();
         this.char.setAnimation(CharAnimation.IDLE);
 
         this.char.hpIndicator.show()

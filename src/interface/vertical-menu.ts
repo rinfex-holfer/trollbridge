@@ -216,7 +216,12 @@ export class VerticalMenu<Keys extends string> {
 
     isDestroyed = false
 
-    destroy() {
+    destroy(withAnimation?: boolean): void {
+        if (withAnimation) {
+            this.hide().finally(() => this.destroy())
+            return
+        }
+
         this.container.destroy()
         this.isDestroyed = true
     }

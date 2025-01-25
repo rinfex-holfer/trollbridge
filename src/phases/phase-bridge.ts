@@ -8,10 +8,11 @@ import {TrollStateKey} from "../managers/game/troll/troll-state";
 import {Vec} from "../utils/utils-math";
 import {positioner} from "../managers/game/positioner";
 import {PhaseNegotiations} from "./phase-negotiations";
+import {PhaseKeys} from "./domain";
 
 export class PhaseBridge extends GamePhase {
 
-    name = "bridge"
+    name = PhaseKeys.BRIDGE
 
     activity?: {
         promise: CancellablePromise,

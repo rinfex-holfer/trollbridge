@@ -6,7 +6,7 @@ import {Char} from "../char";
 import {TrollLocation} from "../../../types";
 import {charTexts} from "../../../char-texts";
 
-type StateOptions = {duration: number, withAnimation?: boolean}
+type StateOptions = { duration: number, withAnimation?: boolean }
 
 export class CharStateUnconscious extends CharState {
     key = CharStateKey.UNCONSCIOUS
@@ -40,7 +40,7 @@ export class CharStateUnconscious extends CharState {
         }
 
 
-        if (o_.battle.isBattle && this.char.hp === 0) eventBus.emit(Evt.CHAR_DEFEATED, this.char.key)
+        if (o_.phase.getIsBattle() && this.char.hp === 0) eventBus.emit(Evt.CHAR_DEFEATED, this.char.key)
     }
 
     onEnd() {
@@ -62,7 +62,7 @@ export class CharStateUnconscious extends CharState {
     }
 
     wakeUp() {
-        if (o_.battle.isBattle) this.char.goToBattlePosition()
+        if (o_.phase.getIsBattle()) this.char.goToBattlePosition()
         else this.char.setState(CharStateKey.IDLE)
     }
 }

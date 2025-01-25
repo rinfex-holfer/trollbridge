@@ -10,6 +10,8 @@ import {NegotiationMenu} from "../interface/negotiation-menu";
 import {rnd} from "../utils/utils-math";
 import {trollConfig} from "../configs/troll-config";
 import {PhaseBridge} from "./phase-bridge";
+import {PhaseBattle} from "./battle/phase-battle";
+import {PhaseKeys} from "./domain";
 
 export const enum NegotiationsState {
     START = 'START',
@@ -28,7 +30,7 @@ const getButtonsRowWidth = (amount: number) => amount * BUTTON_WIDTH + (amount -
 
 export class PhaseNegotiations extends GamePhase {
 
-    name = "talk"
+    name = PhaseKeys.NEGOTIATIONS
 
     container!: O_Container
 
@@ -65,8 +67,6 @@ export class PhaseNegotiations extends GamePhase {
         o_.troll.goToBattlePosition()
         o_.characters.setPrisonersInteractive(false)
         o_.characters.travellersGoToTalk();
-
-        eventBus.emit(Evt.ENCOUNTER_STARTED);
     }
 
     onTravellerReadyToTalk(id: string) {
@@ -100,8 +100,7 @@ export class PhaseNegotiations extends GamePhase {
                 })
                 break;
             case NegotiationsState.BATTLE:
-                // TODO
-                // o_.battle.startBattle()
+                this.goToNextPhase(new PhaseBattle())
                 break;
             case NegotiationsState.END:
                 this.goToNextPhase(new PhaseBridge())
@@ -736,14 +735,14 @@ const negotiationTree: NegotiationTree = {
         },
     },
     [NegotiationsState.ALL_GIVEN]: {
-        // [NegotiationsMessage.TO_BATTLE]:   {
-        //     [EncounterDanger.IMPOSSIBLE]:   {default: {nextState: NegotiationsState.BATTLE, text: 'Тварь обезумела!'},},
-        //     [EncounterDanger.VERY_HIGH]:    {default: {nextState: NegotiationsState.BATTLE, text: 'Тварь обезумела!'},},
-        //     [EncounterDanger.HIGH]:         {default: {nextState: NegotiationsState.BATTLE, text: 'Тролль совсем обезумел!'},},
-        //     [EncounterDanger.MEDIUM]:       {default: {nextState: NegotiationsState.BATTLE, text: 'Что за коварство?!'},},
-        //     [EncounterDanger.LOW]:          {default: {nextState: NegotiationsState.BATTLE, text: 'Ты чего, тролль?!'},},
-        //     [EncounterDanger.NONE]:         {default: {nextState: NegotiationsState.BATTLE, text: 'Но почему?! За что?!'},},
-        // },
+        [NegotiationsMessage.TO_BATTLE]: {
+            [EncounterDanger.IMPOSSIBLE]: {default: {nextState: NegotiationsState.BATTLE, text: 'Тварь обезумела!'},},
+            [EncounterDanger.VERY_HIGH]: {default: {nextState: NegotiationsState.BATTLE, text: 'Тварь обезумела!'},},
+            [EncounterDanger.HIGH]: {default: {nextState: NegotiationsState.BATTLE, text: 'Тролль совсем обезумел!'},},
+            [EncounterDanger.MEDIUM]: {default: {nextState: NegotiationsState.BATTLE, text: 'Что за коварство?!'},},
+            [EncounterDanger.LOW]: {default: {nextState: NegotiationsState.BATTLE, text: 'Ты чего, тролль?!'},},
+            [EncounterDanger.NONE]: {default: {nextState: NegotiationsState.BATTLE, text: 'Но почему?! За что?!'},},
+        },
         [NegotiationsMessage.GO_IN_PEACE]: {
             [EncounterDanger.IMPOSSIBLE]: {default: {nextState: NegotiationsState.END, text: '...'},},
             [EncounterDanger.VERY_HIGH]: {default: {nextState: NegotiationsState.END, text: 'Твой счастливый день.'},},

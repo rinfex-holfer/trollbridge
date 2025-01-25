@@ -5,6 +5,8 @@ import {PotState} from "./entities/buildings/pot";
 import {MenuParams, MenuScreen} from "./managers/core/menu";
 import {Vec} from "./utils/utils-math";
 import {GamePointerEvent} from "./managers/core/input/types";
+import {ItemType} from "./entities/items/types";
+import {BaseItem, BaseItemAny} from "./entities/items/base-item/base-item";
 
 let nextId = 0;
 
@@ -59,11 +61,9 @@ export const enum Evt {
 
     TRAVELLERS_APPEAR = 'TRAVELLERS_APPEAR',
     ENCOUNTER_ENDED = 'ENCOUNTER_ENDED',
-    ENCOUNTER_STARTED = 'ENCOUNTER_STARTED',
     CHAR_LEFT_BRIDGE = 'CHAR_LEFT_BRIDGE',
     CHARS_PASSED_AFTER_ASKING = 'CHARS_PASSED_AFTER_ASKING',
     CHAR_READY_TO_TALK = 'CHAR_READY_TO_TALK',
-    TROLL_TURN_END = 'TROLL_TURN_END',
 
     FEAR_CHANGES = 'FEAR_CHANGES',
     VIGILANTE_PLANNED = 'VIGILANTE_PLANNED',
@@ -72,6 +72,8 @@ export const enum Evt {
     CHAR_DEVOURED_IN_BATTLE = 'CHAR_DEVOURED_IN_BATTLE',
     CHAR_DEVOURED = 'CHAR_DEVOURED',
     CHAR_TORN_APART = 'CHAR_TORN_APART',
+
+    ITEM_CREATED = 'ITEM_CREATED',
 }
 
 export type EvtData = {
@@ -109,12 +111,12 @@ export type EvtData = {
 
     [Evt.FOOD_PREPARATION_STARTED]: undefined,
 
-    [Evt.BATTLE_STARTED]: undefined,
     [Evt.BATTLE_TRAVELLERS_TURN_END]: undefined,
     [Evt.CHARS_PASSED_AFTER_ASKING]: undefined,
     [Evt.BATTLE_WON]: EncounterDanger,
     [Evt.BATTLE_DEFEAT]: EncounterDanger,
     [Evt.BATTLE_END]: undefined,
+    [Evt.BATTLE_STARTED]: undefined,
 
     [Evt.BYPASSED]: undefined,
     [Evt.TIME_PASSED]: number,
@@ -128,10 +130,8 @@ export type EvtData = {
     [Evt.TROLL_LOCATION_CHANGED]: TrollLocation,
     [Evt.TRAVELLERS_APPEAR]: undefined,
     [Evt.ENCOUNTER_ENDED]: undefined,
-    [Evt.ENCOUNTER_STARTED]: undefined,
     [Evt.CHAR_LEFT_BRIDGE]: string,
     [Evt.CHAR_READY_TO_TALK]: string,
-    [Evt.TROLL_TURN_END]: undefined,
 
     [Evt.FEAR_CHANGES]: TrollFearLevel,
     [Evt.VIGILANTE_PLANNED]: number,
@@ -140,6 +140,8 @@ export type EvtData = {
     [Evt.CHAR_DEVOURED_IN_BATTLE]: CharKey,
     [Evt.CHAR_DEVOURED]: CharKey,
     [Evt.CHAR_TORN_APART]: CharKey,
+
+    [Evt.ITEM_CREATED]: string
 }
 
 type Subscribers = {

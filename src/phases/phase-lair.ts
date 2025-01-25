@@ -10,10 +10,11 @@ import {PhaseBridge} from "./phase-bridge";
 import {TrollStateKey} from "../managers/game/troll/troll-state";
 import {Vec} from "../utils/utils-math";
 import {GamePointerEvent} from "../managers/core/input/types";
+import {PhaseKeys} from "./domain";
 
 export class PhaseLair extends GamePhase {
 
-    name = "lair"
+    name = PhaseKeys.LAIR
 
     activity?: {
         promise: CancellablePromise,

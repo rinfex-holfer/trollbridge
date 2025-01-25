@@ -31,6 +31,8 @@ export class Rock extends BaseItem<ItemType.ROCK> {
 
         // this.sprite.setWidth(32)
         this.updateLayer()
+
+        this.emitCreatedEvent();
     }
 
     private updateLayer() {

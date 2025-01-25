@@ -475,7 +475,7 @@ export class Char {
     }
 
     becomeDevoured() {
-        if (o_.battle.isBattle) {
+        if (o_.phase.getIsBattle()) {
             eventBus.emit(Evt.CHAR_DEVOURED_IN_BATTLE, this.key)
         } else {
             eventBus.emit(Evt.CHAR_DEVOURED, this.key)

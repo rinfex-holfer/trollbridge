@@ -92,6 +92,8 @@ export class Meat extends BaseItem<ItemType.MEAT> {
         }
 
         this.globalEventsSubscripions.on(Evt.TIME_PASSED, () => this.onTimePassed())
+
+        this.emitCreatedEvent();
     }
 
     private onClickDefault() {

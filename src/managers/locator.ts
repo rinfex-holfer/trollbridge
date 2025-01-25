@@ -6,7 +6,6 @@ import {Troll} from "./game/troll/troll";
 import {AudioManager} from "./core/audio";
 import {TimeManager} from "./core/time";
 import {GameManager} from "./game/game-manager";
-import {BattleManager} from "./game/battle";
 import {LayersManager} from "./core/layers";
 import {ItemManager} from "./game/items";
 import {InteractionManager} from "./core/interaction";
@@ -18,8 +17,10 @@ import {InputManager} from "./core/input";
 import {MenuManager} from "./core/menu";
 import {TextsManager} from "./core/texts";
 import {SaveManager} from "./save-manager";
+import {PhaseManager} from "./core/phase";
 
 class Locator {
+    #_phase: PhaseManager | undefined
     #_render: RenderManager | undefined
     #_characters: CharactersManager | undefined
     #_bridge: BridgeManager | undefined
@@ -29,7 +30,6 @@ class Locator {
     #_music: MusicManager | undefined
     #_time: TimeManager | undefined
     #_game: GameManager | undefined
-    #_battle: BattleManager | undefined
     #_layers: LayersManager | undefined
     #_items: ItemManager | undefined
     #_interaction: InteractionManager | undefined
@@ -46,6 +46,9 @@ class Locator {
     }
 
     register = {
+        phase: (phase: PhaseManager) => {
+            this.#_phase = phase
+        },
         render: (render: RenderManager) => {
             this.#_render = render
         },
@@ -72,9 +75,6 @@ class Locator {
         },
         game: (game: GameManager) => {
             this.#_game = game
-        },
-        battle: (battle: BattleManager) => {
-            this.#_battle = battle
         },
         layers: (layers: LayersManager) => {
             this.#_layers = layers
@@ -106,6 +106,11 @@ class Locator {
         texts: (textsManager: TextsManager) => {
             this.#_texts = textsManager
         }
+    }
+
+    get phase() {
+        if (!this.#_phase) throw Error(Locator.crashStr('phase'))
+        return this.#_phase;
     }
 
     get render() {
@@ -151,11 +156,6 @@ class Locator {
     get game() {
         if (!this.#_game) throw Error(Locator.crashStr('game'))
         return this.#_game
-    }
-
-    get battle() {
-        if (!this.#_battle) throw Error(Locator.crashStr('battle'))
-        return this.#_battle
     }
 
     get layers() {

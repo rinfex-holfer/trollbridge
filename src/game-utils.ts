@@ -6,7 +6,6 @@ import {CharactersManager} from "./managers/game/characters";
 import {Lair} from "./managers/game/lair";
 import {BridgeManager} from "./managers/game/bridge";
 import {Ladder} from "./entities/buildings/ladder";
-import {BattleManager} from "./managers/game/battle";
 import {Troll} from "./managers/game/troll/troll";
 import {GameManager} from "./managers/game/game-manager";
 import {InputManager} from "./managers/core/input";
@@ -23,6 +22,7 @@ import {Scene} from "phaser";
 import {o_} from "./managers/locator";
 import {TextsManager} from "./managers/core/texts";
 import {SettingsManager} from "./managers/core/settings";
+import {PhaseManager} from "./managers/core/phase";
 
 // managers that
 // - don't need re-instantiate and can be created once
@@ -43,6 +43,7 @@ export const createGameManagers = (scene: Scene) => {
     new TimeManager()
     new LayersManager(scene)
     new RenderManager(scene)
+    new PhaseManager()
 
     inputManager.initializeCursor()
 
@@ -61,7 +62,6 @@ export const createSceneManagers = (saveData?: SaveData) => {
     new Lair(saveData)
     new BridgeManager()
     new Ladder()
-    new BattleManager()
 
     new Troll()
 }
@@ -72,7 +72,6 @@ export const resetSceneManagers = (saveData?: SaveData) => {
     o_.characters.reset(saveData)
     o_.lair.reset(saveData)
     o_.bridge.reset()
-    o_.battle.reset()
     o_.troll.reset()
 }
 

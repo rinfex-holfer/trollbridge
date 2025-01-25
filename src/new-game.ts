@@ -1,7 +1,5 @@
 import Phaser from "phaser";
 import {getGameSize} from "./utils/utils-misc";
-import {Gold, GoldLocation} from "./entities/items/gold";
-import {gamePhaseCycle} from "./phases/game-phase-cycle";
 import {PhaseLair} from "./phases/phase-lair";
 import {GameLoader} from "./game-loader";
 import {outlinePipeline} from "./shaders/OutlinePipeline";
@@ -28,7 +26,7 @@ const create = (scene: Phaser.Scene) => {
         o_.time.onUpdate(delta);
     }
 
-    gamePhaseCycle(new PhaseLair())
+    o_.phase.runPhaseLoop(new PhaseLair())
 }
 
 export const newGame = () => {

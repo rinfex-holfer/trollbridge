@@ -2,11 +2,12 @@ import {GamePhase} from "./game-phase";
 import {PhaseLair} from "./phase-lair";
 import {eventBus, Evt} from "../event-bus";
 import {o_} from "../managers/locator";
+import {PhaseKeys} from "./domain";
 
 
 export class PhaseBuild extends GamePhase {
 
-    name = "build"
+    name = PhaseKeys.BUILD
 
     onStart() {
         o_.upgrade.showButtons(this.goToLairPhase)
