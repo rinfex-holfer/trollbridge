@@ -26,7 +26,7 @@ import {O_Container} from "../../managers/core/render/container";
 import {o_} from "../../managers/locator";
 import {LayerKey} from "../../managers/core/layers";
 import {Gold, GoldLocation} from "../items/gold";
-import {Meat, MeatLocation, meatSprite} from "../items/meat/meat";
+import {BodyPart, Meat, MeatLocation, meatSprite} from "../items/meat/meat";
 import {CharStateBattleGoDefend} from "./states/CharStateBattleGoDefend";
 import {CharStateGoToBattlePosition} from "./states/CharStateGoToBattlePosition";
 import {CharStateGoTo} from "./states/CharStateGoTo";
@@ -438,7 +438,8 @@ export class Char {
                     position: this.getCoords(),
                     location: MeatLocation.GROUND,
                     isHuman: true,
-                }, i < 2 ? meatSprite.HUMAN_LEG : meatSprite.HUMAN_HAND)
+                    bodyPart: i < 2 ? BodyPart.LEG : BodyPart.ARM,
+                })
             meat.throwTo(coord)
         }
     }

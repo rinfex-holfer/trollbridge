@@ -3,7 +3,6 @@ import {o_} from "../locator";
 import {Rect, rndBetween, Vec} from "../../utils/utils-math";
 import {Meat} from "../../entities/items/meat/meat";
 
-// TODO переделать мокап, чтобы логово было глубже под мостом
 const scenePositions = {
     bridge: {
         x: 400,
@@ -112,8 +111,8 @@ export const positioner = {
         let xRand = rndBetween(-30, 30)
         let yRand = rndBetween(-30, 30)
 
-        if (meat.data.isStale) xRand += 150
-        if (meat.data.isHuman) yRand -= 100
+        if (meat.data.isStale) xRand -= 150
+        if (meat.data.isHuman) yRand += 100
         return {x: foodStoragePos.x - 100 + xRand, y: foodStoragePos.y - 50 + yRand}
     },
 

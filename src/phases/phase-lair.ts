@@ -11,6 +11,8 @@ import {TrollStateKey} from "../managers/game/troll/troll-state";
 import {Vec} from "../utils/utils-math";
 import {GamePointerEvent} from "../managers/core/input/types";
 import {PhaseKeys} from "./domain";
+import {ItemType} from "../entities/items/types";
+import {Meat} from "../entities/items/meat/meat";
 
 export class PhaseLair extends GamePhase {
 
@@ -35,6 +37,11 @@ export class PhaseLair extends GamePhase {
         this.registerListener(Evt.INTERFACE_TOOLS_CLICKED, this.onToolsClicked)
         this.registerListener(Evt.INTERFACE_LAIR_CLICKED, (e) => this.onLairClicked(e.event))
         this.registerListener(Evt.INTERFACE_BRIDGE_CLICKED, (e) => this.trollGoesToBridge({coord: e.event}))
+
+        this.onNewItems({
+            [ItemType.MEAT]: (item: Meat) => item.setInteractive(true),
+            [ItemType.GOLD]: (item: Meat) => item.setInteractive(true),
+        })
 
         o_.troll.setLocation(TrollLocation.LAIR)
         o_.camera.panToLair()

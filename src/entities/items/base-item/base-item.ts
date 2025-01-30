@@ -42,7 +42,7 @@ export abstract class BaseItem<T extends ItemType> implements Item<T> {
     }
 
     protected emitCreatedEvent() {
-        eventBus.emit(Evt.ITEM_CREATED, this.id)
+        eventBus.emit(Evt.ITEM_CREATED, {type: this.type, id: this.id})
     }
 
     public setInteractive(val: boolean) {

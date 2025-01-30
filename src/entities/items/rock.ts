@@ -29,9 +29,7 @@ export class Rock extends BaseItem<ItemType.ROCK> {
             () => this.getEffect(EffectType.HIGHLIGHTED)?.setActive(false)
         )
 
-        // this.sprite.setWidth(32)
         this.updateLayer()
-
         this.emitCreatedEvent();
     }
 

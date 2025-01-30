@@ -2,7 +2,8 @@ import {eventBus, Evt, EvtData} from "../event-bus";
 import {createPromiseAndHandlers} from "../utils/utils-async";
 import {PhaseKey} from "./domain";
 import {BaseItem} from "../entities/items/base-item/base-item";
-import {ItemType} from "../entities/items/types";
+import {ItemMap, ItemType} from "../entities/items/types";
+import {o_} from "../managers/locator";
 
 
 export abstract class GamePhase {
@@ -17,6 +18,18 @@ export abstract class GamePhase {
         const {promise, done} = createPromiseAndHandlers<GamePhase>()
         this.finishPhasePromise = promise
         this.goToNextPhase = done
+    }
+
+    onNewItems = (config: Partial<Record<ItemType, (item: any) => void>>) => {
+        this.registerListener(Evt.ITEM_CREATED, ({type, id}) => {
+            const cb = config[type]
+            if (cb) {
+                const item = o_.items.get(type).find(i => i.id === id)
+                if (item) {
+                    cb(item)
+                }
+            }
+        });
     }
 
     pause = () => {

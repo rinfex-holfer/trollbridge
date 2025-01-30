@@ -9,6 +9,8 @@ import {Vec} from "../utils/utils-math";
 import {positioner} from "../managers/game/positioner";
 import {PhaseNegotiations} from "./phase-negotiations";
 import {PhaseKeys} from "./domain";
+import {ItemType} from "../entities/items/types";
+import {Meat} from "../entities/items/meat/meat";
 
 export class PhaseBridge extends GamePhase {
 
@@ -32,6 +34,11 @@ export class PhaseBridge extends GamePhase {
         this.registerListener(Evt.INTERFACE_LAIR_CLICKED, e => this.trollGoesToLair(e.event))
         this.registerListener(Evt.TRAVELLERS_APPEAR, () => this.checkShouldStartNegotiation())
         this.registerListener(Evt.TROLL_LOCATION_CHANGED, (str) => this.checkShouldStartNegotiation())
+
+        this.onNewItems({
+            [ItemType.MEAT]: (item: Meat) => item.setInteractive(true),
+            [ItemType.GOLD]: (item: Meat) => item.setInteractive(true),
+        })
 
         o_.troll.setLocation(TrollLocation.BRIDGE);
         o_.camera.panToBridge()

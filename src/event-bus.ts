@@ -141,7 +141,7 @@ export type EvtData = {
     [Evt.CHAR_DEVOURED]: CharKey,
     [Evt.CHAR_TORN_APART]: CharKey,
 
-    [Evt.ITEM_CREATED]: string
+    [Evt.ITEM_CREATED]: { type: ItemType, id: string }
 }
 
 type Subscribers = {

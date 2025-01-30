@@ -16,6 +16,7 @@ import {BaseItem} from "../base-item/base-item";
 import {ItemType} from "../types";
 import {MeatEvent} from "./meat-events";
 import {EffectHighlight} from "../../../effects/highlight";
+import {removeFromParentContainer} from "../../../utils/sprites";
 
 export const enum MeatLocation {
     GROUND = 'GROUND',
@@ -31,12 +32,18 @@ export const meatSprite = {
 
 export const MEAT_WIDTH = 50;
 
+export enum BodyPart {
+    ARM = 'arm',
+    LEG = 'leg',
+}
+
 export interface MeatData {
     isHuman: boolean,
     isStale: boolean,
     position: Vec,
     timePassed: number,
-    location: MeatLocation
+    location: MeatLocation,
+    bodyPart?: BodyPart
 }
 
 export class Meat extends BaseItem<ItemType.MEAT> {
@@ -55,13 +62,28 @@ export class Meat extends BaseItem<ItemType.MEAT> {
         timePassed: 0
     }
 
-    constructor(data: Partial<MeatData>, key: ImageKey = meatSprite.ANIMAL) {
+    constructor(data: Partial<MeatData>) {
         super()
         this.id = this.register()
 
         this.data = {
             ...this.data,
             ...data
+        }
+
+        let key: ImageKey
+        if (data.isHuman) {
+            if (!data.bodyPart) {
+                this.data.bodyPart = rnd2(BodyPart.ARM, BodyPart.LEG) as BodyPart;
+            }
+
+            if (this.data.bodyPart === BodyPart.ARM) {
+                key = meatSprite.HUMAN_HAND;
+            } else {
+                key = meatSprite.HUMAN_LEG;
+            }
+        } else {
+            key = meatSprite.ANIMAL;
         }
 
         this.sprite = o_.render.createSprite(key, this.data.position.x, this.data.position.y)
@@ -123,7 +145,7 @@ export class Meat extends BaseItem<ItemType.MEAT> {
                 }
                 break;
             case MeatLocation.STORAGE:
-                this.flyOnLairGround()
+                o_.lair.foodStorage.removeFood(this)
                 break;
             case MeatLocation.LAIR:
                 if (o_.lair.foodStorage.hasFreeSpace()) {
@@ -166,6 +188,10 @@ export class Meat extends BaseItem<ItemType.MEAT> {
         this.addEffect(new EffectRotten(this))
         this.data.isStale = true
         this.data.timePassed = 0
+
+        if (this.data.location === MeatLocation.LAIR) {
+            this.flyOnLairGround()
+        }
     }
 
     private onTimePassed() {
@@ -227,16 +253,11 @@ export class Meat extends BaseItem<ItemType.MEAT> {
         const effectRotten = this.getEffect(EffectType.ROTTEN)
         if (this.data.isStale && !!effectRotten) effectRotten.stopGas()
         if (this.data.location === MeatLocation.STORAGE && this.sprite.obj.parentContainer === o_.lair.foodStorage.container.obj) {
-            o_.lair.foodStorage.container.remove(this.sprite)
-            this.sprite.x += o_.lair.foodStorage.container.x
-            this.sprite.y += o_.lair.foodStorage.container.y
+            removeFromParentContainer(this.sprite)
+            o_.layers.add(this.sprite, LayerKey.FIELD_BUTTONS)
         }
 
-        console.log("flyTo 1")
         return o_.render.flyTo(this.sprite, pos, speed, maxDuration).then(() => {
-            console.log("flyTo then")
-            // console.log("finish", this)
-            // this.updateEmitters()
             if (this.data.isStale && !!effectRotten) effectRotten.startGas()
         });
     }
@@ -261,7 +282,8 @@ debugExpose((amount = 1) => {
             position: {x, y},
             location: MeatLocation.GROUND,
             isHuman: true,
-        }, rnd2(meatSprite.HUMAN_LEG, meatSprite.HUMAN_HAND))
+            bodyPart: rnd2(BodyPart.ARM, BodyPart.LEG)
+        })
         console.log(meat)
         return meat
     }

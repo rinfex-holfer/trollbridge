@@ -215,6 +215,17 @@ export class FoodStorage {
         o_.audio.playSound(SOUND_KEY.PICK_BIG)
     }
 
+    async removeFood(food: Meat, withEffects = true) {
+        const place = this.places.find(p => p[1] === food)
+        if (!place) return;
+
+        await food.flyTo(positioner.getRandomPlaceForMeat(food))
+        o_.audio.playSound(SOUND_KEY.BONK);
+        food.updateRealPosition()
+        food.setLocation(MeatLocation.LAIR)
+        this.updateFood()
+    }
+
     hasFreeSpace() {
         return !!this.getNextPlace()
     }
