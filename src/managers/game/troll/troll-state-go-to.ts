@@ -7,7 +7,7 @@ type GoToOptions = {
     target: Vec
     minDistance?: number
     speed?: number
-    turnToTarget?: boolean
+    directToTarget?: boolean
     onStart?: () => void
     onEnd?: () => void
     onReached?: () => void
@@ -29,7 +29,7 @@ export class TrollStateGoTo extends TrollState {
 
     onStart() {
         this.host.setAnimation(CharAnimation.WALK)
-        this.host.moveTowards(this.options.target.x, this.options.target.y)
+        this.host.moveTowards(this.options.target.x, this.options.target.y, this.options.directToTarget)
 
         this.options.onStart?.()
 
@@ -50,7 +50,7 @@ export class TrollStateGoTo extends TrollState {
     }
 
     update(dt: number) {
-        this.host.moveTowards(this.options.target.x, this.options.target.y)
+        this.host.moveTowards(this.options.target.x, this.options.target.y, this.options.directToTarget)
         this.checkDistance()
     }
 }

@@ -452,7 +452,6 @@ export class Troll {
     }
 
     goToBridge = (options: { coord: Vec }) => {
-        console.log("goToBridge", options)
         return this.setState(TrollStateKey.GO_TO, {target: options.coord})
     }
 
@@ -592,17 +591,13 @@ export class Troll {
             y: positioner.getLairTopWalkingY()
         }
 
-        return this.goTo(targetCoord)
+        return this.goTo(targetCoord, undefined, false)
     }
 
     async goToJumpPointFromBridge(targetOnLair: Vec) {
         this.directToTarget(targetOnLair)
 
         const distance = Math.abs(this.x - targetOnLair.x)
-
-        // if (distance < this.maxJumpXDistance) {
-        //     return Promise.resolve()
-        // }
 
         const furthestX = targetOnLair.x > this.x
             ? targetOnLair.x - this.maxJumpXDistance
@@ -612,7 +607,7 @@ export class Troll {
             x: distance <= this.maxJumpXDistance ? this.x : furthestX,
             y: positioner.getBridgeBottomWalkingY()
         }
-        return this.goTo(targetCoord)
+        return this.goTo(targetCoord, undefined, false)
     }
 
     async jumpToBridge(target: Vec) {
@@ -678,8 +673,8 @@ export class Troll {
         this.setState(TrollStateKey.SLEEP)
     }
 
-    goTo(target: Vec, minDistance?: number) {
-        return this.setState(TrollStateKey.GO_TO, {target, minDistance})
+    goTo(target: Vec, minDistance?: number, directToTarget = true) {
+        return this.setState(TrollStateKey.GO_TO, {target, minDistance, directToTarget})
     }
 
     async devour(id: string) {
@@ -770,7 +765,7 @@ export class Troll {
     rageStartCheck() {
         let chanceOfRage = (this.maxSelfControl - this.selfControl) / (100 * 2)
         const roll = rnd()
-        console.log('chance of rage', chanceOfRage, 'roll', roll, roll <= chanceOfRage)
+        // console.log('chance of rage', chanceOfRage, 'roll', roll, roll <= chanceOfRage)
         if (roll <= chanceOfRage) this.setEnraged(true)
     }
 
