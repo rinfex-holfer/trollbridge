@@ -121,7 +121,9 @@ export class PhaseBridge extends GamePhase {
         if (res === CANCELLED) return
     }
 
+    ignoresTravellers = false
     trollGoesToLair = async (coord: Vec) => {
+        this.ignoresTravellers = true
         o_.camera.panToLair()
 
         this.interfaceFor.goesToLair();
@@ -129,6 +131,7 @@ export class PhaseBridge extends GamePhase {
         const res2 = await this.setCurrentTrollActivity(() => o_.troll.goToJumpPointFromBridge(coord));
         if (res2 === "CANCELLED") {
             o_.camera.panToLair()
+            this.ignoresTravellers = false
             return
         }
 
@@ -137,18 +140,34 @@ export class PhaseBridge extends GamePhase {
         const res = await resPromise
         if (res === CANCELLED) {
             o_.camera.panToBridge()
+            this.ignoresTravellers = false
             return
         }
 
         this.goToNextPhase(new PhaseLair())
     }
 
+    onUpdate() {
+        this.checkShouldStartNegotiation()
+    }
+
+    travellersWalkedAwayIds = ''
+
     checkShouldStartNegotiation() {
-        if (
-            o_.troll.location === TrollLocation.BRIDGE &&
-            o_.characters.getNewTravellers().length
-        ) {
-            this.goToNextPhase(new PhaseNegotiations())
+        if (this.ignoresTravellers) return
+
+        const newTravellers = o_.characters.getNewTravellers();
+        const travellersId = newTravellers.map(t => t.id).join(', ');
+        if (o_.characters.getNewTravellers().length) {
+            if (o_.characters.canTravellersWalkAwayLol()) {
+                if (travellersId !== this.travellersWalkedAwayIds) {
+                    // don't send loling twice
+                    o_.characters.allTravelersWalkAwayLol()
+                    this.travellersWalkedAwayIds = travellersId
+                }
+            } else {
+                this.goToNextPhase(new PhaseNegotiations())
+            }
         }
     }
 }

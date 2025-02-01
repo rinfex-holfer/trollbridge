@@ -13,8 +13,8 @@ export const TimeOrder = [
 export const gameConstants = {
     //  ======================== CHARS ========================
     CHAR_SPEED: 100,
-    CHAR_FAST: 150,
-    CHAR_VERY_FAST: 250,
+    CHAR_FAST: 200,
+    CHAR_VERY_FAST: 300,
 
     horse: {
         speed: 500,

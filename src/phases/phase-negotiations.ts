@@ -153,8 +153,6 @@ export class PhaseNegotiations extends GamePhase {
     onMessage(message: NegotiationsMessage) {
         const roll = rnd() * 100;
 
-        console.log('onMessage roll', roll)
-
         if (!this.encounterState[message]) {
             throw Error('wrong message ' + message)
         }
@@ -181,8 +179,6 @@ export class PhaseNegotiations extends GamePhase {
 
         const fearBonus = o_.troll.fear * trollConfig.FEAR_FACTOR
 
-        console.log('edges', edges, edgeNumericKeys, 'fearBonus', fearBonus)
-
         let edgeKey: number | 'default' = 'default'
 
         for (let i = 0; i < edgeNumericKeys.length; i++) {
@@ -192,8 +188,6 @@ export class PhaseNegotiations extends GamePhase {
                 break;
             }
         }
-
-        console.log('new state key', edgeKey)
 
         this.currentStateKey = edges[edgeKey].nextState;
 
@@ -245,6 +239,27 @@ const wordsOnStart = {
     },
     [EncounterDanger.NONE]: {
         100: 'Кошмар... Это конец!'
+    },
+}
+
+export const wordsOnWalkAwayLol = {
+    [EncounterDanger.IMPOSSIBLE]: {
+        100: 'Что это за ничтожное создание там сзади?'
+    },
+    [EncounterDanger.VERY_HIGH]: {
+        100: 'Там позади вылез мерзкий тролль.'
+    },
+    [EncounterDanger.HIGH]: {
+        100: 'Смотри какое чудище.'
+    },
+    [EncounterDanger.MEDIUM]: {
+        100: 'Тролль прямо позади нас! Лучше уходить поскорее.'
+    },
+    [EncounterDanger.LOW]: {
+        100: 'Смотри, тролль! Убираемся!'
+    },
+    [EncounterDanger.NONE]: {
+        100: 'О господи! Бежим отсюда!'
     },
 }
 

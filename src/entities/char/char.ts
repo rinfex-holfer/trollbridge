@@ -1,4 +1,4 @@
-import {CharKey, ResourceKey, SquadPlace} from "../../types";
+import {CharKey, EncounterDanger, ResourceKey, SquadPlace} from "../../types";
 import {charConfig} from "../../configs/char-config";
 import {createId, stub} from "../../utils/utils-misc";
 import {CharState} from "./states/CharState";
@@ -476,6 +476,16 @@ export class Char {
         return this.setState(CharStateKey.SURRENDER, {goBack: !this.isUnconscious, showNotification});
     }
 
+    walkAwayLol(danger: EncounterDanger) {
+        if ([EncounterDanger.NONE, EncounterDanger.LOW].includes(danger)) {
+            this.speed = gameConstants.CHAR_VERY_FAST
+        } else if ([EncounterDanger.MEDIUM].includes(danger)) {
+            this.speed = gameConstants.CHAR_FAST
+        }
+
+        this.goAcrossBridge()
+    }
+
     becomeDevoured() {
         if (o_.phase.getIsBattle()) {
             eventBus.emit(Evt.CHAR_DEVOURED_IN_BATTLE, this.key)
@@ -519,7 +529,7 @@ export class Char {
     }
 
     goAcrossBridge() {
-        if (this.state.key !== CharStateKey.GO_ACROSS) return this.setState(CharStateKey.GO_ACROSS);
+        return this.setState(CharStateKey.GO_ACROSS);
     }
 
     release() {

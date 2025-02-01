@@ -32,6 +32,10 @@ export abstract class GamePhase {
         });
     }
 
+    onUpdate(dt: number) {
+        //
+    }
+
     pause = () => {
 
     }
@@ -45,12 +49,16 @@ export abstract class GamePhase {
         this.listeners.push([eventType, id])
     }
 
+    timeUnsub: number = -1
+
     run() {
         this.onStart()
+        this.timeUnsub = o_.time.sub(dt => this.onUpdate(dt))
         return this.finishPhasePromise;
     }
 
     end() {
+        o_.time.unsub(this.timeUnsub)
         this.listeners.forEach(listener => {
             eventBus.unsubscribe(listener[0], listener[1])
         })

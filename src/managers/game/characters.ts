@@ -16,6 +16,7 @@ import {debugExpose} from "../../utils/utils-misc";
 
 import {ItemType} from "../../entities/items/types";
 import {SaveData} from "../save-manager";
+import {wordsOnWalkAwayLol} from "../../phases/phase-negotiations";
 
 export class CharactersManager {
     chars: Char[] = []
@@ -300,6 +301,19 @@ export class CharactersManager {
 
     allSurrender() {
         this.getTravellers().forEach(t => t.surrender());
+    }
+
+    /**
+     *  when troll jumped behind them
+     */
+    canTravellersWalkAwayLol() {
+        return this.getNewTravellers().every(t => t.getCoords().x < o_.troll.getCoords().x)
+    }
+
+    allTravelersWalkAwayLol() {
+        const danger = this.getDangerKey();
+        this.getNewTravellers().forEach(t => t.walkAwayLol(danger))
+        this.travellersSpeak(getRndItem(Object.values(wordsOnWalkAwayLol[danger])))
     }
 
     allTravelersGoAcrossBridge() {
