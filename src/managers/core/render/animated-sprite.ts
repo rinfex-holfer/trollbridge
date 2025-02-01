@@ -2,6 +2,8 @@ import Phaser from "phaser";
 import {resoursePaths} from "../../../resourse-paths";
 import {O_Container} from "./container";
 import Pointer = Phaser.Input.Pointer;
+import {CursorType} from "../input/cursor";
+import {o_} from "../../locator";
 
 const animations: {
     [atlas: string]: {
@@ -56,6 +58,10 @@ export class O_AnimatedSprite {
 
     atlasKey: keyof typeof resoursePaths.atlases
 
+    cursor: CursorType = CursorType.DEFAULT
+    isInteractive = false
+    isHovered = false
+
     constructor(
         private scene: Phaser.Scene,
         options: {
@@ -76,6 +82,14 @@ export class O_AnimatedSprite {
         } else {
             this.scene.add.existing(this.obj)
         }
+
+        this.onHover(() => {
+            this.isHovered = true
+            this.useCursor()
+        }, () => {
+            this.isHovered = false
+            this.stopUsingCursor()
+        })
     }
 
     getBounds() {
@@ -99,9 +113,32 @@ export class O_AnimatedSprite {
         this.obj.setPosition(x, y);
     }
 
-    setInteractive(val: boolean, options?: any) {
-        if (val) this.obj.setInteractive(options)
-        else this.obj.disableInteractive()
+    setCursor = (cursor: CursorType) => {
+        this.cursor = cursor
+        if (this.isHovered) this.useCursor()
+    }
+
+    useCursor = () => {
+        o_.input.cursor.setCursor(this.cursor)
+    }
+    stopUsingCursor = () => {
+        o_.input.cursor.setDefaultCursor()
+    }
+
+    setInteractive(val: boolean) {
+        // if we call  disableInteractive() on Phaser Sprite that is already non-interactive
+        // it throws error
+        const needToUpdatePhaserSprite = val !== this.isInteractive
+
+        this.isInteractive = val
+
+        if (val) {
+            if (needToUpdatePhaserSprite) this.obj.setInteractive()
+            if (this.isHovered) this.useCursor()
+        } else {
+            if (this.isHovered) this.stopUsingCursor()
+            if (needToUpdatePhaserSprite) this.obj.disableInteractive()
+        }
     }
 
     leftClickCb: ((pointer: Pointer) => void) | null = null

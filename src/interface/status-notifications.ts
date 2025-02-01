@@ -57,7 +57,7 @@ export class StatusNotifications {
         })
         text.setOrigin(0, 0.5)
 
-        bg.setWidth(getNotificationWidth(text.width), true)
+        bg.setWidth(getNotificationWidth(text.width), false)
 
         this.notifications.push(notification)
 

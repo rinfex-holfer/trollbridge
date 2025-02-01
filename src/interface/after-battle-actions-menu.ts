@@ -4,6 +4,7 @@ import {positioner} from "../managers/game/positioner";
 import {VerticalMenu} from "./vertical-menu";
 import {AfterBattleTrollActionS} from "../phases/phase-after-battle/actions-after-battle";
 import {PhaseActionsAfterBattleWon} from "../phases/phase-after-battle/phase-actions-after-battle-won";
+import {CursorType} from "../managers/core/input/cursor";
 
 export class AfterBattleActionsMenu {
     verticalMenu: VerticalMenu<AfterBattleAction>
@@ -31,10 +32,10 @@ export class AfterBattleActionsMenu {
                 c.onSpriteClicked(char => {
                     this.phase.executeAction(action, char)
                 })
-                c.setCursor('pointer')
+                c.setCursor(CursorType.POINTER)
             } else {
                 c.sprite.removeClickListener()
-                c.setCursor('not-allowed')
+                c.setCursor(CursorType.BUILD_NOT_ALLOWED)
             }
         })
     }

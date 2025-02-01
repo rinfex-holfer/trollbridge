@@ -39,6 +39,7 @@ import {Squad} from "../../managers/game/squad";
 import {StatusNotifications} from "../../interface/status-notifications";
 import {positioner} from "../../managers/game/positioner";
 import {trollConfig} from "../../configs/troll-config";
+import {CursorType} from "../../managers/core/input/cursor";
 
 export enum CharBehavior {
     COMMON = 'COMMON',
@@ -294,11 +295,11 @@ export class Char {
         this.sprite.onClick(() => cb(this))
     }
 
-    setCursor(cursor: string) {
+    setCursor(cursor: CursorType) {
         // this.sprite.setInteractive(false)
         // this.sprite.setInteractive(true, {cursor})
-        if (!this.sprite.obj.input) this.sprite.setInteractive(true, {cursor})
-        else this.sprite.obj.input.cursor = cursor
+        this.sprite.setInteractive(true)
+        this.sprite.setCursor(cursor)
     }
 
     onSpritePointerOver(cb: (char: Char) => void) {

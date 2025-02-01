@@ -11,7 +11,7 @@ export enum CursorType {
     POINTER = 'pointer',
     BUILD = 'build',
     ATTACK = 'attack',
-    NOT_ALLOWED = 'not_allowed',
+    BUILD_NOT_ALLOWED = 'build_not_allowed',
     WAIT = 'wait',
     SLEEP = 'sleep',
 }
@@ -21,7 +21,7 @@ export const CursorImgMap: Record<CursorType, { img: ImageKey, options?: { origi
     [CursorType.POINTER]: {img: "cursor_default"},
     [CursorType.BUILD]: {img: "cursor_build"},
     [CursorType.ATTACK]: {img: "cursor_attack"},
-    [CursorType.NOT_ALLOWED]: {img: "cursor_not_allowed"},
+    [CursorType.BUILD_NOT_ALLOWED]: {img: "cursor_not_allowed"},
     [CursorType.WAIT]: {img: "cursor_wait", options: {origin: {x: 0.5, y: 0.5}}},
     [CursorType.SLEEP]: {img: "cursor_sleep", options: {origin: {x: 0.5, y: 0.5}}},
 } as const

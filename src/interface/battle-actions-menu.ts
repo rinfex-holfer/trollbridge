@@ -2,7 +2,8 @@ import {o_} from "../managers/locator";
 import {positioner} from "../managers/game/positioner";
 import {VerticalMenu} from "./vertical-menu";
 import {PhaseBattle} from "../phases/battle/phase-battle";
-import {TrollBattleActions, TrollBattleAction} from "../phases/battle/actions-battle";
+import {TrollBattleAction, TrollBattleActions} from "../phases/battle/actions-battle";
+import {CursorType} from "../managers/core/input/cursor";
 
 export class BattleActionsMenu {
     verticalMenu!: VerticalMenu<TrollBattleAction>
@@ -37,10 +38,10 @@ export class BattleActionsMenu {
                     this.verticalMenu.selectButton(null)
                     this.battle.executeTrollBattleAction(action, char)
                 })
-                c.setCursor('pointer')
+                c.setCursor(CursorType.ATTACK)
             } else {
                 c.sprite.removeClickListener()
-                c.setCursor('not-allowed')
+                c.setCursor(CursorType.BUILD_NOT_ALLOWED)
             }
         })
     }
@@ -57,6 +58,9 @@ export class BattleActionsMenu {
             this.verticalMenu.destroy()
         })
 
-        o_.characters.getSquadChars().forEach(c => c.sprite.removeClickListener())
+        o_.characters.getSquadChars().forEach(c => {
+            c.setCursor(CursorType.DEFAULT)
+            c.sprite.removeClickListener()
+        })
     }
 }

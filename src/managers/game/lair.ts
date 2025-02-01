@@ -97,6 +97,7 @@ export class Lair {
         },
         allButComplexStuff: () => {
             this.setInteractive.all(true)
+            this.setInteractive.foodStorage(false)
             this.setInteractive.tools(false)
             this.setInteractive.pot(false)
         }

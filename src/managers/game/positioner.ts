@@ -37,6 +37,14 @@ export const positioner = {
         }
     },
 
+    getLairTopWalkingY() {
+        return scenePositions.lairPosition.y + 30
+    },
+
+    getBridgeBottomWalkingY() {
+        return scenePositions.bridge.y + scenePositions.bridge.height - 30
+    },
+
     getLadderBounds(): [left: Rect, right: Rect] {
         const lairPos = positioner.getLairPosition();
         const width = 150
@@ -133,13 +141,25 @@ export const positioner = {
         }
     },
 
-    getTrollLairIdlePosition() {
-        const pos = positioner.getLairPosition();
+    getTrollLairIdlePosition(part?: 'left' | 'right') {
+        const lairPos = positioner.getLairPosition();
+
+        if (part === 'left') return {
+            x: lairPos.x + lairPos.width / 2 - 250,
+            y: lairPos.y + lairPos.height / 2 + 100
+        }
+
+        if (part === 'right') return {
+            x: lairPos.x + lairPos.width / 2 + 150,
+            y: lairPos.y + lairPos.height / 2 + 100
+        }
+
         return {
-            x: pos.x + pos.width / 2 + 150,
-            y: pos.y + pos.height / 2 + 100
+            x: lairPos.x + lairPos.width / 2 + 150,
+            y: lairPos.y + lairPos.height / 2 + 100
         }
     },
+
 
     getTrollBridgePosition() {
         const bridgePos = scenePositions.bridge
@@ -147,7 +167,7 @@ export const positioner = {
         const marginX = 200
         return [
             {x: bridgePos.x + marginX, y},
-            {x: bridgePos.x - bridgePos.width - marginX, y}
+            {x: bridgePos.x + bridgePos.width - marginX, y}
         ]
     },
 }

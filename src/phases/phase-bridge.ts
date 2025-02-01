@@ -92,6 +92,10 @@ export class PhaseBridge extends GamePhase {
             o_.lair.setInteractive.all(false)
             o_.bridge.setInteractive.all(false)
         },
+        jumpToLair: () => {
+            o_.lair.setInteractive.all(false)
+            o_.bridge.setInteractive.all(false)
+        },
         climbToLair: () => {
             o_.lair.setInteractive.all(false)
             o_.bridge.setInteractive.all(false)
@@ -104,12 +108,12 @@ export class PhaseBridge extends GamePhase {
     }
 
     trollGoesToBridge = async (coord: Vec) => {
-        if (o_.troll.currentStateKey === TrollStateKey.CLIMB) {
-            let resPromise = this.setCurrentTrollActivity(() => o_.troll.climbLadder('up'))
-            this.interfaceFor.climbsFromLair()
-            const res = await resPromise
-            if (res === CANCELLED) return
-        }
+        // if (o_.troll.currentStateKey === TrollStateKey.CLIMB) {
+        //     let resPromise = this.setCurrentTrollActivity(() => o_.troll.climbLadder('up'))
+        //     this.interfaceFor.climbsFromLair()
+        //     const res = await resPromise
+        //     if (res === CANCELLED) return
+        // }
 
         const resPromise = this.setCurrentTrollActivity(() => o_.troll.goToBridge({coord}))
         this.interfaceFor.idleOnBridge()
@@ -120,19 +124,16 @@ export class PhaseBridge extends GamePhase {
     trollGoesToLair = async (coord: Vec) => {
         o_.camera.panToLair()
 
-        if (o_.troll.currentStateKey !== TrollStateKey.CLIMB) {
-            this.interfaceFor.goesToLair();
+        this.interfaceFor.goesToLair();
 
-            const res = await this.setCurrentTrollActivity(() => o_.troll.goToLadder('closest'));
-
-            if (res === CANCELLED) {
-                o_.camera.panToBridge()
-                return
-            }
+        const res2 = await this.setCurrentTrollActivity(() => o_.troll.goToJumpPointFromBridge(coord));
+        if (res2 === "CANCELLED") {
+            o_.camera.panToLair()
+            return
         }
 
-        let resPromise = this.setCurrentTrollActivity(() => o_.troll.climbLadder('down'))
-        this.interfaceFor.climbToLair()
+        let resPromise = this.setCurrentTrollActivity(() => o_.troll.jumpToLair(coord))
+        this.interfaceFor.jumpToLair()
         const res = await resPromise
         if (res === CANCELLED) {
             o_.camera.panToBridge()

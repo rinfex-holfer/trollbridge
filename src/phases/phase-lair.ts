@@ -114,6 +114,10 @@ export class PhaseLair extends GamePhase {
         climbsFromBridge: () => {
             o_.lair.setInteractive.allButComplexStuff()
             o_.bridge.setInteractive.surfaceOnly()
+        },
+        jumpsToBridge: () => {
+            o_.lair.setInteractive.all(false)
+            o_.bridge.setInteractive.all(false)
         }
     }
 
@@ -168,23 +172,19 @@ export class PhaseLair extends GamePhase {
     trollGoesToBridge = async (options: {
         coord: Vec
     }) => {
-
-        // TODO - back from bridge + fix дерганье на мосту
-
         o_.camera.panToBridge()
 
-        if (o_.troll.currentStateKey !== TrollStateKey.CLIMB) {
-            this.interfaceFor.goesToBridge();
+        this.interfaceFor.goesToBridge();
 
-            const res = await this.setCurrentTrollActivity(() => o_.troll.goToLadder());
-            if (res === "CANCELLED") {
-                o_.camera.panToLair()
-                return
-            }
+        const res2 = await this.setCurrentTrollActivity(() => o_.troll.goToJumpPointFromLair(options.coord));
+        if (res2 === "CANCELLED") {
+            o_.camera.panToLair()
+            return
         }
 
-        let resPromise = this.setCurrentTrollActivity(() => o_.troll.climbLadder('up'))
-        this.interfaceFor.climbsToBridge()
+        // const partOfBridge = o_.characters.getNewTravellers().length ? 'left' : options.coord;
+        let resPromise = this.setCurrentTrollActivity(() => o_.troll.jumpToBridge(options.coord))
+        this.interfaceFor.jumpsToBridge()
         const res = await resPromise
         if (res === CANCELLED) {
             o_.camera.panToLair()

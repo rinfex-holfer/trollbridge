@@ -231,28 +231,22 @@ export class RenderManager {
         return promise
     }
 
-    jumpTo(obj: O_GameObject, pos: Vec): Promise<any> {
-        const {promise, done} = createPromiseAndHandlers()
+    jumpHorizontallyTo(obj: O_GameObject, pos: Vec): Promise<any> {
+        const {promise: promiseX, done: doneX} = createPromiseAndHandlers<any>()
+        const {promise: promiseY, done: doneY} = createPromiseAndHandlers<any>()
         const distance = getDistanceBetween(obj, pos);
 
         const duration = 400
         const height = distance / 3
 
-        const tween = this.createTweenChain([
-            {
-                targets: obj.obj,
-                x: pos.x,
-                // y: pos.y,
-                ease: 'Linear',
-                duration: duration,
-            },
-            {
-                targets: obj.obj,
-                y: pos.y - height,
-                ease: 'Linear',
-                duration: duration / 2,
-                offset: 0,
-            },
+        const tweenX = this.createTween({
+            targets: obj.obj,
+            x: pos.x,
+            ease: 'Linear',
+            duration: duration,
+            onComplete: doneX
+        })
+        const tweenY = this.createTweenChain([
             {
                 targets: obj.obj,
                 y: pos.y - height,
@@ -266,12 +260,100 @@ export class RenderManager {
                 ease: 'Linear',
                 duration: duration / 2,
                 offset: duration / 2,
-                onComplete: done
+                onComplete: doneY
             }
         ])
-        tween.play()
+        tweenX.play()
+        tweenY.play()
 
-        return promise
+        return Promise.all([promiseX, promiseY])
+    }
+
+    jumpDownTo(obj: O_GameObject, pos: Vec, options?: { duration?: number, speed?: number }): Promise<any> {
+        const startY = obj.obj.y;
+        const targetY = pos.y;
+        const jumpDepth = 150;    // how much extra dip at the middle
+
+        const distance = getDistanceBetween(obj, pos);
+
+        const duration = options?.duration
+            ? options?.duration
+            : options?.speed
+                ? distance / options.speed
+                : 400;
+
+
+        const {promise: promiseX, done: doneX} = createPromiseAndHandlers<any>()
+        const {promise: promiseY, done: doneY} = createPromiseAndHandlers<any>()
+
+
+        const tweenX = this.createTween({
+            targets: obj.obj,
+            x: pos.x,
+            ease: 'Linear',
+            duration: duration,
+            onComplete: doneX
+        })
+
+        this.scene.tweens.addCounter({
+            from: 0,
+            to: 1,
+            duration: duration,
+            onUpdate: tween => {
+                const t = tween.getValue();
+                const linearY = startY + (targetY - startY) * t;
+                const arcOffset = -jumpDepth * (4 * t * (1 - t));
+                obj.obj.y = linearY + arcOffset;
+            },
+            onComplete: doneY
+        });
+        tweenX.play()
+
+        return Promise.all([promiseX, promiseY])
+    }
+
+    jumpUpTo(obj: O_GameObject, pos: Vec, options?: { duration?: number, speed?: number }): Promise<any> {
+        const startY = obj.obj.y;
+        const targetY = pos.y;
+
+        const {promise: promiseX, done: doneX} = createPromiseAndHandlers<any>()
+        const {promise: promiseY, done: doneY} = createPromiseAndHandlers<any>()
+        const distance = getDistanceBetween(obj, pos);
+
+        const duration = options?.duration
+            ? options?.duration
+            : options?.speed
+                ? distance / options.speed
+                : 400;
+
+        const jumpHeight = 100
+
+        const tweenX = this.createTween({
+            targets: obj.obj,
+            x: pos.x,
+            ease: 'Linear',
+            duration: duration,
+            onComplete: doneX
+        })
+
+        this.scene.tweens.addCounter({
+            from: 0,
+            to: 1,
+            duration: duration,
+            onUpdate: tween => {
+                const t = tween.getValue();
+                // Linear interpolation between start and target y
+                const linearY = startY + (targetY - startY) * t;
+                // Parabolic offset: peaks at t = 0.5. Negative offset lifts the jump (assuming smaller y = higher on screen)
+                const arcOffset = -jumpHeight * (4 * t * (1 - t));
+                obj.obj.y = linearY + arcOffset;
+            },
+            onComplete: doneY
+        });
+        tweenX.play()
+
+        return Promise.all([promiseX, promiseY])
+        // return Promise.all([promiseY])
     }
 
     thrownTo(obj: O_GameObject, pos: Vec, duration: number): Promise<any> {

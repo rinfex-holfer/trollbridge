@@ -2,7 +2,17 @@ import {eventBus, Evt} from "../../../event-bus";
 import {CharKey, EncounterDanger, FoodType, TrollAbility, TrollLocation} from "../../../types";
 import {positioner} from "../positioner";
 import {CharAnimation} from "../../../entities/char/char-constants";
-import {clamp, getClosest, getRndItem, getRndSign, Rect, rnd, rndBetween, Vec} from "../../../utils/utils-math";
+import {
+    clamp,
+    getClosest,
+    getDistanceBetween,
+    getRndItem,
+    getRndSign,
+    Rect,
+    rnd,
+    rndBetween,
+    Vec
+} from "../../../utils/utils-math";
 import {flyingStatusChange} from "../../../interface/basic/flying-status-change";
 import {O_AnimatedSprite} from "../../core/render/animated-sprite";
 import {o_} from "../../locator";
@@ -72,6 +82,8 @@ export class Troll {
     grappleCooldown = 0
 
     timeFearPassed = 0
+
+    jumpSpeed = 1
 
     constructor(saveData?: SaveData) {
         o_.register.troll(this)
@@ -444,6 +456,22 @@ export class Troll {
         return this.setState(TrollStateKey.GO_TO, {target: options.coord})
     }
 
+    goToBridgeBottom = () => {
+        const target = {
+            x: this.x,
+            y: positioner.getBridgeBottomWalkingY()
+        }
+        return this.setState(TrollStateKey.GO_TO, {target})
+    }
+
+    goToLairTop = () => {
+        const target = {
+            x: this.x,
+            y: positioner.getLairTopWalkingY()
+        }
+        return this.setState(TrollStateKey.GO_TO, {target})
+    }
+
     goToLadder = (whichLadder: 'left' | 'right' | 'closest' = 'closest') => {
         const [leftLadderPos, rightLadderPos] = positioner.getLadderBounds()
 
@@ -528,7 +556,82 @@ export class Troll {
     }
 
     async jumpTo(pos: Vec) {
-        await o_.render.jumpTo(this.container, pos)
+        await o_.render.jumpHorizontallyTo(this.container, pos)
+    }
+
+    async jumpToLair(target: 'left' | 'right' | 'closest' | Vec = 'closest') {
+        const targetLeft = positioner.getTrollLairIdlePosition('left')
+        const targetRight = positioner.getTrollLairIdlePosition('right')
+        const closestPoint = getClosest(this.getCoords(), targetLeft, targetRight)
+
+        const targetCoord = target === 'left'
+            ? targetLeft
+            : target === 'right'
+                ? targetRight
+                : target === 'closest'
+                    ? closestPoint
+                    : target
+
+        await o_.render.jumpDownTo(this.container, targetCoord, {duration: 500})
+    }
+
+    maxJumpXDistance = 500
+    jumpDuration = 500
+
+    async goToJumpPointFromLair(targetOnBridge: Vec) {
+        this.directToTarget(targetOnBridge)
+
+        const distance = Math.abs(this.x - targetOnBridge.x)
+
+        const furthestX = targetOnBridge.x > this.x
+            ? targetOnBridge.x - this.maxJumpXDistance
+            : targetOnBridge.x + this.maxJumpXDistance;
+
+        const targetCoord = {
+            x: distance <= this.maxJumpXDistance ? this.x : furthestX,
+            y: positioner.getLairTopWalkingY()
+        }
+
+        return this.goTo(targetCoord)
+    }
+
+    async goToJumpPointFromBridge(targetOnLair: Vec) {
+        this.directToTarget(targetOnLair)
+
+        const distance = Math.abs(this.x - targetOnLair.x)
+
+        // if (distance < this.maxJumpXDistance) {
+        //     return Promise.resolve()
+        // }
+
+        const furthestX = targetOnLair.x > this.x
+            ? targetOnLair.x - this.maxJumpXDistance
+            : targetOnLair.x + this.maxJumpXDistance;
+
+        const targetCoord = {
+            x: distance <= this.maxJumpXDistance ? this.x : furthestX,
+            y: positioner.getBridgeBottomWalkingY()
+        }
+        return this.goTo(targetCoord)
+    }
+
+    async jumpToBridge(target: Vec) {
+        const targetLeft = positioner.getTrollBridgePosition()[0]
+        const targetRight = positioner.getTrollBridgePosition()[1]
+
+        const options = {duration: 500};
+
+        return o_.render.jumpUpTo(this.container, target, options)
+
+        // if (target === 'left') {
+        //     return o_.render.jumpUpTo(this.container, targetLeft, options)
+        // } else if (target === 'right') {
+        //     return o_.render.jumpUpTo(this.container, targetRight, options)
+        // } else if (target === 'closest') {
+        //     const toLeftPoint = getDistanceBetween(this, targetLeft)
+        //     const toRightPoint = getDistanceBetween(this, targetRight)
+        //     return o_.render.jumpUpTo(this.container, toLeftPoint < toRightPoint ? targetLeft : targetRight, options)
+        // }
     }
 
     moveToChar(char: Char) {
